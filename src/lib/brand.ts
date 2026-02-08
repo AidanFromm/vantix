@@ -1,47 +1,48 @@
-// Vantix Brand Constants
 export const brand = {
   name: 'Vantix',
-  tagline: 'Custom Digital Solutions',
-  description: 'We build websites, apps, and inventory systems tailored to your business.',
+  tagline: 'Get Organized',
+  description: 'We build the systems that let you focus on what matters. Websites. Apps. Inventory. All connected. All automated.',
   
-  // Colors - Clean & Minimal with a premium accent
   colors: {
-    primary: '#0A0A0A',      // Near black
-    secondary: '#FAFAFA',    // Off white
-    accent: '#3B82F6',       // Clean blue
-    accentHover: '#2563EB',  // Darker blue
-    muted: '#737373',        // Gray text
-    border: '#262626',       // Dark border
-    card: '#141414',         // Card background
+    primary: '#10b981', // Green-teal
+    primaryLight: '#34d399',
+    background: '#0a0a0a',
+    text: '#fafafa',
+    muted: '#666666',
+    border: '#1a1a1a',
   },
   
-  // Services
   services: [
     {
-      title: 'Web Development',
-      description: 'Custom websites built for performance, scalability, and conversion.',
-      icon: 'Globe',
+      title: 'Websites',
+      description: 'Fast, modern, built to convert. No templates.',
     },
     {
-      title: 'App Development', 
-      description: 'Native and cross-platform mobile apps that users love.',
-      icon: 'Smartphone',
+      title: 'Mobile Apps',
+      description: 'iOS apps that work offline and sync perfectly.',
     },
     {
       title: 'Inventory Systems',
-      description: 'Real-time inventory management synced across all your channels.',
-      icon: 'Package',
+      description: 'Scan, track, sync across all your channels.',
     },
     {
-      title: 'Custom Solutions',
-      description: 'If you can dream it, we can build it. Fully tailored to your needs.',
-      icon: 'Sparkles',
+      title: 'Integrations',
+      description: 'Stripe, Clover, StockX — we connect everything.',
+    },
+    {
+      title: 'Automation',
+      description: 'Bots that work while you sleep.',
     },
   ],
   
-  // Team
   team: [
-    { name: 'Aidan', role: 'Technical Lead', emoji: '⚡' },
-    { name: 'Kyle', role: 'Business & Strategy', emoji: '📈' },
+    { name: 'Aidan', role: 'Tech & Development' },
+    { name: 'Kyle', role: 'Business & Strategy' },
   ],
-} as const;
+  
+  differentiators: [
+    { title: 'Under 3 weeks', desc: 'Most projects delivered in weeks, not months.' },
+    { title: 'Affordable', desc: 'Agency quality without the agency price tag.' },
+    { title: 'Reliable', desc: 'We deliver what we promise. Every time.' },
+  ],
+};
