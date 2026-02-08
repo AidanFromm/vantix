@@ -31,7 +31,6 @@ const navItems = [
   { href: '/dashboard/clients', label: 'Clients', icon: Users },
   { href: '/dashboard/notepad', label: 'Notepad', icon: StickyNote },
   { href: '/dashboard/memory', label: 'Memory', icon: Brain },
-  { href: '/dashboard/github', label: 'GitHub', icon: Github },
   { href: '/dashboard/bots', label: 'Bot Hub', icon: Bot },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
