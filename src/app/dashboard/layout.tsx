@@ -10,12 +10,12 @@ import {
   Users,
   StickyNote,
   Brain,
-  Github,
   Bot,
   Settings,
   LogOut,
   Menu,
   X,
+  Inbox,
 } from 'lucide-react';
 
 interface User {
@@ -26,6 +26,7 @@ interface User {
 
 const navItems = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
+  { href: '/dashboard/leads', label: 'Leads', icon: Inbox },
   { href: '/dashboard/tasks', label: 'Tasks', icon: CheckSquare },
   { href: '/dashboard/projects', label: 'Projects', icon: FolderKanban },
   { href: '/dashboard/clients', label: 'Clients', icon: Users },
