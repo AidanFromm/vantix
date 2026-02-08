@@ -478,9 +478,23 @@ function Footer() {
   );
 }
 
+// Hidden dashboard button
+function HiddenDashboardButton() {
+  return (
+    <Link
+      href="/dashboard"
+      className="fixed top-6 right-6 z-50 w-10 h-10 rounded-lg opacity-0 hover:opacity-100 hover:bg-[var(--color-accent)]/10 hover:border hover:border-[var(--color-accent)]/30 transition-all duration-300 flex items-center justify-center"
+      title="Dashboard"
+    >
+      <ArrowUpRight size={16} className="text-[var(--color-accent)]" />
+    </Link>
+  );
+}
+
 export default function Home() {
   return (
     <main className="relative">
+      <HiddenDashboardButton />
       <CursorGlow />
       <Hero />
       <MarqueeSection />
