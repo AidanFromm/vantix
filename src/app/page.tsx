@@ -299,6 +299,16 @@ function Testimonial() {
 
 // Team
 function Team() {
+  const founders = [
+    { name: 'Aidan', role: 'Co-Founder' },
+    { name: 'Kyle', role: 'Co-Founder' },
+  ];
+  
+  const bots = [
+    { name: 'Vantix Bot #1', role: '24/7 Employee' },
+    { name: 'Vantix Bot #2', role: '24/7 Employee' },
+  ];
+
   return (
     <section className="py-32 md:py-48 px-6 md:px-12 lg:px-24">
       <div className="max-w-6xl mx-auto">
@@ -308,20 +318,38 @@ function Team() {
           </p>
         </RevealText>
         <RevealText delay={0.1}>
-          <h2 className="text-3xl md:text-5xl font-bold mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold mb-6">
             Small team. Big results.
           </h2>
         </RevealText>
+        <RevealText delay={0.15}>
+          <p className="text-[var(--color-muted)] text-xl mb-16 max-w-2xl">
+            We work together on everything. No silos, no handoffs — just two founders who get things done.
+          </p>
+        </RevealText>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {[
-            { name: 'Aidan', role: 'Tech & Development' },
-            { name: 'Kyle', role: 'Business & Strategy' },
-          ].map((member, i) => (
+        {/* Founders */}
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+          {founders.map((member, i) => (
             <RevealText key={i} delay={0.2 + i * 0.1}>
               <div className="p-8 border border-[var(--color-border)] rounded-2xl hover:border-[var(--color-accent)] transition-colors">
                 <h3 className="text-2xl font-bold mb-2">{member.name}</h3>
                 <p className="text-[var(--color-muted)]">{member.role}</p>
+              </div>
+            </RevealText>
+          ))}
+        </div>
+
+        {/* Bots */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {bots.map((bot, i) => (
+            <RevealText key={i} delay={0.4 + i * 0.1}>
+              <div className="p-8 border border-[var(--color-border)] rounded-2xl bg-[var(--color-accent)]/5 hover:border-[var(--color-accent)] transition-colors">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl">🤖</span>
+                  <h3 className="text-2xl font-bold">{bot.name}</h3>
+                </div>
+                <p className="text-[var(--color-accent)]">{bot.role}</p>
               </div>
             </RevealText>
           ))}
