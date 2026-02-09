@@ -504,7 +504,7 @@ function Contact() {
                 Drop your number. We'll text you within 24 hours to discuss your project.
               </p>
               <p className="text-[var(--color-muted)]">
-                Or email us at <a href="mailto:hello@usevantix.com" className="text-[var(--color-accent)] hover:underline">hello@usevantix.com</a>
+                Or email us at <a href="mailto:usevantix@gmail.com" className="text-[var(--color-accent)] hover:underline">usevantix@gmail.com</a>
               </p>
             </RevealText>
           </div>
