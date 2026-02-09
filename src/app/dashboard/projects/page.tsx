@@ -78,6 +78,28 @@ const initialProjects: Project[] = [
       { id: '3', date: '2026-02-07', message: 'Initial deploy to Vercel', author: 'Botskii', type: 'milestone' },
     ],
   },
+  {
+    id: '3',
+    name: 'Sports Arbitrage Bot',
+    description: 'Automated NBA/NHL moneyline arbitrage between Vegas odds and Polymarket',
+    status: 'active',
+    tech: ['Python', 'SQLite', 'WebSocket', 'Telegram Bot', 'Polymarket CLOB'],
+    github: 'https://github.com/AidanFromm/Sports',
+    live: null,
+    client: 'Internal',
+    revenue: '~$188/mo projected',
+    startDate: '2026-01-31',
+    logs: [
+      { id: '1', date: '2026-02-08', message: 'Botskii added as collaborator, full docs reviewed', author: 'Botskii', type: 'update' },
+      { id: '2', date: '2026-02-05', message: 'Fixed duplicate positions bug (market_id check)', author: 'Aidan', type: 'milestone' },
+      { id: '3', date: '2026-02-05', message: 'Fixed P&L tracking - now uses actual fill price', author: 'Aidan', type: 'milestone' },
+      { id: '4', date: '2026-02-04', message: 'Added overnight sleep mode (10AM-12AM ET)', author: 'Aidan', type: 'update' },
+      { id: '5', date: '2026-02-03', message: 'NHL support added alongside NBA', author: 'Aidan', type: 'milestone' },
+      { id: '6', date: '2026-02-02', message: 'v2.1: Raised min entry to 70%, bet size to $25', author: 'Aidan', type: 'update' },
+      { id: '7', date: '2026-02-02', message: '+$2.22 profit on 23 trades (47.8% win rate)', author: 'Aidan', type: 'note' },
+      { id: '8', date: '2026-02-01', message: 'First profitable day! Bot live on DigitalOcean', author: 'Aidan', type: 'milestone' },
+    ],
+  },
 ];
 
 const statusColors = {
