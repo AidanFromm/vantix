@@ -100,6 +100,27 @@ const initialProjects: Project[] = [
       { id: '8', date: '2026-02-01', message: 'First profitable day! Bot live on DigitalOcean', author: 'Aidan', type: 'milestone' },
     ],
   },
+  {
+    id: '4',
+    name: 'CardLedger',
+    description: 'iOS app for collectors & resellers to track sports cards, Pokemon, and TCGs with portfolio analytics',
+    status: 'active',
+    tech: ['React', 'TypeScript', 'Vite', 'Capacitor', 'Supabase', 'Tailwind', 'shadcn/ui'],
+    github: 'https://github.com/AidanFromm/card-ledger',
+    live: 'https://lovable.dev/projects/c6b24c8b-88d9-447f-8fb9-c9bd4cae114d',
+    client: 'Internal (SaaS)',
+    revenue: 'Planned: $4.99-14.99/mo',
+    startDate: '2026-02-01',
+    logs: [
+      { id: '1', date: '2026-02-08', message: 'Botskii added as collaborator', author: 'Botskii', type: 'update' },
+      { id: '2', date: '2026-02-03', message: 'Image upgrade system complete - smart name matching + branded placeholders', author: 'Aidan', type: 'milestone' },
+      { id: '3', date: '2026-02-03', message: 'Batch image fetch working, CSV import fixed', author: 'Aidan', type: 'update' },
+      { id: '4', date: '2026-02-03', message: 'One Piece TCG + Multi-TCG support added', author: 'Aidan', type: 'milestone' },
+      { id: '5', date: '2026-02-02', message: 'Sports detection + Tavily AI search deployed', author: 'Aidan', type: 'milestone' },
+      { id: '6', date: '2026-02-02', message: 'Phase 4 database migrations (sports fields, search indexes)', author: 'Aidan', type: 'update' },
+      { id: '7', date: '2026-02-01', message: 'New Supabase project created, 1,963 items imported ($85k value)', author: 'Aidan', type: 'note' },
+    ],
+  },
 ];
 
 const statusColors = {
