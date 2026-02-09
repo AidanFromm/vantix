@@ -9,23 +9,28 @@ interface User {
 }
 
 const stats = [
-  { label: 'Active Projects', value: '3', icon: FolderKanban, change: '+1 this week' },
-  { label: 'Open Tasks', value: '12', icon: CheckSquare, change: '5 high priority' },
-  { label: 'Clients', value: '4', icon: Users, change: '1 pending proposal' },
-  { label: 'Hours This Week', value: '24', icon: Clock, change: 'On track' },
+  { label: 'Active Projects', value: '3', icon: FolderKanban, change: 'Secured, JFK, Vantix' },
+  { label: 'Open Tasks', value: '8', icon: CheckSquare, change: '3 high priority' },
+  { label: 'Clients', value: '1', icon: Users, change: 'Dave (Secured Tampa)' },
+  { label: 'Team Members', value: '4', icon: Clock, change: 'Kyle, Aidan, Vantix, Botskii' },
 ];
 
 const recentActivity = [
-  { type: 'task', message: 'Completed StockX OAuth fix', time: '2 hours ago', user: 'Botskii' },
-  { type: 'project', message: 'Secured Tampa website deployed', time: '5 hours ago', user: 'Aidan' },
-  { type: 'client', message: 'New inquiry from Tampa Sneakers', time: '1 day ago', user: 'Kyle' },
-  { type: 'task', message: 'Inventory sync webhook added', time: '1 day ago', user: 'Botskii' },
+  { type: 'task', message: 'Scan system V2: two-phase workflow, batch mode, sound effects', time: 'Feb 9, 3:30 AM', user: 'Vantix' },
+  { type: 'task', message: 'Removed demo credentials from login page', time: 'Feb 9, 3:00 AM', user: 'Vantix' },
+  { type: 'task', message: 'Secured website dev server setup with Supabase env', time: 'Feb 9, 3:05 AM', user: 'Vantix' },
+  { type: 'project', message: 'Stripe webhook: auto inventory decrement on purchase', time: 'Feb 8', user: 'Botskii' },
+  { type: 'project', message: 'JFK codebase review completed (security, performance, features)', time: 'Feb 7', user: 'Vantix' },
+  { type: 'task', message: 'Vantix AI assistant fully set up — Telegram, memory, voice transcription', time: 'Feb 7', user: 'Vantix' },
 ];
 
 const upcomingTasks = [
   { title: 'Clover POS integration', priority: 'high', project: 'Secured Tampa' },
-  { title: 'Landing page animations', priority: 'medium', project: 'Vantix' },
-  { title: 'Client proposal review', priority: 'low', project: 'New Lead' },
+  { title: 'StockX OAuth HTTPS callback setup', priority: 'high', project: 'Secured Tampa' },
+  { title: 'Stripe checkout flow', priority: 'high', project: 'Secured Tampa' },
+  { title: 'Customer-facing website polish', priority: 'medium', project: 'Secured Tampa' },
+  { title: 'Leads page — shared backend for team', priority: 'medium', project: 'Vantix' },
+  { title: 'JFK inventory system improvements', priority: 'low', project: 'Just Four Kicks' },
 ];
 
 export default function DashboardOverview() {
