@@ -102,13 +102,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-[var(--color-border)]">
-            <p className="text-sm text-[var(--color-muted)] text-center">
-              Demo accounts: aidan@vantix.com, kyle@vantix.com
-              <br />
-              Password: vantix2024
-            </p>
-          </div>
+{/* Demo credentials removed */}
         </div>
       </div>
     </div>
