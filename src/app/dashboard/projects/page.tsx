@@ -90,6 +90,7 @@ const initialProjects: Project[] = [
     revenue: '~$188/mo projected',
     startDate: '2026-01-31',
     logs: [
+      { id: '0', date: '2026-02-09', message: 'Verified FOK fix deployed and working - bot running, WebSocket auto-reconnecting', author: 'Botskii', type: 'update' },
       { id: '1', date: '2026-02-08', message: 'Botskii added as collaborator, full docs reviewed', author: 'Botskii', type: 'update' },
       { id: '2', date: '2026-02-05', message: 'Fixed duplicate positions bug (market_id check)', author: 'Aidan', type: 'milestone' },
       { id: '3', date: '2026-02-05', message: 'Fixed P&L tracking - now uses actual fill price', author: 'Aidan', type: 'milestone' },
@@ -112,6 +113,7 @@ const initialProjects: Project[] = [
     revenue: 'Planned: $4.99-14.99/mo',
     startDate: '2026-02-01',
     logs: [
+      { id: '0', date: '2026-02-09', message: 'Deep dive complete: CardLedger beats ALL competitors (Unboxed, Tradeblock) - needs scanner impl + Apple Sign In', author: 'Botskii', type: 'milestone' },
       { id: '1', date: '2026-02-08', message: 'Botskii added as collaborator', author: 'Botskii', type: 'update' },
       { id: '2', date: '2026-02-03', message: 'Image upgrade system complete - smart name matching + branded placeholders', author: 'Aidan', type: 'milestone' },
       { id: '3', date: '2026-02-03', message: 'Batch image fetch working, CSV import fixed', author: 'Aidan', type: 'update' },
