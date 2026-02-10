@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#111111;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#10b981" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#10b981" stroke-width="0.5" opacity="0.1"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Glow orb behind logo -->
+  <circle cx="400" cy="315" r="200" fill="#10b981" opacity="0.08"/>
+  
+  <!-- V Logo -->
+  <g transform="translate(280, 195)" filter="url(#shadow)">
+    <path d="M50 0 L120 240 L190 0 L150 0 L120 150 L90 0 Z" fill="url(#glow)" transform="scale(1.8)"/>
+  </g>
+  
+  <!-- Text: VANTIX -->
+  <text x="620" y="280" font-family="system-ui, -apple-system, sans-serif" font-size="90" font-weight="800" fill="white" letter-spacing="8">VANTIX</text>
+  
+  <!-- Tagline -->
+  <text x="620" y="360" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="500" fill="#10b981" letter-spacing="4">GET ORGANIZED</text>
+  
+  <!-- URL -->
+  <text x="620" y="420" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="400" fill="#666666">usevantix.com</text>
+  
+  <!-- Bottom accent line -->
+  <rect x="0" y="610" width="1200" height="20" fill="url(#glow)" opacity="0.8"/>
+</svg>
