@@ -330,47 +330,22 @@ function WhyUs() {
   );
 }
 
-// Testimonial
-function Testimonial() {
-  return (
-    <section className="py-20 md:py-32 px-6 md:px-12 lg:px-24 border-t border-[var(--color-border)] relative overflow-hidden">
-      <div className="max-w-4xl mx-auto text-center relative z-10">
-        <RevealText>
-          <div className="text-5xl md:text-6xl text-[var(--color-accent)] mb-6 md:mb-8">"</div>
-        </RevealText>
-        <RevealText delay={0.1}>
-          <p className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-8 md:mb-12">
-            You just saved my company.
-          </p>
-        </RevealText>
-        <RevealText delay={0.2}>
-          <div className="flex items-center justify-center gap-4">
-            <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-light)]" />
-            <div className="text-left">
-              <p className="font-semibold">Dave</p>
-              <p className="text-sm text-[var(--color-muted)]">Secured Tampa</p>
-            </div>
-          </div>
-        </RevealText>
-      </div>
-    </section>
-  );
-}
-
-// Team Section - Professional with photo placeholders
+// Team Section - Professional with photos
 function Team() {
   const founders = [
     { 
       name: 'Aidan Fromm', 
       role: 'Co-Founder & Technical Lead',
       bio: 'Full-stack developer focused on building systems that scale.',
-      image: '/team/aidan.jpg' // Placeholder - needs photo upload
+      image: '/team/aidan.jpg',
+      hasPhoto: true
     },
     { 
       name: 'Kyle', 
       role: 'Co-Founder & Business Development',
       bio: 'Business strategist with expertise in retail and wholesale.',
-      image: '/team/kyle.jpg' // Placeholder - needs photo upload
+      image: '/team/kyle.jpg',
+      hasPhoto: true
     },
   ];
 
@@ -398,19 +373,20 @@ function Team() {
             <RevealText key={i} delay={0.2 + i * 0.1}>
               <div className="p-6 md:p-8 border border-[var(--color-border)] rounded-2xl bg-[var(--color-card)]/50 hover:border-[var(--color-accent)]/30 transition-colors">
                 <div className="flex items-start gap-4 md:gap-6">
-                  {/* Photo placeholder - will show initials if no photo */}
+                  {/* Photo or initials fallback */}
                   <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden bg-gradient-to-br from-[var(--color-accent)]/20 to-[var(--color-accent)]/5 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl md:text-2xl font-bold text-[var(--color-accent)]">
-                      {member.name.charAt(0)}
-                    </span>
-                    {/* Uncomment when photos are added:
-                    <Image 
-                      src={member.image} 
-                      alt={member.name}
-                      fill
-                      className="object-cover"
-                    />
-                    */}
+                    {member.hasPhoto ? (
+                      <Image 
+                        src={member.image} 
+                        alt={member.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span className="text-xl md:text-2xl font-bold text-[var(--color-accent)]">
+                        {member.name.charAt(0)}
+                      </span>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-xl md:text-2xl font-bold mb-1">{member.name}</h3>
@@ -622,7 +598,6 @@ export default function Home() {
       <Services />
       <ProblemSolution />
       <WhyUs />
-      <Testimonial />
       <Team />
       <Contact />
       <Footer />
