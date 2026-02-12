@@ -1,153 +1,360 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { CheckSquare, FolderKanban, Users, Clock, TrendingUp, AlertCircle } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import {
+  DollarSign, Users, Zap, CheckSquare, Phone, ArrowRight,
+  Plus, FileText, RefreshCw, Clock, AlertCircle, Mail, Send,
+} from 'lucide-react';
 
-interface User {
-  name: string;
-  role: string;
+function ls<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
-const stats = [
-  { label: 'Active Projects', value: '3', icon: FolderKanban, change: 'Secured, JFK, Vantix' },
-  { label: 'Open Tasks', value: '8', icon: CheckSquare, change: '3 high priority' },
-  { label: 'Clients', value: '1', icon: Users, change: 'Dave (Secured Tampa)' },
-  { label: 'Team Members', value: '4', icon: Clock, change: 'Kyle, Aidan, Vantix, Botskii' },
-];
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
 
-const recentActivity = [
-  { type: 'task', message: 'Scan system V2: two-phase workflow, batch mode, sound effects', time: 'Feb 9, 3:30 AM', user: 'Vantix' },
-  { type: 'task', message: 'Removed demo credentials from login page', time: 'Feb 9, 3:00 AM', user: 'Vantix' },
-  { type: 'task', message: 'Secured website dev server setup with Supabase env', time: 'Feb 9, 3:05 AM', user: 'Vantix' },
-  { type: 'project', message: 'Stripe webhook: auto inventory decrement on purchase', time: 'Feb 8', user: 'Botskii' },
-  { type: 'project', message: 'JFK codebase review completed (security, performance, features)', time: 'Feb 7', user: 'Vantix' },
-  { type: 'task', message: 'Vantix AI assistant fully set up — Telegram, memory, voice transcription', time: 'Feb 7', user: 'Vantix' },
-];
+interface CallRecord {
+  id?: string;
+  call_id?: string;
+  from?: string;
+  to?: string;
+  callerName?: string;
+  caller_name?: string;
+  created_at?: string;
+  started_at?: string;
+  date?: string;
+  summary?: string;
+  status?: string;
+  call_length?: number;
+}
 
-const upcomingTasks = [
-  { title: 'Clover POS integration', priority: 'high', project: 'Secured Tampa' },
-  { title: 'StockX OAuth HTTPS callback setup', priority: 'high', project: 'Secured Tampa' },
-  { title: 'Stripe checkout flow', priority: 'high', project: 'Secured Tampa' },
-  { title: 'Customer-facing website polish', priority: 'medium', project: 'Secured Tampa' },
-  { title: 'Leads page — shared backend for team', priority: 'medium', project: 'Vantix' },
-  { title: 'JFK inventory system improvements', priority: 'low', project: 'Just Four Kicks' },
-];
+interface Task {
+  id?: string;
+  title?: string;
+  status?: string;
+  dueDate?: string;
+  priority?: string;
+}
 
-export default function DashboardOverview() {
-  const [user, setUser] = useState<User | null>(null);
-  const [greeting, setGreeting] = useState('');
+interface RevenueEntry {
+  amount: number;
+  status?: string;
+}
 
-  useEffect(() => {
-    const stored = localStorage.getItem('vantix_user');
-    if (stored) {
-      setUser(JSON.parse(stored));
-    }
+interface SentEmail {
+  email: string;
+  business: string;
+  subject: string;
+  template: string;
+  date: string;
+  timestamp: string;
+}
 
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good morning');
-    else if (hour < 18) setGreeting('Good afternoon');
-    else setGreeting('Good evening');
+interface OutreachData {
+  totalSent: number;
+  sentToday: number;
+  totalLeads: number;
+  leadsWithEmail: number;
+  recentEmails: SentEmail[];
+}
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06 } },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+};
+
+export default function OverviewPage() {
+  const [clients, setClients] = useState<unknown[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [revenue, setRevenue] = useState(0);
+  const [calls, setCalls] = useState<CallRecord[]>([]);
+  const [outreach, setOutreach] = useState<OutreachData>({ totalSent: 0, sentToday: 0, totalLeads: 0, leadsWithEmail: 0, recentEmails: [] });
+  const [loaded, setLoaded] = useState(false);
+
+  const load = useCallback(async () => {
+    setClients(ls<unknown[]>('vantix_clients', []));
+    const allTasks = ls<Task[]>('vantix_tasks', []);
+    setTasks(allTasks);
+
+    const revData = ls<{ income?: RevenueEntry[] }>('vantix_revenue', { income: [] });
+    const incomeArr: RevenueEntry[] = Array.isArray(revData) ? revData : (revData.income || []);
+    setRevenue(incomeArr.reduce((s, e) => s + (e.amount || 0), 0));
+
+    // Fetch calls
+    try {
+      const res = await fetch('/api/calls');
+      if (res.ok) {
+        const data = await res.json();
+        setCalls(Array.isArray(data) ? data : (data.calls || []));
+      }
+    } catch {}
+
+    // Fetch outreach
+    try {
+      const res = await fetch('/api/outreach');
+      if (res.ok) {
+        const data = await res.json();
+        setOutreach(data);
+      }
+    } catch {}
+
+    setLoaded(true);
   }, []);
 
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">
-          {greeting}, {user?.name || 'there'} 👋
-        </h1>
-        <p className="text-[var(--color-muted)] mt-1">Here&apos;s what&apos;s happening with your projects.</p>
-      </div>
+  useEffect(() => {
+    load();
+    window.addEventListener('focus', load);
+    return () => window.removeEventListener('focus', load);
+  }, [load]);
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, i) => {
-          const Icon = stat.icon;
-          return (
-            <div
-              key={i}
-              className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-6"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[var(--color-muted)] text-sm">{stat.label}</p>
-                  <p className="text-3xl font-bold mt-1">{stat.value}</p>
-                  <p className="text-xs text-[var(--color-muted)] mt-2 flex items-center gap-1">
-                    <TrendingUp size={12} />
-                    {stat.change}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-[var(--color-accent)]/10 rounded-lg flex items-center justify-center">
-                  <Icon className="text-[var(--color-accent)]" size={20} />
-                </div>
+  const openTasks = tasks.filter(t => t.status !== 'done' && t.status !== 'completed');
+  const today = new Date().toISOString().slice(0, 10);
+  const dueTasks = tasks.filter(t => {
+    if (t.status === 'done' || t.status === 'completed') return false;
+    if (!t.dueDate) return false;
+    return t.dueDate <= today;
+  });
+
+  const recentCalls = [...calls].sort((a, b) =>
+    (b.created_at || b.started_at || b.date || '').localeCompare(a.created_at || a.started_at || a.date || '')
+  ).slice(0, 5);
+
+  const recentOutreach = outreach.recentEmails.slice(0, 5);
+
+  const priorityColor: Record<string, string> = {
+    high: 'bg-red-500/20 text-red-400',
+    medium: 'bg-amber-500/20 text-amber-400',
+    low: 'bg-blue-500/20 text-blue-400',
+  };
+
+  const statusColor: Record<string, string> = {
+    completed: 'bg-emerald-500/20 text-emerald-400',
+    ended: 'bg-emerald-500/20 text-emerald-400',
+    'closed-won': 'bg-emerald-500/20 text-emerald-400',
+    'in-progress': 'bg-blue-500/20 text-blue-400',
+    missed: 'bg-red-500/20 text-red-400',
+    failed: 'bg-red-500/20 text-red-400',
+    'closed-lost': 'bg-red-500/20 text-red-400',
+    queued: 'bg-amber-500/20 text-amber-400',
+    'new-lead': 'bg-blue-500/20 text-blue-400',
+    'no-answer': 'bg-amber-500/20 text-amber-400',
+  };
+
+  if (!loaded) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}>
+          <RefreshCw size={20} className="text-[#10b981]" />
+        </motion.div>
+      </div>
+    );
+  }
+
+  const stats = [
+    { label: 'Total Leads', value: outreach.totalLeads, icon: Zap, color: 'text-amber-400', bg: 'bg-amber-400/10' },
+    { label: 'Emails Sent', value: outreach.totalSent, icon: Send, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+    { label: 'Active Clients', value: (clients as unknown[]).length, icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10' },
+    { label: 'Open Tasks', value: openTasks.length, icon: CheckSquare, color: 'text-purple-400', bg: 'bg-purple-400/10' },
+    { label: 'Total Calls', value: calls.length, icon: Phone, color: 'text-cyan-400', bg: 'bg-cyan-400/10' },
+    { label: 'Revenue', value: revenue, prefix: '$', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+  ];
+
+  return (
+    <motion.div className="space-y-5 pb-12" variants={container} initial="hidden" animate="show">
+      {/* Header */}
+      <motion.div variants={item} className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-white tracking-tight">Overview</h1>
+          <p className="text-xs text-[var(--color-muted)] mt-0.5">At a glance</p>
+        </div>
+        <button onClick={load}
+          className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] hover:text-white transition-colors px-2.5 py-1.5 rounded-lg border border-[var(--color-border)] hover:border-[#10b981]/30">
+          <RefreshCw size={13} strokeWidth={1.5} /> Refresh
+        </button>
+      </motion.div>
+
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+        {stats.map((s) => (
+          <motion.div key={s.label} variants={item}
+            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 hover:border-[#10b981]/20 transition-colors">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] uppercase tracking-wider text-[var(--color-muted)] font-medium">{s.label}</span>
+              <div className={`${s.bg} ${s.color} p-1.5 rounded-lg`}>
+                <s.icon size={16} strokeWidth={1.5} />
               </div>
             </div>
-          );
-        })}
+            <div className="text-2xl font-bold text-white">
+              {s.prefix || ''}{s.value.toLocaleString()}
+            </div>
+          </motion.div>
+        ))}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
-        <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            {recentActivity.map((activity, i) => (
-              <div key={i} className="flex items-start gap-4 pb-4 border-b border-[var(--color-border)] last:border-0 last:pb-0">
-                <div className="w-8 h-8 rounded-full bg-[var(--color-accent)]/20 flex items-center justify-center text-xs font-bold text-[var(--color-accent)]">
-                  {activity.user[0]}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm">
-                    <span className="font-medium">{activity.user}</span>{' '}
-                    <span className="text-[var(--color-muted)]">{activity.message}</span>
-                  </p>
-                  <p className="text-xs text-[var(--color-muted)] mt-1">{activity.time}</p>
-                </div>
-              </div>
-            ))}
+      {/* Recent Calls + Recent Outreach */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Recent Calls */}
+        <motion.div variants={item}
+          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+              <Phone size={16} strokeWidth={1.5} className="text-[#10b981]" />
+              Recent Calls
+            </h2>
+            <Link href="/dashboard/calls" className="text-[11px] text-[#10b981] hover:underline flex items-center gap-1">
+              View all <ArrowRight size={11} />
+            </Link>
           </div>
-        </div>
-
-        {/* Upcoming Tasks */}
-        <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4">Upcoming Tasks</h2>
-          <div className="space-y-3">
-            {upcomingTasks.map((task, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between p-4 bg-[var(--color-primary)] rounded-lg border border-[var(--color-border)]"
-              >
-                <div className="flex items-center gap-3">
-                  {task.priority === 'high' && (
-                    <AlertCircle className="text-red-400" size={18} />
-                  )}
-                  {task.priority === 'medium' && (
-                    <AlertCircle className="text-yellow-400" size={18} />
-                  )}
-                  {task.priority === 'low' && (
-                    <AlertCircle className="text-green-400" size={18} />
-                  )}
-                  <div>
-                    <p className="font-medium">{task.title}</p>
-                    <p className="text-xs text-[var(--color-muted)]">{task.project}</p>
+          <div className="space-y-2">
+            {recentCalls.length === 0 && (
+              <p className="text-xs text-[var(--color-muted)] py-6 text-center">No calls yet</p>
+            )}
+            {recentCalls.map((call, i) => {
+              const name = call.callerName || call.caller_name || call.from || 'Unknown';
+              const time = call.created_at || call.started_at || call.date || '';
+              const st = (call.status || 'completed').toLowerCase();
+              return (
+                <div key={call.id || call.call_id || i} className="flex items-start gap-3 p-2.5 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]">
+                  <Phone size={14} strokeWidth={1.5} className="text-[var(--color-muted)] mt-0.5 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-white truncate">{name}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${statusColor[st] || 'bg-white/10 text-white/60'}`}>
+                        {st}
+                      </span>
+                    </div>
+                    {call.summary && (
+                      <p className="text-[11px] text-[var(--color-muted)] truncate mt-0.5">{call.summary}</p>
+                    )}
+                    {time && (
+                      <span className="text-[10px] text-[var(--color-muted)]">{timeAgo(time)}</span>
+                    )}
                   </div>
                 </div>
-                <span
-                  className={`text-xs px-2 py-1 rounded ${
-                    task.priority === 'high'
-                      ? 'bg-red-500/20 text-red-400'
-                      : task.priority === 'medium'
-                      ? 'bg-yellow-500/20 text-yellow-400'
-                      : 'bg-green-500/20 text-green-400'
-                  }`}
-                >
-                  {task.priority}
-                </span>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* Recent Outreach */}
+        <motion.div variants={item}
+          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+              <Mail size={16} strokeWidth={1.5} className="text-[#10b981]" />
+              Recent Outreach
+            </h2>
+            <Link href="/dashboard/outreach" className="text-[11px] text-[#10b981] hover:underline flex items-center gap-1">
+              View all <ArrowRight size={11} />
+            </Link>
+          </div>
+          <div className="space-y-2">
+            {recentOutreach.length === 0 && (
+              <p className="text-xs text-[var(--color-muted)] py-6 text-center">No emails sent yet</p>
+            )}
+            {recentOutreach.map((email, i) => (
+              <div key={i} className="flex items-start gap-3 p-2.5 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]">
+                <Send size={14} strokeWidth={1.5} className="text-[var(--color-muted)] mt-0.5 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-white truncate">{email.business}</span>
+                    <span className="text-[10px] text-[var(--color-muted)]">{email.date}</span>
+                  </div>
+                  <p className="text-[11px] text-[var(--color-muted)] truncate mt-0.5">{email.subject}</p>
+                </div>
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+
+      {/* Tasks Due + Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Tasks Due */}
+        <motion.div variants={item}
+          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+              <Clock size={16} strokeWidth={1.5} className="text-[#10b981]" />
+              Tasks Due
+            </h2>
+            <Link href="/dashboard/tasks" className="text-[11px] text-[#10b981] hover:underline flex items-center gap-1">
+              View all <ArrowRight size={11} />
+            </Link>
+          </div>
+          <div className="space-y-2">
+            {dueTasks.length === 0 && (
+              <p className="text-xs text-[var(--color-muted)] py-6 text-center">Nothing due today</p>
+            )}
+            {dueTasks.slice(0, 5).map((task, i) => {
+              const p = (task.priority || 'medium').toLowerCase();
+              const overdue = task.dueDate && task.dueDate < today;
+              return (
+                <div key={task.id || i} className="flex items-center gap-3 p-2.5 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]">
+                  {overdue ? (
+                    <AlertCircle size={14} strokeWidth={1.5} className="text-red-400 shrink-0" />
+                  ) : (
+                    <CheckSquare size={14} strokeWidth={1.5} className="text-[var(--color-muted)] shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-medium text-white truncate block">{task.title || 'Untitled'}</span>
+                    {task.dueDate && (
+                      <span className={`text-[10px] ${overdue ? 'text-red-400' : 'text-[var(--color-muted)]'}`}>
+                        {overdue ? 'Overdue' : 'Due'}: {task.dueDate}
+                      </span>
+                    )}
+                  </div>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${priorityColor[p] || 'bg-white/10 text-white/60'}`}>
+                    {p}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* Quick Actions */}
+        <motion.div variants={item}
+          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4">
+          <h2 className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
+            <Plus size={16} strokeWidth={1.5} className="text-[#10b981]" />
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: 'Log a Call', href: '/dashboard/calls', icon: Phone },
+              { label: 'Add Lead', href: '/dashboard/leads', icon: Zap },
+              { label: 'Create Task', href: '/dashboard/tasks', icon: CheckSquare },
+              { label: 'New Proposal', href: '/dashboard/proposals', icon: FileText },
+            ].map(a => (
+              <Link key={a.label} href={a.href}
+                className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[#10b981]/40 hover:bg-[#10b981]/5 transition-all">
+                <a.icon size={16} strokeWidth={1.5} className="text-[#10b981]" />
+                <span className="text-xs text-[var(--color-muted)] font-medium">{a.label}</span>
+              </Link>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
   );
 }

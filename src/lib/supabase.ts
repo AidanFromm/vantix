@@ -23,3 +23,4 @@ export interface TeamMember {
   role: 'admin' | 'member' | 'bot';
   created_at: string;
 }
+

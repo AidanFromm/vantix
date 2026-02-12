@@ -1,59 +1,86 @@
 'use client';
 
-import { useState } from 'react';
-import { Plus, Save, Trash2, FileText } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Plus, Trash2, FileText } from 'lucide-react';
 
 interface Note {
   id: string;
   title: string;
   content: string;
-  updatedAt: Date;
+  updatedAt: string;
 }
 
-const initialNotes: Note[] = [
+const STORAGE_KEY = 'vantix_notes';
+
+const defaultNotes: Note[] = [
   {
     id: '1',
     title: 'Meeting Notes - Dave',
     content: '- Needs Clover POS integration\n- Stripe already connected\n- Ask for Merchant ID + API token\n- Timeline: 2 weeks',
-    updatedAt: new Date('2024-02-07'),
+    updatedAt: new Date('2026-02-07').toISOString(),
   },
   {
     id: '2',
     title: 'Ideas for Vantix',
-    content: '- Add testimonials section\n- Case studies page\n- Blog for SEO\n- Integrate calendar booking',
-    updatedAt: new Date('2024-02-06'),
+    content: '- Add testimonials section\n- Case studies page\n- Blog for SEO\n- Integrate calendar booking\n- Leads scraper API route',
+    updatedAt: new Date('2026-02-09').toISOString(),
   },
 ];
 
+function loadNotes(): Note[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch { /* fallback */ }
+  return defaultNotes;
+}
+
 export default function NotepadPage() {
-  const [notes, setNotes] = useState<Note[]>(initialNotes);
-  const [activeNote, setActiveNote] = useState<Note | null>(initialNotes[0]);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [activeNote, setActiveNote] = useState<Note | null>(null);
+
+  useEffect(() => {
+    const loaded = loadNotes();
+    setNotes(loaded);
+    setActiveNote(loaded[0] || null);
+  }, []);
+
+  const saveNotes = useCallback((updated: Note[]) => {
+    setNotes(updated);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(updated)); } catch { /* ignore */ }
+  }, []);
 
   const createNote = () => {
     const newNote: Note = {
       id: Date.now().toString(),
       title: 'Untitled Note',
       content: '',
-      updatedAt: new Date(),
+      updatedAt: new Date().toISOString(),
     };
-    setNotes([newNote, ...notes]);
+    const updated = [newNote, ...notes];
+    saveNotes(updated);
     setActiveNote(newNote);
   };
 
   const updateNote = (id: string, updates: Partial<Note>) => {
-    setNotes(notes.map(n => 
-      n.id === id ? { ...n, ...updates, updatedAt: new Date() } : n
-    ));
+    const now = new Date().toISOString();
+    const updated = notes.map(n => n.id === id ? { ...n, ...updates, updatedAt: now } : n);
+    saveNotes(updated);
     if (activeNote?.id === id) {
-      setActiveNote({ ...activeNote, ...updates, updatedAt: new Date() });
+      setActiveNote({ ...activeNote, ...updates, updatedAt: now });
     }
   };
 
   const deleteNote = (id: string) => {
-    setNotes(notes.filter(n => n.id !== id));
+    const updated = notes.filter(n => n.id !== id);
+    saveNotes(updated);
     if (activeNote?.id === id) {
-      setActiveNote(notes.find(n => n.id !== id) || null);
+      setActiveNote(updated[0] || null);
     }
+  };
+
+  const formatDate = (iso: string) => {
+    try { return new Date(iso).toLocaleDateString(); } catch { return ''; }
   };
 
   return (
@@ -65,7 +92,7 @@ export default function NotepadPage() {
         </div>
         <button
           onClick={createNote}
-          className="flex items-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/80 text-black px-4 py-2 rounded-xl font-medium transition-colors"
         >
           <Plus size={20} />
           New Note
@@ -73,7 +100,6 @@ export default function NotepadPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-250px)]">
-        {/* Notes list */}
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 overflow-y-auto">
           <div className="space-y-2">
             {notes.map((note) => (
@@ -90,17 +116,17 @@ export default function NotepadPage() {
                   <FileText size={18} className="text-[var(--color-muted)] mt-1" />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium truncate">{note.title}</h3>
-                    <p className="text-xs text-[var(--color-muted)] mt-1">
-                      {note.updatedAt.toLocaleDateString()}
-                    </p>
+                    <p className="text-xs text-[var(--color-muted)] mt-1">{formatDate(note.updatedAt)}</p>
                   </div>
                 </div>
               </div>
             ))}
+            {notes.length === 0 && (
+              <p className="text-center text-[var(--color-muted)] py-8">No notes yet</p>
+            )}
           </div>
         </div>
 
-        {/* Editor */}
         <div className="lg:col-span-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-6 flex flex-col">
           {activeNote ? (
             <>
@@ -112,14 +138,12 @@ export default function NotepadPage() {
                   className="text-xl font-semibold bg-transparent border-none outline-none flex-1"
                   placeholder="Note title..."
                 />
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => deleteNote(activeNote.id)}
-                    className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
+                <button
+                  onClick={() => deleteNote(activeNote.id)}
+                  className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                >
+                  <Trash2 size={18} />
+                </button>
               </div>
               <textarea
                 value={activeNote.content}
@@ -128,7 +152,7 @@ export default function NotepadPage() {
                 placeholder="Start writing..."
               />
               <p className="text-xs text-[var(--color-muted)] mt-4">
-                Last updated: {activeNote.updatedAt.toLocaleString()}
+                Last updated: {new Date(activeNote.updatedAt).toLocaleString()}
               </p>
             </>
           ) : (
@@ -141,3 +165,4 @@ export default function NotepadPage() {
     </div>
   );
 }
+

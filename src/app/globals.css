@@ -256,3 +256,50 @@ input:focus, textarea:focus, select:focus {
 .gradient-border:hover::before {
   opacity: 1;
 }
+
+/* Dashboard Design System */
+.dashboard-scope {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.dashboard-scope h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.dashboard-scope h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.dashboard-scope h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Lucide icon defaults in dashboard */
+.dashboard-scope svg {
+  stroke-width: 1.5;
+}
+
+.dashboard-scope .icon-sm svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 1.2;
+}
+
+.dashboard-scope .icon-md svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.5;
+}
+
+.dashboard-scope .icon-lg svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.2;
+}
