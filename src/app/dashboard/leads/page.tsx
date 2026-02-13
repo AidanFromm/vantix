@@ -1,311 +1,895 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { motion, AnimatePresence, Reorder, useDragControls, PanInfo } from 'framer-motion';
 import {
-  Search, Users, Phone, Mail, Globe, Star, RefreshCw,
-  ArrowUpDown, ChevronLeft, ChevronRight, Clock, Filter, X,
-  Zap, TrendingUp, Target, MapPin, Download, SkipForward,
-  BarChart3, ArrowRight, Trophy, XCircle,
+  Search, Users, Phone, Mail, Globe, RefreshCw, Clock,
+  Filter, X, Zap, Target, MapPin, Download, Plus,
+  GripVertical, ChevronRight, Building2, DollarSign,
+  Calendar, Tag, ExternalLink, MoreHorizontal, Trash2,
+  CheckCircle2, XCircle, AlertCircle, Loader2, Send,
+  ArrowRight, Trophy, Sparkles,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface ScraperLead {
+interface Lead {
+  id: string;
   name: string;
-  phone: string;
+  company: string;
   email: string;
+  phone: string;
   website: string;
-  category: string;
-  city: string;
-  state: string;
-  source: string;
-  description: string;
-  found_at: string;
-  web_status: string;
-  score: number;
+  value: number;
+  source: 'scraper' | 'referral' | 'website' | 'cold' | 'social';
+  status: LeadStatus;
+  createdAt: string;
+  stageEnteredAt: string;
+  notes: string;
+  city?: string;
+  state?: string;
 }
 
-interface LeadTracking {
-  [leadName: string]: {
-    status: 'contacted' | 'responded' | 'proposal' | 'won' | 'lost';
-    updatedAt: string;
-  };
+type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'won' | 'lost';
+
+interface ScraperResult {
+  id: string;
+  businessName: string;
+  email: string;
+  phone: string;
+  website: string;
+  status: 'pending' | 'valid' | 'invalid';
+  addedToLeads: boolean;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'vantix_lead_tracking';
-const ROWS_PER_PAGE = 12;
+const STORAGE_KEY = 'vantix_kanban_leads';
 
-const FUNNEL_STAGES = ['total', 'contacted', 'responded', 'proposal', 'won'] as const;
-const FUNNEL_LABELS: Record<string, string> = {
-  total: 'Total Leads',
-  contacted: 'Contacted',
-  responded: 'Responded',
-  proposal: 'Proposal Sent',
-  won: 'Closed / Won',
-};
-const FUNNEL_COLORS: Record<string, string> = {
-  total: 'bg-blue-500',
-  contacted: 'bg-yellow-500',
-  responded: 'bg-orange-500',
-  proposal: 'bg-purple-500',
-  won: 'bg-emerald-500',
-};
-
-const REACH_TIMES = [
-  { window: 'Tuesday - Thursday, 10:00 AM - 11:30 AM', reason: 'Highest answer rates for B2B cold outreach' },
-  { window: 'Wednesday, 2:00 PM - 4:00 PM', reason: 'Decision makers available after lunch' },
-  { window: 'Monday, 8:00 AM - 9:00 AM', reason: 'Early week planning -- top of mind' },
+const STATUSES: { id: LeadStatus; label: string; color: string; bgColor: string; borderColor: string }[] = [
+  { id: 'new', label: 'New', color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30' },
+  { id: 'contacted', label: 'Contacted', color: 'text-yellow-400', bgColor: 'bg-yellow-500/10', borderColor: 'border-yellow-500/30' },
+  { id: 'qualified', label: 'Qualified', color: 'text-orange-400', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/30' },
+  { id: 'proposal', label: 'Proposal', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/30' },
+  { id: 'won', label: 'Won', color: 'text-emerald-400', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/30' },
+  { id: 'lost', label: 'Lost', color: 'text-red-400', bgColor: 'bg-red-500/10', borderColor: 'border-red-500/30' },
 ];
 
-type TabId = 'all' | 'hitlist' | 'funnel' | 'analytics' | 'winloss';
+const SOURCE_BADGES: Record<string, { label: string; color: string; bg: string }> = {
+  scraper: { label: 'Scraper', color: 'text-cyan-400', bg: 'bg-cyan-500/20' },
+  referral: { label: 'Referral', color: 'text-emerald-400', bg: 'bg-emerald-500/20' },
+  website: { label: 'Website', color: 'text-blue-400', bg: 'bg-blue-500/20' },
+  cold: { label: 'Cold', color: 'text-gray-400', bg: 'bg-gray-500/20' },
+  social: { label: 'Social', color: 'text-pink-400', bg: 'bg-pink-500/20' },
+};
 
-const TABS: { id: TabId; label: string; icon: typeof Users }[] = [
-  { id: 'all', label: 'All Leads', icon: Users },
-  { id: 'hitlist', label: 'Hit List', icon: Target },
-  { id: 'funnel', label: 'Funnel', icon: BarChart3 },
-  { id: 'analytics', label: 'Analytics', icon: TrendingUp },
-  { id: 'winloss', label: 'Win/Loss', icon: Trophy },
+// ─── Sample Data ──────────────────────────────────────────────────────────────
+
+const SAMPLE_LEADS: Lead[] = [
+  { id: '1', name: 'John Smith', company: 'Tech Solutions Inc', email: 'john@techsolutions.com', phone: '(555) 123-4567', website: 'techsolutions.com', value: 15000, source: 'website', status: 'new', createdAt: '2024-02-01', stageEnteredAt: '2024-02-01', notes: 'Interested in website redesign', city: 'Denver', state: 'CO' },
+  { id: '2', name: 'Sarah Johnson', company: 'Digital Marketing Co', email: 'sarah@digitalmarketing.co', phone: '(555) 234-5678', website: 'digitalmarketing.co', value: 8500, source: 'referral', status: 'new', createdAt: '2024-02-02', stageEnteredAt: '2024-02-02', notes: 'Referred by Mike at ABC Corp', city: 'Boulder', state: 'CO' },
+  { id: '3', name: 'Mike Wilson', company: 'Local Restaurant Group', email: 'mike@localrestaurant.com', phone: '(555) 345-6789', website: '', value: 5000, source: 'scraper', status: 'contacted', createdAt: '2024-01-28', stageEnteredAt: '2024-02-03', notes: 'Left voicemail, waiting for callback', city: 'Aurora', state: 'CO' },
+  { id: '4', name: 'Emily Davis', company: 'Fitness First Studio', email: 'emily@fitnessfirst.com', phone: '(555) 456-7890', website: 'fitnessfirst.com', value: 12000, source: 'cold', status: 'qualified', createdAt: '2024-01-25', stageEnteredAt: '2024-02-05', notes: 'Very interested, needs mobile app integration', city: 'Lakewood', state: 'CO' },
+  { id: '5', name: 'David Lee', company: 'Construction Plus', email: 'david@constructionplus.com', phone: '(555) 567-8901', website: 'constructionplus.com', value: 25000, source: 'social', status: 'proposal', createdAt: '2024-01-20', stageEnteredAt: '2024-02-08', notes: 'Proposal sent, follow up Friday', city: 'Denver', state: 'CO' },
+  { id: '6', name: 'Lisa Brown', company: 'Beauty Salon Pro', email: 'lisa@beautysalonpro.com', phone: '(555) 678-9012', website: '', value: 3500, source: 'scraper', status: 'new', createdAt: '2024-02-10', stageEnteredAt: '2024-02-10', notes: 'No website, great opportunity', city: 'Thornton', state: 'CO' },
+  { id: '7', name: 'James Miller', company: 'Auto Repair Masters', email: 'james@autorepair.com', phone: '(555) 789-0123', website: 'autorepair.com', value: 7500, source: 'website', status: 'won', createdAt: '2024-01-15', stageEnteredAt: '2024-02-12', notes: 'Contract signed!', city: 'Westminster', state: 'CO' },
+  { id: '8', name: 'Amanda White', company: 'Pet Care Services', email: 'amanda@petcare.com', phone: '(555) 890-1234', website: 'petcare.com', value: 4500, source: 'referral', status: 'contacted', createdAt: '2024-02-05', stageEnteredAt: '2024-02-06', notes: 'Scheduled call for Monday', city: 'Arvada', state: 'CO' },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const scoreColor = (score: number) => {
-  if (score >= 8) return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
-  if (score >= 5) return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-  return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-};
+function generateId() {
+  return Math.random().toString(36).substring(2, 15);
+}
 
-const webStatusLabel = (status: string) => {
-  const map: Record<string, { label: string; color: string }> = {
-    no_website: { label: 'No Website', color: 'text-red-400' },
-    facebook_only: { label: 'Facebook Only', color: 'text-yellow-400' },
-    has_website: { label: 'Has Website', color: 'text-emerald-400' },
-    weak_website: { label: 'Weak Site', color: 'text-orange-400' },
-  };
-  return map[status] || { label: status, color: 'text-[var(--color-muted)]' };
-};
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(value);
+}
 
-function loadTracking(): LeadTracking {
+function getDaysInStage(stageEnteredAt: string) {
+  const entered = new Date(stageEnteredAt);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - entered.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+function loadLeads(): Lead[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch { /* ignore */ }
-  return {};
+  return SAMPLE_LEADS;
 }
 
-function saveTracking(t: LeadTracking) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(t)); } catch { /* ignore */ }
+function saveLeads(leads: Lead[]) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(leads)); } catch { /* ignore */ }
 }
 
-function loadLocalLeads(): ScraperLead[] {
-  try {
-    const raw = localStorage.getItem('vantix_leads_export');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed;
-      if (parsed?.leads && Array.isArray(parsed.leads)) return parsed.leads;
-    }
-  } catch { /* ignore */ }
-  return [];
+// ─── Lead Card Component ──────────────────────────────────────────────────────
+
+interface LeadCardProps {
+  lead: Lead;
+  onSelect: () => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
+  isDragging: boolean;
 }
 
-function priorityScore(lead: ScraperLead): number {
-  let s = lead.score * 10;
-  if (lead.email) s += 15;
-  if (lead.phone) s += 15;
-  if (lead.web_status === 'no_website' || lead.web_status === 'weak_website') s += 10;
-  if (lead.web_status === 'facebook_only') s += 5;
-  return s;
+function LeadCard({ lead, onSelect, onDragStart, onDragEnd, isDragging }: LeadCardProps) {
+  const daysInStage = getDaysInStage(lead.stageEnteredAt);
+  const sourceBadge = SOURCE_BADGES[lead.source];
+  
+  return (
+    <motion.div
+      layout
+      layoutId={lead.id}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ 
+        opacity: isDragging ? 0.8 : 1, 
+        scale: isDragging ? 1.05 : 1,
+        boxShadow: isDragging 
+          ? '0 25px 50px -12px rgba(16, 185, 129, 0.25)' 
+          : '0 0 0 0 transparent'
+      }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+      onClick={onSelect}
+      className={`
+        group cursor-pointer
+        relative overflow-hidden rounded-xl
+        bg-gradient-to-br from-white/[0.08] to-white/[0.02]
+        backdrop-blur-xl border border-white/[0.08]
+        hover:border-emerald-500/30 hover:from-white/[0.12] hover:to-white/[0.05]
+        transition-all duration-300 ease-out
+        ${isDragging ? 'z-50 border-emerald-500/50' : ''}
+      `}
+    >
+      {/* Glassmorphism shine effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      <div className="relative p-4">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-white text-sm truncate group-hover:text-emerald-300 transition-colors">
+              {lead.name}
+            </h3>
+            <p className="text-xs text-[var(--color-muted)] truncate flex items-center gap-1 mt-0.5">
+              <Building2 size={11} />
+              {lead.company}
+            </p>
+          </div>
+          <span className={`shrink-0 text-[10px] px-2 py-0.5 rounded-full font-medium ${sourceBadge.bg} ${sourceBadge.color}`}>
+            {sourceBadge.label}
+          </span>
+        </div>
+
+        {/* Value */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-1.5 text-emerald-400">
+            <DollarSign size={14} />
+            <span className="font-bold text-sm">{formatCurrency(lead.value)}</span>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-[10px] text-[var(--color-muted)]">
+            <Clock size={11} />
+            <span>{daysInStage} day{daysInStage !== 1 ? 's' : ''} in stage</span>
+          </div>
+          
+          {/* Quick actions */}
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            {lead.email && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); window.open(`mailto:${lead.email}`); }}
+                className="w-6 h-6 rounded-md bg-white/5 hover:bg-emerald-500/20 flex items-center justify-center transition-colors"
+              >
+                <Mail size={11} className="text-[var(--color-muted)] group-hover:text-emerald-400" />
+              </button>
+            )}
+            {lead.phone && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); window.open(`tel:${lead.phone}`); }}
+                className="w-6 h-6 rounded-md bg-white/5 hover:bg-blue-500/20 flex items-center justify-center transition-colors"
+              >
+                <Phone size={11} className="text-[var(--color-muted)] group-hover:text-blue-400" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Days indicator bar */}
+        <div className="mt-3 h-1 rounded-full bg-white/5 overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(daysInStage * 10, 100)}%` }}
+            transition={{ duration: 0.5 }}
+            className={`h-full rounded-full ${
+              daysInStage <= 3 ? 'bg-emerald-500' :
+              daysInStage <= 7 ? 'bg-yellow-500' :
+              'bg-red-500'
+            }`}
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// ─── Kanban Column Component ──────────────────────────────────────────────────
 
-export default function LeadsPage() {
-  const [leads, setLeads] = useState<ScraperLead[]>([]);
-  const [tracking, setTracking] = useState<LeadTracking>({});
-  const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
-  const [lastSync, setLastSync] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<TabId>('all');
+interface KanbanColumnProps {
+  status: typeof STATUSES[0];
+  leads: Lead[];
+  onSelectLead: (lead: Lead) => void;
+  onDropLead: (leadId: string, newStatus: LeadStatus) => void;
+  draggingLead: string | null;
+}
 
-  // All Leads filters
-  const [search, setSearch] = useState('');
-  const [scoreRange, setScoreRange] = useState<'all' | 'high' | 'mid' | 'low'>('all');
-  const [cityFilter, setCityFilter] = useState('all');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
-  const [page, setPage] = useState(1);
-  const [sortField, setSortField] = useState<'score' | 'name' | 'city'>('score');
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+function KanbanColumn({ status, leads, onSelectLead, onDropLead, draggingLead }: KanbanColumnProps) {
+  const [isDragOver, setIsDragOver] = useState(false);
+  const totalValue = leads.reduce((sum, l) => sum + l.value, 0);
 
-  // Hit list
-  const [batchOffset, setBatchOffset] = useState(0);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col min-w-[280px] w-[280px] lg:min-w-0 lg:w-auto lg:flex-1"
+    >
+      {/* Column Header */}
+      <div className={`
+        p-3 rounded-t-2xl border border-b-0 
+        bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-sm
+        border-white/[0.08] ${isDragOver ? 'border-emerald-500/50' : ''}
+      `}>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${status.bgColor.replace('/10', '')}`} />
+            <h3 className={`font-semibold text-sm ${status.color}`}>{status.label}</h3>
+            <span className="text-xs px-1.5 py-0.5 rounded-md bg-white/5 text-[var(--color-muted)]">
+              {leads.length}
+            </span>
+          </div>
+          <button className="w-6 h-6 rounded-md hover:bg-white/10 flex items-center justify-center transition-colors">
+            <MoreHorizontal size={14} className="text-[var(--color-muted)]" />
+          </button>
+        </div>
+        <div className="text-xs text-[var(--color-muted)]">
+          Total: <span className="text-emerald-400 font-medium">{formatCurrency(totalValue)}</span>
+        </div>
+      </div>
 
-  const fetchLeads = useCallback(async () => {
-    try {
-      const res = await fetch('/api/leads');
-      if (res.ok) {
-        const json = await res.json();
-        const apiLeads: ScraperLead[] = json.leads || [];
-        const localLeads = loadLocalLeads();
-        const byName = new Map<string, ScraperLead>();
-        for (const l of apiLeads) byName.set(l.name, l);
-        for (const l of localLeads) { if (!byName.has(l.name)) byName.set(l.name, l); }
-        setLeads(Array.from(byName.values()));
-        setLastSync(new Date().toISOString());
-      } else {
-        const local = loadLocalLeads();
-        if (local.length) setLeads(local);
-      }
-    } catch {
-      const local = loadLocalLeads();
-      if (local.length) setLeads(local);
-    }
-  }, []);
+      {/* Column Body - Drop Zone */}
+      <div
+        onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+        onDragLeave={() => setIsDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragOver(false);
+          const leadId = e.dataTransfer.getData('leadId');
+          if (leadId) onDropLead(leadId, status.id);
+        }}
+        className={`
+          flex-1 p-2 rounded-b-2xl border border-t-0 min-h-[400px]
+          bg-gradient-to-b from-transparent to-white/[0.02]
+          border-white/[0.08] transition-all duration-200
+          ${isDragOver ? 'bg-emerald-500/5 border-emerald-500/30' : ''}
+        `}
+      >
+        <div className="space-y-2">
+          <AnimatePresence mode="popLayout">
+            {leads.map((lead) => (
+              <div
+                key={lead.id}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('leadId', lead.id);
+                }}
+              >
+                <LeadCard
+                  lead={lead}
+                  onSelect={() => onSelectLead(lead)}
+                  onDragStart={() => {}}
+                  onDragEnd={() => {}}
+                  isDragging={draggingLead === lead.id}
+                />
+              </div>
+            ))}
+          </AnimatePresence>
+          
+          {leads.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="py-8 text-center"
+            >
+              <div className={`w-12 h-12 mx-auto mb-3 rounded-xl ${status.bgColor} flex items-center justify-center`}>
+                {status.id === 'won' ? <Trophy size={20} className={status.color} /> :
+                 status.id === 'lost' ? <XCircle size={20} className={status.color} /> :
+                 <Users size={20} className={status.color} />}
+              </div>
+              <p className="text-xs text-[var(--color-muted)]">No leads here</p>
+              <p className="text-[10px] text-[var(--color-muted)] opacity-60 mt-1">Drag cards to move</p>
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Slide Over Panel ─────────────────────────────────────────────────────────
+
+interface SlideOverProps {
+  lead: Lead | null;
+  onClose: () => void;
+  onUpdate: (lead: Lead) => void;
+  onDelete: (id: string) => void;
+}
+
+function SlideOver({ lead, onClose, onUpdate, onDelete }: SlideOverProps) {
+  const [editedLead, setEditedLead] = useState<Lead | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    setTracking(loadTracking());
-    fetchLeads().finally(() => setLoading(false));
-  }, [fetchLeads]);
+    setEditedLead(lead);
+  }, [lead]);
 
-  const handleSync = async () => {
-    setSyncing(true);
-    await fetchLeads();
-    setSyncing(false);
+  if (!lead || !editedLead) return null;
+
+  const handleSave = () => {
+    onUpdate(editedLead);
+    onClose();
   };
 
-  // ── Derived data ──────────────────────────────────────────────────────────
+  return (
+    <>
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+      />
+      
+      {/* Panel */}
+      <motion.div
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+        className="fixed right-0 top-0 h-full w-full max-w-lg bg-[var(--color-card)] border-l border-[var(--color-border)] z-50 overflow-y-auto"
+      >
+        {/* Header */}
+        <div className="sticky top-0 bg-[var(--color-card)]/80 backdrop-blur-xl border-b border-[var(--color-border)] p-4 flex items-center justify-between z-10">
+          <div>
+            <h2 className="font-semibold text-lg">{editedLead.name}</h2>
+            <p className="text-sm text-[var(--color-muted)]">{editedLead.company}</p>
+          </div>
+          <button 
+            onClick={onClose}
+            className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+          >
+            <X size={18} />
+          </button>
+        </div>
 
-  const cities = useMemo(() => [...new Set(leads.map((l) => l.city).filter(Boolean))].sort(), [leads]);
-  const categories = useMemo(() => [...new Set(leads.map((l) => l.category).filter(Boolean))].sort(), [leads]);
+        <div className="p-6 space-y-6">
+          {/* Status */}
+          <div>
+            <label className="text-xs text-[var(--color-muted)] mb-2 block">Status</label>
+            <div className="flex flex-wrap gap-2">
+              {STATUSES.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setEditedLead({ ...editedLead, status: s.id, stageEnteredAt: new Date().toISOString().split('T')[0] })}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    editedLead.status === s.id 
+                      ? `${s.bgColor} ${s.color} border ${s.borderColor}` 
+                      : 'bg-white/5 text-[var(--color-muted)] hover:bg-white/10'
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-  const filteredLeads = useMemo(() => {
-    let result = leads;
-    if (scoreRange === 'high') result = result.filter((l) => l.score >= 8);
-    else if (scoreRange === 'mid') result = result.filter((l) => l.score >= 5 && l.score <= 7);
-    else if (scoreRange === 'low') result = result.filter((l) => l.score >= 1 && l.score <= 4);
-    if (cityFilter !== 'all') result = result.filter((l) => l.city === cityFilter);
-    if (categoryFilter !== 'all') result = result.filter((l) => l.category === categoryFilter);
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter((l) =>
-        l.name.toLowerCase().includes(q) || l.category.toLowerCase().includes(q) ||
-        l.city.toLowerCase().includes(q) || l.email.toLowerCase().includes(q) || l.phone.includes(q)
-      );
+          {/* Value */}
+          <div>
+            <label className="text-xs text-[var(--color-muted)] mb-2 block">Deal Value</label>
+            <div className="relative">
+              <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400" />
+              <input
+                type="number"
+                value={editedLead.value}
+                onChange={(e) => setEditedLead({ ...editedLead, value: parseInt(e.target.value) || 0 })}
+                className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+              />
+            </div>
+          </div>
+
+          {/* Contact Info */}
+          <div className="space-y-3">
+            <label className="text-xs text-[var(--color-muted)] block">Contact Information</label>
+            
+            <div className="relative">
+              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]" />
+              <input
+                type="email"
+                value={editedLead.email}
+                onChange={(e) => setEditedLead({ ...editedLead, email: e.target.value })}
+                placeholder="Email"
+                className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+              />
+            </div>
+
+            <div className="relative">
+              <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]" />
+              <input
+                type="tel"
+                value={editedLead.phone}
+                onChange={(e) => setEditedLead({ ...editedLead, phone: e.target.value })}
+                placeholder="Phone"
+                className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+              />
+            </div>
+
+            <div className="relative">
+              <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]" />
+              <input
+                type="text"
+                value={editedLead.website}
+                onChange={(e) => setEditedLead({ ...editedLead, website: e.target.value })}
+                placeholder="Website"
+                className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+              />
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="text-xs text-[var(--color-muted)] mb-2 block">Notes</label>
+            <textarea
+              value={editedLead.notes}
+              onChange={(e) => setEditedLead({ ...editedLead, notes: e.target.value })}
+              rows={4}
+              className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors resize-none"
+              placeholder="Add notes about this lead..."
+            />
+          </div>
+
+          {/* Meta */}
+          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[var(--color-border)]">
+            <div>
+              <span className="text-xs text-[var(--color-muted)]">Source</span>
+              <p className="text-sm font-medium capitalize">{editedLead.source}</p>
+            </div>
+            <div>
+              <span className="text-xs text-[var(--color-muted)]">Created</span>
+              <p className="text-sm font-medium">{new Date(editedLead.createdAt).toLocaleDateString()}</p>
+            </div>
+            <div>
+              <span className="text-xs text-[var(--color-muted)]">Days in Stage</span>
+              <p className="text-sm font-medium">{getDaysInStage(editedLead.stageEnteredAt)}</p>
+            </div>
+            <div>
+              <span className="text-xs text-[var(--color-muted)]">Location</span>
+              <p className="text-sm font-medium">{editedLead.city || 'N/A'}{editedLead.state ? `, ${editedLead.state}` : ''}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="sticky bottom-0 bg-[var(--color-card)]/80 backdrop-blur-xl border-t border-[var(--color-border)] p-4 flex items-center gap-3">
+          <button
+            onClick={() => { onDelete(lead.id); onClose(); }}
+            className="px-4 py-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors text-sm font-medium flex items-center gap-2"
+          >
+            <Trash2 size={14} />
+            Delete
+          </button>
+          <div className="flex-1" />
+          <button
+            onClick={onClose}
+            className="px-4 py-2.5 rounded-xl bg-white/5 text-[var(--color-muted)] hover:bg-white/10 transition-colors text-sm font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="px-4 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors text-sm font-medium flex items-center gap-2"
+          >
+            <CheckCircle2 size={14} />
+            Save Changes
+          </button>
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
+// ─── Email Scraper Component ──────────────────────────────────────────────────
+
+interface EmailScraperProps {
+  onAddToLeads: (result: ScraperResult) => void;
+}
+
+function EmailScraper({ onAddToLeads }: EmailScraperProps) {
+  const [query, setQuery] = useState('');
+  const [location, setLocation] = useState('');
+  const [isScrapeing, setIsScraping] = useState(false);
+  const [results, setResults] = useState<ScraperResult[]>([]);
+  const [progress, setProgress] = useState(0);
+
+  // Simulated scraping
+  const startScraping = async () => {
+    if (!query.trim()) return;
+    
+    setIsScraping(true);
+    setResults([]);
+    setProgress(0);
+
+    // Simulate scraping with fake results
+    const fakeBusinesses = [
+      'Mountain View Auto Repair',
+      'Sunrise Dental Clinic',
+      'Peak Performance Gym',
+      'Rocky Road Construction',
+      'Alpine Landscaping Co',
+      'Front Range Plumbing',
+      'Mile High Marketing',
+      'Denver Design Studio',
+      'Colorado Coffee Roasters',
+      'Evergreen Electric'
+    ];
+
+    for (let i = 0; i < fakeBusinesses.length; i++) {
+      await new Promise(r => setTimeout(r, 300 + Math.random() * 200));
+      setProgress(((i + 1) / fakeBusinesses.length) * 100);
+      
+      const business = fakeBusinesses[i];
+      const hasEmail = Math.random() > 0.3;
+      const hasPhone = Math.random() > 0.2;
+      
+      setResults(prev => [...prev, {
+        id: generateId(),
+        businessName: business,
+        email: hasEmail ? `contact@${business.toLowerCase().replace(/\s+/g, '')}.com` : '',
+        phone: hasPhone ? `(303) ${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}` : '',
+        website: Math.random() > 0.4 ? `${business.toLowerCase().replace(/\s+/g, '')}.com` : '',
+        status: hasEmail ? 'valid' : 'pending',
+        addedToLeads: false
+      }]);
     }
-    result = [...result].sort((a, b) => {
-      let cmp = 0;
-      if (sortField === 'score') cmp = a.score - b.score;
-      else if (sortField === 'name') cmp = a.name.localeCompare(b.name);
-      else if (sortField === 'city') cmp = a.city.localeCompare(b.city);
-      return sortDir === 'desc' ? -cmp : cmp;
-    });
-    return result;
-  }, [leads, scoreRange, cityFilter, categoryFilter, search, sortField, sortDir]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredLeads.length / ROWS_PER_PAGE));
-  const pagedLeads = filteredLeads.slice((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE);
-
-  const ranked = useMemo(() => [...leads].sort((a, b) => priorityScore(b) - priorityScore(a)), [leads]);
-  const hitList = useMemo(() => {
-    const unworked = ranked.filter((l) => !tracking[l.name] || tracking[l.name].status === 'contacted');
-    return unworked.slice(batchOffset, batchOffset + 10);
-  }, [ranked, tracking, batchOffset]);
-  const hotLeads = useMemo(() => ranked.filter((l) => l.score >= 8), [ranked]);
-
-  const funnelCounts = useMemo(() => {
-    const counts: Record<string, number> = { total: leads.length, contacted: 0, responded: 0, proposal: 0, won: 0 };
-    Object.values(tracking).forEach((t) => {
-      if (t.status === 'contacted') counts.contacted++;
-      if (t.status === 'responded') { counts.contacted++; counts.responded++; }
-      if (t.status === 'proposal') { counts.contacted++; counts.responded++; counts.proposal++; }
-      if (t.status === 'won') { counts.contacted++; counts.responded++; counts.proposal++; counts.won++; }
-    });
-    return counts;
-  }, [leads, tracking]);
-
-  const lostCount = useMemo(() => Object.values(tracking).filter((t) => t.status === 'lost').length, [tracking]);
-
-  const categoryBreakdown = useMemo(() => {
-    const map: Record<string, { total: number; hot: number }> = {};
-    leads.forEach((l) => {
-      const cat = l.category || 'Unknown';
-      if (!map[cat]) map[cat] = { total: 0, hot: 0 };
-      map[cat].total++;
-      if (l.score >= 8) map[cat].hot++;
-    });
-    return Object.entries(map).sort((a, b) => b[1].hot - a[1].hot).slice(0, 10);
-  }, [leads]);
-
-  const cityBreakdown = useMemo(() => {
-    const map: Record<string, { total: number; hot: number; avgScore: number }> = {};
-    leads.forEach((l) => {
-      const city = l.city || 'Unknown';
-      if (!map[city]) map[city] = { total: 0, hot: 0, avgScore: 0 };
-      map[city].total++;
-      map[city].avgScore += l.score;
-      if (l.score >= 8) map[city].hot++;
-    });
-    Object.values(map).forEach((v) => { v.avgScore = Math.round((v.avgScore / v.total) * 10) / 10; });
-    return Object.entries(map).sort((a, b) => b[1].hot - a[1].hot || b[1].avgScore - a[1].avgScore).slice(0, 12);
-  }, [leads]);
-
-  // Win/loss tracked leads
-  const wonLeads = useMemo(() => Object.entries(tracking).filter(([, t]) => t.status === 'won').map(([name, t]) => ({ name, ...t })), [tracking]);
-  const lostLeads = useMemo(() => Object.entries(tracking).filter(([, t]) => t.status === 'lost').map(([name, t]) => ({ name, ...t })), [tracking]);
-
-  // ── Actions ───────────────────────────────────────────────────────────────
-
-  const updateTracking = (name: string, status: LeadTracking[string]['status']) => {
-    setTracking((prev) => {
-      const next = { ...prev, [name]: { status, updatedAt: new Date().toISOString() } };
-      saveTracking(next);
-      return next;
-    });
+    setIsScraping(false);
   };
 
-  const toggleSort = (field: typeof sortField) => {
-    if (sortField === field) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
-    else { setSortField(field); setSortDir('desc'); }
-  };
-
-  const activeFilterCount = [scoreRange !== 'all', cityFilter !== 'all', categoryFilter !== 'all'].filter(Boolean).length;
-  const clearFilters = () => { setScoreRange('all'); setCityFilter('all'); setCategoryFilter('all'); setPage(1); };
-
-  const exportHotLeads = () => {
-    const csv = ['Name,Category,City,Phone,Email,Score,Priority']
-      .concat(hotLeads.map((l) => `"${l.name}","${l.category}","${l.city}","${l.phone}","${l.email}",${l.score},${priorityScore(l)}`))
+  const exportToCSV = () => {
+    const csv = ['Business Name,Email,Phone,Website,Status']
+      .concat(results.map(r => `"${r.businessName}","${r.email}","${r.phone}","${r.website}","${r.status}"`))
       .join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'hot-leads.csv'; a.click();
+    const a = document.createElement('a'); a.href = url; a.download = 'scraped-leads.csv'; a.click();
     URL.revokeObjectURL(url);
   };
 
-  const emailTopN = (n: number) => {
-    const emails = hotLeads.slice(0, n).map((l) => l.email).filter(Boolean);
-    if (emails.length) window.open(`mailto:${emails.join(',')}`);
+  const handleAddToLeads = (result: ScraperResult) => {
+    onAddToLeads(result);
+    setResults(prev => prev.map(r => r.id === result.id ? { ...r, addedToLeads: true } : r));
   };
 
-  // ── Stats ─────────────────────────────────────────────────────────────────
+  return (
+    <div className="space-y-6">
+      {/* Search Form */}
+      <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Sparkles size={20} className="text-emerald-400" />
+          <h3 className="font-semibold">Search for Businesses</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="text-xs text-[var(--color-muted)] mb-2 block">Business Type / Industry</label>
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="e.g., Restaurants, Auto Repair, Dentists"
+                className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs text-[var(--color-muted)] mb-2 block">Location</label>
+            <div className="relative">
+              <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]" />
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="e.g., Denver, CO"
+                className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+              />
+            </div>
+          </div>
+        </div>
 
-  const totalLeads = leads.length;
-  const withEmail = leads.filter((l) => l.email).length;
-  const withPhone = leads.filter((l) => l.phone).length;
-  const avgScore = leads.length > 0 ? (leads.reduce((s, l) => s + l.score, 0) / leads.length).toFixed(1) : '0';
+        <button
+          onClick={startScraping}
+          disabled={isScrapeing || !query.trim()}
+          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium flex items-center justify-center gap-2"
+        >
+          {isScrapeing ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              Scraping... {Math.round(progress)}%
+            </>
+          ) : (
+            <>
+              <Zap size={16} />
+              Start Scraping
+            </>
+          )}
+        </button>
 
-  const statCards = [
-    { label: 'Total Leads', value: totalLeads.toString(), icon: Users, accent: 'text-blue-400', bg: 'bg-blue-500/10' },
-    { label: 'Hot Leads', value: hotLeads.length.toString(), icon: TrendingUp, accent: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-    { label: 'Won', value: funnelCounts.won.toString(), icon: Trophy, accent: 'text-purple-400', bg: 'bg-purple-500/10' },
-    { label: 'Avg Score', value: avgScore, icon: Star, accent: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-  ];
+        {/* Progress bar */}
+        {isScrapeing && (
+          <div className="mt-4 h-2 bg-white/5 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+        )}
+      </div>
 
-  // ── Render ────────────────────────────────────────────────────────────────
+      {/* Results */}
+      {results.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/[0.08] rounded-2xl overflow-hidden"
+        >
+          {/* Results Header */}
+          <div className="px-5 py-4 border-b border-white/[0.08] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h3 className="font-semibold">Results</h3>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
+                {results.length} found
+              </span>
+            </div>
+            <button
+              onClick={exportToCSV}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 text-[var(--color-muted)] hover:text-white hover:bg-white/10 transition-colors text-xs font-medium"
+            >
+              <Download size={14} />
+              Export CSV
+            </button>
+          </div>
+
+          {/* Results Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/[0.08] text-[var(--color-muted)] text-left">
+                  <th className="px-5 py-3 font-medium">Business Name</th>
+                  <th className="px-5 py-3 font-medium">Email</th>
+                  <th className="px-5 py-3 font-medium">Phone</th>
+                  <th className="px-5 py-3 font-medium">Website</th>
+                  <th className="px-5 py-3 font-medium">Status</th>
+                  <th className="px-5 py-3 font-medium">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <AnimatePresence mode="popLayout">
+                  {results.map((result, i) => (
+                    <motion.tr
+                      key={result.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02] transition-colors"
+                    >
+                      <td className="px-5 py-3 font-medium text-white">{result.businessName}</td>
+                      <td className="px-5 py-3 text-[var(--color-muted)]">
+                        {result.email || <span className="opacity-40">--</span>}
+                      </td>
+                      <td className="px-5 py-3 text-[var(--color-muted)]">
+                        {result.phone || <span className="opacity-40">--</span>}
+                      </td>
+                      <td className="px-5 py-3">
+                        {result.website ? (
+                          <a 
+                            href={`https://${result.website}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
+                          >
+                            {result.website}
+                            <ExternalLink size={12} />
+                          </a>
+                        ) : (
+                          <span className="text-red-400 text-xs">No website</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                          result.status === 'valid' ? 'bg-emerald-500/20 text-emerald-400' :
+                          result.status === 'invalid' ? 'bg-red-500/20 text-red-400' :
+                          'bg-yellow-500/20 text-yellow-400'
+                        }`}>
+                          {result.status === 'valid' ? 'Verified' : result.status === 'invalid' ? 'Invalid' : 'Pending'}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        {result.addedToLeads ? (
+                          <span className="text-xs text-emerald-400 flex items-center gap-1">
+                            <CheckCircle2 size={14} />
+                            Added
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleAddToLeads(result)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors text-xs font-medium"
+                          >
+                            <Plus size={12} />
+                            Add to Leads
+                          </button>
+                        )}
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Empty State */}
+      {results.length === 0 && !isScrapeing && (
+        <div className="text-center py-16">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+            <Search size={28} className="text-emerald-400" />
+          </div>
+          <h3 className="font-semibold mb-2">Start Finding Leads</h3>
+          <p className="text-sm text-[var(--color-muted)] max-w-md mx-auto">
+            Enter a business type and location above to scrape for potential leads with contact information.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+export default function LeadsPage() {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeView, setActiveView] = useState<'kanban' | 'scraper'>('kanban');
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [draggingLead, setDraggingLead] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [filterSource, setFilterSource] = useState<string>('all');
+  const [filterValue, setFilterValue] = useState<'all' | 'high' | 'mid' | 'low'>('all');
+  const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    setLeads(loadLeads());
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (!loading) saveLeads(leads);
+  }, [leads, loading]);
+
+  const filteredLeads = useMemo(() => {
+    let result = leads;
+    
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(l => 
+        l.name.toLowerCase().includes(q) ||
+        l.company.toLowerCase().includes(q) ||
+        l.email.toLowerCase().includes(q)
+      );
+    }
+    
+    if (filterSource !== 'all') {
+      result = result.filter(l => l.source === filterSource);
+    }
+    
+    if (filterValue === 'high') result = result.filter(l => l.value >= 15000);
+    else if (filterValue === 'mid') result = result.filter(l => l.value >= 5000 && l.value < 15000);
+    else if (filterValue === 'low') result = result.filter(l => l.value < 5000);
+    
+    return result;
+  }, [leads, search, filterSource, filterValue]);
+
+  const leadsByStatus = useMemo(() => {
+    const grouped: Record<LeadStatus, Lead[]> = {
+      new: [], contacted: [], qualified: [], proposal: [], won: [], lost: []
+    };
+    filteredLeads.forEach(lead => {
+      grouped[lead.status].push(lead);
+    });
+    // Sort each group by value desc
+    Object.keys(grouped).forEach(key => {
+      grouped[key as LeadStatus].sort((a, b) => b.value - a.value);
+    });
+    return grouped;
+  }, [filteredLeads]);
+
+  const handleDropLead = (leadId: string, newStatus: LeadStatus) => {
+    setLeads(prev => prev.map(lead => {
+      if (lead.id === leadId && lead.status !== newStatus) {
+        return { ...lead, status: newStatus, stageEnteredAt: new Date().toISOString().split('T')[0] };
+      }
+      return lead;
+    }));
+  };
+
+  const handleUpdateLead = (updatedLead: Lead) => {
+    setLeads(prev => prev.map(l => l.id === updatedLead.id ? updatedLead : l));
+  };
+
+  const handleDeleteLead = (id: string) => {
+    setLeads(prev => prev.filter(l => l.id !== id));
+  };
+
+  const handleAddFromScraper = (result: ScraperResult) => {
+    const newLead: Lead = {
+      id: generateId(),
+      name: result.businessName.split(' ')[0] + ' (Owner)',
+      company: result.businessName,
+      email: result.email,
+      phone: result.phone,
+      website: result.website,
+      value: 5000,
+      source: 'scraper',
+      status: 'new',
+      createdAt: new Date().toISOString().split('T')[0],
+      stageEnteredAt: new Date().toISOString().split('T')[0],
+      notes: 'Added from email scraper',
+    };
+    setLeads(prev => [newLead, ...prev]);
+  };
+
+  const handleAddLead = () => {
+    const newLead: Lead = {
+      id: generateId(),
+      name: 'New Lead',
+      company: 'Company Name',
+      email: '',
+      phone: '',
+      website: '',
+      value: 0,
+      source: 'cold',
+      status: 'new',
+      createdAt: new Date().toISOString().split('T')[0],
+      stageEnteredAt: new Date().toISOString().split('T')[0],
+      notes: '',
+    };
+    setLeads(prev => [newLead, ...prev]);
+    setSelectedLead(newLead);
+  };
+
+  // Stats
+  const totalValue = leads.reduce((sum, l) => sum + l.value, 0);
+  const wonValue = leads.filter(l => l.status === 'won').reduce((sum, l) => sum + l.value, 0);
+  const activeLeads = leads.filter(l => !['won', 'lost'].includes(l.status)).length;
+
+  const activeFilterCount = [filterSource !== 'all', filterValue !== 'all'].filter(Boolean).length;
 
   if (loading) {
     return (
@@ -315,489 +899,201 @@ export default function LeadsPage() {
     );
   }
 
-  const funnelMax = Math.max(funnelCounts.total, 1);
-
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Leads Center</h1>
-          <p className="text-[var(--color-muted)] mt-1">Database, outreach, and conversion tracking</p>
-          <div className="flex items-center gap-2 mt-2 text-xs text-[var(--color-muted)]">
-            <Clock size={12} />
-            {lastSync ? <span>Synced: {new Date(lastSync).toLocaleTimeString()}</span> : <span>Not yet synced</span>}
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold">Leads</h1>
+          <p className="text-[var(--color-muted)] mt-1 text-sm">Manage your sales pipeline</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => emailTopN(5)}
-            className="hidden sm:flex items-center gap-2 px-3 py-2.5 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 transition-colors text-sm font-medium">
-            <Mail size={15} /> Email top 5
-          </button>
-          <button onClick={exportHotLeads}
-            className="hidden sm:flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/5 text-[var(--color-muted)] border border-[var(--color-border)] hover:text-white hover:bg-white/10 transition-colors text-sm font-medium">
-            <Download size={15} /> Export
-          </button>
-          <button onClick={handleSync} disabled={syncing}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors disabled:opacity-50 text-sm font-medium">
-            <RefreshCw size={16} className={syncing ? 'animate-spin' : ''} /> Sync
+          <button
+            onClick={handleAddLead}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors text-sm font-medium"
+          >
+            <Plus size={16} />
+            Add Lead
           </button>
         </div>
       </div>
 
-      {/* Stat cards */}
+      {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {statCards.map((card) => {
-          const Icon = card.icon;
+        {[
+          { label: 'Total Leads', value: leads.length.toString(), icon: Users, accent: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'Active', value: activeLeads.toString(), icon: Zap, accent: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+          { label: 'Pipeline Value', value: formatCurrency(totalValue), icon: DollarSign, accent: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: 'Won Revenue', value: formatCurrency(wonValue), icon: Trophy, accent: 'text-purple-400', bg: 'bg-purple-500/10' },
+        ].map((stat) => {
+          const Icon = stat.icon;
           return (
-            <motion.div key={card.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-              className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-4">
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4"
+            >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-[var(--color-muted)]">{card.label}</span>
-                <div className={`w-9 h-9 rounded-xl ${card.bg} flex items-center justify-center`}>
-                  <Icon size={18} className={card.accent} />
+                <span className="text-xs text-[var(--color-muted)]">{stat.label}</span>
+                <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}>
+                  <Icon size={18} className={stat.accent} />
                 </div>
               </div>
-              <p className="text-2xl font-bold">{card.value}</p>
+              <p className="text-xl sm:text-2xl font-bold">{stat.value}</p>
             </motion.div>
           );
         })}
       </div>
 
-      {/* Tab navigation */}
-      <div className="flex gap-1 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-1 overflow-x-auto">
-        {TABS.map((tab) => {
-          const Icon = tab.icon;
-          return (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                activeTab === tab.id ? 'bg-emerald-500/20 text-emerald-400' : 'text-[var(--color-muted)] hover:text-white'
-              }`}>
-              <Icon size={15} /> {tab.label}
+      {/* View Toggle */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/[0.08] rounded-xl p-1">
+          <button
+            onClick={() => setActiveView('kanban')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              activeView === 'kanban' 
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                : 'text-[var(--color-muted)] hover:text-white'
+            }`}
+          >
+            <Target size={15} />
+            Pipeline
+          </button>
+          <button
+            onClick={() => setActiveView('scraper')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              activeView === 'scraper' 
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                : 'text-[var(--color-muted)] hover:text-white'
+            }`}
+          >
+            <Mail size={15} />
+            Email Scraper
+          </button>
+        </div>
+
+        {activeView === 'kanban' && (
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors border ${
+                showFilters || activeFilterCount > 0
+                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                  : 'bg-white/5 text-[var(--color-muted)] hover:text-white border-white/[0.08]'
+              }`}
+            >
+              <Filter size={14} />
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
             </button>
-          );
-        })}
+            <div className="relative flex-1 sm:w-64">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]" />
+              <input
+                type="text"
+                placeholder="Search leads..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-white/5 border border-white/[0.08] rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Tab content */}
+      {/* Filters Panel */}
+      <AnimatePresence>
+        {showFilters && activeView === 'kanban' && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-[var(--color-muted)] mb-2 block">Source</label>
+                <select
+                  value={filterSource}
+                  onChange={(e) => setFilterSource(e.target.value)}
+                  className="w-full bg-white/5 border border-white/[0.08] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500/50"
+                >
+                  <option value="all">All Sources</option>
+                  {Object.keys(SOURCE_BADGES).map(s => (
+                    <option key={s} value={s}>{SOURCE_BADGES[s].label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs text-[var(--color-muted)] mb-2 block">Value Range</label>
+                <select
+                  value={filterValue}
+                  onChange={(e) => setFilterValue(e.target.value as typeof filterValue)}
+                  className="w-full bg-white/5 border border-white/[0.08] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500/50"
+                >
+                  <option value="all">All Values</option>
+                  <option value="high">High ($15k+)</option>
+                  <option value="mid">Medium ($5k-$15k)</option>
+                  <option value="low">Low (&lt;$5k)</option>
+                </select>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content */}
       <AnimatePresence mode="wait">
-        {/* ═══ ALL LEADS ═══ */}
-        {activeTab === 'all' && (
-          <motion.div key="all" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
-            {/* Search + Filters */}
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex items-center gap-2">
-                <button onClick={() => setShowFilters(!showFilters)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors border ${
-                    showFilters || activeFilterCount > 0
-                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                      : 'bg-white/5 text-[var(--color-muted)] hover:text-white border-transparent'
-                  }`}>
-                  <Filter size={16} /> Filters
-                  {activeFilterCount > 0 && (
-                    <span className="ml-1 w-5 h-5 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center">{activeFilterCount}</span>
-                  )}
-                </button>
-                {activeFilterCount > 0 && (
-                  <button onClick={clearFilters} className="flex items-center gap-1 text-xs text-[var(--color-muted)] hover:text-white transition-colors">
-                    <X size={14} /> Clear
-                  </button>
-                )}
-              </div>
-              <div className="relative w-full sm:w-72">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]" />
-                <input type="text" placeholder="Search leads..." value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                  className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors" />
-              </div>
-            </div>
-
-            {/* Filter panel */}
-            <AnimatePresence>
-              {showFilters && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-                  <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="text-xs text-[var(--color-muted)] mb-2 block">Score Range</label>
-                      <select value={scoreRange} onChange={(e) => { setScoreRange(e.target.value as typeof scoreRange); setPage(1); }}
-                        className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500/50">
-                        <option value="all">All Scores</option>
-                        <option value="high">High (8-10)</option>
-                        <option value="mid">Medium (5-7)</option>
-                        <option value="low">Low (1-4)</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs text-[var(--color-muted)] mb-2 block">City</label>
-                      <select value={cityFilter} onChange={(e) => { setCityFilter(e.target.value); setPage(1); }}
-                        className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500/50">
-                        <option value="all">All Cities</option>
-                        {cities.map((c) => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs text-[var(--color-muted)] mb-2 block">Category</label>
-                      <select value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
-                        className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500/50">
-                        <option value="all">All Categories</option>
-                        {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Table */}
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--color-border)] text-[var(--color-muted)] text-left">
-                      <th className="px-5 py-4 font-medium">
-                        <button onClick={() => toggleSort('name')} className="flex items-center gap-1 hover:text-white transition-colors">
-                          Business {sortField === 'name' && <ArrowUpDown size={14} />}
-                        </button>
-                      </th>
-                      <th className="px-5 py-4 font-medium">Category</th>
-                      <th className="px-5 py-4 font-medium">
-                        <button onClick={() => toggleSort('city')} className="flex items-center gap-1 hover:text-white transition-colors">
-                          City {sortField === 'city' && <ArrowUpDown size={14} />}
-                        </button>
-                      </th>
-                      <th className="px-5 py-4 font-medium">Phone</th>
-                      <th className="px-5 py-4 font-medium">Email</th>
-                      <th className="px-5 py-4 font-medium">Web Status</th>
-                      <th className="px-5 py-4 font-medium">
-                        <button onClick={() => toggleSort('score')} className="flex items-center gap-1 hover:text-white transition-colors">
-                          Score {sortField === 'score' && <ArrowUpDown size={14} />}
-                        </button>
-                      </th>
-                      <th className="px-5 py-4 font-medium">Stage</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pagedLeads.length === 0 ? (
-                      <tr><td colSpan={8} className="text-center py-16 text-[var(--color-muted)]">No leads match your filters</td></tr>
-                    ) : (
-                      pagedLeads.map((lead, i) => {
-                        const ws = webStatusLabel(lead.web_status);
-                        const status = tracking[lead.name]?.status;
-                        return (
-                          <motion.tr key={`${lead.name}-${i}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }}
-                            className="border-b border-[var(--color-border)] last:border-0 hover:bg-white/[0.02] transition-colors">
-                            <td className="px-5 py-4 font-medium text-white">{lead.name}</td>
-                            <td className="px-5 py-4 text-[var(--color-muted)] capitalize">{lead.category}</td>
-                            <td className="px-5 py-4 text-[var(--color-muted)]">{lead.city}{lead.state ? `, ${lead.state}` : ''}</td>
-                            <td className="px-5 py-4 text-[var(--color-muted)]">
-                              {lead.phone ? (
-                                <a href={`tel:${lead.phone}`} className="hover:text-white transition-colors flex items-center gap-1.5">
-                                  <Phone size={13} /> {lead.phone}
-                                </a>
-                              ) : <span className="opacity-40">--</span>}
-                            </td>
-                            <td className="px-5 py-4 text-[var(--color-muted)]">
-                              {lead.email ? (
-                                <a href={`mailto:${lead.email}`} className="hover:text-white transition-colors flex items-center gap-1.5">
-                                  <Mail size={13} /> {lead.email}
-                                </a>
-                              ) : <span className="opacity-40">--</span>}
-                            </td>
-                            <td className="px-5 py-4">
-                              <span className={`flex items-center gap-1.5 text-sm ${ws.color}`}>
-                                <Globe size={14} /> {ws.label}
-                              </span>
-                            </td>
-                            <td className="px-5 py-4">
-                              <span className={`text-xs px-3 py-1 rounded-full border font-semibold ${scoreColor(lead.score)}`}>
-                                {lead.score}
-                              </span>
-                            </td>
-                            <td className="px-5 py-4">
-                              <select value={status || ''} onChange={(e) => { if (e.target.value) updateTracking(lead.name, e.target.value as LeadTracking[string]['status']); }}
-                                className="bg-white/5 border border-[var(--color-border)] rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-emerald-500/50 text-[var(--color-muted)]">
-                                <option value="">--</option>
-                                <option value="contacted">Contacted</option>
-                                <option value="responded">Responded</option>
-                                <option value="proposal">Proposal</option>
-                                <option value="won">Won</option>
-                                <option value="lost">Lost</option>
-                              </select>
-                            </td>
-                          </motion.tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between px-5 py-4 border-t border-[var(--color-border)]">
-                  <span className="text-sm text-[var(--color-muted)]">
-                    {(page - 1) * ROWS_PER_PAGE + 1}-{Math.min(page * ROWS_PER_PAGE, filteredLeads.length)} of {filteredLeads.length}
-                  </span>
-                  <div className="flex gap-2">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
-                      className="p-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 transition-colors"><ChevronLeft size={16} /></button>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                      className="p-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 transition-colors"><ChevronRight size={16} /></button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-
-        {/* ═══ HIT LIST ═══ */}
-        {activeTab === 'hitlist' && (
-          <motion.div key="hitlist" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-[var(--color-muted)]">Top unworked leads ranked by conversion likelihood</p>
-              <button onClick={() => setBatchOffset((o) => o + 10)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 text-[var(--color-muted)] border border-[var(--color-border)] hover:text-white hover:bg-white/10 transition-colors text-sm font-medium">
-                <SkipForward size={15} /> Next batch
-              </button>
-            </div>
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
-              <div className="px-5 py-3 border-b border-[var(--color-border)] flex items-center justify-between">
-                <span className="text-sm font-medium">Batch {Math.floor(batchOffset / 10) + 1}</span>
-                <span className="text-xs text-[var(--color-muted)]">{hitList.length} leads</span>
-              </div>
-              {hitList.length === 0 ? (
-                <div className="text-center py-16 text-[var(--color-muted)]">All leads in the current pool have been worked. Reset or skip batch.</div>
-              ) : (
-                <div className="divide-y divide-[var(--color-border)]">
-                  {hitList.map((lead, i) => {
-                    const status = tracking[lead.name]?.status;
-                    return (
-                      <motion.div key={lead.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
-                        className="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3 hover:bg-white/[0.02] transition-colors">
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <span className="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold shrink-0">
-                            {batchOffset + i + 1}
-                          </span>
-                          <div className="min-w-0">
-                            <p className="font-medium text-white truncate">{lead.name}</p>
-                            <p className="text-xs text-[var(--color-muted)] truncate">{lead.category} -- {lead.city}{lead.state ? `, ${lead.state}` : ''}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">
-                            {lead.score}/10
-                          </span>
-                          <span className="text-[10px] text-[var(--color-muted)]">P:{priorityScore(lead)}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          {lead.phone && (
-                            <a href={`tel:${lead.phone}`} className="w-8 h-8 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 flex items-center justify-center transition-colors" title={lead.phone}>
-                              <Phone size={14} className="text-emerald-400" />
-                            </a>
-                          )}
-                          {lead.email && (
-                            <a href={`mailto:${lead.email}`} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 flex items-center justify-center transition-colors" title={lead.email}>
-                              <Mail size={14} className="text-blue-400" />
-                            </a>
-                          )}
-                          <button onClick={() => updateTracking(lead.name, 'won')}
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${status === 'won' ? 'bg-emerald-500/30 text-emerald-300' : 'bg-white/5 hover:bg-emerald-500/10 text-[var(--color-muted)] hover:text-emerald-400'}`}
-                            title="Mark as Won"><Trophy size={14} /></button>
-                          <button onClick={() => updateTracking(lead.name, 'lost')}
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${status === 'lost' ? 'bg-red-500/30 text-red-300' : 'bg-white/5 hover:bg-red-500/10 text-[var(--color-muted)] hover:text-red-400'}`}
-                            title="Mark as Lost"><XCircle size={14} /></button>
-                          <select value={status || ''} onChange={(e) => { if (e.target.value) updateTracking(lead.name, e.target.value as LeadTracking[string]['status']); }}
-                            className="bg-white/5 border border-[var(--color-border)] rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-emerald-500/50 text-[var(--color-muted)]">
-                            <option value="">Stage...</option>
-                            <option value="contacted">Contacted</option>
-                            <option value="responded">Responded</option>
-                            <option value="proposal">Proposal</option>
-                            <option value="won">Won</option>
-                            <option value="lost">Lost</option>
-                          </select>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-
-        {/* ═══ FUNNEL ═══ */}
-        {activeTab === 'funnel' && (
-          <motion.div key="funnel" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-6">
-              <h2 className="font-semibold text-lg mb-6">Conversion Funnel</h2>
-              <div className="space-y-4">
-                {FUNNEL_STAGES.map((stage, i) => {
-                  const count = funnelCounts[stage];
-                  const pct = funnelMax > 0 ? (count / funnelMax) * 100 : 0;
-                  return (
-                    <div key={stage}>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm text-[var(--color-muted)]">{FUNNEL_LABELS[stage]}</span>
-                        <span className="text-sm font-semibold">{count}</span>
-                      </div>
-                      <div className="h-8 bg-white/5 rounded-lg overflow-hidden">
-                        <motion.div initial={{ width: 0 }} animate={{ width: `${Math.max(pct, 2)}%` }}
-                          transition={{ duration: 0.6, delay: i * 0.1 }}
-                          className={`h-full ${FUNNEL_COLORS[stage]} rounded-lg flex items-center justify-end pr-3`}>
-                          {pct > 10 && <span className="text-xs font-semibold text-white">{Math.round(pct)}%</span>}
-                        </motion.div>
-                      </div>
-                      {i < FUNNEL_STAGES.length - 1 && (
-                        <div className="flex justify-center py-1 text-[var(--color-muted)]"><ArrowRight size={14} className="rotate-90" /></div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-4 pt-4 border-t border-[var(--color-border)] flex items-center gap-4">
-                <span className="text-sm text-red-400">Lost: {lostCount}</span>
-                {funnelCounts.total > 0 && (
-                  <span className="text-sm text-[var(--color-muted)]">
-                    Win rate: {funnelCounts.won > 0 ? Math.round((funnelCounts.won / (funnelCounts.won + lostCount)) * 100) : 0}%
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-6">
-              <h2 className="font-semibold text-lg mb-4 flex items-center gap-2"><Clock size={18} className="text-emerald-400" /> Best Time to Reach Out</h2>
-              <div className="space-y-3">
-                {REACH_TIMES.map((rt, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-[var(--color-border)]">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">{i + 1}</div>
-                    <div>
-                      <p className="text-sm font-medium text-white">{rt.window}</p>
-                      <p className="text-xs text-[var(--color-muted)] mt-0.5">{rt.reason}</p>
-                    </div>
-                  </div>
+        {activeView === 'kanban' ? (
+          <motion.div
+            key="kanban"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* Kanban Board */}
+            <div className="overflow-x-auto pb-4 -mx-4 px-4 lg:mx-0 lg:px-0">
+              <div className="flex gap-3 lg:grid lg:grid-cols-6">
+                {STATUSES.map((status) => (
+                  <KanbanColumn
+                    key={status.id}
+                    status={status}
+                    leads={leadsByStatus[status.id]}
+                    onSelectLead={setSelectedLead}
+                    onDropLead={handleDropLead}
+                    draggingLead={draggingLead}
+                  />
                 ))}
               </div>
             </div>
           </motion.div>
-        )}
-
-        {/* ═══ ANALYTICS ═══ */}
-        {activeTab === 'analytics' && (
-          <motion.div key="analytics" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
-            {/* Category breakdown */}
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-6">
-              <h2 className="font-semibold text-lg mb-4">Category Breakdown</h2>
-              <div className="space-y-3">
-                {categoryBreakdown.map(([cat, data]) => {
-                  const hotPct = data.total > 0 ? (data.hot / data.total) * 100 : 0;
-                  return (
-                    <div key={cat} className="flex items-center gap-4">
-                      <span className="text-sm text-[var(--color-muted)] w-40 truncate capitalize" title={cat}>{cat}</span>
-                      <div className="flex-1 h-6 bg-white/5 rounded-lg overflow-hidden">
-                        <motion.div initial={{ width: 0 }} animate={{ width: `${Math.max(hotPct, 2)}%` }}
-                          transition={{ duration: 0.5 }} className="h-full bg-emerald-500/60 rounded-lg" />
-                      </div>
-                      <span className="text-xs text-[var(--color-muted)] w-20 text-right">{data.hot} hot / {data.total}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* City heatmap */}
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-6">
-              <h2 className="font-semibold text-lg mb-4 flex items-center gap-2"><MapPin size={18} className="text-emerald-400" /> City Heatmap</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {cityBreakdown.map(([city, data], i) => (
-                  <motion.div key={city} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.03 }}
-                    className="p-4 rounded-xl bg-white/[0.02] border border-[var(--color-border)] hover:border-emerald-500/30 transition-colors">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-sm">{city}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">{data.hot} hot</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-[var(--color-muted)]">
-                      <span>{data.total} total</span>
-                      <span>Avg: {data.avgScore}</span>
-                    </div>
-                    <div className="mt-2 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-emerald-500/50 rounded-full" style={{ width: `${Math.min((data.avgScore / 10) * 100, 100)}%` }} />
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+        ) : (
+          <motion.div
+            key="scraper"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            <EmailScraper onAddToLeads={handleAddFromScraper} />
           </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* ═══ WIN/LOSS ═══ */}
-        {activeTab === 'winloss' && (
-          <motion.div key="winloss" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                { label: 'Won', value: wonLeads.length, color: 'text-emerald-400', bg: 'bg-emerald-500/10', icon: Trophy },
-                { label: 'Lost', value: lostLeads.length, color: 'text-red-400', bg: 'bg-red-500/10', icon: XCircle },
-                { label: 'Win Rate', value: wonLeads.length + lostLeads.length > 0 ? `${Math.round((wonLeads.length / (wonLeads.length + lostLeads.length)) * 100)}%` : '--', color: 'text-blue-400', bg: 'bg-blue-500/10', icon: BarChart3 },
-              ].map((s) => {
-                const Icon = s.icon;
-                return (
-                  <div key={s.label} className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-[var(--color-muted)]">{s.label}</span>
-                      <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center`}>
-                        <Icon size={16} className={s.color} />
-                      </div>
-                    </div>
-                    <p className="text-2xl font-bold">{s.value}</p>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Won leads */}
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-[var(--color-border)]">
-                <h2 className="font-semibold flex items-center gap-2"><Trophy size={16} className="text-emerald-400" /> Won ({wonLeads.length})</h2>
-              </div>
-              {wonLeads.length === 0 ? (
-                <div className="text-center py-10 text-[var(--color-muted)] text-sm">No won leads yet</div>
-              ) : (
-                <div className="divide-y divide-[var(--color-border)]">
-                  {wonLeads.map((l) => (
-                    <div key={l.name} className="px-5 py-3 flex items-center justify-between">
-                      <span className="text-sm font-medium text-white">{l.name}</span>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-[var(--color-muted)]">{new Date(l.updatedAt).toLocaleDateString()}</span>
-                        <button onClick={() => updateTracking(l.name, 'lost')} className="text-xs text-[var(--color-muted)] hover:text-red-400 transition-colors">Move to lost</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Lost leads */}
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-[var(--color-border)]">
-                <h2 className="font-semibold flex items-center gap-2"><XCircle size={16} className="text-red-400" /> Lost ({lostLeads.length})</h2>
-              </div>
-              {lostLeads.length === 0 ? (
-                <div className="text-center py-10 text-[var(--color-muted)] text-sm">No lost leads</div>
-              ) : (
-                <div className="divide-y divide-[var(--color-border)]">
-                  {lostLeads.map((l) => (
-                    <div key={l.name} className="px-5 py-3 flex items-center justify-between">
-                      <span className="text-sm font-medium text-white">{l.name}</span>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-[var(--color-muted)]">{new Date(l.updatedAt).toLocaleDateString()}</span>
-                        <button onClick={() => updateTracking(l.name, 'won')} className="text-xs text-[var(--color-muted)] hover:text-emerald-400 transition-colors">Move to won</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </motion.div>
+      {/* Slide Over Panel */}
+      <AnimatePresence>
+        {selectedLead && (
+          <SlideOver
+            lead={selectedLead}
+            onClose={() => setSelectedLead(null)}
+            onUpdate={handleUpdateLead}
+            onDelete={handleDeleteLead}
+          />
         )}
       </AnimatePresence>
     </div>
   );
 }
-

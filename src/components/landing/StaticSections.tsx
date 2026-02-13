@@ -123,7 +123,7 @@ export function Services() {
     { icon: <Plug size={24} />, title: 'System Integration', desc: 'Connect your tools and platforms. CRM, ERP, payment systems, APIs — we make everything work together.' },
   ];
   return (
-    <section id="features" className="py-20 md:py-32 px-6 md:px-12 lg:px-24 relative">
+    <section id="services" className="py-20 md:py-32 px-6 md:px-12 lg:px-24 relative">
       <div className="max-w-6xl mx-auto">
         <Reveal><p className="text-[var(--color-accent)] text-sm font-medium tracking-wider uppercase mb-4">What We Build</p></Reveal>
         <Reveal delay={0.1}>

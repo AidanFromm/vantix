@@ -1,360 +1,796 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import {
-  DollarSign, Users, Zap, CheckSquare, Phone, ArrowRight,
-  Plus, FileText, RefreshCw, Clock, AlertCircle, Mail, Send,
+import { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { 
+  DollarSign, 
+  TrendingDown,
+  TrendingUp,
+  Briefcase,
+  Users,
+  Plus,
+  UserPlus,
+  FileText,
+  BarChart3,
+  Zap,
+  CheckCircle2,
+  Clock,
+  ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 
-function ls<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
+// ============================================================================
+// TYPES
+// ============================================================================
+
+interface KPIData {
+  title: string;
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  trend: number;
+  trendLabel: string;
+  sparkline: number[];
+  icon: React.ElementType;
+  color: string;
 }
 
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+interface Activity {
+  id: string;
+  type: 'payment' | 'project' | 'lead' | 'bot' | 'client';
+  title: string;
+  amount?: string;
+  timestamp: Date;
+  icon: React.ElementType;
+  color: string;
 }
 
-interface CallRecord {
-  id?: string;
-  call_id?: string;
-  from?: string;
-  to?: string;
-  callerName?: string;
-  caller_name?: string;
-  created_at?: string;
-  started_at?: string;
-  date?: string;
-  summary?: string;
-  status?: string;
-  call_length?: number;
+interface Project {
+  id: string;
+  name: string;
+  progress: number;
+  status: 'on-track' | 'at-risk' | 'behind';
+  client: string;
 }
 
-interface Task {
-  id?: string;
-  title?: string;
-  status?: string;
-  dueDate?: string;
-  priority?: string;
-}
+// ============================================================================
+// ANIMATED COUNTER COMPONENT
+// ============================================================================
 
-interface RevenueEntry {
-  amount: number;
-  status?: string;
-}
-
-interface SentEmail {
-  email: string;
-  business: string;
-  subject: string;
-  template: string;
-  date: string;
-  timestamp: string;
-}
-
-interface OutreachData {
-  totalSent: number;
-  sentToday: number;
-  totalLeads: number;
-  leadsWithEmail: number;
-  recentEmails: SentEmail[];
-}
-
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
-};
-
-export default function OverviewPage() {
-  const [clients, setClients] = useState<unknown[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [revenue, setRevenue] = useState(0);
-  const [calls, setCalls] = useState<CallRecord[]>([]);
-  const [outreach, setOutreach] = useState<OutreachData>({ totalSent: 0, sentToday: 0, totalLeads: 0, leadsWithEmail: 0, recentEmails: [] });
-  const [loaded, setLoaded] = useState(false);
-
-  const load = useCallback(async () => {
-    setClients(ls<unknown[]>('vantix_clients', []));
-    const allTasks = ls<Task[]>('vantix_tasks', []);
-    setTasks(allTasks);
-
-    const revData = ls<{ income?: RevenueEntry[] }>('vantix_revenue', { income: [] });
-    const incomeArr: RevenueEntry[] = Array.isArray(revData) ? revData : (revData.income || []);
-    setRevenue(incomeArr.reduce((s, e) => s + (e.amount || 0), 0));
-
-    // Fetch calls
-    try {
-      const res = await fetch('/api/calls');
-      if (res.ok) {
-        const data = await res.json();
-        setCalls(Array.isArray(data) ? data : (data.calls || []));
-      }
-    } catch {}
-
-    // Fetch outreach
-    try {
-      const res = await fetch('/api/outreach');
-      if (res.ok) {
-        const data = await res.json();
-        setOutreach(data);
-      }
-    } catch {}
-
-    setLoaded(true);
-  }, []);
+function AnimatedNumber({ 
+  value, 
+  prefix = '', 
+  suffix = '',
+  duration = 1500 
+}: { 
+  value: number; 
+  prefix?: string; 
+  suffix?: string;
+  duration?: number;
+}) {
+  const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    load();
-    window.addEventListener('focus', load);
-    return () => window.removeEventListener('focus', load);
-  }, [load]);
+    let startTime: number;
+    let animationFrame: number;
 
-  const openTasks = tasks.filter(t => t.status !== 'done' && t.status !== 'completed');
-  const today = new Date().toISOString().slice(0, 10);
-  const dueTasks = tasks.filter(t => {
-    if (t.status === 'done' || t.status === 'completed') return false;
-    if (!t.dueDate) return false;
-    return t.dueDate <= today;
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      
+      // Easing function for smooth deceleration
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.floor(eased * value));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [value, duration]);
+
+  const formatted = prefix === '$' 
+    ? `${prefix}${displayValue.toLocaleString()}`
+    : `${displayValue.toLocaleString()}${suffix}`;
+
+  return <span className="tabular-nums">{formatted}</span>;
+}
+
+// ============================================================================
+// SPARKLINE COMPONENT
+// ============================================================================
+
+function Sparkline({ 
+  data, 
+  color = '#10b981',
+  width = 80,
+  height = 32 
+}: { 
+  data: number[]; 
+  color?: string;
+  width?: number;
+  height?: number;
+}) {
+  const padding = 2;
+
+  if (!data || data.length < 2) return null;
+
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+
+  const points = data.map((value, index) => {
+    const x = padding + (index / (data.length - 1)) * (width - padding * 2);
+    const y = height - padding - ((value - min) / range) * (height - padding * 2);
+    return `${x},${y}`;
   });
 
-  const recentCalls = [...calls].sort((a, b) =>
-    (b.created_at || b.started_at || b.date || '').localeCompare(a.created_at || a.started_at || a.date || '')
-  ).slice(0, 5);
+  const pathD = `M ${points.join(' L ')}`;
+  const areaPoints = [
+    `${padding},${height}`,
+    ...points,
+    `${width - padding},${height}`,
+  ].join(' ');
 
-  const recentOutreach = outreach.recentEmails.slice(0, 5);
+  const gradientId = `sparkline-${Math.random().toString(36).substr(2, 9)}`;
 
-  const priorityColor: Record<string, string> = {
-    high: 'bg-red-500/20 text-red-400',
-    medium: 'bg-amber-500/20 text-amber-400',
-    low: 'bg-blue-500/20 text-blue-400',
-  };
+  return (
+    <svg width={width} height={height} className="overflow-visible">
+      <defs>
+        <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor={color} stopOpacity="0.4" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={areaPoints} fill={`url(#${gradientId})`} />
+      <motion.path
+        d={pathD}
+        fill="none"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={{ pathLength: 0, opacity: 0 }}
+        animate={{ pathLength: 1, opacity: 1 }}
+        transition={{ duration: 1.5, ease: 'easeOut', delay: 0.3 }}
+      />
+      <motion.circle
+        cx={parseFloat(points[points.length - 1].split(',')[0])}
+        cy={parseFloat(points[points.length - 1].split(',')[1])}
+        r={3}
+        fill={color}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1.5, duration: 0.3 }}
+      />
+    </svg>
+  );
+}
 
-  const statusColor: Record<string, string> = {
-    completed: 'bg-emerald-500/20 text-emerald-400',
-    ended: 'bg-emerald-500/20 text-emerald-400',
-    'closed-won': 'bg-emerald-500/20 text-emerald-400',
-    'in-progress': 'bg-blue-500/20 text-blue-400',
-    missed: 'bg-red-500/20 text-red-400',
-    failed: 'bg-red-500/20 text-red-400',
-    'closed-lost': 'bg-red-500/20 text-red-400',
-    queued: 'bg-amber-500/20 text-amber-400',
-    'new-lead': 'bg-blue-500/20 text-blue-400',
-    'no-answer': 'bg-amber-500/20 text-amber-400',
-  };
+// ============================================================================
+// KPI CARD COMPONENT
+// ============================================================================
 
-  if (!loaded) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}>
-          <RefreshCw size={20} className="text-[#10b981]" />
-        </motion.div>
+function KPICard({ 
+  data, 
+  index 
+}: { 
+  data: KPIData; 
+  index: number;
+}) {
+  const Icon = data.icon;
+  const isPositive = data.trend >= 0;
+  const TrendIcon = isPositive ? TrendingUp : TrendingDown;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ 
+        duration: 0.5, 
+        delay: index * 0.1,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }}
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="group relative overflow-hidden"
+    >
+      {/* Glass card */}
+      <div className="relative bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-5 transition-all duration-300 hover:border-white/20 hover:shadow-xl hover:shadow-black/20">
+        {/* Gradient overlay on hover */}
+        <div 
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
+          style={{ background: `linear-gradient(135deg, ${data.color}10 0%, transparent 60%)` }}
+        />
+        
+        <div className="relative z-10">
+          {/* Header row */}
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div 
+                className="p-2.5 rounded-xl transition-transform duration-300 group-hover:scale-110"
+                style={{ backgroundColor: `${data.color}15` }}
+              >
+                <Icon size={18} style={{ color: data.color }} />
+              </div>
+              <span className="text-sm font-medium text-gray-400 uppercase tracking-wide">
+                {data.title}
+              </span>
+            </div>
+            
+            {/* Sparkline */}
+            <Sparkline 
+              data={data.sparkline} 
+              color={isPositive ? '#10b981' : '#ef4444'} 
+            />
+          </div>
+
+          {/* Value */}
+          <div className="mb-3">
+            <h3 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">
+              <AnimatedNumber 
+                value={data.value} 
+                prefix={data.prefix} 
+                suffix={data.suffix}
+                duration={1500 + index * 200}
+              />
+            </h3>
+          </div>
+
+          {/* Trend indicator */}
+          <div className="flex items-center gap-2">
+            <div 
+              className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                isPositive 
+                  ? 'bg-emerald-500/10 text-emerald-400' 
+                  : 'bg-red-500/10 text-red-400'
+              }`}
+            >
+              <TrendIcon size={12} />
+              <span>{isPositive ? '+' : ''}{data.trend}%</span>
+            </div>
+            <span className="text-xs text-gray-500">{data.trendLabel}</span>
+          </div>
+        </div>
       </div>
-    );
-  }
+    </motion.div>
+  );
+}
 
-  const stats = [
-    { label: 'Total Leads', value: outreach.totalLeads, icon: Zap, color: 'text-amber-400', bg: 'bg-amber-400/10' },
-    { label: 'Emails Sent', value: outreach.totalSent, icon: Send, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
-    { label: 'Active Clients', value: (clients as unknown[]).length, icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10' },
-    { label: 'Open Tasks', value: openTasks.length, icon: CheckSquare, color: 'text-purple-400', bg: 'bg-purple-400/10' },
-    { label: 'Total Calls', value: calls.length, icon: Phone, color: 'text-cyan-400', bg: 'bg-cyan-400/10' },
-    { label: 'Revenue', value: revenue, prefix: '$', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+// ============================================================================
+// LOADING SKELETON
+// ============================================================================
+
+function LoadingSkeleton() {
+  return (
+    <div className="space-y-8 animate-pulse">
+      {/* Header skeleton */}
+      <div className="space-y-2">
+        <div className="h-8 w-64 bg-white/5 rounded-lg" />
+        <div className="h-4 w-48 bg-white/5 rounded-lg" />
+      </div>
+      
+      {/* KPI cards skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-40 bg-white/5 rounded-2xl" />
+        ))}
+      </div>
+      
+      {/* Charts skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 h-80 bg-white/5 rounded-2xl" />
+        <div className="h-80 bg-white/5 rounded-2xl" />
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// REVENUE CHART COMPONENT
+// ============================================================================
+
+function RevenueChart({ data }: { data: { month: string; revenue: number; expenses: number }[] }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.4 }}
+      className="relative bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 overflow-hidden"
+    >
+      {/* Gradient glow effect */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+      
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-emerald-500/10">
+              <BarChart3 size={18} className="text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-white">Revenue Trend</h3>
+              <p className="text-xs text-gray-500">Last 6 months</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-emerald-500" />
+              <span className="text-gray-400">Revenue</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-violet-500" />
+              <span className="text-gray-400">Expenses</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="expensesGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis 
+                dataKey="month" 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#6b7280', fontSize: 12 }}
+                dy={10}
+              />
+              <YAxis 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#6b7280', fontSize: 12 }}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                dx={-10}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'rgba(0,0,0,0.9)', 
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                }}
+                labelStyle={{ color: '#fff', fontWeight: 600, marginBottom: '8px' }}
+                itemStyle={{ color: '#9ca3af', fontSize: '12px' }}
+                formatter={(value) => [`$${Number(value).toLocaleString()}`, '']}
+              />
+              <Area
+                type="monotone"
+                dataKey="expenses"
+                stroke="#8b5cf6"
+                strokeWidth={2}
+                fill="url(#expensesGradient)"
+              />
+              <Area
+                type="monotone"
+                dataKey="revenue"
+                stroke="#10b981"
+                strokeWidth={2}
+                fill="url(#revenueGradient)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// ACTIVITY FEED COMPONENT
+// ============================================================================
+
+function ActivityFeed({ activities }: { activities: Activity[] }) {
+  const getRelativeTime = (date: Date): string => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days === 1) return 'Yesterday';
+    return `${days}d ago`;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.5 }}
+      className="relative bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden"
+    >
+      <div className="px-6 py-4 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-blue-500/10">
+            <Sparkles size={18} className="text-blue-400" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-white">Recent Activity</h3>
+            <p className="text-xs text-gray-500">What's happening in your business</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 space-y-1 max-h-[320px] overflow-y-auto">
+        <AnimatePresence>
+          {activities.map((activity, index) => {
+            const Icon = activity.icon;
+            return (
+              <motion.div
+                key={activity.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 + index * 0.08 }}
+                className="group flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all cursor-pointer"
+              >
+                <div 
+                  className="p-2 rounded-lg transition-transform group-hover:scale-110"
+                  style={{ backgroundColor: `${activity.color}15` }}
+                >
+                  <Icon size={14} style={{ color: activity.color }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-white truncate group-hover:text-emerald-400 transition-colors">
+                    {activity.title}
+                  </p>
+                  {activity.amount && (
+                    <p className="text-xs text-emerald-400 font-medium">{activity.amount}</p>
+                  )}
+                </div>
+                <span className="text-xs text-gray-500 shrink-0">
+                  {getRelativeTime(activity.timestamp)}
+                </span>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// PROJECTS CARD COMPONENT
+// ============================================================================
+
+function ProjectsCard({ projects }: { projects: Project[] }) {
+  const getStatusColor = (status: Project['status']) => {
+    switch (status) {
+      case 'on-track': return { dot: 'bg-emerald-400', bar: 'bg-emerald-500' };
+      case 'at-risk': return { dot: 'bg-yellow-400', bar: 'bg-yellow-500' };
+      case 'behind': return { dot: 'bg-red-400', bar: 'bg-red-500' };
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.6 }}
+      className="relative bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden"
+    >
+      <div className="px-6 py-4 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-orange-500/10">
+            <Briefcase size={18} className="text-orange-400" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-white">Active Projects</h3>
+            <p className="text-xs text-gray-500">{projects.length} in progress</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 space-y-3">
+        {projects.map((project, index) => {
+          const colors = getStatusColor(project.status);
+          return (
+            <motion.div
+              key={project.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.7 + index * 0.1 }}
+              className="group p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 transition-all cursor-pointer"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${colors.dot}`} />
+                  <span className="text-sm font-medium text-white group-hover:text-emerald-400 transition-colors">
+                    {project.name}
+                  </span>
+                </div>
+                <span className="text-sm font-semibold text-white">{project.progress}%</span>
+              </div>
+              
+              {/* Progress bar */}
+              <div className="relative h-2 bg-white/5 rounded-full overflow-hidden">
+                <motion.div
+                  className={`absolute inset-y-0 left-0 rounded-full ${colors.bar}`}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${project.progress}%` }}
+                  transition={{ duration: 1, delay: 0.8 + index * 0.1, ease: 'easeOut' }}
+                />
+              </div>
+              
+              <p className="text-xs text-gray-500 mt-2">{project.client}</p>
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// QUICK ACTIONS COMPONENT
+// ============================================================================
+
+function QuickActions() {
+  const actions = [
+    { label: 'New Project', icon: Plus, color: '#10b981' },
+    { label: 'Add Lead', icon: UserPlus, color: '#3b82f6' },
+    { label: 'Create Invoice', icon: FileText, color: '#8b5cf6' },
+    { label: 'View Reports', icon: BarChart3, color: '#f59e0b' },
   ];
 
   return (
-    <motion.div className="space-y-5 pb-12" variants={container} initial="hidden" animate="show">
-      {/* Header */}
-      <motion.div variants={item} className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-white tracking-tight">Overview</h1>
-          <p className="text-xs text-[var(--color-muted)] mt-0.5">At a glance</p>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.7 }}
+      className="relative bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden"
+    >
+      <div className="px-6 py-4 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-purple-500/10">
+            <Zap size={18} className="text-purple-400" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-white">Quick Actions</h3>
+            <p className="text-xs text-gray-500">Get things done fast</p>
+          </div>
         </div>
-        <button onClick={load}
-          className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] hover:text-white transition-colors px-2.5 py-1.5 rounded-lg border border-[var(--color-border)] hover:border-[#10b981]/30">
-          <RefreshCw size={13} strokeWidth={1.5} /> Refresh
-        </button>
+      </div>
+
+      <div className="p-4 grid grid-cols-2 gap-3">
+        {actions.map((action, index) => {
+          const Icon = action.icon;
+          return (
+            <motion.button
+              key={action.label}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8 + index * 0.08 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              className="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition-all"
+            >
+              <div 
+                className="p-2 rounded-lg transition-transform group-hover:scale-110"
+                style={{ backgroundColor: `${action.color}15` }}
+              >
+                <Icon size={14} style={{ color: action.color }} />
+              </div>
+              <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+                {action.label}
+              </span>
+            </motion.button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// MAIN DASHBOARD PAGE
+// ============================================================================
+
+export default function DashboardPage() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [greeting, setGreeting] = useState('');
+  const [userName, setUserName] = useState('');
+
+  // Sample KPI data
+  const kpiData: KPIData[] = useMemo(() => [
+    {
+      title: 'Revenue',
+      value: 45200,
+      prefix: '$',
+      trend: 12.5,
+      trendLabel: 'vs last month',
+      sparkline: [28000, 32000, 35000, 38000, 41000, 45200],
+      icon: DollarSign,
+      color: '#10b981',
+    },
+    {
+      title: 'Expenses',
+      value: 12300,
+      prefix: '$',
+      trend: -3.2,
+      trendLabel: 'vs last month',
+      sparkline: [14000, 13500, 13000, 12800, 12500, 12300],
+      icon: TrendingDown,
+      color: '#ef4444',
+    },
+    {
+      title: 'Profit',
+      value: 32900,
+      prefix: '$',
+      trend: 18.7,
+      trendLabel: 'vs last month',
+      sparkline: [18000, 22000, 25000, 28000, 30000, 32900],
+      icon: TrendingUp,
+      color: '#8b5cf6',
+    },
+    {
+      title: 'Active',
+      value: 5,
+      suffix: ' projects',
+      trend: 25,
+      trendLabel: '2 clients',
+      sparkline: [2, 3, 3, 4, 4, 5],
+      icon: Briefcase,
+      color: '#3b82f6',
+    },
+  ], []);
+
+  // Revenue chart data
+  const chartData = useMemo(() => [
+    { month: 'Aug', revenue: 28000, expenses: 8500 },
+    { month: 'Sep', revenue: 32000, expenses: 9200 },
+    { month: 'Oct', revenue: 35000, expenses: 10100 },
+    { month: 'Nov', revenue: 38000, expenses: 11000 },
+    { month: 'Dec', revenue: 41000, expenses: 11800 },
+    { month: 'Jan', revenue: 45200, expenses: 12300 },
+  ], []);
+
+  // Activity data
+  const activities: Activity[] = useMemo(() => [
+    { 
+      id: '1', 
+      type: 'payment', 
+      title: 'Invoice paid', 
+      amount: '$2,400',
+      timestamp: new Date(Date.now() - 1000 * 60 * 5),
+      icon: CheckCircle2,
+      color: '#10b981',
+    },
+    { 
+      id: '2', 
+      type: 'project', 
+      title: 'New project started', 
+      timestamp: new Date(Date.now() - 1000 * 60 * 30),
+      icon: Briefcase,
+      color: '#3b82f6',
+    },
+    { 
+      id: '3', 
+      type: 'lead', 
+      title: 'Lead converted', 
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
+      icon: Users,
+      color: '#8b5cf6',
+    },
+    { 
+      id: '4', 
+      type: 'bot', 
+      title: 'Bot completed task', 
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5),
+      icon: Zap,
+      color: '#f59e0b',
+    },
+    { 
+      id: '5', 
+      type: 'payment', 
+      title: 'Payment received', 
+      amount: '$5,800',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 8),
+      icon: DollarSign,
+      color: '#10b981',
+    },
+  ], []);
+
+  // Projects data
+  const projects: Project[] = useMemo(() => [
+    { id: '1', name: 'Dave App', progress: 90, status: 'on-track', client: 'Dave Martinez' },
+    { id: '2', name: 'CardLedger', progress: 65, status: 'at-risk', client: 'Kyle Johnson' },
+    { id: '3', name: 'J4K Update', progress: 30, status: 'behind', client: 'J4K Sneakers' },
+  ], []);
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('Good morning');
+    else if (hour < 17) setGreeting('Good afternoon');
+    else setGreeting('Good evening');
+
+    const user = localStorage.getItem('vantix_user');
+    if (user) {
+      const parsed = JSON.parse(user);
+      setUserName(parsed.name?.split(' ')[0] || 'there');
+    }
+
+    // Simulate loading
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingSkeleton />;
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Header with greeting */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-white flex items-center gap-2">
+            {greeting},{' '}
+            <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+              {userName}
+            </span>
+            <motion.span
+              initial={{ rotate: 0 }}
+              animate={{ rotate: [0, 14, -8, 14, -4, 10, 0] }}
+              transition={{ duration: 2.5, delay: 0.5 }}
+            >
+              👋
+            </motion.span>
+          </h1>
+          <p className="text-gray-500 mt-1">Here's your business at a glance</p>
+        </div>
+        
+        {/* Today's date */}
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <Clock size={14} />
+          <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
+        </div>
       </motion.div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-        {stats.map((s) => (
-          <motion.div key={s.label} variants={item}
-            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 hover:border-[#10b981]/20 transition-colors">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] uppercase tracking-wider text-[var(--color-muted)] font-medium">{s.label}</span>
-              <div className={`${s.bg} ${s.color} p-1.5 rounded-lg`}>
-                <s.icon size={16} strokeWidth={1.5} />
-              </div>
-            </div>
-            <div className="text-2xl font-bold text-white">
-              {s.prefix || ''}{s.value.toLocaleString()}
-            </div>
-          </motion.div>
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        {kpiData.map((data, index) => (
+          <KPICard key={data.title} data={data} index={index} />
         ))}
       </div>
 
-      {/* Recent Calls + Recent Outreach */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Recent Calls */}
-        <motion.div variants={item}
-          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Phone size={16} strokeWidth={1.5} className="text-[#10b981]" />
-              Recent Calls
-            </h2>
-            <Link href="/dashboard/calls" className="text-[11px] text-[#10b981] hover:underline flex items-center gap-1">
-              View all <ArrowRight size={11} />
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {recentCalls.length === 0 && (
-              <p className="text-xs text-[var(--color-muted)] py-6 text-center">No calls yet</p>
-            )}
-            {recentCalls.map((call, i) => {
-              const name = call.callerName || call.caller_name || call.from || 'Unknown';
-              const time = call.created_at || call.started_at || call.date || '';
-              const st = (call.status || 'completed').toLowerCase();
-              return (
-                <div key={call.id || call.call_id || i} className="flex items-start gap-3 p-2.5 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]">
-                  <Phone size={14} strokeWidth={1.5} className="text-[var(--color-muted)] mt-0.5 shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-white truncate">{name}</span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${statusColor[st] || 'bg-white/10 text-white/60'}`}>
-                        {st}
-                      </span>
-                    </div>
-                    {call.summary && (
-                      <p className="text-[11px] text-[var(--color-muted)] truncate mt-0.5">{call.summary}</p>
-                    )}
-                    {time && (
-                      <span className="text-[10px] text-[var(--color-muted)]">{timeAgo(time)}</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </motion.div>
-
-        {/* Recent Outreach */}
-        <motion.div variants={item}
-          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Mail size={16} strokeWidth={1.5} className="text-[#10b981]" />
-              Recent Outreach
-            </h2>
-            <Link href="/dashboard/outreach" className="text-[11px] text-[#10b981] hover:underline flex items-center gap-1">
-              View all <ArrowRight size={11} />
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {recentOutreach.length === 0 && (
-              <p className="text-xs text-[var(--color-muted)] py-6 text-center">No emails sent yet</p>
-            )}
-            {recentOutreach.map((email, i) => (
-              <div key={i} className="flex items-start gap-3 p-2.5 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]">
-                <Send size={14} strokeWidth={1.5} className="text-[var(--color-muted)] mt-0.5 shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-white truncate">{email.business}</span>
-                    <span className="text-[10px] text-[var(--color-muted)]">{email.date}</span>
-                  </div>
-                  <p className="text-[11px] text-[var(--color-muted)] truncate mt-0.5">{email.subject}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+      {/* Main content grid - Revenue Chart + Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <RevenueChart data={chartData} />
+        </div>
+        <div>
+          <ActivityFeed activities={activities} />
+        </div>
       </div>
 
-      {/* Tasks Due + Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Tasks Due */}
-        <motion.div variants={item}
-          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Clock size={16} strokeWidth={1.5} className="text-[#10b981]" />
-              Tasks Due
-            </h2>
-            <Link href="/dashboard/tasks" className="text-[11px] text-[#10b981] hover:underline flex items-center gap-1">
-              View all <ArrowRight size={11} />
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {dueTasks.length === 0 && (
-              <p className="text-xs text-[var(--color-muted)] py-6 text-center">Nothing due today</p>
-            )}
-            {dueTasks.slice(0, 5).map((task, i) => {
-              const p = (task.priority || 'medium').toLowerCase();
-              const overdue = task.dueDate && task.dueDate < today;
-              return (
-                <div key={task.id || i} className="flex items-center gap-3 p-2.5 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]">
-                  {overdue ? (
-                    <AlertCircle size={14} strokeWidth={1.5} className="text-red-400 shrink-0" />
-                  ) : (
-                    <CheckSquare size={14} strokeWidth={1.5} className="text-[var(--color-muted)] shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <span className="text-xs font-medium text-white truncate block">{task.title || 'Untitled'}</span>
-                    {task.dueDate && (
-                      <span className={`text-[10px] ${overdue ? 'text-red-400' : 'text-[var(--color-muted)]'}`}>
-                        {overdue ? 'Overdue' : 'Due'}: {task.dueDate}
-                      </span>
-                    )}
-                  </div>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${priorityColor[p] || 'bg-white/10 text-white/60'}`}>
-                    {p}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </motion.div>
-
-        {/* Quick Actions */}
-        <motion.div variants={item}
-          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4">
-          <h2 className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
-            <Plus size={16} strokeWidth={1.5} className="text-[#10b981]" />
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: 'Log a Call', href: '/dashboard/calls', icon: Phone },
-              { label: 'Add Lead', href: '/dashboard/leads', icon: Zap },
-              { label: 'Create Task', href: '/dashboard/tasks', icon: CheckSquare },
-              { label: 'New Proposal', href: '/dashboard/proposals', icon: FileText },
-            ].map(a => (
-              <Link key={a.label} href={a.href}
-                className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[#10b981]/40 hover:bg-[#10b981]/5 transition-all">
-                <a.icon size={16} strokeWidth={1.5} className="text-[#10b981]" />
-                <span className="text-xs text-[var(--color-muted)] font-medium">{a.label}</span>
-              </Link>
-            ))}
-          </div>
-        </motion.div>
+      {/* Bottom grid - Projects + Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <ProjectsCard projects={projects} />
+        </div>
+        <div>
+          <QuickActions />
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

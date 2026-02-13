@@ -1,46 +1,74 @@
+'use client';
+
 import Link from 'next/link';
-import { Phone, Mail } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Phone, Mail, MapPin, Github, Twitter, Linkedin, ArrowUpRight } from 'lucide-react';
 
 const quickLinks = [
   { href: '/', label: 'Home' },
-  { href: '/services', label: 'Services' },
-  { href: '/portfolio', label: 'Portfolio' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/about', label: 'About' },
-  { href: '/audit', label: 'Free Website Audit' },
+  { href: '/#services', label: 'Services' },
+  { href: '/#portfolio', label: 'Portfolio' },
+  { href: '/#pricing', label: 'Pricing' },
+  { href: '/#contact', label: 'Contact' },
 ];
 
 const serviceLinks = [
-  { href: '/services/web-design-nj', label: 'Web Design & Development' },
-  { href: '/services/web-design-tampa', label: 'Custom Web Apps' },
-  { href: '/services/web-design-orlando', label: 'E-Commerce Solutions' },
-  { href: '/services/small-business-websites', label: 'Startup Packages' },
+  { href: '/#services', label: 'Custom Websites' },
+  { href: '/#services', label: 'Web Applications' },
+  { href: '/#services', label: 'E-Commerce' },
+  { href: '/#services', label: 'Business Automation' },
+  { href: '/#services', label: 'Enterprise Solutions' },
 ];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[var(--color-border)] bg-[#0a0a0a]">
-      <div className="max-w-6xl mx-auto px-6 md:px-12 lg:px-24 py-12 md:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8">
+    <footer className="relative border-t border-white/10 bg-[#050505]">
+      {/* Gradient accent */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+      
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-16 md:py-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8">
           {/* Brand */}
-          <div>
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <span className="w-8 h-8 rounded-lg bg-[var(--color-accent)] flex items-center justify-center text-black font-bold text-lg">V</span>
-              <span className="text-lg font-bold text-white">Vantix</span>
+          <div className="lg:col-span-1">
+            <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-black font-bold text-xl group-hover:scale-110 transition-transform">
+                V
+              </div>
+              <span className="text-xl font-bold text-white">Vantix</span>
             </Link>
-            <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+            <p className="text-sm text-white/60 leading-relaxed mb-6">
               Full-service digital agency. Websites, apps, automation, and systems for businesses worldwide.
             </p>
+            <div className="flex items-center gap-4">
+              {[
+                { icon: Twitter, href: '#' },
+                { icon: Linkedin, href: '#' },
+                { icon: Github, href: '#' },
+              ].map(({ icon: Icon, href }, i) => (
+                <motion.a
+                  key={i}
+                  href={href}
+                  whileHover={{ y: -3 }}
+                  className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-emerald-400 hover:border-emerald-500/30 transition-colors"
+                >
+                  <Icon size={18} />
+                </motion.a>
+              ))}
+            </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Quick Links</h4>
-            <ul className="space-y-2">
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-6">Navigate</h4>
+            <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors">
+                  <Link 
+                    href={link.href} 
+                    className="group inline-flex items-center gap-2 text-sm text-white/60 hover:text-emerald-400 transition-colors"
+                  >
                     {link.label}
+                    <ArrowUpRight size={12} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
                   </Link>
                 </li>
               ))}
@@ -49,12 +77,16 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Services</h4>
-            <ul className="space-y-2">
-              {serviceLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors">
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-6">Services</h4>
+            <ul className="space-y-3">
+              {serviceLinks.map((link, i) => (
+                <li key={i}>
+                  <Link 
+                    href={link.href} 
+                    className="group inline-flex items-center gap-2 text-sm text-white/60 hover:text-emerald-400 transition-colors"
+                  >
                     {link.label}
+                    <ArrowUpRight size={12} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
                   </Link>
                 </li>
               ))}
@@ -63,19 +95,37 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Contact</h4>
-            <ul className="space-y-3">
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-6">Get in Touch</h4>
+            <ul className="space-y-4">
               <li>
-                <a href="tel:9084987753" className="flex items-center gap-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors">
-                  <Phone size={16} className="text-[var(--color-accent)]" />
+                <a 
+                  href="tel:+19084987753" 
+                  className="flex items-center gap-3 text-sm text-white/60 hover:text-emerald-400 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                    <Phone size={16} className="text-emerald-400" />
+                  </div>
                   (908) 498-7753
                 </a>
               </li>
               <li>
-                <a href="mailto:usevantix@gmail.com" className="flex items-center gap-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors">
-                  <Mail size={16} className="text-[var(--color-accent)]" />
-                  usevantix@gmail.com
+                <a 
+                  href="mailto:hello@vantix.dev" 
+                  className="flex items-center gap-3 text-sm text-white/60 hover:text-emerald-400 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                    <Mail size={16} className="text-emerald-400" />
+                  </div>
+                  hello@vantix.dev
                 </a>
+              </li>
+              <li>
+                <div className="flex items-center gap-3 text-sm text-white/60">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                    <MapPin size={16} className="text-emerald-400" />
+                  </div>
+                  Remote — Worldwide
+                </div>
               </li>
             </ul>
           </div>
@@ -83,10 +133,16 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-[var(--color-border)] py-6">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 lg:px-24 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-[var(--color-muted)]">© {new Date().getFullYear()} Vantix LLC. All rights reserved.</p>
-          <Link href="/dashboard" className="text-xs text-[var(--color-muted)] hover:text-white transition-colors">Team</Link>
+      <div className="border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-white/40">
+            © {new Date().getFullYear()} Vantix LLC. All rights reserved.
+          </p>
+          <div className="flex items-center gap-6 text-xs text-white/40">
+            <Link href="/privacy" className="hover:text-white/60 transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white/60 transition-colors">Terms</Link>
+            <Link href="/dashboard" className="hover:text-white/60 transition-colors">Team</Link>
+          </div>
         </div>
       </div>
     </footer>
