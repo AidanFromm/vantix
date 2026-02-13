@@ -476,3 +476,107 @@ body {
   height: 20px;
   stroke-width: 1.2;
 }
+
+/* ========================================
+   MOBILE OPTIMIZATIONS
+   ======================================== */
+
+/* Ensure text is readable on mobile */
+@media (max-width: 640px) {
+  html {
+    font-size: 15px;
+  }
+  
+  /* Ensure minimum tap target sizes */
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent horizontal scroll */
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Better touch scrolling */
+  .overflow-auto,
+  .overflow-scroll,
+  .overflow-x-auto,
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Hide floating decorative elements on small screens */
+@media (max-width: 480px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+/* Touch-friendly carousel */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+
+.touch-scroll > * {
+  scroll-snap-align: center;
+}
+
+/* Improve button tap states on mobile */
+@media (hover: none) {
+  button:active,
+  a:active,
+  [role="button"]:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .animate-float-slow,
+  .animate-float-medium,
+  .animate-float-fast,
+  .animate-float-gentle,
+  .animate-aurora,
+  .animate-shimmer,
+  .animate-gradient,
+  .animate-glow-pulse,
+  .animate-pulse-glow {
+    animation: none !important;
+  }
+}
+
+/* Fix iOS button styling */
+input,
+button,
+select,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Ensure proper viewport behavior */
+@supports (padding: max(0px)) {
+  .safe-padding-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-padding-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+}

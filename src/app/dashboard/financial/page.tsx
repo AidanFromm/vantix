@@ -36,37 +36,24 @@ interface RevenueData {
   Expenses: number;
 }
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
+// ─── Real Vantix Financial Data ───────────────────────────────────────────────
 
 const mockRevenueData: RevenueData[] = [
-  { month: 'Sep', Revenue: 18500, Expenses: 4200 },
-  { month: 'Oct', Revenue: 24800, Expenses: 5100 },
-  { month: 'Nov', Revenue: 21200, Expenses: 4800 },
-  { month: 'Dec', Revenue: 32500, Expenses: 6200 },
-  { month: 'Jan', Revenue: 28900, Expenses: 5500 },
-  { month: 'Feb', Revenue: 35200, Expenses: 6800 },
+  { month: 'Sep', Revenue: 0, Expenses: 0 },
+  { month: 'Oct', Revenue: 0, Expenses: 0 },
+  { month: 'Nov', Revenue: 0, Expenses: 50 },
+  { month: 'Dec', Revenue: 0, Expenses: 50 },
+  { month: 'Jan', Revenue: 0, Expenses: 50 },
+  { month: 'Feb', Revenue: 2000, Expenses: 50 },
 ];
 
 const mockInvoices: Invoice[] = [
-  { id: 'INV-001', client: 'Acme Corp', amount: 12500, dueDate: '2026-02-28', status: 'sent', createdAt: '2026-02-01' },
-  { id: 'INV-002', client: 'TechStart Inc', amount: 8750, dueDate: '2026-02-15', status: 'overdue', createdAt: '2026-01-20' },
-  { id: 'INV-003', client: 'Global Solutions', amount: 15000, dueDate: '2026-03-10', status: 'draft', createdAt: '2026-02-10' },
-  { id: 'INV-004', client: 'Secured Tampa', amount: 4500, dueDate: '2026-02-05', status: 'paid', createdAt: '2026-01-25' },
-  { id: 'INV-005', client: 'Metro Dental', amount: 6200, dueDate: '2026-02-20', status: 'sent', createdAt: '2026-02-05' },
-  { id: 'INV-006', client: 'Local Bakery Co', amount: 3800, dueDate: '2026-02-12', status: 'paid', createdAt: '2026-01-28' },
-  { id: 'INV-007', client: 'Summit Financial', amount: 22000, dueDate: '2026-03-01', status: 'sent', createdAt: '2026-02-08' },
-  { id: 'INV-008', client: 'Harbor View Hotel', amount: 9500, dueDate: '2026-02-18', status: 'overdue', createdAt: '2026-01-15' },
+  { id: 'INV-001', client: 'Secured Tampa (Dave)', amount: 2000, dueDate: '2025-02-01', status: 'paid', createdAt: '2025-01-15' },
+  { id: 'INV-002', client: 'Secured Tampa (Dave)', amount: 2500, dueDate: '2025-02-28', status: 'sent', createdAt: '2025-02-10' }, // $2,500 remaining + 3% rev share
 ];
 
 const mockExpenses: Expense[] = [
-  { id: 'EXP-001', description: 'DigitalOcean Hosting', amount: 48, category: 'Infrastructure', date: '2026-02-01', vendor: 'DigitalOcean' },
-  { id: 'EXP-002', description: 'Vercel Pro', amount: 20, category: 'Software', date: '2026-02-01', vendor: 'Vercel' },
-  { id: 'EXP-003', description: 'Figma Team', amount: 45, category: 'Software', date: '2026-02-01', vendor: 'Figma' },
-  { id: 'EXP-004', description: 'Domain Renewals', amount: 85, category: 'Infrastructure', date: '2026-02-05', vendor: 'Cloudflare' },
-  { id: 'EXP-005', description: 'Claude API', amount: 120, category: 'AI Services', date: '2026-02-08', vendor: 'Anthropic' },
-  { id: 'EXP-006', description: 'Office Supplies', amount: 65, category: 'Operations', date: '2026-02-10', vendor: 'Amazon' },
-  { id: 'EXP-007', description: 'Zoom Business', amount: 25, category: 'Software', date: '2026-02-01', vendor: 'Zoom' },
-  { id: 'EXP-008', description: 'Google Workspace', amount: 18, category: 'Software', date: '2026-02-01', vendor: 'Google' },
+  { id: 'EXP-001', description: 'Hosting & Tools', amount: 50, category: 'Infrastructure', date: '2025-02-01', vendor: 'Various' },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -393,18 +380,30 @@ export default function FinancialPage() {
             ))}
           </div>
         </div>
-        <AreaChart
-          className="h-72"
-          data={revenueData}
-          index="month"
-          categories={['Revenue', 'Expenses']}
-          colors={['emerald', 'amber']}
-          valueFormatter={(value) => formatCurrency(value)}
-          showLegend={true}
-          showGridLines={true}
-          showAnimation={true}
-          curveType="monotone"
-        />
+        {revenueData.length === 0 ? (
+          <div className="h-72 flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
+              <TrendingUp size={32} className="text-emerald-400" />
+            </div>
+            <p className="text-white font-medium mb-1">No revenue data yet</p>
+            <p className="text-[var(--color-muted)] text-sm text-center max-w-xs">
+              Start adding invoices and expenses to see your revenue trends
+            </p>
+          </div>
+        ) : (
+          <AreaChart
+            className="h-72"
+            data={revenueData}
+            index="month"
+            categories={['Revenue', 'Expenses']}
+            colors={['emerald', 'amber']}
+            valueFormatter={(value) => formatCurrency(value)}
+            showLegend={true}
+            showGridLines={true}
+            showAnimation={true}
+            curveType="monotone"
+          />
+        )}
       </motion.div>
 
       {/* Quick Actions */}
@@ -486,8 +485,14 @@ export default function FinancialPage() {
             <tbody>
               {filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-12 text-[var(--color-muted)]">
-                    No invoices match this filter
+                  <td colSpan={5} className="text-center py-12">
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-3">
+                        <FileText size={24} className="text-emerald-400" />
+                      </div>
+                      <p className="text-white font-medium mb-1">No invoices yet</p>
+                      <p className="text-[var(--color-muted)] text-sm">Create your first invoice to start tracking payments</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -556,30 +561,40 @@ export default function FinancialPage() {
             </span>
           </div>
           <div className="divide-y divide-[var(--color-border)] max-h-80 overflow-y-auto">
-            {expenses.map((expense, idx) => (
-              <motion.div
-                key={expense.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.7 + idx * 0.03 }}
-                className="px-5 py-4 hover:bg-white/[0.02] transition-colors flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className="w-3 h-3 rounded-full shrink-0"
-                    style={{ backgroundColor: CATEGORY_COLORS[expense.category] || '#6b7280' }}
-                  />
-                  <div className="min-w-0">
-                    <p className="font-medium text-sm text-white truncate">{expense.description}</p>
-                    <p className="text-xs text-[var(--color-muted)]">{expense.category} • {expense.vendor}</p>
+            {expenses.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-3">
+                  <Receipt size={24} className="text-amber-400" />
+                </div>
+                <p className="text-white font-medium mb-1">No expenses logged</p>
+                <p className="text-[var(--color-muted)] text-sm text-center">Start tracking your business expenses</p>
+              </div>
+            ) : (
+              expenses.map((expense, idx) => (
+                <motion.div
+                  key={expense.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.7 + idx * 0.03 }}
+                  className="px-5 py-4 hover:bg-white/[0.02] transition-colors flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className="w-3 h-3 rounded-full shrink-0"
+                      style={{ backgroundColor: CATEGORY_COLORS[expense.category] || '#6b7280' }}
+                    />
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm text-white truncate">{expense.description}</p>
+                      <p className="text-xs text-[var(--color-muted)]">{expense.category} • {expense.vendor}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="font-semibold text-amber-400">-{formatCurrency(expense.amount)}</p>
-                  <p className="text-xs text-[var(--color-muted)]">{new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="text-right shrink-0">
+                    <p className="font-semibold text-amber-400">-{formatCurrency(expense.amount)}</p>
+                    <p className="text-xs text-[var(--color-muted)]">{new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                  </div>
+                </motion.div>
+              ))
+            )}
           </div>
         </motion.div>
 
@@ -595,39 +610,51 @@ export default function FinancialPage() {
             Expense Breakdown
           </h2>
           <div className="flex flex-col items-center gap-6">
-            {/* Donut Chart */}
-            <DonutChart
-              className="h-48"
-              data={expenseBreakdown}
-              category="amount"
-              index="name"
-              colors={['emerald', 'blue', 'violet', 'amber', 'pink', 'gray']}
-              valueFormatter={(value) => formatCurrency(value)}
-              showAnimation={true}
-            />
-            {/* Legend */}
-            <div className="w-full space-y-3">
-              {expenseBreakdown.map((category) => {
-                const percentage = ((category.amount / totalMonthlyExpenses) * 100).toFixed(1);
-                return (
-                  <div key={category.name} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: category.color }} />
-                      <span className="text-sm text-[var(--color-muted)]">{category.name}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden hidden sm:block">
-                        <div
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{ width: `${percentage}%`, backgroundColor: category.color }}
-                        />
+            {expenseBreakdown.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8">
+                <div className="w-16 h-16 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4">
+                  <PieChart size={32} className="text-amber-400" />
+                </div>
+                <p className="text-white font-medium mb-1">No expense data</p>
+                <p className="text-[var(--color-muted)] text-sm text-center">Log expenses to see category breakdown</p>
+              </div>
+            ) : (
+              <>
+                {/* Donut Chart */}
+                <DonutChart
+                  className="h-48"
+                  data={expenseBreakdown}
+                  category="amount"
+                  index="name"
+                  colors={['emerald', 'blue', 'violet', 'amber', 'pink', 'gray']}
+                  valueFormatter={(value) => formatCurrency(value)}
+                  showAnimation={true}
+                />
+                {/* Legend */}
+                <div className="w-full space-y-3">
+                  {expenseBreakdown.map((category) => {
+                    const percentage = ((category.amount / totalMonthlyExpenses) * 100).toFixed(1);
+                    return (
+                      <div key={category.name} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: category.color }} />
+                          <span className="text-sm text-[var(--color-muted)]">{category.name}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden hidden sm:block">
+                            <div
+                              className="h-full rounded-full transition-all duration-500"
+                              style={{ width: `${percentage}%`, backgroundColor: category.color }}
+                            />
+                          </div>
+                          <span className="text-sm font-medium w-16 text-right">{formatCurrency(category.amount)}</span>
+                        </div>
                       </div>
-                      <span className="text-sm font-medium w-16 text-right">{formatCurrency(category.amount)}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         </motion.div>
       </div>

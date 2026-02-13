@@ -52,7 +52,7 @@ const PROJECTS: Project[] = [
     fullDescription: 'Enterprise-grade B2B platform featuring admin dashboard, customer portal, staff management, FedEx integration, tiered pricing system, and real-time inventory management.',
     tech: ['React', 'TypeScript', 'Supabase', 'Vercel', 'FedEx API'],
     stats: [
-      { label: 'Revenue Processed', value: '$5.82M', icon: <DollarSign size={16} /> },
+      { label: 'Orders Processed', value: '35K+', icon: <DollarSign size={16} /> },
       { label: 'Active SKUs', value: '2,500+', icon: <Package size={16} /> },
       { label: 'B2B Customers', value: '150+', icon: <Users size={16} /> },
     ],
@@ -169,7 +169,7 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
           
           {/* Top gradient section - Device mockup area */}
           <div className={cn(
-            'relative h-56 md:h-64 overflow-hidden',
+            'relative h-44 sm:h-52 md:h-64 overflow-hidden',
             'bg-gradient-to-br',
             project.gradient
           )}>
@@ -192,7 +192,7 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
                     rotateY: isHovered ? 5 : 0,
                   }}
                   transition={{ duration: 0.4 }}
-                  className="relative w-64 md:w-80"
+                  className="relative w-52 sm:w-64 md:w-80"
                   style={{ transformStyle: 'preserve-3d' }}
                 >
                   {/* Browser chrome */}
@@ -210,7 +210,7 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
                   </div>
                   
                   {/* Browser content - Screenshot placeholder */}
-                  <div className="bg-gradient-to-br from-gray-900 to-gray-800 h-40 md:h-48 rounded-b-xl overflow-hidden relative">
+                  <div className="bg-gradient-to-br from-gray-900 to-gray-800 h-28 sm:h-36 md:h-48 rounded-b-xl overflow-hidden relative">
                     {/* Placeholder content representing the site */}
                     <div className="absolute inset-0 p-4">
                       <div className="h-3 w-24 bg-white/20 rounded mb-3" />
@@ -241,9 +241,9 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
             {/* Type badge */}
             <motion.div
               style={{ translateZ: '60px' }}
-              className="absolute top-5 left-5"
+              className="absolute top-3 left-3 sm:top-5 sm:left-5"
             >
-              <span className="px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-xl text-xs font-semibold text-white border border-white/20">
+              <span className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-black/40 backdrop-blur-xl text-[10px] sm:text-xs font-semibold text-white border border-white/20">
                 {project.type}
               </span>
             </motion.div>
@@ -274,27 +274,27 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
           {/* Content section */}
           <motion.div
             style={{ translateZ: '30px' }}
-            className="p-6 md:p-8"
+            className="p-4 sm:p-6 md:p-8"
           >
             {/* Title row */}
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
               <div>
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors duration-300">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors duration-300">
                   {project.title}
                 </h3>
                 {project.subtitle && (
-                  <span className="text-white/40 text-sm font-medium">{project.subtitle}</span>
+                  <span className="text-white/40 text-xs sm:text-sm font-medium">{project.subtitle}</span>
                 )}
               </div>
             </div>
 
             {/* Description */}
-            <p className="text-white/60 leading-relaxed mb-6 line-clamp-2 group-hover:text-white/70 transition-colors">
+            <p className="text-sm sm:text-base text-white/60 leading-relaxed mb-4 sm:mb-6 line-clamp-2 group-hover:text-white/70 transition-colors">
               {project.fullDescription}
             </p>
 
             {/* Stats grid */}
-            <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
               {project.stats.map((stat, i) => (
                 <motion.div
                   key={i}
@@ -303,17 +303,17 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.15 + i * 0.1 + 0.3 }}
                   className={cn(
-                    'relative p-3 rounded-xl overflow-hidden',
+                    'relative p-2 sm:p-3 rounded-lg sm:rounded-xl overflow-hidden',
                     'bg-gradient-to-br from-white/[0.06] to-white/[0.02]',
                     'border border-white/[0.06]'
                   )}
                 >
-                  <div className="flex items-center gap-1.5 text-white/40 text-xs mb-1">
-                    {stat.icon}
-                    <span>{stat.label}</span>
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-white/40 text-[10px] sm:text-xs mb-0.5 sm:mb-1">
+                    <span className="hidden sm:inline-flex">{stat.icon}</span>
+                    <span className="truncate">{stat.label}</span>
                   </div>
                   <p className={cn(
-                    'text-lg font-bold',
+                    'text-sm sm:text-base md:text-lg font-bold',
                     project.accentColor === 'emerald' && 'text-emerald-400',
                     project.accentColor === 'violet' && 'text-violet-400',
                     project.accentColor === 'amber' && 'text-amber-400',
@@ -325,7 +325,7 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
             </div>
 
             {/* Tech stack */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {project.tech.map((tech, i) => (
                 <motion.span
                   key={i}
@@ -334,7 +334,7 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.15 + i * 0.05 + 0.5 }}
                   className={cn(
-                    'px-3 py-1.5 text-xs font-medium rounded-lg',
+                    'px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium rounded-md sm:rounded-lg',
                     'bg-white/[0.04] text-white/70',
                     'border border-white/[0.06]',
                     'hover:bg-white/[0.08] hover:border-white/[0.12]',
@@ -352,8 +352,8 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                'inline-flex items-center gap-2 mt-6',
-                'text-sm font-semibold',
+                'inline-flex items-center gap-1.5 sm:gap-2 mt-4 sm:mt-6',
+                'text-xs sm:text-sm font-semibold',
                 project.accentColor === 'emerald' && 'text-emerald-400 hover:text-emerald-300',
                 project.accentColor === 'violet' && 'text-violet-400 hover:text-violet-300',
                 project.accentColor === 'amber' && 'text-amber-400 hover:text-amber-300',
@@ -361,7 +361,7 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
               )}
             >
               View Project
-              <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
             </motion.a>
           </motion.div>
 
@@ -405,25 +405,25 @@ function FeaturedProjectCard({ project }: { project: Project }) {
         isHovered && 'border-emerald-500/30 shadow-[0_20px_60px_rgba(16,185,129,0.15)]'
       )}>
         {/* Featured badge */}
-        <div className="absolute top-6 left-6 z-20">
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
           <motion.span 
             initial={{ opacity: 0, x: -20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.3 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-xl"
+            className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-xl"
           >
-            <span className="relative flex h-2 w-2">
+            <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-emerald-500"></span>
             </span>
-            <span className="text-emerald-400 text-sm font-semibold">Featured Project</span>
+            <span className="text-emerald-400 text-xs sm:text-sm font-semibold">Featured Project</span>
           </motion.span>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-0">
           {/* Image/Preview side */}
           <div className={cn(
-            'relative h-80 lg:h-auto min-h-[400px] overflow-hidden',
+            'relative h-56 sm:h-72 lg:h-auto min-h-[220px] sm:min-h-[300px] lg:min-h-[400px] overflow-hidden',
             'bg-gradient-to-br',
             project.gradient
           )}>
@@ -511,12 +511,12 @@ function FeaturedProjectCard({ project }: { project: Project }) {
           </div>
 
           {/* Content side */}
-          <div className="p-8 md:p-10 lg:p-12 flex flex-col justify-center">
+          <div className="p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12 flex flex-col justify-center">
             <motion.span 
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2 }}
-              className="text-emerald-400 text-sm font-semibold uppercase tracking-wider mb-3"
+              className="text-emerald-400 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-2 sm:mb-3"
             >
               {project.type}
             </motion.span>
@@ -525,7 +525,7 @@ function FeaturedProjectCard({ project }: { project: Project }) {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.3 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-1 sm:mb-2"
             >
               {project.title}
             </motion.h3>
@@ -535,7 +535,7 @@ function FeaturedProjectCard({ project }: { project: Project }) {
                 initial={{ opacity: 0 }}
                 animate={isInView ? { opacity: 1 } : {}}
                 transition={{ delay: 0.35 }}
-                className="text-white/40 text-lg mb-4"
+                className="text-white/40 text-base sm:text-lg mb-3 sm:mb-4"
               >
                 {project.subtitle}
               </motion.span>
@@ -545,7 +545,7 @@ function FeaturedProjectCard({ project }: { project: Project }) {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.4 }}
-              className="text-white/60 text-lg leading-relaxed mb-8"
+              className="text-sm sm:text-base md:text-lg text-white/60 leading-relaxed mb-5 sm:mb-6 md:mb-8"
             >
               {project.fullDescription}
             </motion.p>
@@ -555,22 +555,22 @@ function FeaturedProjectCard({ project }: { project: Project }) {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.5 }}
-              className="grid grid-cols-3 gap-4 mb-8"
+              className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-5 sm:mb-6 md:mb-8"
             >
               {project.stats.map((stat, i) => (
                 <div 
                   key={i} 
                   className={cn(
-                    'p-4 rounded-xl',
+                    'p-2.5 sm:p-3 md:p-4 rounded-lg sm:rounded-xl',
                     'bg-gradient-to-br from-white/[0.06] to-transparent',
                     'border border-white/[0.06]'
                   )}
                 >
-                  <div className="flex items-center gap-1.5 text-emerald-400/60 text-xs mb-1">
-                    {stat.icon}
-                    <span className="text-white/40">{stat.label}</span>
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-emerald-400/60 text-[10px] sm:text-xs mb-0.5 sm:mb-1">
+                    <span className="hidden sm:inline-flex">{stat.icon}</span>
+                    <span className="text-white/40 truncate">{stat.label}</span>
                   </div>
-                  <p className="text-2xl font-bold text-emerald-400">
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-emerald-400">
                     {stat.value}
                   </p>
                 </div>
@@ -582,12 +582,12 @@ function FeaturedProjectCard({ project }: { project: Project }) {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.6 }}
-              className="flex flex-wrap gap-2 mb-8"
+              className="flex flex-wrap gap-1.5 sm:gap-2 mb-5 sm:mb-6 md:mb-8"
             >
               {project.tech.map((tech, i) => (
                 <span
                   key={i}
-                  className="px-4 py-2 text-sm rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                  className="px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                 >
                   {tech}
                 </span>
@@ -602,11 +602,11 @@ function FeaturedProjectCard({ project }: { project: Project }) {
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 text-emerald-400 font-semibold text-lg group/cta"
+              className="inline-flex items-center gap-2 sm:gap-3 text-emerald-400 font-semibold text-sm sm:text-base md:text-lg group/cta"
             >
               <span>View Live Project</span>
-              <span className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 group-hover/cta:bg-emerald-500/20 group-hover/cta:border-emerald-500/40 transition-all">
-                <ArrowUpRight className="w-5 h-5 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5 transition-transform" />
+              <span className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 group-hover/cta:bg-emerald-500/20 group-hover/cta:border-emerald-500/40 transition-all">
+                <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5 transition-transform" />
               </span>
             </motion.a>
           </div>
@@ -638,7 +638,7 @@ export function PortfolioSection() {
     <section 
       ref={sectionRef}
       id="portfolio" 
-      className="relative py-32 px-6 md:px-12 lg:px-24 overflow-hidden"
+      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-24 overflow-hidden"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-[#050505]" />
@@ -675,17 +675,17 @@ export function PortfolioSection() {
 
       <div className="relative max-w-7xl mx-auto">
         {/* Section header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 sm:gap-6 mb-10 sm:mb-16">
           <div>
             <FadeInUp>
-              <span className="inline-flex items-center gap-2 text-emerald-400 text-sm font-semibold tracking-widest uppercase mb-4">
-                <span className="w-8 h-px bg-emerald-400" />
+              <span className="inline-flex items-center gap-2 text-emerald-400 text-xs sm:text-sm font-semibold tracking-widest uppercase mb-3 sm:mb-4">
+                <span className="w-6 sm:w-8 h-px bg-emerald-400" />
                 Our Work
               </span>
             </FadeInUp>
             
             <FadeInUp delay={0.1}>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
                 Real projects.
                 <br />
                 <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
@@ -695,14 +695,14 @@ export function PortfolioSection() {
             </FadeInUp>
             
             <FadeInUp delay={0.2}>
-              <p className="text-xl text-white/50 mt-4 max-w-xl">
+              <p className="text-base sm:text-lg md:text-xl text-white/50 mt-3 sm:mt-4 max-w-xl">
                 From concept to launch — here's what we've built for businesses like yours.
               </p>
             </FadeInUp>
           </div>
           
-          <FadeInUp delay={0.3}>
-            <MagneticArrowButton href="#contact">
+          <FadeInUp delay={0.3} className="mt-2 sm:mt-0">
+            <MagneticArrowButton href="#contact" className="w-full sm:w-auto justify-center sm:justify-start">
               Start your project
             </MagneticArrowButton>
           </FadeInUp>
@@ -728,11 +728,11 @@ export function PortfolioSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5 }}
-          className="mt-20 p-8 rounded-2xl bg-gradient-to-r from-white/[0.04] to-white/[0.02] border border-white/[0.06]"
+          className="mt-12 sm:mt-16 md:mt-20 p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-r from-white/[0.04] to-white/[0.02] border border-white/[0.06]"
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 text-center">
             {[
-              { value: '$6M+', label: 'Revenue Generated' },
+              { value: '50K+', label: 'Orders Processed' },
               { value: '50K+', label: 'Users Served' },
               { value: '99.9%', label: 'Uptime' },
               { value: '3', label: 'Live Products' },
@@ -744,10 +744,10 @@ export function PortfolioSection() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.6 + i * 0.1 }}
               >
-                <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
                   {stat.value}
                 </p>
-                <p className="text-white/40 text-sm mt-1">{stat.label}</p>
+                <p className="text-white/40 text-xs sm:text-sm mt-0.5 sm:mt-1">{stat.label}</p>
               </motion.div>
             ))}
           </div>

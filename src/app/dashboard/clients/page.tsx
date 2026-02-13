@@ -106,94 +106,16 @@ const STORAGE_KEY = 'vantix_clients_v2';
 function loadClients(): Client[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch { /* ignore */ }
-  return generateSampleClients();
+  return []; // Start empty - no sample data
 }
 
 function saveClients(clients: Client[]) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(clients)); } catch { /* ignore */ }
-}
-
-function generateSampleClients(): Client[] {
-  const companies = [
-    { name: 'Apex Digital Solutions', industry: 'Technology', tags: ['Enterprise', 'Long-term'] },
-    { name: 'Mountain View Landscaping', industry: 'Home Services', tags: ['SMB', 'Local'] },
-    { name: 'Summit Legal Partners', industry: 'Legal', tags: ['Professional', 'Retainer'] },
-    { name: 'Coastal Coffee Roasters', industry: 'Food & Beverage', tags: ['E-commerce', 'Startup'] },
-    { name: 'Precision Auto Group', industry: 'Automotive', tags: ['Multi-location', 'SEO'] },
-    { name: 'Valley Medical Associates', industry: 'Healthcare', tags: ['HIPAA', 'Enterprise'] },
-    { name: 'Granite Construction Co', industry: 'Construction', tags: ['B2B', 'Lead Gen'] },
-    { name: 'Bright Future Academy', industry: 'Education', tags: ['Non-profit', 'Local'] },
-    { name: 'Pacific Realty Group', industry: 'Real Estate', tags: ['IDX', 'Premium'] },
-    { name: 'Evergreen Wellness Spa', industry: 'Health & Beauty', tags: ['Boutique', 'Social'] },
-  ];
-
-  const statuses: Array<'active' | 'inactive' | 'lead'> = ['active', 'active', 'active', 'inactive', 'lead'];
-  
-  return companies.map((c, i) => {
-    const status = statuses[i % statuses.length];
-    const monthlyValue = status === 'lead' ? 0 : Math.floor(Math.random() * 8000) + 2000;
-    const projectCount = status === 'lead' ? 0 : Math.floor(Math.random() * 3) + 1;
-    
-    return {
-      id: uid(),
-      company: c.name,
-      website: `https://${c.name.toLowerCase().replace(/\s+/g, '')}.com`,
-      industry: c.industry,
-      address: `${Math.floor(Math.random() * 9000) + 1000} Main St, Denver, CO`,
-      status,
-      monthlyValue,
-      totalRevenue: monthlyValue * (Math.floor(Math.random() * 18) + 6),
-      tags: c.tags,
-      contacts: [
-        {
-          id: uid(),
-          name: ['John Smith', 'Sarah Johnson', 'Mike Davis', 'Emily Chen', 'David Wilson'][i % 5],
-          email: `contact@${c.name.toLowerCase().replace(/\s+/g, '')}.com`,
-          phone: `(303) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`,
-          role: ['CEO', 'Marketing Director', 'Owner', 'Operations Manager', 'VP of Sales'][i % 5],
-          isPrimary: true,
-        },
-      ],
-      notes: [],
-      files: [],
-      activities: [
-        {
-          id: uid(),
-          type: 'email',
-          description: 'Sent monthly report',
-          date: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-          user: 'You',
-        },
-        {
-          id: uid(),
-          type: 'meeting',
-          description: 'Strategy call',
-          date: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(),
-          user: 'You',
-        },
-      ],
-      projects: Array.from({ length: projectCount }, (_, j) => ({
-        id: uid(),
-        name: ['Website Redesign', 'SEO Campaign', 'Brand Identity', 'Social Media Management'][j % 4],
-        status: ['active', 'completed', 'active'][j % 3] as 'active' | 'completed',
-        progress: Math.floor(Math.random() * 100),
-        value: Math.floor(Math.random() * 15000) + 5000,
-      })),
-      invoices: status === 'lead' ? [] : [
-        {
-          id: uid(),
-          number: `INV-${2024}${String(i + 1).padStart(3, '0')}`,
-          amount: monthlyValue,
-          status: ['paid', 'paid', 'sent', 'overdue'][Math.floor(Math.random() * 4)] as 'paid' | 'sent' | 'overdue',
-          dueDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
-        },
-      ],
-      createdAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
-      lastActivityAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-    };
-  });
 }
 
 const statusConfig = {

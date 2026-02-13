@@ -93,12 +93,33 @@ function getDaysInStage(stageEnteredAt: string) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
+function generateRealLeads(): Lead[] {
+  return [
+    {
+      id: generateId(),
+      name: '601 Owner',
+      company: '601',
+      email: '',
+      phone: '',
+      website: '',
+      value: 2000,
+      source: 'cold',
+      status: 'proposal',
+      createdAt: new Date().toISOString().split('T')[0],
+      stageEnteredAt: new Date().toISOString().split('T')[0],
+      notes: 'HOT LEAD - Shopify upgrade project. Trying to close $2,000 deal.',
+      city: '',
+      state: '',
+    },
+  ];
+}
+
 function loadLeads(): Lead[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch { /* ignore */ }
-  return SAMPLE_LEADS;
+  return generateRealLeads(); // Start with real Vantix leads
 }
 
 function saveLeads(leads: Lead[]) {
@@ -123,60 +144,72 @@ function LeadCard({ lead, onSelect, onDragStart, onDragEnd, isDragging }: LeadCa
     <motion.div
       layout
       layoutId={lead.id}
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ 
-        opacity: isDragging ? 0.8 : 1, 
-        scale: isDragging ? 1.05 : 1,
+        opacity: isDragging ? 0.9 : 1, 
+        scale: isDragging ? 1.02 : 1,
         boxShadow: isDragging 
-          ? '0 25px 50px -12px rgba(16, 185, 129, 0.25)' 
-          : '0 0 0 0 transparent'
+          ? '0 20px 40px -12px rgba(16, 185, 129, 0.3)' 
+          : '0 2px 8px -2px rgba(0, 0, 0, 0.2)'
       }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-      onClick={onSelect}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={`
-        group cursor-pointer
-        relative overflow-hidden rounded-xl
-        bg-gradient-to-br from-white/[0.08] to-white/[0.02]
-        backdrop-blur-xl border border-white/[0.08]
-        hover:border-emerald-500/30 hover:from-white/[0.12] hover:to-white/[0.05]
-        transition-all duration-300 ease-out
-        ${isDragging ? 'z-50 border-emerald-500/50' : ''}
+        group cursor-pointer select-none
+        relative rounded-xl
+        bg-gradient-to-br from-white/[0.08] to-white/[0.03]
+        backdrop-blur-xl border border-white/[0.1]
+        hover:border-emerald-500/40 hover:from-white/[0.12] hover:to-white/[0.06]
+        transition-all duration-200 ease-out
+        w-full box-border
+        ${isDragging ? 'z-50 border-emerald-500/60 ring-2 ring-emerald-500/20' : ''}
       `}
     >
       {/* Glassmorphism shine effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       
-      <div className="relative p-4">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-white text-sm truncate group-hover:text-emerald-300 transition-colors">
+      {/* Card Content Container */}
+      <div className="relative p-3.5">
+        {/* Drag Handle + Header Row */}
+        <div className="flex items-start gap-2 mb-2.5">
+          {/* Drag Handle */}
+          <div 
+            className="flex-shrink-0 mt-0.5 p-1 -ml-1 rounded-md cursor-grab active:cursor-grabbing hover:bg-white/10 transition-colors"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <GripVertical size={14} className="text-[var(--color-muted)] opacity-50 group-hover:opacity-100 transition-opacity" />
+          </div>
+          
+          {/* Name & Company */}
+          <div className="flex-1 min-w-0 overflow-hidden" onClick={onSelect}>
+            <h3 className="font-semibold text-white text-sm leading-tight truncate group-hover:text-emerald-300 transition-colors">
               {lead.name}
             </h3>
-            <p className="text-xs text-[var(--color-muted)] truncate flex items-center gap-1 mt-0.5">
-              <Building2 size={11} />
-              {lead.company}
+            <p className="text-xs text-[var(--color-muted)] truncate flex items-center gap-1 mt-1">
+              <Building2 size={11} className="flex-shrink-0" />
+              <span className="truncate">{lead.company}</span>
             </p>
           </div>
-          <span className={`shrink-0 text-[10px] px-2 py-0.5 rounded-full font-medium ${sourceBadge.bg} ${sourceBadge.color}`}>
+          
+          {/* Source Badge */}
+          <span className={`flex-shrink-0 text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap ${sourceBadge.bg} ${sourceBadge.color}`}>
             {sourceBadge.label}
           </span>
         </div>
 
-        {/* Value */}
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex items-center gap-1.5 text-emerald-400">
-            <DollarSign size={14} />
+        {/* Value Row */}
+        <div className="flex items-center gap-2 mb-2.5 pl-6" onClick={onSelect}>
+          <div className="flex items-center gap-1 text-emerald-400">
+            <DollarSign size={14} className="flex-shrink-0" />
             <span className="font-bold text-sm">{formatCurrency(lead.value)}</span>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between">
+        {/* Footer Row */}
+        <div className="flex items-center justify-between pl-6" onClick={onSelect}>
           <div className="flex items-center gap-1.5 text-[10px] text-[var(--color-muted)]">
-            <Clock size={11} />
-            <span>{daysInStage} day{daysInStage !== 1 ? 's' : ''} in stage</span>
+            <Clock size={10} className="flex-shrink-0" />
+            <span className="whitespace-nowrap">{daysInStage}d in stage</span>
           </div>
           
           {/* Quick actions */}
@@ -185,23 +218,25 @@ function LeadCard({ lead, onSelect, onDragStart, onDragEnd, isDragging }: LeadCa
               <button 
                 onClick={(e) => { e.stopPropagation(); window.open(`mailto:${lead.email}`); }}
                 className="w-6 h-6 rounded-md bg-white/5 hover:bg-emerald-500/20 flex items-center justify-center transition-colors"
+                title="Send email"
               >
-                <Mail size={11} className="text-[var(--color-muted)] group-hover:text-emerald-400" />
+                <Mail size={11} className="text-[var(--color-muted)] hover:text-emerald-400" />
               </button>
             )}
             {lead.phone && (
               <button 
                 onClick={(e) => { e.stopPropagation(); window.open(`tel:${lead.phone}`); }}
                 className="w-6 h-6 rounded-md bg-white/5 hover:bg-blue-500/20 flex items-center justify-center transition-colors"
+                title="Call"
               >
-                <Phone size={11} className="text-[var(--color-muted)] group-hover:text-blue-400" />
+                <Phone size={11} className="text-[var(--color-muted)] hover:text-blue-400" />
               </button>
             )}
           </div>
         </div>
 
         {/* Days indicator bar */}
-        <div className="mt-3 h-1 rounded-full bg-white/5 overflow-hidden">
+        <div className="mt-2.5 ml-6 h-1 rounded-full bg-white/5 overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${Math.min(daysInStage * 10, 100)}%` }}
@@ -233,31 +268,28 @@ function KanbanColumn({ status, leads, onSelectLead, onDropLead, draggingLead }:
   const totalValue = leads.reduce((sum, l) => sum + l.value, 0);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col min-w-[280px] w-[280px] lg:min-w-0 lg:w-auto lg:flex-1"
-    >
+    <div className="flex flex-col min-w-[260px] w-[260px] flex-shrink-0 lg:min-w-0 lg:w-auto lg:flex-1 h-full">
       {/* Column Header */}
       <div className={`
-        p-3 rounded-t-2xl border border-b-0 
-        bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-sm
-        border-white/[0.08] ${isDragOver ? 'border-emerald-500/50' : ''}
+        px-3 py-3 rounded-t-xl border border-b-0 
+        bg-gradient-to-br from-white/[0.08] to-white/[0.03] backdrop-blur-sm
+        transition-all duration-200
+        ${isDragOver ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-white/[0.1]'}
       `}>
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${status.bgColor.replace('/10', '')}`} />
-            <h3 className={`font-semibold text-sm ${status.color}`}>{status.label}</h3>
-            <span className="text-xs px-1.5 py-0.5 rounded-md bg-white/5 text-[var(--color-muted)]">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.bgColor.replace('/10', '')}`} />
+            <h3 className={`font-semibold text-sm truncate ${status.color}`}>{status.label}</h3>
+            <span className="flex-shrink-0 text-xs px-1.5 py-0.5 rounded-md bg-white/10 text-[var(--color-muted)] font-medium">
               {leads.length}
             </span>
           </div>
-          <button className="w-6 h-6 rounded-md hover:bg-white/10 flex items-center justify-center transition-colors">
+          <button className="flex-shrink-0 w-6 h-6 rounded-md hover:bg-white/10 flex items-center justify-center transition-colors">
             <MoreHorizontal size={14} className="text-[var(--color-muted)]" />
           </button>
         </div>
-        <div className="text-xs text-[var(--color-muted)]">
-          Total: <span className="text-emerald-400 font-medium">{formatCurrency(totalValue)}</span>
+        <div className="text-xs text-[var(--color-muted)] pl-4">
+          Total: <span className="text-emerald-400 font-semibold">{formatCurrency(totalValue)}</span>
         </div>
       </div>
 
@@ -272,13 +304,13 @@ function KanbanColumn({ status, leads, onSelectLead, onDropLead, draggingLead }:
           if (leadId) onDropLead(leadId, status.id);
         }}
         className={`
-          flex-1 p-2 rounded-b-2xl border border-t-0 min-h-[400px]
+          flex-1 p-2.5 rounded-b-xl border border-t-0 min-h-[420px] max-h-[calc(100vh-360px)] overflow-y-auto
           bg-gradient-to-b from-transparent to-white/[0.02]
-          border-white/[0.08] transition-all duration-200
-          ${isDragOver ? 'bg-emerald-500/5 border-emerald-500/30' : ''}
+          transition-all duration-200 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent
+          ${isDragOver ? 'bg-emerald-500/5 border-emerald-500/40 shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]' : 'border-white/[0.1]'}
         `}
       >
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2.5">
           <AnimatePresence mode="popLayout">
             {leads.map((lead) => (
               <div
@@ -286,7 +318,9 @@ function KanbanColumn({ status, leads, onSelectLead, onDropLead, draggingLead }:
                 draggable
                 onDragStart={(e) => {
                   e.dataTransfer.setData('leadId', lead.id);
+                  e.dataTransfer.effectAllowed = 'move';
                 }}
+                className="touch-none"
               >
                 <LeadCard
                   lead={lead}
@@ -303,20 +337,20 @@ function KanbanColumn({ status, leads, onSelectLead, onDropLead, draggingLead }:
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="py-8 text-center"
+              className="py-10 text-center"
             >
-              <div className={`w-12 h-12 mx-auto mb-3 rounded-xl ${status.bgColor} flex items-center justify-center`}>
-                {status.id === 'won' ? <Trophy size={20} className={status.color} /> :
-                 status.id === 'lost' ? <XCircle size={20} className={status.color} /> :
-                 <Users size={20} className={status.color} />}
+              <div className={`w-11 h-11 mx-auto mb-3 rounded-xl ${status.bgColor} flex items-center justify-center`}>
+                {status.id === 'won' ? <Trophy size={18} className={status.color} /> :
+                 status.id === 'lost' ? <XCircle size={18} className={status.color} /> :
+                 <Users size={18} className={status.color} />}
               </div>
-              <p className="text-xs text-[var(--color-muted)]">No leads here</p>
+              <p className="text-xs text-[var(--color-muted)] font-medium">No leads here</p>
               <p className="text-[10px] text-[var(--color-muted)] opacity-60 mt-1">Drag cards to move</p>
             </motion.div>
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -918,13 +952,13 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats - Real Vantix Lead Data */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: 'Total Leads', value: leads.length.toString(), icon: Users, accent: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Active', value: activeLeads.toString(), icon: Zap, accent: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-          { label: 'Pipeline Value', value: formatCurrency(totalValue), icon: DollarSign, accent: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'Won Revenue', value: formatCurrency(wonValue), icon: Trophy, accent: 'text-purple-400', bg: 'bg-purple-500/10' },
+          { label: 'Leads Scraped', value: '3,327', icon: Users, accent: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'Email Verified', value: '866', icon: Zap, accent: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+          { label: 'Cold Emails Sent', value: '100', icon: Mail, accent: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: 'Pipeline Value', value: formatCurrency(totalValue), icon: DollarSign, accent: 'text-purple-400', bg: 'bg-purple-500/10' },
         ].map((stat) => {
           const Icon = stat.icon;
           return (
@@ -1055,21 +1089,55 @@ export default function LeadsPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
           >
-            {/* Kanban Board */}
-            <div className="overflow-x-auto pb-4 -mx-4 px-4 lg:mx-0 lg:px-0">
-              <div className="flex gap-3 lg:grid lg:grid-cols-6">
-                {STATUSES.map((status) => (
-                  <KanbanColumn
-                    key={status.id}
-                    status={status}
-                    leads={leadsByStatus[status.id]}
-                    onSelectLead={setSelectedLead}
-                    onDropLead={handleDropLead}
-                    draggingLead={draggingLead}
-                  />
-                ))}
+            {/* Empty State or Kanban Board */}
+            {leads.length === 0 && !search && filterSource === 'all' && filterValue === 'all' ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-6">
+                  <Target size={40} className="text-emerald-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">No leads yet</h3>
+                <p className="text-[var(--color-muted)] max-w-md mb-6">
+                  Start building your sales pipeline by adding leads manually or using the email scraper to find potential clients.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleAddLead}
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors font-medium"
+                  >
+                    <Plus size={18} />
+                    Add Your First Lead
+                  </button>
+                  <button
+                    onClick={() => setActiveView('scraper')}
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 text-[var(--color-muted)] border border-white/10 hover:text-white hover:bg-white/10 transition-colors font-medium"
+                  >
+                    <Mail size={18} />
+                    Try Email Scraper
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="overflow-x-auto pb-4 -mx-4 px-4 lg:mx-0 lg:px-0 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                <div className="flex gap-4 lg:grid lg:grid-cols-6 lg:gap-3 min-w-max lg:min-w-0">
+                  {STATUSES.map((status, index) => (
+                    <motion.div
+                      key={status.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <KanbanColumn
+                        status={status}
+                        leads={leadsByStatus[status.id]}
+                        onSelectLead={setSelectedLead}
+                        onDropLead={handleDropLead}
+                        draggingLead={draggingLead}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
           </motion.div>
         ) : (
           <motion.div

@@ -327,59 +327,71 @@ function RevenueChart({ data }: { data: { month: string; revenue: number; expens
         </div>
 
         <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="expensesGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis 
-                dataKey="month" 
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: '#6b7280', fontSize: 12 }}
-                dy={10}
-              />
-              <YAxis 
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: '#6b7280', fontSize: 12 }}
-                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                dx={-10}
-              />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(0,0,0,0.9)', 
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '12px',
-                  padding: '12px',
-                }}
-                labelStyle={{ color: '#fff', fontWeight: 600, marginBottom: '8px' }}
-                itemStyle={{ color: '#9ca3af', fontSize: '12px' }}
-                formatter={(value) => [`$${Number(value).toLocaleString()}`, '']}
-              />
-              <Area
-                type="monotone"
-                dataKey="expenses"
-                stroke="#8b5cf6"
-                strokeWidth={2}
-                fill="url(#expensesGradient)"
-              />
-              <Area
-                type="monotone"
-                dataKey="revenue"
-                stroke="#10b981"
-                strokeWidth={2}
-                fill="url(#revenueGradient)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          {data.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <div className="p-4 rounded-xl bg-emerald-500/10 mb-4">
+                <BarChart3 size={32} className="text-emerald-400" />
+              </div>
+              <p className="text-sm text-white mb-2">No financial data yet</p>
+              <p className="text-xs text-gray-500 max-w-xs">
+                Start adding invoices and expenses to see your revenue trends here
+              </p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="expensesGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis 
+                  dataKey="month" 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#6b7280', fontSize: 12 }}
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#6b7280', fontSize: 12 }}
+                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                  dx={-10}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(0,0,0,0.9)', 
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
+                    padding: '12px',
+                  }}
+                  labelStyle={{ color: '#fff', fontWeight: 600, marginBottom: '8px' }}
+                  itemStyle={{ color: '#9ca3af', fontSize: '12px' }}
+                  formatter={(value) => [`$${Number(value).toLocaleString()}`, '']}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="expenses"
+                  stroke="#8b5cf6"
+                  strokeWidth={2}
+                  fill="url(#expensesGradient)"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  fill="url(#revenueGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
     </motion.div>
@@ -425,38 +437,48 @@ function ActivityFeed({ activities }: { activities: Activity[] }) {
       </div>
 
       <div className="p-4 space-y-1 max-h-[320px] overflow-y-auto">
-        <AnimatePresence>
-          {activities.map((activity, index) => {
-            const Icon = activity.icon;
-            return (
-              <motion.div
-                key={activity.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 + index * 0.08 }}
-                className="group flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all cursor-pointer"
-              >
-                <div 
-                  className="p-2 rounded-lg transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: `${activity.color}15` }}
+        {activities.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <div className="p-3 rounded-xl bg-blue-500/10 mb-3">
+              <Sparkles size={24} className="text-blue-400" />
+            </div>
+            <p className="text-sm text-white mb-1">No activity yet</p>
+            <p className="text-xs text-gray-500">Activity will appear here as you work</p>
+          </div>
+        ) : (
+          <AnimatePresence>
+            {activities.map((activity, index) => {
+              const Icon = activity.icon;
+              return (
+                <motion.div
+                  key={activity.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + index * 0.08 }}
+                  className="group flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all cursor-pointer"
                 >
-                  <Icon size={14} style={{ color: activity.color }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white truncate group-hover:text-emerald-400 transition-colors">
-                    {activity.title}
-                  </p>
-                  {activity.amount && (
-                    <p className="text-xs text-emerald-400 font-medium">{activity.amount}</p>
-                  )}
-                </div>
-                <span className="text-xs text-gray-500 shrink-0">
-                  {getRelativeTime(activity.timestamp)}
-                </span>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+                  <div 
+                    className="p-2 rounded-lg transition-transform group-hover:scale-110"
+                    style={{ backgroundColor: `${activity.color}15` }}
+                  >
+                    <Icon size={14} style={{ color: activity.color }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-white truncate group-hover:text-emerald-400 transition-colors">
+                      {activity.title}
+                    </p>
+                    {activity.amount && (
+                      <p className="text-xs text-emerald-400 font-medium">{activity.amount}</p>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-500 shrink-0">
+                    {getRelativeTime(activity.timestamp)}
+                  </span>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        )}
       </div>
     </motion.div>
   );
@@ -495,40 +517,50 @@ function ProjectsCard({ projects }: { projects: Project[] }) {
       </div>
 
       <div className="p-4 space-y-3">
-        {projects.map((project, index) => {
-          const colors = getStatusColor(project.status);
-          return (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.7 + index * 0.1 }}
-              className="group p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 transition-all cursor-pointer"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${colors.dot}`} />
-                  <span className="text-sm font-medium text-white group-hover:text-emerald-400 transition-colors">
-                    {project.name}
-                  </span>
+        {projects.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <div className="p-3 rounded-xl bg-orange-500/10 mb-3">
+              <Briefcase size={24} className="text-orange-400" />
+            </div>
+            <p className="text-sm text-white mb-1">No active projects</p>
+            <p className="text-xs text-gray-500">Create your first project to get started</p>
+          </div>
+        ) : (
+          projects.map((project, index) => {
+            const colors = getStatusColor(project.status);
+            return (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.7 + index * 0.1 }}
+                className="group p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 transition-all cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${colors.dot}`} />
+                    <span className="text-sm font-medium text-white group-hover:text-emerald-400 transition-colors">
+                      {project.name}
+                    </span>
+                  </div>
+                  <span className="text-sm font-semibold text-white">{project.progress}%</span>
                 </div>
-                <span className="text-sm font-semibold text-white">{project.progress}%</span>
-              </div>
-              
-              {/* Progress bar */}
-              <div className="relative h-2 bg-white/5 rounded-full overflow-hidden">
-                <motion.div
-                  className={`absolute inset-y-0 left-0 rounded-full ${colors.bar}`}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${project.progress}%` }}
-                  transition={{ duration: 1, delay: 0.8 + index * 0.1, ease: 'easeOut' }}
-                />
-              </div>
-              
-              <p className="text-xs text-gray-500 mt-2">{project.client}</p>
-            </motion.div>
-          );
-        })}
+                
+                {/* Progress bar */}
+                <div className="relative h-2 bg-white/5 rounded-full overflow-hidden">
+                  <motion.div
+                    className={`absolute inset-y-0 left-0 rounded-full ${colors.bar}`}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${project.progress}%` }}
+                    transition={{ duration: 1, delay: 0.8 + index * 0.1, ease: 'easeOut' }}
+                  />
+                </div>
+                
+                <p className="text-xs text-gray-500 mt-2">{project.client}</p>
+              </motion.div>
+            );
+          })
+        )}
       </div>
     </motion.div>
   );
@@ -604,111 +636,110 @@ export default function DashboardPage() {
   const [greeting, setGreeting] = useState('');
   const [userName, setUserName] = useState('');
 
-  // Sample KPI data
+  // Real Vantix KPI data
   const kpiData: KPIData[] = useMemo(() => [
     {
       title: 'Revenue',
-      value: 45200,
+      value: 2000,
       prefix: '$',
-      trend: 12.5,
-      trendLabel: 'vs last month',
-      sparkline: [28000, 32000, 35000, 38000, 41000, 45200],
+      trend: 100,
+      trendLabel: 'first payment!',
+      sparkline: [0, 0, 0, 0, 0, 2000],
       icon: DollarSign,
       color: '#10b981',
     },
     {
-      title: 'Expenses',
-      value: 12300,
+      title: 'Outstanding',
+      value: 2500,
       prefix: '$',
-      trend: -3.2,
-      trendLabel: 'vs last month',
-      sparkline: [14000, 13500, 13000, 12800, 12500, 12300],
+      trend: 0,
+      trendLabel: 'Dave + 3% rev share',
+      sparkline: [0, 0, 500, 500, 2500, 2500],
       icon: TrendingDown,
-      color: '#ef4444',
+      color: '#f59e0b',
     },
     {
-      title: 'Profit',
-      value: 32900,
+      title: 'Net Profit',
+      value: 1950,
       prefix: '$',
-      trend: 18.7,
-      trendLabel: 'vs last month',
-      sparkline: [18000, 22000, 25000, 28000, 30000, 32900],
+      trend: 100,
+      trendLabel: '~$50/mo expenses',
+      sparkline: [0, 0, 0, 0, 0, 1950],
       icon: TrendingUp,
       color: '#8b5cf6',
     },
     {
       title: 'Active',
-      value: 5,
+      value: 3,
       suffix: ' projects',
-      trend: 25,
-      trendLabel: '2 clients',
-      sparkline: [2, 3, 3, 4, 4, 5],
+      trend: 200,
+      trendLabel: '3 clients',
+      sparkline: [1, 1, 2, 2, 3, 3],
       icon: Briefcase,
       color: '#3b82f6',
     },
   ], []);
 
-  // Revenue chart data
+  // Real Vantix revenue chart data
   const chartData = useMemo(() => [
-    { month: 'Aug', revenue: 28000, expenses: 8500 },
-    { month: 'Sep', revenue: 32000, expenses: 9200 },
-    { month: 'Oct', revenue: 35000, expenses: 10100 },
-    { month: 'Nov', revenue: 38000, expenses: 11000 },
-    { month: 'Dec', revenue: 41000, expenses: 11800 },
-    { month: 'Jan', revenue: 45200, expenses: 12300 },
+    { month: 'Sep', revenue: 0, expenses: 0 },
+    { month: 'Oct', revenue: 0, expenses: 0 },
+    { month: 'Nov', revenue: 0, expenses: 50 },
+    { month: 'Dec', revenue: 0, expenses: 50 },
+    { month: 'Jan', revenue: 0, expenses: 50 },
+    { month: 'Feb', revenue: 2000, expenses: 50 },
   ], []);
 
-  // Activity data
+  // Real Vantix activity data
   const activities: Activity[] = useMemo(() => [
     { 
       id: '1', 
       type: 'payment', 
-      title: 'Invoice paid', 
-      amount: '$2,400',
-      timestamp: new Date(Date.now() - 1000 * 60 * 5),
+      title: 'Dave App - Invoice paid', 
+      amount: '$2,000',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
       icon: CheckCircle2,
       color: '#10b981',
     },
     { 
       id: '2', 
       type: 'project', 
-      title: 'New project started', 
-      timestamp: new Date(Date.now() - 1000 * 60 * 30),
+      title: 'Dave App moved to Review (90%)', 
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
       icon: Briefcase,
       color: '#3b82f6',
     },
     { 
       id: '3', 
       type: 'lead', 
-      title: 'Lead converted', 
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
+      title: '866 leads email-verified', 
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5),
       icon: Users,
       color: '#8b5cf6',
     },
     { 
       id: '4', 
       type: 'bot', 
-      title: 'Bot completed task', 
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5),
+      title: 'Cold outreach: 100 emails sent', 
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
       icon: Zap,
       color: '#f59e0b',
     },
     { 
       id: '5', 
-      type: 'payment', 
-      title: 'Payment received', 
-      amount: '$5,800',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 8),
-      icon: DollarSign,
+      type: 'client', 
+      title: 'J4K partnership started', 
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14),
+      icon: Users,
       color: '#10b981',
     },
   ], []);
 
-  // Projects data
+  // Real Vantix projects data
   const projects: Project[] = useMemo(() => [
-    { id: '1', name: 'Dave App', progress: 90, status: 'on-track', client: 'Dave Martinez' },
-    { id: '2', name: 'CardLedger', progress: 65, status: 'at-risk', client: 'Kyle Johnson' },
-    { id: '3', name: 'J4K Update', progress: 30, status: 'behind', client: 'J4K Sneakers' },
+    { id: '1', name: 'Dave App ($4.5k + 3% rev share)', progress: 90, status: 'on-track', client: 'Secured Tampa (Dave)' },
+    { id: '2', name: 'CardLedger V2', progress: 65, status: 'at-risk', client: 'Internal Project' },
+    { id: '3', name: 'J4K Platform', progress: 100, status: 'on-track', client: 'Just Four Kicks' },
   ], []);
 
   useEffect(() => {

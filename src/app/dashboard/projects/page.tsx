@@ -114,186 +114,81 @@ const healthConfig: Record<HealthStatus, { icon: string; color: string; label: s
   'critical': { icon: '🔴', color: 'text-red-400', label: 'Critical' },
 }
 
-// Mock data
+// Real Vantix Projects
 const initialProjects: Project[] = [
   {
     id: '1',
-    name: 'E-commerce Platform',
-    client: 'TechStart Inc',
-    status: 'ACTIVE',
-    health: 'healthy',
-    progress: 65,
-    budgetSpent: 32500,
-    budgetTotal: 50000,
-    deadline: new Date('2026-03-15'),
-    assignee: 'botskii',
-    description: 'Full-stack e-commerce platform with AI-powered recommendations and inventory management.',
-    tasks: [
-      { id: 't1', title: 'Setup authentication', completed: true, assignee: 'botskii' },
-      { id: 't2', title: 'Build product catalog', completed: true, assignee: 'botskii' },
-      { id: 't3', title: 'Implement cart system', completed: false, assignee: 'botskii' },
-      { id: 't4', title: 'Payment integration', completed: false, assignee: 'aidan' },
-    ],
-    activities: [
-      { id: 'a1', type: 'task_complete', content: 'Completed: Build product catalog', timestamp: new Date('2026-02-12'), actor: 'Botskii' },
-      { id: 'a2', type: 'comment', content: 'Cart system is 80% done', timestamp: new Date('2026-02-11'), actor: 'Botskii' },
-    ],
-    files: [
-      { id: 'f1', name: 'requirements.pdf', type: 'pdf', size: '2.4 MB', uploadedAt: new Date('2026-01-15') },
-      { id: 'f2', name: 'wireframes.fig', type: 'figma', size: '12 MB', uploadedAt: new Date('2026-01-20') },
-    ],
-    notes: 'Client prefers minimalist design. Weekly sync every Tuesday.',
-    createdAt: new Date('2026-01-10'),
-  },
-  {
-    id: '2',
-    name: 'AI Customer Support',
-    client: 'ServicePro',
-    status: 'ACTIVE',
-    health: 'warning',
-    progress: 45,
-    budgetSpent: 18000,
-    budgetTotal: 35000,
-    deadline: new Date('2026-02-28'),
-    assignee: 'vantix-bot',
-    description: 'Automated customer support system with natural language processing and ticket routing.',
-    tasks: [
-      { id: 't5', title: 'NLP model training', completed: true, assignee: 'vantix-bot' },
-      { id: 't6', title: 'Ticket classification', completed: false, assignee: 'vantix-bot' },
-      { id: 't7', title: 'Dashboard UI', completed: false, assignee: 'kyle' },
-    ],
-    activities: [
-      { id: 'a3', type: 'status_change', content: 'Status changed to Active', timestamp: new Date('2026-02-10'), actor: 'Vantix Bot' },
-    ],
-    files: [],
-    notes: 'Integration with Zendesk required.',
-    createdAt: new Date('2026-01-25'),
-  },
-  {
-    id: '3',
-    name: 'Mobile Banking App',
-    client: 'FinanceFirst',
-    status: 'PROPOSAL',
-    health: 'healthy',
-    progress: 15,
-    budgetSpent: 5000,
-    budgetTotal: 80000,
-    deadline: new Date('2026-06-01'),
-    assignee: 'together',
-    description: 'Secure mobile banking application with biometric authentication and real-time transactions.',
-    tasks: [
-      { id: 't8', title: 'Security audit', completed: false, assignee: 'aidan' },
-      { id: 't9', title: 'UI/UX Design', completed: true, assignee: 'kyle' },
-    ],
-    activities: [],
-    files: [],
-    notes: 'High security requirements. PCI DSS compliance needed.',
-    createdAt: new Date('2026-02-01'),
-  },
-  {
-    id: '4',
-    name: 'Restaurant POS',
-    client: 'FoodChain Co',
-    status: 'LEAD',
-    health: 'healthy',
-    progress: 5,
-    budgetSpent: 0,
-    budgetTotal: 25000,
-    deadline: new Date('2026-04-15'),
-    assignee: 'aidan',
-    description: 'Point of sale system for restaurant chain with inventory tracking.',
-    tasks: [],
-    activities: [],
-    files: [],
-    notes: 'Initial meeting scheduled for next week.',
-    createdAt: new Date('2026-02-10'),
-  },
-  {
-    id: '5',
-    name: 'Healthcare Portal',
-    client: 'MedTech Solutions',
+    name: 'Dave App',
+    client: 'Secured Tampa (Dave)',
     status: 'REVIEW',
     health: 'healthy',
     progress: 90,
-    budgetSpent: 42000,
-    budgetTotal: 45000,
-    deadline: new Date('2026-02-20'),
-    assignee: 'botskii',
-    description: 'Patient portal with appointment scheduling and medical records access.',
+    budgetSpent: 4000,
+    budgetTotal: 4500,
+    deadline: new Date('2026-02-28'),
+    assignee: 'together',
+    description: 'E-commerce/retail application for Secured Tampa. Almost complete, in final review stage.',
     tasks: [
-      { id: 't10', title: 'HIPAA compliance check', completed: true, assignee: 'aidan' },
-      { id: 't11', title: 'Final testing', completed: false, assignee: 'botskii' },
+      { id: 't1', title: 'Core app development', completed: true, assignee: 'together' },
+      { id: 't2', title: 'UI/UX implementation', completed: true, assignee: 'together' },
+      { id: 't3', title: 'Backend integration', completed: true, assignee: 'botskii' },
+      { id: 't4', title: 'Final review & testing', completed: false, assignee: 'together' },
     ],
     activities: [
-      { id: 'a4', type: 'status_change', content: 'Moved to Review', timestamp: new Date('2026-02-12'), actor: 'Botskii' },
+      { id: 'a1', type: 'status_change', content: 'Moved to Review - 90% complete', timestamp: new Date('2026-02-10'), actor: 'Together' },
+      { id: 'a2', type: 'task_complete', content: 'Backend integration completed', timestamp: new Date('2026-02-08'), actor: 'Botskii' },
     ],
     files: [],
-    notes: 'Client very happy with progress!',
-    createdAt: new Date('2025-11-15'),
+    notes: 'Dave has paid $2,000. $500 outstanding. Almost done!',
+    createdAt: new Date('2025-01-01'),
   },
   {
-    id: '6',
-    name: 'Inventory System',
-    client: 'Warehouse Plus',
-    status: 'COMPLETE',
+    id: '2',
+    name: 'CardLedger V2',
+    client: 'CardLedger (Internal)',
+    status: 'ACTIVE',
+    health: 'warning',
+    progress: 65,
+    budgetSpent: 0,
+    budgetTotal: 0,
+    deadline: new Date('2026-04-01'),
+    assignee: 'botskii',
+    description: 'Internal fintech project - sports card portfolio and collectibles tracking platform. Version 2 development.',
+    tasks: [
+      { id: 't5', title: 'V2 architecture planning', completed: true, assignee: 'botskii' },
+      { id: 't6', title: 'Database redesign', completed: true, assignee: 'botskii' },
+      { id: 't7', title: 'New dashboard UI', completed: false, assignee: 'botskii' },
+      { id: 't8', title: 'API improvements', completed: false, assignee: 'botskii' },
+    ],
+    activities: [
+      { id: 'a3', type: 'comment', content: 'V2 development ongoing - needs attention', timestamp: new Date('2026-02-11'), actor: 'Botskii' },
+    ],
+    files: [],
+    notes: 'Internal project. Website: usecardledger.com',
+    createdAt: new Date('2024-12-01'),
+  },
+  {
+    id: '3',
+    name: 'J4K Platform Maintenance',
+    client: 'Just Four Kicks (Kyle)',
+    status: 'ACTIVE',
     health: 'healthy',
     progress: 100,
-    budgetSpent: 28000,
-    budgetTotal: 30000,
-    deadline: new Date('2026-02-01'),
-    assignee: 'kyle',
-    description: 'Warehouse inventory management with barcode scanning.',
-    tasks: [
-      { id: 't12', title: 'All tasks completed', completed: true },
-    ],
-    activities: [
-      { id: 'a5', type: 'status_change', content: 'Project completed!', timestamp: new Date('2026-02-01'), actor: 'Kyle' },
-    ],
-    files: [],
-    notes: 'Successfully delivered on time!',
-    createdAt: new Date('2025-10-01'),
-  },
-  {
-    id: '7',
-    name: 'Social Media Dashboard',
-    client: 'BrandBoost',
-    status: 'ACTIVE',
-    health: 'critical',
-    progress: 30,
-    budgetSpent: 22000,
-    budgetTotal: 40000,
-    deadline: new Date('2026-02-18'),
-    assignee: 'vantix-bot',
-    description: 'Analytics dashboard for social media management across platforms.',
-    tasks: [
-      { id: 't13', title: 'API integrations', completed: true, assignee: 'vantix-bot' },
-      { id: 't14', title: 'Analytics engine', completed: false, assignee: 'vantix-bot' },
-      { id: 't15', title: 'Report generation', completed: false, assignee: 'botskii' },
-    ],
-    activities: [
-      { id: 'a6', type: 'comment', content: 'Behind schedule - need to expedite', timestamp: new Date('2026-02-12'), actor: 'Vantix Bot' },
-    ],
-    files: [],
-    notes: 'URGENT: Deadline approaching fast!',
-    createdAt: new Date('2026-01-05'),
-  },
-  {
-    id: '8',
-    name: 'HR Management System',
-    client: 'PeopleFirst HR',
-    status: 'LEAD',
-    health: 'healthy',
-    progress: 0,
     budgetSpent: 0,
-    budgetTotal: 55000,
-    deadline: new Date('2026-07-01'),
-    assignee: 'together',
-    description: 'Complete HR management with payroll, leave tracking, and performance reviews.',
-    tasks: [],
-    activities: [],
+    budgetTotal: 0,
+    deadline: new Date('2026-12-31'),
+    assignee: 'vantix-bot',
+    description: 'Ongoing platform maintenance and support for J4K B2B wholesale sneaker business.',
+    tasks: [
+      { id: 't9', title: 'Platform monitoring', completed: true, assignee: 'vantix-bot' },
+      { id: 't10', title: 'Bug fixes as needed', completed: true, assignee: 'vantix-bot' },
+    ],
+    activities: [
+      { id: 'a4', type: 'status_change', content: 'Partnership started', timestamp: new Date('2026-01-15'), actor: 'Aidan' },
+    ],
     files: [],
-    notes: 'Awaiting contract signature.',
-    createdAt: new Date('2026-02-12'),
+    notes: 'Ongoing partnership with Kyle. Website: justfourkicks.store',
+    createdAt: new Date('2025-01-15'),
   },
 ]
 
@@ -948,7 +843,7 @@ function AddProjectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (proj
 
 // Main Page Component
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>(initialProjects)
+  const [projects, setProjects] = useState<Project[]>([])
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [filterAssignee, setFilterAssignee] = useState<Assignee | 'all'>('all')
@@ -1206,27 +1101,50 @@ export default function ProjectsPage() {
       </div>
 
       {/* Kanban Board */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {(['LEAD', 'PROPOSAL', 'ACTIVE', 'REVIEW', 'COMPLETE'] as ProjectStatus[]).map((status) => (
-            <KanbanColumn
-              key={status}
-              status={status}
-              projects={projectsByStatus[status]}
-              onProjectClick={setSelectedProject}
-            />
-          ))}
-        </div>
+      {filteredProjects.length === 0 && !searchQuery && filterAssignee === 'all' ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center justify-center py-20 text-center"
+        >
+          <div className="w-20 h-20 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6">
+            <Folder className="w-10 h-10 text-purple-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-white mb-2">No projects yet</h3>
+          <p className="text-slate-400 max-w-md mb-6">
+            Create your first project to start tracking work, managing tasks, and collaborating with your team.
+          </p>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium px-6 py-3 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/25"
+          >
+            <Plus className="w-5 h-5" />
+            Create Your First Project
+          </button>
+        </motion.div>
+      ) : (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {(['LEAD', 'PROPOSAL', 'ACTIVE', 'REVIEW', 'COMPLETE'] as ProjectStatus[]).map((status) => (
+              <KanbanColumn
+                key={status}
+                status={status}
+                projects={projectsByStatus[status]}
+                onProjectClick={setSelectedProject}
+              />
+            ))}
+          </div>
 
-        <DragOverlay>
-          {activeProject && <ProjectCard project={activeProject} />}
-        </DragOverlay>
-      </DndContext>
+          <DragOverlay>
+            {activeProject && <ProjectCard project={activeProject} />}
+          </DragOverlay>
+        </DndContext>
+      )}
 
       {/* Slide-over Panel */}
       <AnimatePresence>

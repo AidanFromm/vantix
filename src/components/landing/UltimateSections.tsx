@@ -80,17 +80,17 @@ export function HeroSection() {
       {/* Main content */}
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 max-w-6xl mx-auto px-6 text-center"
+        className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 text-center"
       >
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-8"
+          className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6 sm:mb-8"
         >
-          <Sparkles size={14} className="text-emerald-400" />
-          <span className="text-sm text-emerald-400 font-medium">Digital Solutions Worldwide</span>
+          <Sparkles size={14} className="text-emerald-400 flex-shrink-0" />
+          <span className="text-xs sm:text-sm text-emerald-400 font-medium">Digital Solutions Worldwide</span>
         </motion.div>
 
         {/* Headline */}
@@ -98,7 +98,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[1.1] mb-6"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] mb-4 sm:mb-6"
         >
           We Build Digital
           <br />
@@ -112,7 +112,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="text-lg md:text-xl lg:text-2xl text-white/60 max-w-3xl mx-auto mb-10"
+          className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/60 max-w-3xl mx-auto mb-8 sm:mb-10 px-2"
         >
           Websites, apps, automation, and systems for businesses worldwide.
           <br className="hidden md:block" />
@@ -124,18 +124,18 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0"
         >
           <MagneticButton
             href="#contact"
             glow
-            className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold"
+            className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold w-full sm:w-auto"
           >
             Start Your Project
             <ArrowRight className="ml-2 w-5 h-5 inline-block" />
           </MagneticButton>
           
-          <MagneticArrowButton href="#services">
+          <MagneticArrowButton href="#services" className="w-full sm:w-auto justify-center">
             See Our Work
           </MagneticArrowButton>
         </motion.div>
@@ -145,7 +145,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
-          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12"
+          className="mt-12 sm:mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-12"
         >
           {[
             { value: '500+', label: 'Projects Delivered' },
@@ -160,8 +160,8 @@ export function HeroSection() {
               transition={{ delay: 1 + i * 0.1 }}
               className="text-center"
             >
-              <p className="text-3xl md:text-4xl font-bold gradient-text">{stat.value}</p>
-              <p className="text-sm text-white/50 mt-1">{stat.label}</p>
+              <p className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">{stat.value}</p>
+              <p className="text-xs sm:text-sm text-white/50 mt-1">{stat.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -249,39 +249,39 @@ export function ServicesSection() {
   ];
 
   return (
-    <section id="services" className="relative py-32 px-6 md:px-12 lg:px-24">
+    <section id="services" className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-24">
       {/* Background */}
       <div className="absolute inset-0 bg-dot-pattern opacity-30" />
       
       <div className="relative max-w-7xl mx-auto">
         {/* Header */}
         <FadeInUp>
-          <span className="text-emerald-400 text-sm font-semibold tracking-widest uppercase">
+          <span className="text-emerald-400 text-xs sm:text-sm font-semibold tracking-widest uppercase">
             What We Build
           </span>
         </FadeInUp>
         <FadeInUp delay={0.1}>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mt-4 mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mt-3 sm:mt-4 mb-4 sm:mb-6">
             Everything you need to
             <br />
             <span className="gradient-text">dominate digitally.</span>
           </h2>
         </FadeInUp>
         <FadeInUp delay={0.2}>
-          <p className="text-xl text-white/60 max-w-2xl mb-16">
+          <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mb-10 sm:mb-16">
             From idea to launch and beyond. We build it all — beautifully.
           </p>
         </FadeInUp>
 
         {/* Bento Grid */}
-        <StaggerContainer stagger={0.05} className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-5">
+        <StaggerContainer stagger={0.05} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
           {services.map((service, i) => (
             <StaggerItem key={i} className={cn('group', service.span)}>
               <motion.div
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 className={cn(
-                  'relative h-full p-6 md:p-8 rounded-2xl overflow-hidden cursor-pointer',
+                  'relative h-full p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer',
                   'bg-gradient-to-br from-white/5 to-white/[0.02]',
                   'border border-white/10 hover:border-emerald-500/30',
                   'transition-colors duration-300'
@@ -298,13 +298,13 @@ export function ServicesSection() {
 
                 {/* Content */}
                 <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-5 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300">
                     {service.icon}
                   </div>
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-emerald-400 transition-colors">
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 group-hover:text-emerald-400 transition-colors">
                     {service.title}
                   </h3>
-                  <p className="text-white/60 leading-relaxed">
+                  <p className="text-sm sm:text-base text-white/60 leading-relaxed">
                     {service.description}
                   </p>
                 </div>
@@ -448,22 +448,22 @@ export function TestimonialsSection() {
   ];
 
   return (
-    <section className="relative py-32 px-6 md:px-12 lg:px-24 overflow-hidden">
+    <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-24 overflow-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-emerald-500/5 blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] md:w-[800px] h-[400px] sm:h-[600px] md:h-[800px] rounded-full bg-emerald-500/5 blur-[80px] sm:blur-[100px] md:blur-[120px]" />
       </div>
 
       <div className="relative max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <FadeInUp>
-            <span className="text-emerald-400 text-sm font-semibold tracking-widest uppercase">
+            <span className="text-emerald-400 text-xs sm:text-sm font-semibold tracking-widest uppercase">
               Testimonials
             </span>
           </FadeInUp>
           <FadeInUp delay={0.1}>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mt-4 mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mt-3 sm:mt-4 mb-4 sm:mb-6">
               Loved by businesses
               <br />
               <span className="gradient-text">around the world.</span>
@@ -478,11 +478,11 @@ export function TestimonialsSection() {
 
         {/* Trust badges */}
         <FadeInUp delay={0.4}>
-          <div className="mt-16 flex flex-wrap items-center justify-center gap-8 md:gap-12">
+          <div className="mt-10 sm:mt-16 flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
             {['Google', 'Stripe', 'AWS', 'Vercel', 'Supabase'].map((partner, i) => (
               <span
                 key={i}
-                className="text-white/20 text-2xl font-bold tracking-tight hover:text-white/40 transition-colors"
+                className="text-white/20 text-lg sm:text-xl md:text-2xl font-bold tracking-tight hover:text-white/40 transition-colors"
               >
                 {partner}
               </span>
@@ -542,24 +542,24 @@ export function PricingSection() {
   ];
 
   return (
-    <section id="pricing" className="relative py-32 px-6 md:px-12 lg:px-24 bg-[#080808]">
+    <section id="pricing" className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-24 bg-[#080808]">
       <div className="relative max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <FadeInUp>
-            <span className="text-emerald-400 text-sm font-semibold tracking-widest uppercase">
+            <span className="text-emerald-400 text-xs sm:text-sm font-semibold tracking-widest uppercase">
               Pricing
             </span>
           </FadeInUp>
           <FadeInUp delay={0.1}>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mt-4 mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mt-3 sm:mt-4 mb-4 sm:mb-6">
               Investment that
               <br />
               <span className="gradient-text">pays for itself.</span>
             </h2>
           </FadeInUp>
           <FadeInUp delay={0.2}>
-            <p className="text-xl text-white/60 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mx-auto px-2">
               Every project is custom-quoted. These are starting points — 
               let's talk about what you actually need.
             </p>
@@ -567,14 +567,14 @@ export function PricingSection() {
         </div>
 
         {/* Pricing cards */}
-        <StaggerContainer stagger={0.1} className="grid md:grid-cols-3 gap-6 md:gap-8">
+        <StaggerContainer stagger={0.1} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {plans.map((plan, i) => (
-            <StaggerItem key={i}>
+            <StaggerItem key={i} className={plan.popular ? 'sm:col-span-2 md:col-span-1' : ''}>
               <motion.div
                 whileHover={{ y: -10, scale: 1.02 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 className={cn(
-                  'relative h-full p-8 rounded-2xl',
+                  'relative h-full p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl',
                   'bg-gradient-to-br from-white/5 to-white/[0.02]',
                   'border transition-colors duration-300',
                   plan.popular
@@ -584,24 +584,24 @@ export function PricingSection() {
               >
                 {/* Popular badge */}
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-emerald-500 text-black text-sm font-semibold rounded-full">
+                  <div className="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 sm:py-1.5 bg-emerald-500 text-black text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap">
                     Most Popular
                   </div>
                 )}
 
                 {/* Plan info */}
-                <div className="mb-8">
-                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <p className="text-4xl font-bold gradient-text mb-3">{plan.price}</p>
-                  <p className="text-white/60 text-sm">{plan.description}</p>
+                <div className="mb-6 sm:mb-8">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2">{plan.name}</h3>
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-2 sm:mb-3">{plan.price}</p>
+                  <p className="text-white/60 text-xs sm:text-sm">{plan.description}</p>
                 </div>
 
                 {/* Features */}
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                   {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-white/80">{feature}</span>
+                    <li key={j} className="flex items-start gap-2 sm:gap-3">
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm sm:text-base text-white/80">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -612,7 +612,7 @@ export function PricingSection() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={cn(
-                    'block w-full py-4 rounded-xl font-semibold text-center transition-colors',
+                    'block w-full py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-center text-sm sm:text-base transition-colors',
                     plan.popular
                       ? 'bg-emerald-500 text-black hover:bg-emerald-400'
                       : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-emerald-500/30'
@@ -627,9 +627,10 @@ export function PricingSection() {
 
         {/* Bottom note */}
         <FadeInUp delay={0.5}>
-          <p className="text-center text-white/50 mt-12 text-sm">
+          <p className="text-center text-white/50 mt-8 sm:mt-12 text-xs sm:text-sm px-4">
             All pricing is custom based on your needs. Free consultation included.
-            <br />
+            <br className="hidden sm:block" />
+            <span className="sm:hidden"> </span>
             Remote-first — we work with clients worldwide.
           </p>
         </FadeInUp>
@@ -666,7 +667,7 @@ export function CTASection() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative py-32 px-6 md:px-12 lg:px-24 overflow-hidden"
+      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-24 overflow-hidden"
     >
       {/* Cursor glow effect */}
       <div
@@ -690,7 +691,7 @@ export function CTASection() {
           <motion.div
             whileHover={{ scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-            className="relative p-12 md:p-16 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 overflow-hidden"
+            className="relative p-6 sm:p-8 md:p-12 lg:p-16 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 overflow-hidden"
           >
             {/* Animated border */}
             <div className="absolute inset-0 rounded-3xl overflow-hidden">
@@ -706,54 +707,58 @@ export function CTASection() {
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-                className="w-20 h-20 mx-auto mb-8 rounded-full bg-emerald-500/20 flex items-center justify-center"
+                className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 mx-auto mb-6 sm:mb-8 rounded-full bg-emerald-500/20 flex items-center justify-center"
               >
-                <Rocket size={36} className="text-emerald-400" />
+                <Rocket size={28} className="text-emerald-400 sm:hidden" />
+                <Rocket size={36} className="text-emerald-400 hidden sm:block" />
               </motion.div>
 
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6">
                 Ready to build
                 <br />
                 <span className="gradient-text">something amazing?</span>
               </h2>
 
-              <p className="text-xl text-white/60 max-w-xl mx-auto mb-10">
+              <p className="text-base sm:text-lg md:text-xl text-white/60 max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10 px-2">
                 Let's talk about your project. Free consultation — no commitment.
                 We'll map out exactly what you need.
               </p>
 
               {/* CTA buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-10 w-full">
                 <MagneticButton
                   href="tel:+19084987753"
                   glow
-                  className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold"
+                  className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold w-full sm:w-auto"
                 >
-                  <Phone size={18} className="mr-2" />
+                  <Phone size={18} className="mr-2 flex-shrink-0" />
                   (908) 498-7753
                 </MagneticButton>
 
                 <MagneticButton
                   href="mailto:hello@vantix.dev"
-                  className="bg-white/5 border border-white/20 hover:border-emerald-500/50 text-white"
+                  className="bg-white/5 border border-white/20 hover:border-emerald-500/50 text-white w-full sm:w-auto"
                 >
-                  <Mail size={18} className="mr-2" />
+                  <Mail size={18} className="mr-2 flex-shrink-0" />
                   hello@vantix.dev
                 </MagneticButton>
               </div>
 
               {/* Trust indicators */}
-              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/50">
-                <span className="flex items-center gap-2">
-                  <Shield size={14} className="text-emerald-400" />
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6 text-xs sm:text-sm text-white/50">
+                <span className="flex items-center gap-1.5 sm:gap-2">
+                  <Shield size={12} className="text-emerald-400 sm:hidden" />
+                  <Shield size={14} className="text-emerald-400 hidden sm:block" />
                   100% Confidential
                 </span>
-                <span className="flex items-center gap-2">
-                  <Zap size={14} className="text-emerald-400" />
+                <span className="flex items-center gap-1.5 sm:gap-2">
+                  <Zap size={12} className="text-emerald-400 sm:hidden" />
+                  <Zap size={14} className="text-emerald-400 hidden sm:block" />
                   48hr Response
                 </span>
-                <span className="flex items-center gap-2">
-                  <Globe size={14} className="text-emerald-400" />
+                <span className="flex items-center gap-1.5 sm:gap-2">
+                  <Globe size={12} className="text-emerald-400 sm:hidden" />
+                  <Globe size={14} className="text-emerald-400 hidden sm:block" />
                   Remote Worldwide
                 </span>
               </div>
