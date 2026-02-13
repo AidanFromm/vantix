@@ -7,6 +7,7 @@ import {
   Plus, Download, Filter, Calendar, Clock, AlertCircle,
   CheckCircle, Send, Edit3, MoreHorizontal, ChevronDown,
   PieChart, ArrowUpRight, ArrowDownRight, CreditCard, Zap,
+  Trash2, RefreshCw,
 } from 'lucide-react';
 import { AreaChart, DonutChart, BarChart } from '@tremor/react';
 
@@ -28,6 +29,7 @@ interface Expense {
   category: string;
   date: string;
   vendor?: string;
+  type: 'recurring' | 'one-time';
 }
 
 interface RevenueData {
@@ -53,7 +55,7 @@ const mockInvoices: Invoice[] = [
 ];
 
 const mockExpenses: Expense[] = [
-  { id: 'EXP-001', description: 'Hosting & Tools', amount: 50, category: 'Infrastructure', date: '2025-02-01', vendor: 'Various' },
+  { id: 'EXP-001', description: 'Hosting & Tools', amount: 50, category: 'Infrastructure', date: '2025-02-01', vendor: 'Various', type: 'recurring' },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -131,12 +133,25 @@ function AnimatedCounter({
 
 export default function FinancialPage() {
   const [invoices, setInvoices] = useState<Invoice[]>(mockInvoices);
-  const [expenses] = useState<Expense[]>(mockExpenses);
+  const [expenses, setExpenses] = useState<Expense[]>(mockExpenses);
   const [revenueData] = useState<RevenueData[]>(mockRevenueData);
   const [invoiceFilter, setInvoiceFilter] = useState<'all' | Invoice['status']>('all');
   const [chartPeriod, setChartPeriod] = useState<'month' | 'quarter' | 'year'>('month');
   const [showCreateInvoice, setShowCreateInvoice] = useState(false);
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
+
+  // Delete expense handler
+  const handleDeleteExpense = (expense: Expense) => {
+    setExpenseToDelete(expense);
+  };
+
+  const confirmDeleteExpense = () => {
+    if (expenseToDelete) {
+      setExpenses(prev => prev.filter(e => e.id !== expenseToDelete.id));
+      setExpenseToDelete(null);
+    }
+  };
 
   // ── Computed KPIs ─────────────────────────────────────────────────────────
 
@@ -576,7 +591,7 @@ export default function FinancialPage() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.7 + idx * 0.03 }}
-                  className="px-5 py-4 hover:bg-white/[0.02] transition-colors flex items-center justify-between"
+                  className="px-5 py-4 hover:bg-white/[0.02] transition-colors flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div
@@ -584,13 +599,36 @@ export default function FinancialPage() {
                       style={{ backgroundColor: CATEGORY_COLORS[expense.category] || '#6b7280' }}
                     />
                     <div className="min-w-0">
-                      <p className="font-medium text-sm text-white truncate">{expense.description}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-sm text-white truncate">{expense.description}</p>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                          expense.type === 'recurring' 
+                            ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30' 
+                            : 'bg-gray-500/10 text-gray-400 border border-gray-500/30'
+                        }`}>
+                          {expense.type === 'recurring' ? (
+                            <span className="flex items-center gap-1">
+                              <RefreshCw size={8} />
+                              Monthly
+                            </span>
+                          ) : 'One-time'}
+                        </span>
+                      </div>
                       <p className="text-xs text-[var(--color-muted)]">{expense.category} • {expense.vendor}</p>
                     </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-semibold text-amber-400">-{formatCurrency(expense.amount)}</p>
-                    <p className="text-xs text-[var(--color-muted)]">{new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <div className="text-right">
+                      <p className="font-semibold text-amber-400">-{formatCurrency(expense.amount)}</p>
+                      <p className="text-xs text-[var(--color-muted)]">{new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteExpense(expense)}
+                      className="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-[var(--color-muted)] hover:text-red-400 transition-all"
+                      title="Delete expense"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </motion.div>
               ))
@@ -760,6 +798,24 @@ export default function FinancialPage() {
                   />
                 </div>
                 <div>
+                  <label className="text-sm text-[var(--color-muted)] mb-1.5 block">Expense Type</label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 transition-colors text-sm font-medium"
+                    >
+                      <RefreshCw size={14} />
+                      Monthly Recurring
+                    </button>
+                    <button
+                      type="button"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 text-[var(--color-muted)] border border-[var(--color-border)] hover:bg-white/10 transition-colors text-sm font-medium"
+                    >
+                      One-time
+                    </button>
+                  </div>
+                </div>
+                <div>
                   <label className="text-sm text-[var(--color-muted)] mb-1.5 block">Category</label>
                   <select className="w-full bg-white/5 border border-[var(--color-border)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500/50 transition-colors">
                     <option value="">Select category</option>
@@ -795,6 +851,51 @@ export default function FinancialPage() {
                   className="flex-1 px-4 py-2.5 rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition-colors font-medium text-sm"
                 >
                   Add Expense
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Expense Confirmation Modal */}
+      <AnimatePresence>
+        {expenseToDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setExpenseToDelete(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-6 w-full max-w-sm"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 mx-auto mb-4">
+                <Trash2 size={24} className="text-red-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-center mb-2">Delete Expense</h3>
+              <p className="text-sm text-[var(--color-muted)] text-center mb-6">
+                Are you sure you want to delete <span className="text-white font-medium">"{expenseToDelete.description}"</span>? 
+                This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setExpenseToDelete(null)}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-[var(--color-muted)] hover:text-white hover:bg-white/10 transition-colors font-medium text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteExpense}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+                >
+                  <Trash2 size={14} />
+                  Delete
                 </button>
               </div>
             </motion.div>

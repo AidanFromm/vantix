@@ -728,8 +728,7 @@ export function CTASection() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-10 w-full">
                 <MagneticButton
                   href="tel:+19084987753"
-                  glow
-                  className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold w-full sm:w-auto"
+                  className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all duration-300 w-full sm:w-auto"
                 >
                   <Phone size={18} className="mr-2 flex-shrink-0" />
                   (908) 498-7753
@@ -737,7 +736,7 @@ export function CTASection() {
 
                 <MagneticButton
                   href="mailto:hello@vantix.dev"
-                  className="bg-white/5 border border-white/20 hover:border-emerald-500/50 text-white w-full sm:w-auto"
+                  className="bg-white/10 border border-white/30 hover:border-emerald-500/60 hover:bg-white/15 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300 w-full sm:w-auto"
                 >
                   <Mail size={18} className="mr-2 flex-shrink-0" />
                   hello@vantix.dev
