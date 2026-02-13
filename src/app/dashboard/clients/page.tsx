@@ -103,6 +103,87 @@ function uid(): string {
 
 const STORAGE_KEY = 'vantix_clients_v2';
 
+function getInitialClients(): Client[] {
+  const now = new Date().toISOString();
+  return [
+    {
+      id: 'dave-secured-tampa',
+      company: 'Secured Tampa',
+      website: 'securedtampa.com',
+      industry: 'E-commerce/Retail',
+      status: 'active',
+      monthlyValue: 0,
+      totalRevenue: 2000,
+      tags: ['E-commerce', 'Sneakers', 'Pokemon'],
+      contacts: [{ id: '1', name: 'Dave', email: '', phone: '', role: 'Owner', isPrimary: true }],
+      notes: [{ id: '1', content: 'Owes $2,500 + 3% of online sales for 3 months. Total deal: $4,500 base + rev share.', author: 'System', date: now }],
+      files: [],
+      activities: [],
+      projects: [{ id: 'dave-app', name: 'Dave App', status: 'active', progress: 90, value: 4500 }],
+      invoices: [
+        { id: 'inv-1', number: 'INV-001', amount: 2000, status: 'paid', dueDate: '2026-02-01' },
+        { id: 'inv-2', number: 'INV-002', amount: 2500, status: 'sent', dueDate: '2026-02-28' },
+      ],
+      createdAt: '2026-01-15T00:00:00Z',
+      lastActivityAt: now,
+    },
+    {
+      id: 'j4k',
+      company: 'Just Four Kicks (J4K)',
+      website: 'justfourkicks.store',
+      industry: 'B2B Wholesale',
+      status: 'active',
+      monthlyValue: 0,
+      totalRevenue: 0,
+      tags: ['B2B', 'Sneakers', 'Kyle'],
+      contacts: [{ id: '1', name: 'Kyle', email: '', phone: '', role: 'CEO', isPrimary: true }],
+      notes: [{ id: '1', content: 'Kyle partnership - ongoing platform maintenance and features.', author: 'System', date: now }],
+      files: [],
+      activities: [],
+      projects: [{ id: 'j4k-maintenance', name: 'Platform Maintenance', status: 'active', progress: 100, value: 0 }],
+      invoices: [],
+      createdAt: '2026-01-01T00:00:00Z',
+      lastActivityAt: now,
+    },
+    {
+      id: 'cardledger',
+      company: 'CardLedger',
+      website: 'usecardledger.com',
+      industry: 'Fintech/Collectibles',
+      status: 'active',
+      monthlyValue: 0,
+      totalRevenue: 0,
+      tags: ['Internal', 'App', 'iOS'],
+      contacts: [{ id: '1', name: 'Aidan', email: '', phone: '', role: 'Founder', isPrimary: true }],
+      notes: [{ id: '1', content: 'Internal project - portfolio tracker for collectible cards.', author: 'System', date: now }],
+      files: [],
+      activities: [],
+      projects: [{ id: 'cardledger-v2', name: 'CardLedger V2', status: 'active', progress: 65, value: 0 }],
+      invoices: [],
+      createdAt: '2026-01-01T00:00:00Z',
+      lastActivityAt: now,
+    },
+    {
+      id: '601-prospect',
+      company: '601',
+      website: '',
+      industry: 'E-commerce/Shopify',
+      status: 'lead',
+      monthlyValue: 0,
+      totalRevenue: 0,
+      tags: ['Prospect', 'Shopify', 'Hot Lead'],
+      contacts: [],
+      notes: [{ id: '1', content: 'Hot lead - Shopify upgrade project, trying to close $2,000 deal.', author: 'System', date: now }],
+      files: [],
+      activities: [],
+      projects: [],
+      invoices: [],
+      createdAt: now,
+      lastActivityAt: now,
+    },
+  ];
+}
+
 function loadClients(): Client[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -111,7 +192,7 @@ function loadClients(): Client[] {
       if (Array.isArray(parsed)) return parsed;
     }
   } catch { /* ignore */ }
-  return []; // Start empty - no sample data
+  return getInitialClients(); // Start with real clients
 }
 
 function saveClients(clients: Client[]) {

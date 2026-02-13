@@ -763,9 +763,76 @@ function AddProjectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (proj
   )
 }
 
+// Initial real projects
+const initialRealProjects: Project[] = [
+  {
+    id: 'dave-app',
+    name: 'Dave App',
+    client: 'Secured Tampa (Dave)',
+    status: 'REVIEW',
+    health: 'healthy',
+    progress: 90,
+    budgetTotal: 4500,
+    budgetSpent: 4000,
+    deadline: new Date('2026-02-28'),
+    assignee: 'together',
+    description: 'Sneaker & Pokemon e-commerce app. $4,500 base + 3% rev share.',
+    tasks: [
+      { id: '1', title: 'Final QA testing', completed: true },
+      { id: '2', title: 'Client handoff', completed: false },
+    ],
+    activities: [
+      { id: '1', type: 'status_change', content: 'Moved to Review', timestamp: new Date(), actor: 'Aidan' },
+    ],
+    files: [],
+    notes: 'Owes $2,500 + 3% of online sales for 3 months.',
+    createdAt: new Date('2026-01-15'),
+  },
+  {
+    id: 'cardledger-v2',
+    name: 'CardLedger V2',
+    client: 'CardLedger (Internal)',
+    status: 'ACTIVE',
+    health: 'warning',
+    progress: 65,
+    budgetTotal: 0,
+    budgetSpent: 0,
+    deadline: new Date('2026-03-31'),
+    assignee: 'botskii',
+    description: 'Portfolio tracker for collectible cards - iOS app + web.',
+    tasks: [
+      { id: '1', title: 'Dashboard rebuild', completed: true },
+      { id: '2', title: 'Inventory swipe-to-sell', completed: true },
+      { id: '3', title: 'Native iOS build', completed: false },
+    ],
+    activities: [],
+    files: [],
+    notes: 'Internal project - Robinhood-style UI.',
+    createdAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'j4k-maintenance',
+    name: 'J4K Platform Maintenance',
+    client: 'Just Four Kicks (Kyle)',
+    status: 'ACTIVE',
+    health: 'healthy',
+    progress: 100,
+    budgetTotal: 0,
+    budgetSpent: 0,
+    deadline: new Date('2026-12-31'),
+    assignee: 'vantix-bot',
+    description: 'Ongoing maintenance and features for J4K wholesale platform.',
+    tasks: [],
+    activities: [],
+    files: [],
+    notes: 'Kyle partnership - ongoing.',
+    createdAt: new Date('2026-01-01'),
+  },
+];
+
 // Main Page Component
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([])
+  const [projects, setProjects] = useState<Project[]>(initialRealProjects)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [filterAssignee, setFilterAssignee] = useState<Assignee | 'all'>('all')

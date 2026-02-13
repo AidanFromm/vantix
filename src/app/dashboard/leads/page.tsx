@@ -80,6 +80,25 @@ function getDaysInStage(stageEnteredAt: string) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
+function getInitialLeads(): Lead[] {
+  return [
+    {
+      id: '601-lead',
+      name: '601',
+      company: '601',
+      email: '',
+      phone: '',
+      website: '',
+      status: 'proposal',
+      source: 'cold',
+      value: 2000,
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      stageEnteredAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      notes: 'HOT LEAD - Shopify upgrade project. Trying to close $2,000 deal.',
+    },
+  ];
+}
+
 function loadLeads(): Lead[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -88,7 +107,7 @@ function loadLeads(): Lead[] {
       if (Array.isArray(parsed)) return parsed;
     }
   } catch { /* ignore */ }
-  return []; // Start empty - no sample data
+  return getInitialLeads(); // Start with real leads
 }
 
 function saveLeads(leads: Lead[]) {
