@@ -254,8 +254,10 @@ export default function ClientsPage() {
   
   // Add modal
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newClient, setNewClient] = useState({
-    company: '', website: '', industry: '', contactName: '', email: '', phone: '', status: 'lead' as const,
+  const [newClient, setNewClient] = useState<{
+    company: string; website: string; industry: string; contactName: string; email: string; phone: string; status: 'active' | 'inactive' | 'lead';
+  }>({
+    company: '', website: '', industry: '', contactName: '', email: '', phone: '', status: 'lead',
   });
 
   // Note input
