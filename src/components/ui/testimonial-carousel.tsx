@@ -45,9 +45,29 @@ export function TestimonialCarousel({
     return () => clearInterval(timer);
   }, [autoPlay, interval, next]);
 
+  // Touch/swipe handling
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    (e.currentTarget as HTMLElement).dataset.touchStartX = touch.clientX.toString();
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const startX = parseFloat((e.currentTarget as HTMLElement).dataset.touchStartX || '0');
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+    
+    if (Math.abs(diff) > 50) { // Minimum swipe distance
+      if (diff > 0) {
+        next();
+      } else {
+        prev();
+      }
+    }
+  }, [next, prev]);
+
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
+      x: direction > 0 ? 200 : -200,
       opacity: 0,
     }),
     center: {
@@ -55,7 +75,7 @@ export function TestimonialCarousel({
       opacity: 1,
     },
     exit: (direction: number) => ({
-      x: direction > 0 ? -300 : 300,
+      x: direction > 0 ? -200 : 200,
       opacity: 0,
     }),
   };
@@ -63,9 +83,13 @@ export function TestimonialCarousel({
   return (
     <div className={cn('relative', className)}>
       {/* Main testimonial card */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 min-h-[300px]">
+      <div 
+        className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 p-5 sm:p-8 md:p-12 min-h-[280px] sm:min-h-[300px] touch-pan-y"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* Quote icon */}
-        <Quote className="absolute top-6 left-6 w-12 h-12 text-emerald-500/20" />
+        <Quote className="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 sm:w-12 sm:h-12 text-emerald-500/20" />
         
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
@@ -82,7 +106,7 @@ export function TestimonialCarousel({
             className="relative z-10"
           >
             {/* Stars */}
-            <div className="flex gap-1 mb-6">
+            <div className="flex gap-1 mb-4 sm:mb-6">
               {[...Array(5)].map((_, i) => (
                 <motion.div
                   key={i}
@@ -90,32 +114,32 @@ export function TestimonialCarousel({
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Star className="w-5 h-5 fill-emerald-400 text-emerald-400" />
+                  <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-emerald-400 text-emerald-400" />
                 </motion.div>
               ))}
             </div>
 
             {/* Quote */}
-            <p className="text-xl md:text-2xl lg:text-3xl font-medium leading-relaxed mb-8 text-white/90">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-medium leading-relaxed mb-6 sm:mb-8 text-white/90 pr-0 sm:pr-12">
               &ldquo;{testimonials[current].quote}&rdquo;
             </p>
 
             {/* Author */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
               {testimonials[current].avatar ? (
                 <img
                   src={testimonials[current].avatar}
                   alt={testimonials[current].name}
-                  className="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/30"
+                  className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-emerald-500/30"
                 />
               ) : (
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-xl font-bold text-white">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-base sm:text-lg md:text-xl font-bold text-white flex-shrink-0">
                   {testimonials[current].name.charAt(0)}
                 </div>
               )}
-              <div>
-                <p className="text-lg font-semibold text-white">{testimonials[current].name}</p>
-                <p className="text-white/60">
+              <div className="min-w-0">
+                <p className="text-sm sm:text-base md:text-lg font-semibold text-white truncate">{testimonials[current].name}</p>
+                <p className="text-xs sm:text-sm text-white/60 truncate">
                   {testimonials[current].role}
                   {testimonials[current].company && `, ${testimonials[current].company}`}
                 </p>
@@ -124,27 +148,32 @@ export function TestimonialCarousel({
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation arrows */}
-        <div className="absolute bottom-8 right-8 flex gap-2">
+        {/* Navigation arrows - hidden on mobile, use swipe instead */}
+        <div className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 hidden sm:flex gap-2">
           <button
             onClick={prev}
-            className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors border border-white/10"
+            className="p-2 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-colors border border-white/10"
             aria-label="Previous testimonial"
           >
-            <ChevronLeft className="w-5 h-5 text-white" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </button>
           <button
             onClick={next}
-            className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors border border-white/10"
+            className="p-2 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-colors border border-white/10"
             aria-label="Next testimonial"
           >
-            <ChevronRight className="w-5 h-5 text-white" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </button>
         </div>
+
+        {/* Swipe hint on mobile */}
+        <p className="absolute bottom-4 right-4 text-[10px] text-white/30 sm:hidden">
+          Swipe to navigate
+        </p>
       </div>
 
       {/* Dots indicator */}
-      <div className="flex justify-center gap-2 mt-6">
+      <div className="flex justify-center gap-1.5 sm:gap-2 mt-4 sm:mt-6">
         {testimonials.map((_, i) => (
           <button
             key={i}
@@ -153,10 +182,10 @@ export function TestimonialCarousel({
               setCurrent(i);
             }}
             className={cn(
-              'h-2 rounded-full transition-all duration-300',
+              'h-1.5 sm:h-2 rounded-full transition-all duration-300',
               i === current
-                ? 'w-8 bg-emerald-500'
-                : 'w-2 bg-white/30 hover:bg-white/50'
+                ? 'w-6 sm:w-8 bg-emerald-500'
+                : 'w-1.5 sm:w-2 bg-white/30 hover:bg-white/50'
             )}
             aria-label={`Go to testimonial ${i + 1}`}
           />

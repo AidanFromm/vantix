@@ -63,19 +63,6 @@ const SOURCE_BADGES: Record<string, { label: string; color: string; bg: string }
   social: { label: 'Social', color: 'text-pink-400', bg: 'bg-pink-500/20' },
 };
 
-// ─── Sample Data ──────────────────────────────────────────────────────────────
-
-const SAMPLE_LEADS: Lead[] = [
-  { id: '1', name: 'John Smith', company: 'Tech Solutions Inc', email: 'john@techsolutions.com', phone: '(555) 123-4567', website: 'techsolutions.com', value: 15000, source: 'website', status: 'new', createdAt: '2024-02-01', stageEnteredAt: '2024-02-01', notes: 'Interested in website redesign', city: 'Denver', state: 'CO' },
-  { id: '2', name: 'Sarah Johnson', company: 'Digital Marketing Co', email: 'sarah@digitalmarketing.co', phone: '(555) 234-5678', website: 'digitalmarketing.co', value: 8500, source: 'referral', status: 'new', createdAt: '2024-02-02', stageEnteredAt: '2024-02-02', notes: 'Referred by Mike at ABC Corp', city: 'Boulder', state: 'CO' },
-  { id: '3', name: 'Mike Wilson', company: 'Local Restaurant Group', email: 'mike@localrestaurant.com', phone: '(555) 345-6789', website: '', value: 5000, source: 'scraper', status: 'contacted', createdAt: '2024-01-28', stageEnteredAt: '2024-02-03', notes: 'Left voicemail, waiting for callback', city: 'Aurora', state: 'CO' },
-  { id: '4', name: 'Emily Davis', company: 'Fitness First Studio', email: 'emily@fitnessfirst.com', phone: '(555) 456-7890', website: 'fitnessfirst.com', value: 12000, source: 'cold', status: 'qualified', createdAt: '2024-01-25', stageEnteredAt: '2024-02-05', notes: 'Very interested, needs mobile app integration', city: 'Lakewood', state: 'CO' },
-  { id: '5', name: 'David Lee', company: 'Construction Plus', email: 'david@constructionplus.com', phone: '(555) 567-8901', website: 'constructionplus.com', value: 25000, source: 'social', status: 'proposal', createdAt: '2024-01-20', stageEnteredAt: '2024-02-08', notes: 'Proposal sent, follow up Friday', city: 'Denver', state: 'CO' },
-  { id: '6', name: 'Lisa Brown', company: 'Beauty Salon Pro', email: 'lisa@beautysalonpro.com', phone: '(555) 678-9012', website: '', value: 3500, source: 'scraper', status: 'new', createdAt: '2024-02-10', stageEnteredAt: '2024-02-10', notes: 'No website, great opportunity', city: 'Thornton', state: 'CO' },
-  { id: '7', name: 'James Miller', company: 'Auto Repair Masters', email: 'james@autorepair.com', phone: '(555) 789-0123', website: 'autorepair.com', value: 7500, source: 'website', status: 'won', createdAt: '2024-01-15', stageEnteredAt: '2024-02-12', notes: 'Contract signed!', city: 'Westminster', state: 'CO' },
-  { id: '8', name: 'Amanda White', company: 'Pet Care Services', email: 'amanda@petcare.com', phone: '(555) 890-1234', website: 'petcare.com', value: 4500, source: 'referral', status: 'contacted', createdAt: '2024-02-05', stageEnteredAt: '2024-02-06', notes: 'Scheduled call for Monday', city: 'Arvada', state: 'CO' },
-];
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function generateId() {
@@ -93,33 +80,15 @@ function getDaysInStage(stageEnteredAt: string) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-function generateRealLeads(): Lead[] {
-  return [
-    {
-      id: generateId(),
-      name: '601 Owner',
-      company: '601',
-      email: '',
-      phone: '',
-      website: '',
-      value: 2000,
-      source: 'cold',
-      status: 'proposal',
-      createdAt: new Date().toISOString().split('T')[0],
-      stageEnteredAt: new Date().toISOString().split('T')[0],
-      notes: 'HOT LEAD - Shopify upgrade project. Trying to close $2,000 deal.',
-      city: '',
-      state: '',
-    },
-  ];
-}
-
 function loadLeads(): Lead[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch { /* ignore */ }
-  return generateRealLeads(); // Start with real Vantix leads
+  return []; // Start empty - no sample data
 }
 
 function saveLeads(leads: Lead[]) {

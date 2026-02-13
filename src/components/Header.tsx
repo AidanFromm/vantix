@@ -40,7 +40,7 @@ export default function Header() {
           : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 flex items-center justify-between h-16 md:h-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-24 flex items-center justify-between h-14 sm:h-16 md:h-20">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
           <motion.div 
@@ -124,7 +124,7 @@ export default function Header() {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="md:hidden bg-[#0a0a0a]/98 backdrop-blur-xl border-b border-white/5 overflow-hidden"
           >
-            <nav className="flex flex-col px-6 py-6 gap-2">
+            <nav className="flex flex-col px-4 sm:px-6 py-4 sm:py-6 gap-1 sm:gap-2">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.href}

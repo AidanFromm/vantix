@@ -112,9 +112,9 @@ export function FloatingStat({
 export function HeroFloatingElements() {
   return (
     <>
-      {/* Floating badges */}
+      {/* Floating badges - hidden on small screens to avoid overlap */}
       <FloatingBadge 
-        className="top-[20%] left-[5%] md:left-[10%]" 
+        className="hidden sm:block top-[20%] left-[5%] md:left-[10%]" 
         delay={0.5}
       >
         <span className="flex items-center gap-2">
@@ -124,7 +124,7 @@ export function HeroFloatingElements() {
       </FloatingBadge>
 
       <FloatingBadge 
-        className="top-[15%] right-[5%] md:right-[12%]" 
+        className="hidden sm:block top-[15%] right-[5%] md:right-[12%]" 
         delay={0.7}
       >
         <span className="flex items-center gap-2">
@@ -134,7 +134,7 @@ export function HeroFloatingElements() {
       </FloatingBadge>
 
       <FloatingBadge 
-        className="bottom-[25%] left-[8%] md:left-[15%]" 
+        className="hidden md:block bottom-[25%] left-[8%] md:left-[15%]" 
         delay={0.9}
       >
         <span className="flex items-center gap-2">
@@ -144,7 +144,7 @@ export function HeroFloatingElements() {
       </FloatingBadge>
 
       <FloatingBadge 
-        className="bottom-[30%] right-[5%] md:right-[10%]" 
+        className="hidden md:block bottom-[30%] right-[5%] md:right-[10%]" 
         delay={1.1}
       >
         <span className="flex items-center gap-2">

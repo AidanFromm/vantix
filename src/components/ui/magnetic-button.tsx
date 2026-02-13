@@ -37,12 +37,15 @@ export function MagneticButton({
 
   const Component = href ? motion.a : motion.button;
 
+  // Check if className includes w-full to make container full width
+  const isFullWidth = className?.includes('w-full');
+
   return (
     <div
       ref={ref}
       onMouseMove={handleMouse}
       onMouseLeave={reset}
-      className="inline-block"
+      className={cn('inline-block', isFullWidth && 'w-full')}
     >
       <Component
         href={href}
@@ -50,7 +53,7 @@ export function MagneticButton({
         animate={{ x: position.x, y: position.y }}
         transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
         className={cn(
-          'relative inline-flex items-center justify-center px-8 py-4 font-semibold rounded-full transition-all duration-300',
+          'relative inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 font-semibold rounded-full transition-all duration-300',
           glow && 'shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:shadow-[0_0_50px_rgba(16,185,129,0.6)]',
           className
         )}
@@ -96,20 +99,23 @@ export function MagneticArrowButton({
     setIsHovered(false);
   };
 
+  // Check if className includes w-full to make container full width
+  const isFullWidth = className?.includes('w-full');
+
   return (
     <div
       ref={ref}
       onMouseMove={handleMouse}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={reset}
-      className="inline-block"
+      className={cn('inline-block', isFullWidth && 'w-full')}
     >
       <motion.a
         href={href}
         animate={{ x: position.x, y: position.y }}
         transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
         className={cn(
-          'group relative inline-flex items-center gap-2 text-lg font-medium text-white transition-colors hover:text-emerald-400',
+          'group relative inline-flex items-center gap-2 text-base sm:text-lg font-medium text-white transition-colors hover:text-emerald-400 py-3 sm:py-0',
           className
         )}
       >
