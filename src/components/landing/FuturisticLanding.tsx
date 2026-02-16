@@ -155,7 +155,7 @@ function HeroSection() {
           >
             We build custom websites, apps, and automation systems that{' '}
             <span className="text-gray-900 font-medium">actually make you money</span>—not 
-            just look pretty. In 4-8 weeks, you&apos;ll have a system that works as hard as you do.
+            just look pretty. In 3-5 weeks, you&apos;ll have a system that works as hard as you do.
           </motion.p>
 
           {/* CTAs */}
@@ -248,7 +248,7 @@ function SocialProofBar() {
           </div>
           <div className="hidden sm:block w-px h-12 bg-gray-200" />
           <div>
-            <p className="text-3xl md:text-4xl font-bold text-gray-900">4-8</p>
+            <p className="text-3xl md:text-4xl font-bold text-gray-900">3-5</p>
             <p className="text-sm text-gray-500">Weeks to Launch</p>
           </div>
         </div>
@@ -442,7 +442,7 @@ function WhyUsSection() {
     {
       icon: Zap,
       title: "We move fast",
-      description: "Most projects launch in 4-8 weeks. Not 4-8 months. You'll have updates every step of the way."
+      description: "Most projects launch in 3-5 weeks. Not 3-5 months. You'll have updates every step of the way."
     },
     {
       icon: MessageSquare,
@@ -528,7 +528,7 @@ function ProcessSection() {
     { 
       num: '03', 
       title: 'Build Sprint', 
-      duration: '4-8 weeks',
+      duration: '3-5 weeks',
       description: 'We build your solution with weekly demos. You see progress every week and give feedback that actually gets implemented.' 
     },
     { 
@@ -668,13 +668,13 @@ function ResultsSection() {
 function TestimonialsSection() {
   const testimonials = [
     {
-      quote: "They built our entire platform in 6 weeks. Other agencies quoted us 6 months. The system handles $500K+ in monthly orders without breaking a sweat.",
+      quote: "They built our entire platform in 4 weeks. Other agencies quoted us 6 months. The system handles $500K+ in monthly orders without breaking a sweat.",
       name: "Kyle",
       title: "CEO, Just Four Kicks",
       avatar: "K"
     },
     {
-      quote: "Finally, developers who actually deliver. No excuses, no delays—just results. Our app went from idea to App Store in 2 months.",
+      quote: "Finally, developers who actually deliver. No excuses, no delays—just results. Our app went from idea to live in under 5 weeks.",
       name: "Dave",
       title: "Founder, SecuredTampa",
       avatar: "D"
@@ -838,7 +838,7 @@ function FAQSection() {
     },
     {
       question: "How long does it take to build?",
-      answer: "Most projects launch in 4-8 weeks. Simple websites can be done in 2-3 weeks. Complex apps might take 10-12 weeks. We'll give you a clear timeline before we start, and we stick to it."
+      answer: "Most projects launch in 3-5 weeks. Simple websites can be done in 1-2 weeks. Complex apps might take 6-8 weeks. We'll give you a clear timeline before we start, and we stick to it."
     },
     {
       question: "What if I'm not happy with the result?",
