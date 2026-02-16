@@ -1,4 +1,4 @@
-import { StoryLanding } from '@/components/landing/StoryLanding';
+import { LightLanding } from '@/components/landing/LightLanding';
 
 export const metadata = {
   title: 'Vantix | Digital Solutions That Actually Work',
@@ -11,5 +11,5 @@ export const metadata = {
 };
 
 export default function Home() {
-  return <StoryLanding />;
+  return <LightLanding />;
 }
