@@ -44,7 +44,7 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const woodButtonClass = "text-white font-semibold rounded-xl px-8 py-4 shadow-lg hover:shadow-xl transition-all hover:brightness-90";
+const woodButtonClass = "text-white font-semibold rounded-xl px-8 py-4 shadow-lg hover:shadow-xl transition-all hover:brightness-90 border-b-2 border-[#9a7648]";
 
 function woodButtonProps() {
   return {
@@ -59,12 +59,7 @@ function woodButtonProps() {
 function WoodDivider() {
   return (
     <div className="max-w-7xl mx-auto px-6">
-      <div
-        className="h-px w-full"
-        style={{
-          background: `repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(139,90,43,0.06) 4px, rgba(139,90,43,0.06) 6px), linear-gradient(to right, transparent, #D4A85C40, #C89B4E30, #D4A85C40, transparent)`,
-        }}
-      />
+      <div className="h-px w-full" />
     </div>
   );
 }
@@ -143,63 +138,6 @@ function useTypewriter(phrases: string[], typingSpeed = 60, deletingSpeed = 30, 
   }, [charIdx, deleting, phraseIdx, phrases, typingSpeed, deletingSpeed, pauseMs]);
 
   return text;
-}
-
-// ============================================
-// PARTICLE DOT GRID
-// ============================================
-function DotGrid() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const isMobile = useIsMobile();
-
-  useEffect(() => {
-    if (isMobile) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animId: number;
-    const dots: { x: number; y: number; baseY: number; speed: number; phase: number }[] = [];
-
-    const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      dots.length = 0;
-      const spacing = 40;
-      for (let x = 0; x < canvas.width; x += spacing) {
-        for (let y = 0; y < canvas.height; y += spacing) {
-          dots.push({ x, y, baseY: y, speed: 0.3 + Math.random() * 0.5, phase: Math.random() * Math.PI * 2 });
-        }
-      }
-    };
-
-    resize();
-    window.addEventListener('resize', resize);
-
-    let time = 0;
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.01;
-      for (const dot of dots) {
-        dot.y = dot.baseY + Math.sin(time * dot.speed + dot.phase) * 3;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(184, 137, 90, 0.15)';
-        ctx.fill();
-      }
-      animId = requestAnimationFrame(animate);
-    };
-
-    animate();
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener('resize', resize);
-    };
-  }, [isMobile]);
-
-  if (isMobile) return null;
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
 }
 
 // ============================================
@@ -322,30 +260,9 @@ function StickyCTABar() {
 }
 
 // ============================================
-// GRID BACKGROUND
-// ============================================
-function GridBackground({ variant = 'grid' }: { variant?: 'grid' | 'solid' }) {
-  if (variant === 'solid') {
-    return <div className="absolute inset-0 bg-[#FAFAFA]" />;
-  }
-  return (
-    <div className="absolute inset-0 bg-[#FAFAFA]">
-      <div
-        className="absolute inset-0 opacity-40"
-        style={{
-          backgroundImage: `linear-gradient(to right, #E8E5E0 1px, transparent 1px), linear-gradient(to bottom, #E8E5E0 1px, transparent 1px)`,
-          backgroundSize: '48px 48px',
-        }}
-      />
-    </div>
-  );
-}
-
-// ============================================
-// HERO SECTION (with typewriter + dot grid)
+// HERO SECTION (with typewriter + hero bg image)
 // ============================================
 function HeroSection() {
-  const isMobile = useIsMobile();
   const typedText = useTypewriter([
     'We automate customer support',
     'We build custom platforms',
@@ -355,16 +272,34 @@ function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <GridBackground />
-      <DotGrid />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.06)_0%,transparent_60%)]" />
+      {/* Hero background image */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'url(/hero-bg.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      {/* White overlay for readability */}
+      <div className="absolute inset-0 bg-white/30" />
+      {/* Subtle film grain overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          opacity: 0.04,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '128px 128px',
+        }}
+      />
 
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center pt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C5C3BE] bg-white mb-8 shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#E8E2DA]/60 bg-white mb-8 shadow-[0_2px_16px_rgba(0,0,0,0.06)]"
         >
           <span className="w-2 h-2 rounded-full bg-[#B8895A] animate-pulse" />
           <span className="text-sm text-[#8C857C] font-medium">2 Humans + 2 AI Assistants — Building 24/7</span>
@@ -374,7 +309,8 @@ function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-[#2D2A26] leading-[0.93] tracking-tight mb-8"
+          className="text-5xl sm:text-6xl lg:text-7xl font-bold text-[#2D2A26] leading-[0.93] mb-8"
+          style={{ letterSpacing: '-0.03em' }}
         >
           Your Competitors Are
           <br />
@@ -387,7 +323,7 @@ function HeroSection() {
           transition={{ duration: 0.7, delay: 0.6 }}
           className="h-16 sm:h-12 flex items-center justify-center mb-10"
         >
-          <p className="text-lg sm:text-xl text-[#8C857C] max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-[#8C857C] max-w-2xl mx-auto leading-relaxed">
             <span>{typedText}</span>
             <span className="inline-block w-0.5 h-5 bg-[#B8895A] ml-1 animate-pulse" />
           </p>
@@ -441,7 +377,7 @@ function AnimatedCounterSection() {
   ];
 
   return (
-    <section className="relative py-14 border-y border-[#E8E5E0] bg-[#FAFAFA]" ref={ref}>
+    <section className="relative py-14 bg-white rounded-2xl mx-4 md:mx-8 my-4" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial="hidden"
@@ -483,8 +419,7 @@ function BeforeAfterSection() {
   ];
 
   return (
-    <section className="py-24 relative" ref={ref}>
-      <GridBackground variant="solid" />
+    <section className="py-28 relative" ref={ref}>
       <div className="max-w-5xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -496,7 +431,7 @@ function BeforeAfterSection() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             The Transformation
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26]">
             See the Difference
           </motion.h2>
         </motion.div>
@@ -512,7 +447,7 @@ function BeforeAfterSection() {
           <div className="flex justify-center mb-10">
             <button
               onClick={() => setShowAfter(!showAfter)}
-              className="relative flex items-center bg-white rounded-full p-1.5 shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] border border-[#E8E5E0]"
+              className="relative flex items-center bg-white rounded-full p-1.5 shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60"
             >
               <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${!showAfter ? 'bg-[#2D2A26] text-white' : 'text-[#8C857C]'}`}>
                 Before
@@ -531,7 +466,7 @@ function BeforeAfterSection() {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -30 }}
-                  className="md:col-span-2 p-10 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]"
+                  className="md:col-span-2 p-10 rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60"
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
@@ -552,7 +487,7 @@ function BeforeAfterSection() {
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 30 }}
-                  className="md:col-span-2 p-10 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/20"
+                  className="md:col-span-2 p-10 rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#B8895A]/20"
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-3 h-3 rounded-full bg-[#B8895A]" />
@@ -599,8 +534,7 @@ function ProblemSection() {
   ];
 
   return (
-    <section className="py-24 relative">
-      <GridBackground />
+    <section className="py-28 relative bg-white rounded-2xl mx-4 md:mx-8 my-4">
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
@@ -612,7 +546,7 @@ function ProblemSection() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             The Problem
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] leading-tight max-w-3xl mx-auto">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26] leading-tight max-w-3xl mx-auto">
             You&apos;re Working 60-Hour Weeks on Tasks AI Can Handle in Seconds
           </motion.h2>
         </motion.div>
@@ -624,14 +558,14 @@ function ProblemSection() {
           variants={staggerContainer}
           className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
         >
-          <motion.div variants={fadeLeft} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]/50">
+          <motion.div variants={fadeLeft} className="relative p-10 rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
               <span className="text-[#8C857C] font-semibold text-sm uppercase tracking-wider">Before Vantix</span>
             </div>
             <ul className="space-y-4">
               {before.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[#8C857C]">
+                <li key={i} className="flex items-start gap-3 text-[#8C857C] text-base leading-relaxed">
                   <X size={16} className="text-[#C5C3BE] mt-1 shrink-0" />
                   <span>{item}</span>
                 </li>
@@ -639,14 +573,14 @@ function ProblemSection() {
             </ul>
           </motion.div>
 
-          <motion.div variants={fadeRight} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/20">
+          <motion.div variants={fadeRight} className="relative p-10 rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#B8895A]/20">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#B8895A]" />
               <span className="text-[#B8895A] font-semibold text-sm uppercase tracking-wider">After Vantix</span>
             </div>
             <ul className="space-y-4">
               {after.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[#2D2A26]">
+                <li key={i} className="flex items-start gap-3 text-[#2D2A26] text-base leading-relaxed">
                   <CheckCircle2 size={16} className="text-[#B8895A] mt-1 shrink-0" />
                   <span>{item}</span>
                 </li>
@@ -675,8 +609,7 @@ const services = [
 
 function ServicesSection() {
   return (
-    <section id="services" className="py-24 relative">
-      <GridBackground variant="solid" />
+    <section id="services" className="py-28 relative">
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -688,10 +621,10 @@ function ServicesSection() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             What We Deploy
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] leading-tight">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26] leading-tight">
             AI That Runs Your Business.<br />Not Just Advises On It.
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8C857C] mt-4 max-w-2xl mx-auto">
+          <motion.p variants={fadeUp} className="text-base sm:text-lg text-[#8C857C] mt-4 max-w-2xl mx-auto leading-relaxed">
             While competitors write whitepapers about AI, we deploy systems that generate revenue from day one.
           </motion.p>
         </motion.div>
@@ -707,9 +640,9 @@ function ServicesSection() {
             <motion.div
               key={i}
               variants={scaleUp}
-              className="group relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#c0bcb6,-12px_-12px_28px_#ffffff] border border-transparent hover:border-[#B8895A]/20 transition-all cursor-default"
+              className="group relative p-10 rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.10)] border border-[#E8E2DA]/60 hover:border-[#B8895A]/20 transition-all cursor-default"
             >
-              <div className="w-12 h-12 rounded-2xl bg-[#FAFAFA] flex items-center justify-center mb-5 group-hover:bg-[#B8895A]/10 transition-colors shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]">
+              <div className="w-12 h-12 rounded-2xl bg-[#FAFAFA] flex items-center justify-center mb-5 group-hover:bg-[#B8895A]/10 transition-colors">
                 <s.icon size={22} className="text-[#B8895A]" />
               </div>
               <h3 className="text-[#2D2A26] font-semibold text-lg mb-2">{s.title}</h3>
@@ -732,8 +665,7 @@ function TechStackSection() {
   ];
 
   return (
-    <section className="py-20 relative overflow-hidden">
-      <GridBackground variant="solid" />
+    <section className="py-28 relative overflow-hidden bg-white rounded-2xl mx-4 md:mx-8 my-4">
       <div className="max-w-5xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -745,7 +677,7 @@ function TechStackSection() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             Our Stack
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#2D2A26]">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26]">
             Built With the Best
           </motion.h2>
         </motion.div>
@@ -760,7 +692,7 @@ function TechStackSection() {
               transition={{ delay: i * 0.08, duration: 0.5 }}
               animate={!isMobile ? { y: [0, -8, 0] } : undefined}
               {...(!isMobile ? { transition: { y: { repeat: Infinity, duration: 2.5 + i * 0.3, ease: 'easeInOut' }, opacity: { duration: 0.5 }, default: { delay: i * 0.08 } } } : {})}
-              className="px-6 py-4 rounded-2xl bg-white shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] border border-[#E8E5E0]/50 text-[#2D2A26] font-semibold text-sm"
+              className="px-6 py-4 rounded-2xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60 text-[#2D2A26] font-semibold text-sm"
             >
               {tech}
             </motion.div>
@@ -776,8 +708,7 @@ function TechStackSection() {
 // ============================================
 function CaseStudyHighlight() {
   return (
-    <section className="py-24 relative">
-      <GridBackground variant="solid" />
+    <section className="py-28 relative">
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -790,7 +721,7 @@ function CaseStudyHighlight() {
           </motion.p>
           <motion.div
             variants={fadeUp}
-            className="relative p-8 md:p-12 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/15 overflow-hidden"
+            className="relative p-8 md:p-12 rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#B8895A]/15 overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#B8895A]/5 rounded-full blur-3xl" />
             <div className="relative grid md:grid-cols-2 gap-10 items-center">
@@ -799,7 +730,7 @@ function CaseStudyHighlight() {
                 <p className="text-[#B8895A] text-sm font-medium mb-6">
                   From Instagram DMs to a 122-page e-commerce empire — in 3 weeks.
                 </p>
-                <p className="text-[#8C857C] leading-relaxed mb-6">
+                <p className="text-base sm:text-lg text-[#8C857C] leading-relaxed mb-6">
                   Shopify shut them down. They were running a growing sneaker business through Instagram DMs. We built a complete AI-powered e-commerce platform with automated inventory, POS integration, and intelligent customer service — replacing everything Shopify couldn&apos;t handle.
                 </p>
                 <div className="flex flex-wrap gap-3 mb-8">
@@ -830,7 +761,7 @@ function CaseStudyHighlight() {
                     whileInView="visible"
                     viewport={{ once: true }}
                     variants={popIn}
-                    className="p-5 rounded-2xl bg-[#FAFAFA] shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff] text-center"
+                    className="p-5 rounded-2xl bg-[#FAFAFA] shadow-[0_2px_16px_rgba(0,0,0,0.06)] text-center"
                   >
                     <div className="text-2xl font-bold text-[#B8895A]">{m.value}</div>
                     <div className="text-xs text-[#8C857C] mt-1">{m.label}</div>
@@ -860,8 +791,7 @@ function ProcessTimeline() {
   ];
 
   return (
-    <section id="process" className="py-24 relative">
-      <GridBackground />
+    <section id="process" className="py-28 relative bg-white rounded-2xl mx-4 md:mx-8 my-4">
       <div className="max-w-4xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -873,7 +803,7 @@ function ProcessTimeline() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             How It Works
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26]">
             From First Call to Full Automation
           </motion.h2>
         </motion.div>
@@ -896,13 +826,13 @@ function ProcessTimeline() {
               {/* Timeline dot */}
               <motion.div
                 variants={popIn}
-                className="absolute left-6 md:left-1/2 w-3 h-3 rounded-full bg-[#B8895A] border-4 border-[#FAFAFA] shadow-md -translate-x-1.5 md:-translate-x-1.5 mt-6 z-10"
+                className="absolute left-6 md:left-1/2 w-3 h-3 rounded-full bg-[#B8895A] border-4 border-white shadow-md -translate-x-1.5 md:-translate-x-1.5 mt-6 z-10"
               />
 
               {!isMobile && i % 2 === 0 && <div className="hidden md:block md:w-1/2" />}
 
               <div className={`ml-12 md:ml-0 md:w-1/2 ${!isMobile ? (i % 2 === 0 ? 'md:pr-12' : 'md:pl-12') : ''}`}>
-                <div className="p-6 rounded-2xl bg-white shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] border border-[#E8E5E0]/50">
+                <div className="p-8 rounded-2xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60">
                   <div className={`flex items-center gap-3 mb-3 ${!isMobile && i % 2 === 0 ? 'md:justify-end' : ''}`}>
                     <div className="w-10 h-10 rounded-xl bg-[#B8895A]/10 flex items-center justify-center">
                       <step.icon size={18} className="text-[#B8895A]" />
@@ -930,8 +860,7 @@ function ProcessTimeline() {
 // ============================================
 function TestimonialSection() {
   return (
-    <section className="py-24 relative">
-      <GridBackground variant="solid" />
+    <section className="py-28 relative">
       <div className="max-w-4xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -943,12 +872,12 @@ function TestimonialSection() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             Client Results
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] mb-12">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26] mb-12">
             Don&apos;t Take Our Word For It
           </motion.h2>
           <motion.div
             variants={scaleUp}
-            className="relative p-10 md:p-14 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]/50"
+            className="relative p-10 md:p-14 rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60"
           >
             {/* Quotation mark */}
             <div className="text-[#B8895A]/10 text-8xl font-serif leading-none mb-2 select-none">&ldquo;</div>
@@ -993,8 +922,7 @@ function ROISection() {
   ];
 
   return (
-    <section id="roi" className="py-24 relative">
-      <GridBackground />
+    <section id="roi" className="py-28 relative bg-white rounded-2xl mx-4 md:mx-8 my-4">
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -1006,7 +934,7 @@ function ROISection() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             Your ROI
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26]">
             The Math Speaks for Itself
           </motion.h2>
         </motion.div>
@@ -1022,7 +950,7 @@ function ROISection() {
             <motion.div
               key={i}
               variants={popIn}
-              className="text-center p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff]"
+              className="text-center p-10 rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60"
             >
               <s.icon size={28} className="text-[#B8895A] mx-auto mb-4" />
               <div className="text-3xl md:text-4xl font-bold text-[#B8895A] mb-1">{s.value}</div>
@@ -1055,8 +983,7 @@ function TeamSection() {
   ];
 
   return (
-    <section id="team" className="py-24 relative">
-      <GridBackground variant="solid" />
+    <section id="team" className="py-28 relative">
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -1068,10 +995,10 @@ function TeamSection() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             Who We Are
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26]">
             A 4-Person Team.<br />Half of Us Never Sleep.
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8C857C] mt-4 max-w-2xl mx-auto">
+          <motion.p variants={fadeUp} className="text-base sm:text-lg text-[#8C857C] mt-4 max-w-2xl mx-auto leading-relaxed">
             2 humans who obsess over your success. 2 AI assistants who build, research, and optimize around the clock. Small enough to care. Powerful enough to deliver enterprise results.
           </motion.p>
         </motion.div>
@@ -1087,9 +1014,9 @@ function TeamSection() {
             <motion.div
               key={i}
               variants={i === 0 ? fadeLeft : fadeRight}
-              className="p-10 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] text-center"
+              className="p-10 rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60 text-center"
             >
-              <div className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] border-2 border-white/80">
+              <div className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.06)] border-2 border-white/80">
                 <img src={t.photo} alt={t.name} className="w-full h-full object-cover" />
               </div>
               <h3 className="text-xl font-bold text-[#2D2A26]">{t.name}</h3>
@@ -1110,7 +1037,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-2xl bg-white shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] overflow-hidden">
+    <div className="rounded-2xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60 overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between p-6 text-left hover:bg-[#FAFAFA]/50 transition-colors"
@@ -1146,8 +1073,7 @@ function FAQSection() {
   ];
 
   return (
-    <section id="faq" className="py-24 relative">
-      <GridBackground />
+    <section id="faq" className="py-28 relative bg-white rounded-2xl mx-4 md:mx-8 my-4">
       <div className="max-w-3xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -1159,7 +1085,7 @@ function FAQSection() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             FAQ
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26]">
             Every Question. Answered.
           </motion.h2>
         </motion.div>
@@ -1189,8 +1115,7 @@ function BookingSection() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section id="booking" className="py-24 relative">
-      <GridBackground variant="solid" />
+    <section id="booking" className="py-28 relative">
       <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
@@ -1202,10 +1127,10 @@ function BookingSection() {
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             Start This Week
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] mb-4">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2A26] mb-4">
             Book Your Free AI Audit
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto">
+          <motion.p variants={fadeUp} className="text-base sm:text-lg text-[#8C857C] max-w-2xl mx-auto leading-relaxed">
             30 minutes. Zero pressure. We&apos;ll map every AI opportunity in your business and show you exactly what the ROI looks like. Pick a time below.
           </motion.p>
         </motion.div>
@@ -1215,7 +1140,7 @@ function BookingSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0] overflow-hidden"
+          className="rounded-3xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-[#E8E2DA]/60 overflow-hidden"
           style={{ minHeight: '660px' }}
         >
           <iframe
@@ -1275,7 +1200,7 @@ function ContactForm() {
 
   if (status === 'sent') {
     return (
-      <div id="contact-form" className="max-w-lg mx-auto mt-12 bg-white rounded-2xl p-8 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] text-center">
+      <div id="contact-form" className="max-w-lg mx-auto mt-12 bg-white rounded-2xl p-8 shadow-[0_2px_16px_rgba(0,0,0,0.06)] text-center">
         <CheckCircle2 size={48} className="mx-auto mb-4 text-[#B8895A]" />
         <h3 className="text-xl font-bold text-[#2D2A26] mb-2">You&apos;re In.</h3>
         <p className="text-[#8C857C]">We&apos;ll reach out within 24 hours with next steps. Check your inbox.</p>
@@ -1284,24 +1209,24 @@ function ContactForm() {
   }
 
   return (
-    <form id="contact-form" onSubmit={handleSubmit} className="max-w-lg mx-auto mt-12 bg-white rounded-2xl p-8 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+    <form id="contact-form" onSubmit={handleSubmit} className="max-w-lg mx-auto mt-12 bg-white rounded-2xl p-8 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
       <p className="text-center text-[#8C857C] text-sm mb-6">Prefer to type? Drop us a message and we&apos;ll follow up within 24 hours.</p>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-[#5C4033] mb-1.5">Name *</label>
-          <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
+          <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-[#E8E2DA]/60 bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
         </div>
         <div>
           <label className="block text-sm font-medium text-[#5C4033] mb-1.5">Email *</label>
-          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
+          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 rounded-xl border border-[#E8E2DA]/60 bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
         </div>
         <div>
           <label className="block text-sm font-medium text-[#5C4033] mb-1.5">Phone <span className="text-[#C5C3BE]">(optional)</span></label>
-          <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
+          <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#E8E2DA]/60 bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
         </div>
         <div>
           <label className="block text-sm font-medium text-[#5C4033] mb-1.5">What&apos;s eating your time?</label>
-          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all resize-none" />
+          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#E8E2DA]/60 bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all resize-none" />
         </div>
         <button
           type="submit"
@@ -1320,8 +1245,7 @@ function ContactForm() {
 
 function FinalCTA() {
   return (
-    <section id="contact" className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#FAFAFA] via-[#F0EDE8] to-[#FAFAFA]" />
+    <section id="contact" className="py-28 relative overflow-hidden bg-white rounded-2xl mx-4 md:mx-8 my-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.08)_0%,transparent_60%)]" />
       <div className="max-w-4xl mx-auto px-6 text-center relative">
         <motion.div
@@ -1330,12 +1254,12 @@ function FinalCTA() {
           viewport={{ once: true }}
           variants={staggerContainer}
         >
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#2D2A26] leading-tight mb-6">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#2D2A26] leading-tight mb-6">
             Every Day You Wait,
             <br />
             <span className="text-[#B8895A]">Your Competitors Pull Ahead.</span>
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto mb-4">
+          <motion.p variants={fadeUp} className="text-base sm:text-lg text-[#8C857C] max-w-2xl mx-auto mb-4 leading-relaxed">
             Book a free AI audit. In 30 minutes, we&apos;ll show you exactly which tasks to automate first and what the payback looks like. No commitment. No pressure.
           </motion.p>
           <motion.p variants={fadeUp} className="text-[#2D2A26] font-semibold text-lg mb-10">
@@ -1372,7 +1296,7 @@ function FinalCTA() {
 // ============================================
 function Footer() {
   return (
-    <footer className="border-t border-[#E8E5E0] py-16 bg-[#FAFAFA]">
+    <footer className="py-16 bg-white rounded-t-2xl mx-4 md:mx-8 mt-4">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-14">
           <div className="md:col-span-2">
@@ -1425,7 +1349,7 @@ function Footer() {
             </div>
           </div>
         </div>
-        <div className="border-t border-[#E8E5E0] pt-8 text-center">
+        <div className="pt-8 text-center">
           <p className="text-[#C5C3BE] text-sm">
             {new Date().getFullYear()} Vantix. All rights reserved.
           </p>
@@ -1444,37 +1368,31 @@ export function FuturisticLanding() {
   }, []);
 
   return (
-    <div className="bg-[#FAFAFA] text-[#2D2A26] min-h-screen selection:bg-[#B8895A]/20 selection:text-[#2D2A26] scroll-smooth">
+    <div
+      className="text-[#2D2A26] min-h-screen selection:bg-[#B8895A]/20 selection:text-[#2D2A26] scroll-smooth"
+      style={{
+        backgroundImage: 'url(/bg-texture.jpg)',
+        backgroundSize: '600px',
+        backgroundRepeat: 'repeat',
+      }}
+    >
       <Navigation />
       <StickyCTABar />
       <HeroSection />
       <AnimatedCounterSection />
-      <WoodDivider />
       <BeforeAfterSection />
-      <WoodDivider />
       <ProblemSection />
-      <WoodDivider />
       <ServicesSection />
-      <WoodDivider />
       <TechStackSection />
-      <WoodDivider />
       <ProcessTimeline />
-      <WoodDivider />
       <CaseStudyHighlight />
-      <WoodDivider />
       <TestimonialSection />
-      <WoodDivider />
       <ROISection />
-      <WoodDivider />
       <TeamSection />
-      <WoodDivider />
       <FAQSection />
-      <WoodDivider />
       <BookingSection />
-      <WoodDivider />
       <FinalCTA />
       <Footer />
     </div>
   );
 }
-
