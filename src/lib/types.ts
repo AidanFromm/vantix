@@ -153,6 +153,22 @@ export interface Expense {
   expense_date: string;
   project_id?: string;
   created_at: string;
+  // Subscription fields (stored in Supabase once migrated, localStorage fallback)
+  expense_type?: 'one-time' | 'subscription';
+  billing_cycle?: 'monthly' | 'quarterly' | 'yearly';
+  next_due_date?: string;
+  company_name?: string;
+}
+
+export interface SubscriptionMeta {
+  expense_id: string;
+  expense_type: 'subscription';
+  billing_cycle: 'monthly' | 'quarterly' | 'yearly';
+  next_due_date: string;
+  company_name: string;
+  amount: number;
+  category?: string;
+  description?: string;
 }
 
 export interface Activity {

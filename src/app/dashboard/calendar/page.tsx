@@ -16,7 +16,8 @@ import {
   Edit3,
   Check,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase, getSubscriptionMetas } from '@/lib/supabase';
+import type { SubscriptionMeta } from '@/lib/types';
 
 // ============================================
 // TYPES
@@ -28,7 +29,7 @@ interface CalendarEvent {
   start_time: string;
   end_time: string;
   client_id: string | null;
-  type: 'consultation' | 'meeting' | 'deadline' | 'follow-up';
+  type: 'consultation' | 'meeting' | 'deadline' | 'follow-up' | 'subscription';
   notes: string;
   created_at: string;
 }
@@ -47,6 +48,7 @@ const EVENT_COLORS: Record<string, string> = {
   meeting: '#7B9E6B',
   deadline: '#C75B5B',
   'follow-up': '#6B8EB8',
+  subscription: '#8B5CF6',
 };
 
 // ============================================
@@ -425,15 +427,56 @@ export default function CalendarPage() {
 
   const todayStr = formatDate(today.getFullYear(), today.getMonth(), today.getDate());
 
+  // Generate subscription events for the current month
+  const generateSubscriptionEvents = useCallback((startDate: string, endDate: string): CalendarEvent[] => {
+    try {
+      const subs = getSubscriptionMetas();
+      const events: CalendarEvent[] = [];
+      const start = new Date(startDate + 'T00:00:00');
+      const end = new Date(endDate + 'T00:00:00');
+
+      for (const sub of subs) {
+        if (!sub.next_due_date) continue;
+        let due = new Date(sub.next_due_date + 'T00:00:00');
+        const increment = sub.billing_cycle === 'monthly' ? 1 : sub.billing_cycle === 'quarterly' ? 3 : 12;
+
+        // Walk forward/backward to find occurrences in range
+        while (due > end) { due.setMonth(due.getMonth() - increment); }
+        while (due < start) { due.setMonth(due.getMonth() + increment); }
+
+        // Generate events within range
+        for (let i = 0; i < 3 && due <= end; i++) {
+          if (due >= start) {
+            const dateStr = formatDate(due.getFullYear(), due.getMonth(), due.getDate());
+            events.push({
+              id: `sub-${sub.expense_id}-${dateStr}`,
+              title: `$ ${sub.company_name} - ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(sub.amount)}`,
+              date: dateStr,
+              start_time: '00:00',
+              end_time: '00:00',
+              client_id: null,
+              type: 'subscription' as CalendarEvent['type'],
+              notes: `${sub.billing_cycle} subscription - ${sub.description || ''}`.trim(),
+              created_at: new Date().toISOString(),
+            });
+          }
+          due.setMonth(due.getMonth() + increment);
+        }
+      }
+      return events;
+    } catch { return []; }
+  }, []);
+
   // Load events for current view
   const loadEvents = useCallback(async () => {
     setLoading(true);
     const startDate = formatDate(currentYear, currentMonth, 1);
     const endDate = formatDate(currentYear, currentMonth, getDaysInMonth(currentYear, currentMonth));
     const data = await fetchEvents(startDate, endDate);
-    setEvents(data);
+    const subEvents = generateSubscriptionEvents(startDate, endDate);
+    setEvents([...data, ...subEvents]);
     setLoading(false);
-  }, [currentYear, currentMonth]);
+  }, [currentYear, currentMonth, generateSubscriptionEvents]);
 
   useEffect(() => {
     loadEvents();

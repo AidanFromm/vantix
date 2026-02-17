@@ -8,8 +8,8 @@ import {
   CheckCircle, Send, Edit3, CreditCard, Zap,
   Trash2, RefreshCw, PieChart, ArrowUpRight, ArrowDownRight, X, Loader2,
 } from 'lucide-react';
-import { getInvoices, getExpenses, createExpense, deleteExpense as deleteExpenseFn } from '@/lib/supabase';
-import type { Invoice, Expense } from '@/lib/types';
+import { getInvoices, getExpenses, createExpense, deleteExpense as deleteExpenseFn, getSubscriptionMetas, saveSubscriptionMeta, removeSubscriptionMeta } from '@/lib/supabase';
+import type { Invoice, Expense, SubscriptionMeta } from '@/lib/types';
 
 const formatCurrency = (amount: number): string => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
 
@@ -24,12 +24,14 @@ export default function FinancialPage() {
   const [loading, setLoading] = useState(true);
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [subscriptionMetas, setSubscriptionMetas] = useState<SubscriptionMeta[]>([]);
 
   const loadData = useCallback(async () => {
     try {
       const [iRes, eRes] = await Promise.all([getInvoices(), getExpenses()]);
       setInvoices(iRes.data || []);
       setExpenses(eRes.data || []);
+      setSubscriptionMetas(getSubscriptionMetas());
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   }, []);
@@ -58,9 +60,11 @@ export default function FinancialPage() {
   const handleDeleteExpense = async (id: string) => {
     if (!confirm('Delete this expense?')) return;
     setDeleting(id);
-    try { await deleteExpenseFn(id); await loadData(); }
+    try { await deleteExpenseFn(id); removeSubscriptionMeta(id); await loadData(); }
     catch (err) { console.error(err); } finally { setDeleting(null); }
   };
+
+  const getSubMeta = (id: string) => subscriptionMetas.find(m => m.expense_id === id);
 
   const downloadReport = () => {
     const report = [`Vantix Financial Report`, `Generated: ${new Date().toLocaleDateString()}`, '', `Total Revenue: ${formatCurrency(kpis.totalRevenue)}`, `Total Expenses: ${formatCurrency(kpis.totalExpenses)}`, `Net Profit: ${formatCurrency(kpis.netProfit)}`, `Outstanding: ${kpis.outstandingCount} (${formatCurrency(kpis.outstandingAmount)})`, '', '=== Invoices ===', ...invoices.map(inv => `${inv.invoice_number || inv.id.slice(0,8)}: ${inv.client?.name || 'N/A'} - ${formatCurrency(inv.total || inv.amount || 0)} (${inv.status})`), '', '=== Expenses ===', ...expenses.map(exp => `${exp.expense_date}: ${exp.description || exp.vendor || 'N/A'} - ${formatCurrency(exp.amount)} (${exp.category || 'Other'})`)].join('\n');
@@ -136,11 +140,19 @@ export default function FinancialPage() {
           <div className="divide-y divide-[#E8E2DA] max-h-80 overflow-y-auto">
             {expenses.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12"><Receipt size={24} className="text-[#8C857C]/30 mb-3" /><p className="text-[#8C857C] text-sm">No expenses logged</p></div>
-            ) : expenses.map(expense => (
+            ) : expenses.map(expense => {
+              const subMeta = getSubMeta(expense.id);
+              return (
               <div key={expense.id} className="px-5 py-4 hover:bg-[#F5F0EB]/50 transition-colors flex items-center justify-between group">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: CATEGORY_COLORS[expense.category || 'Other'] || '#6b7280' }} />
-                  <div className="min-w-0"><p className="font-medium text-sm text-[#2D2A26] truncate">{expense.description || expense.vendor || 'Expense'}</p><p className="text-xs text-[#8C857C]">{expense.category || 'Other'}{expense.vendor ? ` · ${expense.vendor}` : ''}</p></div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-sm text-[#2D2A26] truncate">{subMeta?.company_name || expense.description || expense.vendor || 'Expense'}</p>
+                      {subMeta && <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-200 shrink-0">{subMeta.billing_cycle}</span>}
+                    </div>
+                    <p className="text-xs text-[#8C857C]">{expense.category || 'Other'}{expense.vendor ? ` · ${expense.vendor}` : ''}{subMeta ? ` · Next: ${new Date(subMeta.next_due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}</p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="text-right"><p className="font-semibold text-amber-600">-{formatCurrency(expense.amount)}</p><p className="text-xs text-[#8C857C]">{new Date(expense.expense_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p></div>
@@ -149,7 +161,8 @@ export default function FinancialPage() {
                   </button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -175,29 +188,68 @@ export default function FinancialPage() {
 
       {/* Add Expense Modal */}
       <AnimatePresence>
-        {showAddExpense && <AddExpenseModal onClose={() => setShowAddExpense(false)} onSave={async (data) => { try { await createExpense(data); setShowAddExpense(false); await loadData(); } catch (err) { console.error(err); } }} />}
+        {showAddExpense && <AddExpenseModal onClose={() => setShowAddExpense(false)} onSave={async (data, subMeta) => { try { const { data: created } = await createExpense(data); if (subMeta && created?.id) { saveSubscriptionMeta({ ...subMeta, expense_id: created.id }); } setShowAddExpense(false); await loadData(); } catch (err) { console.error(err); } }} />}
       </AnimatePresence>
     </div>
   );
 }
 
-function AddExpenseModal({ onClose, onSave }: { onClose: () => void; onSave: (data: Partial<Expense>) => Promise<void> }) {
-  const [form, setForm] = useState({ description: '', amount: 0, category: '', vendor: '', expense_date: new Date().toISOString().split('T')[0] });
+function AddExpenseModal({ onClose, onSave }: { onClose: () => void; onSave: (data: Partial<Expense>, subMeta?: SubscriptionMeta) => Promise<void> }) {
+  const [form, setForm] = useState({
+    description: '', amount: 0, category: '', vendor: '',
+    expense_date: new Date().toISOString().split('T')[0],
+    expense_type: 'one-time' as 'one-time' | 'subscription',
+    billing_cycle: 'monthly' as 'monthly' | 'quarterly' | 'yearly',
+    next_due_date: '',
+    company_name: '',
+  });
   const [saving, setSaving] = useState(false);
   const inputCls = 'w-full bg-[#FAFAFA] border border-[#E8E2DA] rounded-xl px-4 py-3 text-sm text-[#2D2A26] focus:outline-none focus:border-[#B8895A]/50';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); if (!form.amount) return;
     setSaving(true);
-    try { await onSave({ description: form.description, amount: form.amount, category: form.category || undefined, vendor: form.vendor || undefined, expense_date: form.expense_date }); }
+    try {
+      const subMeta = form.expense_type === 'subscription' ? {
+        expense_id: '', // will be set after creation
+        expense_type: 'subscription' as const,
+        billing_cycle: form.billing_cycle,
+        next_due_date: form.next_due_date || form.expense_date,
+        company_name: form.company_name || form.vendor || form.description,
+        amount: form.amount,
+        category: form.category || undefined,
+        description: form.description || undefined,
+      } : undefined;
+      await onSave({
+        description: form.description, amount: form.amount,
+        category: form.category || undefined, vendor: form.vendor || undefined,
+        expense_date: form.expense_date,
+        expense_type: form.expense_type,
+        billing_cycle: form.expense_type === 'subscription' ? form.billing_cycle : undefined,
+        next_due_date: form.expense_type === 'subscription' ? (form.next_due_date || form.expense_date) : undefined,
+        company_name: form.expense_type === 'subscription' ? (form.company_name || undefined) : undefined,
+      }, subMeta);
+    }
     catch (err) { console.error(err); } finally { setSaving(false); }
   };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#2D2A26]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-white border border-[#E8E2DA] rounded-2xl p-6 w-full max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
+      <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-white border border-[#E8E2DA] rounded-2xl p-6 w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <h3 className="text-xl font-semibold text-[#2D2A26] mb-4">Log Expense</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Expense Type Toggle */}
+          <div>
+            <label className="text-xs text-[#8C857C] mb-1.5 block">Type</label>
+            <div className="flex gap-2">
+              {(['one-time', 'subscription'] as const).map(t => (
+                <button key={t} type="button" onClick={() => setForm(f => ({ ...f, expense_type: t }))}
+                  className={`flex-1 px-3 py-2 rounded-xl text-sm font-medium border transition-all ${form.expense_type === t ? 'bg-[#B8895A]/10 text-[#B8895A] border-[#B8895A]/30' : 'bg-[#F5F0EB] text-[#8C857C] border-[#E8E2DA]'}`}>
+                  {t === 'one-time' ? 'One-Time' : 'Subscription'}
+                </button>
+              ))}
+            </div>
+          </div>
           <div><label className="text-xs text-[#8C857C] mb-1.5 block">Description</label><input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className={inputCls} /></div>
           <div className="grid grid-cols-2 gap-4">
             <div><label className="text-xs text-[#8C857C] mb-1.5 block">Amount *</label><input type="number" value={form.amount || ''} onChange={e => setForm(f => ({ ...f, amount: Number(e.target.value) }))} className={inputCls} required /></div>
@@ -207,6 +259,22 @@ function AddExpenseModal({ onClose, onSave }: { onClose: () => void; onSave: (da
             <div><label className="text-xs text-[#8C857C] mb-1.5 block">Category</label><select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className={inputCls}><option value="">Select...</option>{['Software & Subscriptions','Equipment & Hardware','Professional Services','Marketing & Advertising','Contractor/Freelancer','Travel & Meals','Other'].map(c => <option key={c} value={c}>{c}</option>)}</select></div>
             <div><label className="text-xs text-[#8C857C] mb-1.5 block">Vendor</label><input value={form.vendor} onChange={e => setForm(f => ({ ...f, vendor: e.target.value }))} className={inputCls} /></div>
           </div>
+          {/* Subscription-specific fields */}
+          {form.expense_type === 'subscription' && (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="text-xs text-[#8C857C] mb-1.5 block">Company Name</label><input value={form.company_name} onChange={e => setForm(f => ({ ...f, company_name: e.target.value }))} placeholder="e.g. Vercel, OpenAI" className={inputCls} /></div>
+                <div><label className="text-xs text-[#8C857C] mb-1.5 block">Billing Cycle</label>
+                  <select value={form.billing_cycle} onChange={e => setForm(f => ({ ...f, billing_cycle: e.target.value as 'monthly' | 'quarterly' | 'yearly' }))} className={inputCls}>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                </div>
+              </div>
+              <div><label className="text-xs text-[#8C857C] mb-1.5 block">Next Due Date</label><input type="date" value={form.next_due_date} onChange={e => setForm(f => ({ ...f, next_due_date: e.target.value }))} className={inputCls} /></div>
+            </>
+          )}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#F5F0EB] text-[#8C857C] text-sm">Cancel</button>
             <button type="submit" disabled={saving || !form.amount} className="flex-1 px-4 py-3 rounded-xl bg-[#B8895A] text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">

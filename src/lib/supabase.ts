@@ -1,5 +1,5 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-import type { Client, Lead, Project, Invoice, Expense, Activity, ScrapedLead, TeamMember, DashboardStats } from './types';
+import type { Client, Lead, Project, Invoice, Expense, Activity, ScrapedLead, TeamMember, DashboardStats, SubscriptionMeta } from './types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
@@ -238,6 +238,50 @@ export async function getTeamMembers() {
 // ============================================
 // DASHBOARD STATS
 // ============================================
+// ============================================
+// CHAT LEADS (Landing Page / Chat Widget)
+// ============================================
+export async function createChatLead(lead: { visitor_name: string; email?: string; phone?: string; interested_in?: string }) {
+  try {
+    const { data, error } = await supabase.from('chat_leads').insert(lead).select().single();
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+}
+
+// ============================================
+// SUBSCRIPTION EXPENSES (localStorage fallback)
+// ============================================
+const SUBSCRIPTION_STORAGE_KEY = 'vantix_subscription_meta';
+
+export function getSubscriptionMetas(): SubscriptionMeta[] {
+  try {
+    const raw = typeof window !== 'undefined' ? localStorage.getItem(SUBSCRIPTION_STORAGE_KEY) : null;
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveSubscriptionMeta(meta: SubscriptionMeta) {
+  try {
+    const existing = getSubscriptionMetas();
+    const idx = existing.findIndex(m => m.expense_id === meta.expense_id);
+    if (idx >= 0) existing[idx] = meta;
+    else existing.push(meta);
+    localStorage.setItem(SUBSCRIPTION_STORAGE_KEY, JSON.stringify(existing));
+  } catch { /* noop */ }
+}
+
+export function removeSubscriptionMeta(expenseId: string) {
+  try {
+    const existing = getSubscriptionMetas().filter(m => m.expense_id !== expenseId);
+    localStorage.setItem(SUBSCRIPTION_STORAGE_KEY, JSON.stringify(existing));
+  } catch { /* noop */ }
+}
+
 export async function getDashboardStats(): Promise<{ data: DashboardStats | null; error: Error | null }> {
   try {
     const { data: invoices } = await supabase.from('invoices').select('total, status').then(r => r, () => ({ data: null, error: null }));

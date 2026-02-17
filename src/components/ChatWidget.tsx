@@ -45,7 +45,8 @@ const TYPING_DELAY = 900;
 
 const STORAGE_KEY = "vantix_chat_leads";
 
-function saveLeadToStorage(lead: Lead) {
+async function saveLeadToStorage(lead: Lead) {
+  // Save to localStorage as fallback
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     const leads: Lead[] = raw ? JSON.parse(raw) : [];
@@ -53,6 +54,22 @@ function saveLeadToStorage(lead: Lead) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
   } catch {
     /* noop */
+  }
+  // Save to Supabase
+  try {
+    const { createLead } = await import('@/lib/supabase');
+    await createLead({
+      name: lead.name || 'Chat Visitor',
+      email: lead.email || undefined,
+      phone: lead.phone || undefined,
+      source: 'Chat Widget',
+      status: 'new',
+      notes: lead.interest ? `Interest: ${lead.interest}` : undefined,
+      score: 0,
+      tags: ['chat-widget'],
+    });
+  } catch {
+    /* Supabase may not be available */
   }
 }
 

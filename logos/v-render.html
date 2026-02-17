@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1024px;
+    height: 1024px;
+    background: #FAFAFA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: system-ui;
+  }
+  
+  .scene {
+    position: relative;
+    width: 600px;
+    height: 700px;
+    perspective: 1200px;
+  }
+  
+  /* Wood texture via layered gradients */
+  .plank {
+    position: absolute;
+    width: 110px;
+    border-radius: 4px;
+    /* Realistic wood: layered gradients for grain */
+    background:
+      /* Fine grain lines */
+      repeating-linear-gradient(
+        2deg,
+        transparent,
+        transparent 4px,
+        rgba(160, 100, 40, 0.12) 4px,
+        rgba(160, 100, 40, 0.12) 5px
+      ),
+      repeating-linear-gradient(
+        -1deg,
+        transparent,
+        transparent 11px,
+        rgba(140, 85, 30, 0.08) 11px,
+        rgba(140, 85, 30, 0.08) 12px
+      ),
+      /* Wider grain bands */
+      repeating-linear-gradient(
+        1deg,
+        transparent,
+        transparent 18px,
+        rgba(180, 120, 50, 0.15) 18px,
+        rgba(180, 120, 50, 0.15) 20px
+      ),
+      /* Base color with subtle variation */
+      linear-gradient(
+        180deg,
+        #D4A258 0%,
+        #C8944C 15%,
+        #D0A050 30%,
+        #C49048 50%,
+        #D4A258 65%,
+        #C8944C 80%,
+        #D0A050 100%
+      );
+    border: 2px solid #8A6228;
+    transform-style: preserve-3d;
+  }
+  
+  .plank::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 3px;
+    /* Top highlight for 3D */
+    background: linear-gradient(
+      100deg,
+      rgba(255,255,255,0.2) 0%,
+      rgba(255,255,255,0.05) 30%,
+      transparent 50%,
+      rgba(0,0,0,0.05) 80%,
+      rgba(0,0,0,0.1) 100%
+    );
+  }
+  
+  /* Wood knot */
+  .plank::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, #9A6525 0%, #A87030 40%, transparent 70%);
+    opacity: 0.35;
+  }
+  
+  .plank-left {
+    height: 580px;
+    top: 20px;
+    left: 110px;
+    transform: rotate(-14deg);
+    box-shadow:
+      /* Main drop shadow */
+      12px 16px 24px rgba(40, 20, 0, 0.35),
+      6px 8px 12px rgba(40, 20, 0, 0.2),
+      /* 3D thickness - right side */
+      4px 3px 0px #9A6828,
+      5px 4px 0px #8A5820,
+      6px 5px 0px #7A4818,
+      /* Subtle ambient */
+      0 0 40px rgba(100, 60, 20, 0.1);
+    z-index: 1;
+  }
+  
+  .plank-left::after {
+    top: 180px;
+    left: 25px;
+  }
+  
+  .plank-right {
+    height: 580px;
+    top: 20px;
+    right: 110px;
+    transform: rotate(14deg);
+    box-shadow:
+      -8px 16px 24px rgba(40, 20, 0, 0.35),
+      -4px 8px 12px rgba(40, 20, 0, 0.2),
+      /* 3D thickness - left side */
+      -4px 3px 0px #9A6828,
+      -5px 4px 0px #8A5820,
+      -6px 5px 0px #7A4818,
+      0 0 40px rgba(100, 60, 20, 0.1);
+    z-index: 2;
+    /* Slightly different wood tone */
+    background:
+      repeating-linear-gradient(
+        -2deg,
+        transparent,
+        transparent 5px,
+        rgba(150, 95, 35, 0.1) 5px,
+        rgba(150, 95, 35, 0.1) 6px
+      ),
+      repeating-linear-gradient(
+        1deg,
+        transparent,
+        transparent 13px,
+        rgba(130, 80, 28, 0.07) 13px,
+        rgba(130, 80, 28, 0.07) 14px
+      ),
+      repeating-linear-gradient(
+        -1deg,
+        transparent,
+        transparent 20px,
+        rgba(170, 110, 45, 0.13) 20px,
+        rgba(170, 110, 45, 0.13) 22px
+      ),
+      linear-gradient(
+        180deg,
+        #D09850 0%,
+        #C48E46 15%,
+        #CC9A4E 30%,
+        #C08A42 50%,
+        #D09850 65%,
+        #C48E46 80%,
+        #CC9A4E 100%
+      );
+  }
+  
+  .plank-right::after {
+    top: 250px;
+    right: 20px;
+    left: auto;
+  }
+  
+  /* Nail */
+  .nail {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    z-index: 10;
+    /* Metallic gradient */
+    background: radial-gradient(
+      ellipse at 38% 32%,
+      #E8E8E8 0%,
+      #C0C0C0 20%,
+      #909090 45%,
+      #606060 70%,
+      #404040 100%
+    );
+    border: 2px solid #333;
+    box-shadow:
+      3px 4px 8px rgba(0,0,0,0.5),
+      1px 2px 3px rgba(0,0,0,0.3),
+      inset 0 -2px 4px rgba(0,0,0,0.2),
+      inset 0 2px 4px rgba(255,255,255,0.15);
+  }
+  
+  .nail::before,
+  .nail::after {
+    content: '';
+    position: absolute;
+    background: #383838;
+    border-radius: 2px;
+  }
+  
+  /* Phillips cross horizontal */
+  .nail::before {
+    width: 22px;
+    height: 4px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 1.5px 0 rgba(0,0,0,0.3);
+  }
+  
+  /* Phillips cross vertical */
+  .nail::after {
+    width: 4px;
+    height: 22px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 1.5px 0 0 rgba(0,0,0,0.3);
+  }
+  
+  /* Highlight spot on nail */
+  .nail-highlight {
+    position: absolute;
+    width: 10px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    top: 6px;
+    left: 7px;
+    filter: blur(1px);
+  }
+  
+  /* Machined ring */
+  .nail-ring {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 1px solid rgba(100,100,100,0.25);
+  }
+  
+  /* Main nail - bottom joint */
+  .nail-main {
+    bottom: 82px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 48px;
+  }
+  
+  .nail-main::before { width: 26px; height: 5px; }
+  .nail-main::after { width: 5px; height: 26px; }
+  
+  /* Small nails at top */
+  .nail-top-left {
+    top: 58px;
+    left: 148px;
+    width: 30px;
+    height: 30px;
+    z-index: 5;
+  }
+  
+  .nail-top-left::before { width: 16px; height: 3px; }
+  .nail-top-left::after { width: 3px; height: 16px; }
+  
+  .nail-top-right {
+    top: 58px;
+    right: 148px;
+    width: 30px;
+    height: 30px;
+    z-index: 5;
+  }
+  
+  .nail-top-right::before { width: 16px; height: 3px; }
+  .nail-top-right::after { width: 3px; height: 16px; }
+  
+  /* Overlap shadow where planks meet */
+  .joint-shadow {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 80px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.15) 0%, transparent 70%);
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+  <div class="scene">
+    <div class="plank plank-left"></div>
+    <div class="plank plank-right"></div>
+    <div class="joint-shadow"></div>
+    
+    <div class="nail nail-main">
+      <div class="nail-ring"></div>
+      <div class="nail-highlight"></div>
+    </div>
+    
+    <div class="nail nail-top-left">
+      <div class="nail-ring"></div>
+      <div class="nail-highlight" style="width:7px;height:5px;top:4px;left:5px;"></div>
+    </div>
+    
+    <div class="nail nail-top-right">
+      <div class="nail-ring"></div>
+      <div class="nail-highlight" style="width:7px;height:5px;top:4px;left:5px;"></div>
+    </div>
+  </div>
+</body>
+</html>

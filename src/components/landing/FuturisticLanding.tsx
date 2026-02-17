@@ -772,13 +772,29 @@ function ContactForm() {
     if (!form.name.trim() || !form.email.trim()) return;
     setStatus('sending');
     try {
-      const { supabase } = await import('@/lib/supabase');
-      await supabase.from('chat_leads').insert({
-        visitor_name: form.name,
-        email: form.email,
-        phone: form.phone || null,
-        interested_in: form.message || null,
-      });
+      const { supabase, createLead } = await import('@/lib/supabase');
+      // Save to chat_leads table
+      try {
+        await supabase.from('chat_leads').insert({
+          visitor_name: form.name,
+          email: form.email,
+          phone: form.phone || null,
+          interested_in: form.message || null,
+        });
+      } catch { /* chat_leads table may not exist */ }
+      // Also save to leads table so it appears in dashboard
+      try {
+        await createLead({
+          name: form.name,
+          email: form.email || undefined,
+          phone: form.phone || undefined,
+          source: 'Website Form',
+          status: 'new',
+          notes: form.message || undefined,
+          score: 0,
+          tags: ['website-contact'],
+        });
+      } catch { /* leads table may not exist */ }
       setStatus('sent');
       setForm({ name: '', email: '', phone: '', message: '' });
     } catch (err) {
