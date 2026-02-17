@@ -1,12 +1,12 @@
-﻿'use client';
+'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
-  ArrowRight, ArrowDown, Bot, Globe, Zap, BarChart3, Mail, Package,
+  ArrowRight, Bot, Globe, Zap, BarChart3, Mail, Package,
   Phone, Sparkles, Clock, Users, TrendingUp, Shield, ChevronDown,
-  MessageSquare, Calendar, Search, Cpu, CheckCircle2, ExternalLink,
-  Twitter, Linkedin, Instagram, Menu, X
+  MessageSquare, Calendar, Search, Cpu, CheckCircle2,
+  Twitter, Linkedin, Instagram, Menu, X, Target, Layers, Rocket, Settings
 } from 'lucide-react';
 
 // ============================================
@@ -14,22 +14,20 @@ import {
 // ============================================
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const staggerContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 
-// Realistic birch/maple wood gradient CSS
 const woodButtonStyle = {
   background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878, #E6C78C)`,
   border: '1px solid rgba(139,90,43,0.2)',
 };
 
-// Section divider component
 function WoodDivider() {
   return (
     <div className="max-w-7xl mx-auto px-6">
@@ -63,11 +61,11 @@ function Navigation() {
   }, []);
 
   const links = [
-    { label: 'Services', href: '#services' },
-    { label: 'Results', href: '#roi' },
-    { label: 'Process', href: '#process' },
-    { label: 'Team', href: '#team' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'Services', href: '/services' },
+    { label: 'Case Studies', href: '/case-studies' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Dashboard', href: '/login' },
   ];
 
   return (
@@ -82,7 +80,7 @@ function Navigation() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2.5">
+        <a href="/" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[#5C4033] font-extrabold text-sm" style={woodButtonStyle}>V</div>
           <span className="text-2xl font-extrabold text-[#3A3632] tracking-tight">vantix<span className="text-[#B8895A]">.</span></span>
         </a>
@@ -92,19 +90,15 @@ function Navigation() {
               {l.label}
             </a>
           ))}
-          <a href="/login" className="text-sm text-[#8C857C] hover:text-[#2D2A26] transition-colors">
-            Login
-          </a>
           <a
-            href="#contact-form"
-            onClick={(e) => { e.preventDefault(); document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' }); }}
+            href="#booking"
             className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full transition-all shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8]"
             style={woodButtonStyle}
           >
             Book a Call
           </a>
         </div>
-        <button className="md:hidden text-[#2D2A26]" onClick={() => setMobileOpen(!mobileOpen)}>
+        <button className="md:hidden text-[#2D2A26]" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -122,10 +116,7 @@ function Navigation() {
                   {l.label}
                 </a>
               ))}
-              <a href="/login" onClick={() => setMobileOpen(false)} className="text-[#8C857C] hover:text-[#2D2A26] transition-colors">
-                Login
-              </a>
-              <a href="#contact-form" onClick={(e) => { e.preventDefault(); setMobileOpen(false); document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full text-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]" style={woodButtonStyle}>
+              <a href="#booking" onClick={() => setMobileOpen(false)} className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full text-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]" style={woodButtonStyle}>
                 Book a Call
               </a>
             </div>
@@ -148,10 +139,7 @@ function GridBackground({ variant = 'grid' }: { variant?: 'grid' | 'solid' }) {
       <div
         className="absolute inset-0 opacity-40"
         style={{
-          backgroundImage: `
-            linear-gradient(to right, #E8E5E0 1px, transparent 1px),
-            linear-gradient(to bottom, #E8E5E0 1px, transparent 1px)
-          `,
+          backgroundImage: `linear-gradient(to right, #E8E5E0 1px, transparent 1px), linear-gradient(to bottom, #E8E5E0 1px, transparent 1px)`,
           backgroundSize: '48px 48px',
         }}
       />
@@ -166,7 +154,6 @@ function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <GridBackground />
-      {/* Subtle warm radial glow */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.06)_0%,transparent_60%)]" />
 
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center pt-20">
@@ -177,20 +164,18 @@ function HeroSection() {
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C5C3BE] bg-white mb-8 shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]"
         >
           <span className="w-2 h-2 rounded-full bg-[#B8895A] animate-pulse" />
-          <span className="text-sm text-[#8C857C] font-medium">AI-First Digital Transformation</span>
+          <span className="text-sm text-[#8C857C] font-medium">AI-Powered Business Automation</span>
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-8xl font-bold text-[#2D2A26] leading-[0.93] tracking-tight mb-8"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-[#2D2A26] leading-[0.93] tracking-tight mb-8"
         >
-          Your Business.
+          Stop Running Your Business.
           <br />
-          <span className="text-[#B8895A]">
-            Powered by AI.
-          </span>
+          <span className="text-[#B8895A]">Let AI Run It For You.</span>
         </motion.h1>
 
         <motion.p
@@ -209,76 +194,54 @@ function HeroSection() {
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <a
-            href="#services"
+            href="#booking"
             className="group px-8 py-4 text-[#5C4033] font-semibold rounded-full transition-all inline-flex items-center justify-center gap-2 shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
             style={woodButtonStyle}
           >
-            See What AI Can Do For You
+            Book Your Free Discovery Call
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </a>
         </motion.div>
 
-        <motion.div
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="hidden"
+          transition={{ delay: 1.2, duration: 0.8 }}
+          className="text-sm text-[#B8895A]/70 mt-8 font-medium"
         >
-          <ArrowDown size={20} className="text-[#C5C3BE] animate-bounce" />
-        </motion.div>
+          Trusted by businesses across the US — $50K+ in projects delivered
+        </motion.p>
       </div>
     </section>
   );
 }
 
 // ============================================
-// SOCIAL PROOF BAR
+// TRUST BAR
 // ============================================
-function AnimatedCounter({ target, suffix = '', prefix = '' }: { target: number; suffix?: string; prefix?: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
+function TrustBar() {
+  const { ref, inView } = useAnimateInView();
 
-  useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const step = target / 60;
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 16);
-    return () => clearInterval(timer);
-  }, [inView, target]);
+  const metrics = [
+    { value: '1', label: 'Client Launched' },
+    { value: '122', label: 'Pages Built' },
+    { value: '24/7', label: 'AI Operations' },
+    { value: '3 Week', label: 'Delivery' },
+  ];
 
-  return <span ref={ref}>{prefix}{count.toLocaleString()}{suffix}</span>;
-}
-
-function SocialProofBar() {
   return (
-    <section className="relative py-12 border-y border-[#E8E5E0] bg-[#FAFAFA]">
+    <section className="relative py-14 border-y border-[#E8E5E0] bg-[#FAFAFA]" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+          animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
-          className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 text-center"
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
         >
-          {[
-            { prefix: '$', target: 2, suffix: 'M+', label: 'Client Revenue Powered' },
-            { prefix: '', target: 50, suffix: '+', label: 'AI Systems Deployed' },
-            { prefix: '', target: 98, suffix: '%', label: 'Client Retention Rate' },
-          ].map((stat, i) => (
+          {metrics.map((m, i) => (
             <motion.div key={i} variants={fadeUp} className="flex flex-col items-center">
-              <span className="text-3xl md:text-4xl font-bold text-[#B8895A]">
-                <AnimatedCounter target={stat.target} suffix={stat.suffix} prefix={stat.prefix} />
-              </span>
-              <span className="text-sm text-[#8C857C] mt-1">{stat.label}</span>
+              <span className="text-3xl md:text-4xl font-bold text-[#B8895A]">{m.value}</span>
+              <span className="text-sm text-[#8C857C] mt-1">{m.label}</span>
             </motion.div>
           ))}
         </motion.div>
@@ -333,7 +296,6 @@ function ProblemSection() {
           variants={staggerContainer}
           className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
         >
-          {/* Before */}
           <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]/50">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
@@ -341,15 +303,14 @@ function ProblemSection() {
             </div>
             <ul className="space-y-4">
               {before.map((item, i) => (
-                <motion.li key={i} variants={fadeUp} className="flex items-start gap-3 text-[#8C857C]">
+                <li key={i} className="flex items-start gap-3 text-[#8C857C]">
                   <X size={16} className="text-[#C5C3BE] mt-1 shrink-0" />
                   <span>{item}</span>
-                </motion.li>
+                </li>
               ))}
             </ul>
           </motion.div>
 
-          {/* After */}
           <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/20">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#B8895A]" />
@@ -357,10 +318,10 @@ function ProblemSection() {
             </div>
             <ul className="space-y-4">
               {after.map((item, i) => (
-                <motion.li key={i} variants={fadeUp} className="flex items-start gap-3 text-[#2D2A26]">
+                <li key={i} className="flex items-start gap-3 text-[#2D2A26]">
                   <CheckCircle2 size={16} className="text-[#B8895A] mt-1 shrink-0" />
                   <span>{item}</span>
-                </motion.li>
+                </li>
               ))}
             </ul>
           </motion.div>
@@ -375,12 +336,12 @@ function ProblemSection() {
 // ============================================
 const services = [
   { icon: Bot, title: 'AI Chatbots', desc: '24/7 customer support and lead qualification. Your best salesperson never sleeps, never calls in sick, never asks for a raise.' },
-  { icon: Globe, title: 'AI-Powered Websites', desc: 'Self-optimizing, conversion-focused websites that learn from every visitor and get better over time. Automatically.' },
+  { icon: Globe, title: 'AI-Powered Websites', desc: 'Self-optimizing, conversion-focused websites that learn from every visitor and get better over time.' },
   { icon: Search, title: 'Automated Lead Generation', desc: 'Find customers while you sleep. AI identifies, qualifies, and nurtures prospects across every channel.' },
-  { icon: BarChart3, title: 'AI Analytics & Insights', desc: 'Real-time business intelligence that tells you what is happening, why, and what to do next. No more guessing.' },
+  { icon: BarChart3, title: 'AI Analytics & Insights', desc: 'Real-time business intelligence that tells you what is happening, why, and what to do next.' },
   { icon: Mail, title: 'AI Email Marketing', desc: 'Writes, personalizes, sends, and follows up. Every email tailored to every recipient. At scale.' },
-  { icon: Package, title: 'AI Inventory Management', desc: 'Demand prediction and auto-reorder. Never overstock, never run out, never lose a sale to poor planning.' },
-  { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, qualify leads. Your AI receptionist handles it all â€" and never puts anyone on hold.' },
+  { icon: Package, title: 'AI Inventory Management', desc: 'Demand prediction and auto-reorder. Never overstock, never run out, never lose a sale.' },
+  { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, qualify leads. Your AI receptionist handles it all.' },
   { icon: Sparkles, title: 'Custom AI Solutions', desc: 'If you can dream it, we can automate it. Bespoke AI systems built for your exact business needs.' },
 ];
 
@@ -418,8 +379,6 @@ function ServicesSection() {
             <motion.div
               key={i}
               variants={fadeUp}
-              whileHover={{ y: -4, scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 300 }}
               className="group relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#c0bcb6,-12px_-12px_28px_#ffffff] border border-transparent hover:border-[#B8895A]/20 transition-all cursor-default"
             >
               <div className="w-12 h-12 rounded-2xl bg-[#FAFAFA] flex items-center justify-center mb-5 group-hover:bg-[#B8895A]/10 transition-colors shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]">
@@ -429,6 +388,172 @@ function ServicesSection() {
               <p className="text-[#8C857C] text-sm leading-relaxed">{s.desc}</p>
             </motion.div>
           ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// CASE STUDY HIGHLIGHT
+// ============================================
+function CaseStudyHighlight() {
+  const { ref, inView } = useAnimateInView();
+
+  return (
+    <section className="py-28 md:py-40 relative">
+      <GridBackground variant="solid" />
+      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+        >
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4 text-center">
+            Case Study
+          </motion.p>
+          <motion.div
+            variants={fadeUp}
+            className="relative p-8 md:p-12 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/15 overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#B8895A]/5 rounded-full blur-3xl" />
+            <div className="relative grid md:grid-cols-2 gap-10 items-center">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-bold text-[#2D2A26] mb-2">Secured Tampa</h3>
+                <p className="text-[#B8895A] text-sm font-medium mb-6">
+                  From Instagram DMs to a full AI-powered e-commerce platform
+                </p>
+                <p className="text-[#8C857C] leading-relaxed mb-6">
+                  Secured Tampa was running their entire business through Instagram DMs. We built them a complete AI-powered e-commerce ecosystem with automated customer service, intelligent product recommendations, and real-time inventory management.
+                </p>
+                <div className="flex flex-wrap gap-3 mb-8">
+                  {['AI Chatbot', 'E-Commerce', 'Automation', 'Analytics'].map((tag) => (
+                    <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B8895A]/20 bg-[#B8895A]/5 text-[#B8895A] text-xs font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <a
+                  href="/case-studies/secured-tampa"
+                  className="group inline-flex items-center gap-2 text-[#B8895A] font-semibold hover:text-[#96703F] transition-colors"
+                >
+                  Read the Full Story
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { value: '122', label: 'Pages Built' },
+                  { value: '85%', label: 'Faster Response Time' },
+                  { value: '24/7', label: 'Customer Support Active' },
+                  { value: '3 wks', label: 'From Concept to Launch' },
+                ].map((m, i) => (
+                  <motion.div
+                    key={i}
+                    variants={fadeUp}
+                    className="p-5 rounded-2xl bg-[#FAFAFA] shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff] text-center"
+                  >
+                    <div className="text-2xl font-bold text-[#B8895A]">{m.value}</div>
+                    <div className="text-xs text-[#8C857C] mt-1">{m.label}</div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// PROCESS
+// ============================================
+function ProcessSection() {
+  const { ref, inView } = useAnimateInView();
+
+  const steps = [
+    { num: '01', title: 'Discovery & Audit', desc: 'We learn your business inside and out. Every pain point, bottleneck, and missed opportunity gets mapped.', icon: Search },
+    { num: '02', title: 'Strategy & Design', desc: 'We build a custom AI strategy with projected ROI, wireframes, and a clear implementation roadmap.', icon: Target },
+    { num: '03', title: 'Build & Deploy', desc: 'Our team builds your AI systems and deploys them seamlessly into your existing operations.', icon: Rocket },
+    { num: '04', title: 'Optimize & Scale', desc: 'We continuously optimize your AI systems and scale what works. Your business gets smarter every day.', icon: TrendingUp },
+  ];
+
+  return (
+    <section id="process" className="py-28 md:py-40 relative">
+      <GridBackground />
+      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="text-center mb-16"
+        >
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
+            Our Process
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
+            How We Work
+          </motion.h2>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto"
+        >
+          {steps.map((step, i) => (
+            <motion.div key={i} variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] text-center">
+              <div className="w-12 h-12 rounded-2xl bg-[#FAFAFA] flex items-center justify-center mx-auto mb-5 shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]">
+                <step.icon size={22} className="text-[#B8895A]" />
+              </div>
+              <span className="text-[#C5C3BE] text-xs font-mono font-bold">{step.num}</span>
+              <h3 className="text-lg font-bold text-[#2D2A26] mt-1 mb-2">{step.title}</h3>
+              <p className="text-[#8C857C] text-sm leading-relaxed">{step.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// TESTIMONIAL
+// ============================================
+function TestimonialSection() {
+  const { ref, inView } = useAnimateInView();
+
+  return (
+    <section className="py-28 md:py-40 relative">
+      <GridBackground variant="solid" />
+      <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="text-center"
+        >
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
+            Testimonials
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] mb-12">
+            What Our Clients Say
+          </motion.h2>
+          <motion.div
+            variants={fadeUp}
+            className="relative p-10 md:p-14 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]/50"
+          >
+            <MessageSquare size={32} className="text-[#B8895A]/30 mx-auto mb-6" />
+            <blockquote className="text-xl md:text-2xl text-[#2D2A26] font-medium leading-relaxed mb-8">
+              &ldquo;Vantix built us a complete custom platform in just 3 weeks. It replaced our old system entirely.&rdquo;
+            </blockquote>
+            <div>
+              <p className="text-[#2D2A26] font-semibold">Dave</p>
+              <p className="text-[#8C857C] text-sm">SecuredTampa</p>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
@@ -490,127 +615,6 @@ function ROISection() {
 }
 
 // ============================================
-// CASE STUDY
-// ============================================
-function CaseStudy() {
-  const { ref, inView } = useAnimateInView();
-
-  return (
-    <section className="py-28 md:py-40 relative">
-      <GridBackground variant="solid" />
-      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
-        <motion.div
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={staggerContainer}
-        >
-          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4 text-center">
-            Case Study
-          </motion.p>
-          <motion.div
-            variants={fadeUp}
-            className="relative p-8 md:p-12 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/15 overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#B8895A]/5 rounded-full blur-3xl" />
-            <div className="relative grid md:grid-cols-2 gap-10 items-center">
-              <div>
-                <h3 className="text-2xl md:text-3xl font-bold text-[#2D2A26] mb-2">Secured Tampa</h3>
-                <p className="text-[#B8895A] text-sm font-medium mb-6">
-                  From Instagram DMs to a full AI-powered e-commerce platform
-                </p>
-                <p className="text-[#8C857C] leading-relaxed mb-6">
-                  Secured Tampa was running their entire business through Instagram DMs â€" manually responding to every inquiry, tracking orders in spreadsheets, and losing customers to slow response times. We built them a complete AI-powered e-commerce ecosystem with automated customer service, intelligent product recommendations, and real-time inventory management.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {['AI Chatbot', 'E-Commerce', 'Automation', 'Analytics'].map((tag) => (
-                    <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B8895A]/20 bg-[#B8895A]/5 text-[#B8895A] text-xs font-medium">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { value: '300%', label: 'Increase in Online Sales' },
-                  { value: '85%', label: 'Faster Response Time' },
-                  { value: '24/7', label: 'Customer Support Active' },
-                  { value: '40hrs', label: 'Saved Per Week' },
-                ].map((m, i) => (
-                  <motion.div
-                    key={i}
-                    variants={fadeUp}
-                    className="p-5 rounded-2xl bg-[#FAFAFA] shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff] text-center"
-                  >
-                    <div className="text-2xl font-bold text-[#B8895A]">{m.value}</div>
-                    <div className="text-xs text-[#8C857C] mt-1">{m.label}</div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
-// PROCESS
-// ============================================
-function ProcessSection() {
-  const { ref, inView } = useAnimateInView();
-
-  const steps = [
-    { num: '01', title: 'Discovery Call', desc: 'We learn your business inside and out. Every pain point, every bottleneck, every missed opportunity.', icon: Phone },
-    { num: '02', title: 'AI Audit', desc: 'We map every process that can be automated and build a custom AI strategy with projected ROI.', icon: Search },
-    { num: '03', title: 'Build & Deploy', desc: 'Our team builds your AI systems and deploys them seamlessly into your existing operations.', icon: Cpu },
-    { num: '04', title: 'Monitor & Scale', desc: 'We continuously optimize your AI systems and scale what works. Your business gets smarter every day.', icon: TrendingUp },
-  ];
-
-  return (
-    <section id="process" className="py-28 md:py-40 relative">
-      <GridBackground />
-      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
-        <motion.div
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={staggerContainer}
-          className="text-center mb-16"
-        >
-          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
-            Our Process
-          </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
-            How We Work
-          </motion.h2>
-        </motion.div>
-
-        <motion.div
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={staggerContainer}
-          className="max-w-3xl mx-auto relative"
-        >
-          {/* Timeline line */}
-          <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-[#B8895A]/50 via-[#C5C3BE]/30 to-transparent" />
-
-          {steps.map((step, i) => (
-            <motion.div key={i} variants={fadeUp} className="relative pl-16 md:pl-20 pb-12 last:pb-0">
-              <div className="absolute left-3 md:left-5 w-6 h-6 rounded-full bg-white border-2 border-[#B8895A] flex items-center justify-center shadow-[5px_5px_12px_#c8c4be,-5px_-5px_12px_#ffffff]">
-                <div className="w-2 h-2 rounded-full bg-[#B8895A]" />
-              </div>
-              <span className="text-[#C5C3BE] text-xs font-mono font-bold">{step.num}</span>
-              <h3 className="text-xl font-bold text-[#2D2A26] mt-1 mb-2">{step.title}</h3>
-              <p className="text-[#8C857C] leading-relaxed">{step.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
 // TEAM
 // ============================================
 function TeamSection() {
@@ -661,9 +665,7 @@ function TeamSection() {
               variants={fadeUp}
               className="p-10 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] text-center"
             >
-              <div
-                className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] border-2 border-white/80"
-              >
+              <div className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] border-2 border-white/80">
                 <img src={t.photo} alt={t.name} className="w-full h-full object-cover" />
               </div>
               <h3 className="text-xl font-bold text-[#2D2A26]">{t.name}</h3>
@@ -684,19 +686,13 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <motion.div
-      variants={fadeUp}
-      className="rounded-2xl bg-white shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] overflow-hidden"
-    >
+    <div className="rounded-2xl bg-white shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between p-6 text-left hover:bg-[#FAFAFA]/50 transition-colors"
       >
         <span className="text-[#2D2A26] font-medium pr-4">{q}</span>
-        <ChevronDown
-          size={18}
-          className={`text-[#C5C3BE] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
-        />
+        <ChevronDown size={18} className={`text-[#C5C3BE] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence>
         {open && (
@@ -711,7 +707,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
 
@@ -719,12 +715,12 @@ function FAQSection() {
   const { ref, inView } = useAnimateInView();
 
   const faqs = [
-    { q: 'How long does it take to deploy an AI system?', a: 'Most AI systems are live within 2-4 weeks. Simple chatbots and automation can be deployed in under a week. Complex custom solutions may take 4-8 weeks. Either way, you start seeing ROI fast.' },
-    { q: 'What if AI makes mistakes with my customers?', a: 'Every system we build has human oversight built in. AI handles the volume, and edge cases get routed to your team. We also continuously train and optimize so accuracy only improves over time.' },
+    { q: 'How long does it take to deploy an AI system?', a: 'Most AI systems are live within 2-4 weeks. Simple chatbots and automation can be deployed in under a week. Complex custom solutions may take 4-8 weeks.' },
+    { q: 'What if AI makes mistakes with my customers?', a: 'Every system we build has human oversight built in. AI handles the volume, and edge cases get routed to your team. We continuously train and optimize so accuracy only improves.' },
     { q: 'Do I need technical knowledge to use these systems?', a: 'Zero. We build everything with dead-simple dashboards. If you can use a smartphone, you can manage your AI systems. Plus, we provide full training and ongoing support.' },
-    { q: 'What does it cost?', a: 'Every business is different. We price based on the complexity and scope of what you need. Book a discovery call and we will give you a transparent quote with projected ROI â€" most clients see positive returns within 30 days.' },
-    { q: 'Can AI really replace hiring more staff?', a: 'Not replace â€" augment. AI handles the repetitive, high-volume tasks so your team can focus on high-value work. One AI system can do the work of 3-5 employees in specific functions, at a fraction of the cost.' },
-    { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. If an issue arises, we catch it before you even notice. All clients get priority support with guaranteed response times. Your business never skips a beat.' },
+    { q: 'What does it cost?', a: 'Every business is different. We price based on complexity and scope. Book a discovery call and we will give you a transparent quote with projected ROI.' },
+    { q: 'Can AI really replace hiring more staff?', a: 'Not replace — augment. AI handles the repetitive, high-volume tasks so your team can focus on high-value work. One AI system can do the work of 3-5 employees in specific functions.' },
+    { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. If an issue arises, we catch it before you even notice. All clients get priority support with guaranteed response times.' },
   ];
 
   return (
@@ -752,8 +748,58 @@ function FAQSection() {
           className="space-y-4"
         >
           {faqs.map((f, i) => (
-            <FAQItem key={i} q={f.q} a={f.a} />
+            <motion.div key={i} variants={fadeUp}>
+              <FAQItem q={f.q} a={f.a} />
+            </motion.div>
           ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// BOOKING SECTION (Calendly)
+// ============================================
+function BookingSection() {
+  const { ref, inView } = useAnimateInView();
+
+  return (
+    <section id="booking" className="py-28 md:py-40 relative">
+      <GridBackground variant="solid" />
+      <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="text-center mb-12"
+        >
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
+            Schedule
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] mb-4">
+            Book a Free Consultation
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto">
+            Pick a time that works for you. We will walk through your business, identify AI opportunities, and give you a clear roadmap.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.3 }}
+          className="rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0] overflow-hidden"
+          style={{ minHeight: '660px' }}
+        >
+          <iframe
+            src="https://calendly.com/usevantix/consultation"
+            width="100%"
+            height="660"
+            frameBorder="0"
+            title="Schedule a consultation"
+            className="w-full"
+          />
         </motion.div>
       </div>
     </section>
@@ -773,7 +819,6 @@ function ContactForm() {
     setStatus('sending');
     try {
       const { supabase, createLead } = await import('@/lib/supabase');
-      // Save to chat_leads table
       try {
         await supabase.from('chat_leads').insert({
           visitor_name: form.name,
@@ -781,8 +826,7 @@ function ContactForm() {
           phone: form.phone || null,
           interested_in: form.message || null,
         });
-      } catch { /* chat_leads table may not exist */ }
-      // Also save to leads table so it appears in dashboard
+      } catch { /* table may not exist */ }
       try {
         await createLead({
           name: form.name,
@@ -794,7 +838,7 @@ function ContactForm() {
           score: 0,
           tags: ['website-contact'],
         });
-      } catch { /* leads table may not exist */ }
+      } catch { /* table may not exist */ }
       setStatus('sent');
       setForm({ name: '', email: '', phone: '', message: '' });
     } catch (err) {
@@ -858,17 +902,20 @@ function FinalCTA() {
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#2D2A26] leading-tight mb-6">
             Ready to Let AI
             <br />
-            <span className="text-[#B8895A]">
-              Run Your Business?
-            </span>
+            <span className="text-[#B8895A]">Run Your Business?</span>
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto mb-10">
-            Book a free discovery call. We will show you exactly which parts of your business AI can transform â€" and what the ROI looks like.
+          <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto mb-4">
+            Book a free discovery call. We will show you exactly which parts of your business AI can transform — and what the ROI looks like.
+          </motion.p>
+          <motion.p variants={fadeUp} className="text-[#2D2A26] font-semibold text-lg mb-10">
+            <a href="tel:9084987753" className="hover:text-[#B8895A] transition-colors inline-flex items-center gap-2">
+              <Phone size={18} />
+              (908) 498-7753
+            </a>
           </motion.p>
           <motion.div variants={fadeUp}>
             <a
-              href="#contact-form"
-              onClick={(e) => { e.preventDefault(); document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' }); }}
+              href="#booking"
               className="group inline-flex items-center gap-2 px-10 py-5 text-[#5C4033] font-bold text-lg rounded-full transition-all shadow-[10px_10px_24px_#c8c4be,-10px_-10px_24px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
               style={woodButtonStyle}
             >
@@ -907,11 +954,19 @@ function Footer() {
             </p>
           </div>
           <div>
-            <h4 className="text-[#2D2A26] font-semibold text-sm mb-4">Quick Links</h4>
+            <h4 className="text-[#2D2A26] font-semibold text-sm mb-4">Pages</h4>
             <ul className="space-y-2">
-              {['Services', 'Results', 'Process', 'Team', 'FAQ'].map((l) => (
-                <li key={l}>
-                  <a href={`#${l.toLowerCase()}`} className="text-[#8C857C] hover:text-[#2D2A26] text-sm transition-colors">{l}</a>
+              {[
+                { label: 'Services', href: '/services' },
+                { label: 'Case Studies', href: '/case-studies' },
+                { label: 'About', href: '/about' },
+                { label: 'Contact', href: '/contact' },
+                { label: 'Blog', href: '/blog' },
+                { label: 'Privacy', href: '/privacy' },
+                { label: 'Terms', href: '/terms' },
+              ].map((l) => (
+                <li key={l.href}>
+                  <a href={l.href} className="text-[#8C857C] hover:text-[#2D2A26] text-sm transition-colors">{l.label}</a>
                 </li>
               ))}
             </ul>
@@ -950,54 +1005,6 @@ function Footer() {
 }
 
 // ============================================
-// BOOKING SECTION
-// ============================================
-function BookingSection() {
-  const { ref, inView } = useAnimateInView();
-
-  return (
-    <section id="booking" className="py-28 md:py-40 relative">
-      <GridBackground variant="solid" />
-      <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
-        <motion.div
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={staggerContainer}
-          className="text-center mb-12"
-        >
-          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
-            Schedule
-          </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] mb-4">
-            Book a Free Consultation
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto">
-            Pick a time that works for you. We will walk through your business, identify AI opportunities, and give you a clear roadmap — no strings attached.
-          </motion.p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.3 }}
-          className="rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0] overflow-hidden"
-          style={{ minHeight: '660px' }}
-        >
-          <iframe
-            src="https://calendly.com/usevantix/consultation"
-            width="100%"
-            height="660"
-            frameBorder="0"
-            title="Schedule a consultation"
-            className="w-full"
-          />
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
 // MAIN EXPORT
 // ============================================
 export function FuturisticLanding() {
@@ -1009,17 +1016,19 @@ export function FuturisticLanding() {
     <div className="bg-[#FAFAFA] text-[#2D2A26] min-h-screen selection:bg-[#B8895A]/20 selection:text-[#2D2A26]">
       <Navigation />
       <HeroSection />
-      <SocialProofBar />
+      <TrustBar />
       <WoodDivider />
       <ProblemSection />
       <WoodDivider />
       <ServicesSection />
       <WoodDivider />
-      <ROISection />
-      <WoodDivider />
-      <CaseStudy />
-      <WoodDivider />
       <ProcessSection />
+      <WoodDivider />
+      <CaseStudyHighlight />
+      <WoodDivider />
+      <TestimonialSection />
+      <WoodDivider />
+      <ROISection />
       <WoodDivider />
       <TeamSection />
       <WoodDivider />
