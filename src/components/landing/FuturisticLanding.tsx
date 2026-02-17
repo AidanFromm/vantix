@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
@@ -15,13 +15,33 @@ import {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const staggerContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.12 } },
 };
+
+// Realistic birch/maple wood gradient CSS
+const woodButtonStyle = {
+  background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878, #E6C78C)`,
+  border: '1px solid rgba(139,90,43,0.2)',
+};
+
+// Section divider component
+function WoodDivider() {
+  return (
+    <div className="max-w-7xl mx-auto px-6">
+      <div
+        className="h-px w-full"
+        style={{
+          background: `repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(139,90,43,0.06) 4px, rgba(139,90,43,0.06) 6px), linear-gradient(to right, transparent, #D4A85C40, #C89B4E30, #D4A85C40, transparent)`,
+        }}
+      />
+    </div>
+  );
+}
 
 function useAnimateInView(threshold = 0.15) {
   const ref = useRef(null);
@@ -62,8 +82,9 @@ function Navigation() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="#" className="text-2xl font-bold text-[#2D2A26] tracking-tight">
-          vantix<span className="text-[#B8895A]">.</span>
+        <a href="#" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[#5C4033] font-extrabold text-sm" style={woodButtonStyle}>V</div>
+          <span className="text-2xl font-extrabold text-[#3A3632] tracking-tight">vantix<span className="text-[#B8895A]">.</span></span>
         </a>
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
@@ -77,9 +98,7 @@ function Navigation() {
           <a
             href="#contact"
             className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full transition-all shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8]"
-            style={{
-              background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
-            }}
+            style={woodButtonStyle}
           >
             Book a Call
           </a>
@@ -105,7 +124,7 @@ function Navigation() {
               <a href="/login" onClick={() => setMobileOpen(false)} className="text-[#8C857C] hover:text-[#2D2A26] transition-colors">
                 Login
               </a>
-              <a href="#contact" onClick={() => setMobileOpen(false)} className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full text-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]" style={{ background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)` }}>
+              <a href="#contact" onClick={() => setMobileOpen(false)} className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full text-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]" style={woodButtonStyle}>
                 Book a Call
               </a>
             </div>
@@ -164,7 +183,7 @@ function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-[#2D2A26] leading-[0.95] tracking-tight mb-6"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-8xl font-bold text-[#2D2A26] leading-[0.93] tracking-tight mb-8"
         >
           Your Business.
           <br />
@@ -179,7 +198,7 @@ function HeroSection() {
           transition={{ duration: 0.7, delay: 0.6 }}
           className="text-lg sm:text-xl text-[#8C857C] max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          We build AI systems that generate revenue, cut costs, and run your operations — while you focus on growth.
+          We build AI systems that generate revenue, cut costs, and run your operations â€” while you focus on growth.
         </motion.p>
 
         <motion.div
@@ -191,9 +210,7 @@ function HeroSection() {
           <a
             href="#services"
             className="group px-8 py-4 text-[#5C4033] font-semibold rounded-full transition-all inline-flex items-center justify-center gap-2 shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
-            style={{
-              background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
-            }}
+            style={woodButtonStyle}
           >
             See What AI Can Do For You
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -292,7 +309,7 @@ function ProblemSection() {
   ];
 
   return (
-    <section className="py-24 md:py-32 relative">
+    <section className="py-28 md:py-40 relative">
       <GridBackground />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -362,7 +379,7 @@ const services = [
   { icon: BarChart3, title: 'AI Analytics & Insights', desc: 'Real-time business intelligence that tells you what is happening, why, and what to do next. No more guessing.' },
   { icon: Mail, title: 'AI Email Marketing', desc: 'Writes, personalizes, sends, and follows up. Every email tailored to every recipient. At scale.' },
   { icon: Package, title: 'AI Inventory Management', desc: 'Demand prediction and auto-reorder. Never overstock, never run out, never lose a sale to poor planning.' },
-  { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, qualify leads. Your AI receptionist handles it all — and never puts anyone on hold.' },
+  { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, qualify leads. Your AI receptionist handles it all â€” and never puts anyone on hold.' },
   { icon: Sparkles, title: 'Custom AI Solutions', desc: 'If you can dream it, we can automate it. Bespoke AI systems built for your exact business needs.' },
 ];
 
@@ -370,7 +387,7 @@ function ServicesSection() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section id="services" className="py-24 md:py-32 relative">
+    <section id="services" className="py-28 md:py-40 relative">
       <GridBackground variant="solid" />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -431,7 +448,7 @@ function ROISection() {
   ];
 
   return (
-    <section id="roi" className="py-24 md:py-32 relative">
+    <section id="roi" className="py-28 md:py-40 relative">
       <GridBackground />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -478,7 +495,7 @@ function CaseStudy() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section className="py-24 md:py-32 relative">
+    <section className="py-28 md:py-40 relative">
       <GridBackground variant="solid" />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -501,7 +518,7 @@ function CaseStudy() {
                   From Instagram DMs to a full AI-powered e-commerce platform
                 </p>
                 <p className="text-[#8C857C] leading-relaxed mb-6">
-                  Secured Tampa was running their entire business through Instagram DMs — manually responding to every inquiry, tracking orders in spreadsheets, and losing customers to slow response times. We built them a complete AI-powered e-commerce ecosystem with automated customer service, intelligent product recommendations, and real-time inventory management.
+                  Secured Tampa was running their entire business through Instagram DMs â€” manually responding to every inquiry, tracking orders in spreadsheets, and losing customers to slow response times. We built them a complete AI-powered e-commerce ecosystem with automated customer service, intelligent product recommendations, and real-time inventory management.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   {['AI Chatbot', 'E-Commerce', 'Automation', 'Analytics'].map((tag) => (
@@ -550,7 +567,7 @@ function ProcessSection() {
   ];
 
   return (
-    <section id="process" className="py-24 md:py-32 relative">
+    <section id="process" className="py-28 md:py-40 relative">
       <GridBackground />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -603,16 +620,18 @@ function TeamSection() {
       name: 'Kyle Ventura',
       role: 'Founder & AI Architect',
       desc: 'Obsessed with building AI systems that make businesses unstoppable. Kyle architects every solution from the ground up with one goal: measurable ROI.',
+      photo: '/team-kyle.jpg',
     },
     {
       name: 'Aidan Fromm',
       role: 'Co-Founder & Technical Lead',
       desc: 'Full-stack engineer who turns complex AI concepts into production-ready systems. Aidan ensures every deployment is bulletproof and built to scale.',
+      photo: '/team-aidan.jpg',
     },
   ];
 
   return (
-    <section id="team" className="py-24 md:py-32 relative">
+    <section id="team" className="py-28 md:py-40 relative">
       <GridBackground variant="solid" />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -641,8 +660,10 @@ function TeamSection() {
               variants={fadeUp}
               className="p-10 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] text-center"
             >
-              <div className="w-20 h-20 rounded-full bg-[#FAFAFA] border-2 border-[#B8895A]/20 mx-auto mb-5 flex items-center justify-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]">
-                <span className="text-2xl font-bold text-[#B8895A]">{t.name.split(' ').map(n => n[0]).join('')}</span>
+              <div
+                className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] border-2 border-white/80"
+              >
+                <img src={t.photo} alt={t.name} className="w-full h-full object-cover" />
               </div>
               <h3 className="text-xl font-bold text-[#2D2A26]">{t.name}</h3>
               <p className="text-[#B8895A] text-sm font-medium mb-4">{t.role}</p>
@@ -700,13 +721,13 @@ function FAQSection() {
     { q: 'How long does it take to deploy an AI system?', a: 'Most AI systems are live within 2-4 weeks. Simple chatbots and automation can be deployed in under a week. Complex custom solutions may take 4-8 weeks. Either way, you start seeing ROI fast.' },
     { q: 'What if AI makes mistakes with my customers?', a: 'Every system we build has human oversight built in. AI handles the volume, and edge cases get routed to your team. We also continuously train and optimize so accuracy only improves over time.' },
     { q: 'Do I need technical knowledge to use these systems?', a: 'Zero. We build everything with dead-simple dashboards. If you can use a smartphone, you can manage your AI systems. Plus, we provide full training and ongoing support.' },
-    { q: 'What does it cost?', a: 'Every business is different. We price based on the complexity and scope of what you need. Book a discovery call and we will give you a transparent quote with projected ROI — most clients see positive returns within 30 days.' },
-    { q: 'Can AI really replace hiring more staff?', a: 'Not replace — augment. AI handles the repetitive, high-volume tasks so your team can focus on high-value work. One AI system can do the work of 3-5 employees in specific functions, at a fraction of the cost.' },
+    { q: 'What does it cost?', a: 'Every business is different. We price based on the complexity and scope of what you need. Book a discovery call and we will give you a transparent quote with projected ROI â€” most clients see positive returns within 30 days.' },
+    { q: 'Can AI really replace hiring more staff?', a: 'Not replace â€” augment. AI handles the repetitive, high-volume tasks so your team can focus on high-value work. One AI system can do the work of 3-5 employees in specific functions, at a fraction of the cost.' },
     { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. If an issue arises, we catch it before you even notice. All clients get priority support with guaranteed response times. Your business never skips a beat.' },
   ];
 
   return (
-    <section id="faq" className="py-24 md:py-32 relative">
+    <section id="faq" className="py-28 md:py-40 relative">
       <GridBackground />
       <div className="max-w-3xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -745,7 +766,7 @@ function FinalCTA() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section id="contact" className="py-24 md:py-32 relative overflow-hidden">
+    <section id="contact" className="py-28 md:py-40 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#FAFAFA] via-[#F0EDE8] to-[#FAFAFA]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.08)_0%,transparent_60%)]" />
       <div className="max-w-4xl mx-auto px-6 text-center relative" ref={ref}>
@@ -762,17 +783,13 @@ function FinalCTA() {
             </span>
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto mb-10">
-            Book a free discovery call. We will show you exactly which parts of your business AI can transform — and what the ROI looks like.
+            Book a free discovery call. We will show you exactly which parts of your business AI can transform â€” and what the ROI looks like.
           </motion.p>
           <motion.div variants={fadeUp}>
             <a
-              href="https://cal.com"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#contact"
               className="group inline-flex items-center gap-2 px-10 py-5 text-[#5C4033] font-bold text-lg rounded-full transition-all shadow-[10px_10px_24px_#c8c4be,-10px_-10px_24px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
-              style={{
-                background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
-              }}
+              style={woodButtonStyle}
             >
               <Calendar size={20} />
               Book Your Free Discovery Call
@@ -793,13 +810,14 @@ function FinalCTA() {
 // ============================================
 function Footer() {
   return (
-    <footer className="border-t border-[#E8E5E0] py-12 bg-[#FAFAFA]">
+    <footer className="border-t border-[#E8E5E0] py-16 bg-[#FAFAFA]">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-10 mb-10">
+        <div className="grid md:grid-cols-4 gap-12 mb-14">
           <div className="md:col-span-2">
-            <span className="text-2xl font-bold text-[#2D2A26] tracking-tight">
-              vantix<span className="text-[#B8895A]">.</span>
-            </span>
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[#5C4033] font-extrabold text-sm" style={woodButtonStyle}>V</div>
+              <span className="text-2xl font-extrabold text-[#3A3632] tracking-tight">vantix<span className="text-[#B8895A]">.</span></span>
+            </div>
             <p className="text-[#8C857C] mt-4 max-w-sm leading-relaxed">
               We deploy AI systems that generate revenue, cut costs, and automate operations for businesses ready to scale.
             </p>
@@ -860,13 +878,21 @@ export function FuturisticLanding() {
       <Navigation />
       <HeroSection />
       <SocialProofBar />
+      <WoodDivider />
       <ProblemSection />
+      <WoodDivider />
       <ServicesSection />
+      <WoodDivider />
       <ROISection />
+      <WoodDivider />
       <CaseStudy />
+      <WoodDivider />
       <ProcessSection />
+      <WoodDivider />
       <TeamSection />
+      <WoodDivider />
       <FAQSection />
+      <WoodDivider />
       <FinalCTA />
       <Footer />
     </div>

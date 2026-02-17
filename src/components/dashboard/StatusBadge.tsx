@@ -14,29 +14,29 @@ interface StatusBadgeProps {
 
 const statusConfig: Record<StatusType, { dot: string; bg: string; text: string }> = {
   success: {
-    dot: 'bg-emerald-500',
-    bg: 'bg-emerald-500/10 border-emerald-500/20',
-    text: 'text-emerald-400',
+    dot: 'bg-[#8DB580]',
+    bg: 'bg-[#8DB580]/10 border-[#8DB580]/20',
+    text: 'text-[#6B9A5E]',
   },
   warning: {
-    dot: 'bg-yellow-500',
-    bg: 'bg-yellow-500/10 border-yellow-500/20',
-    text: 'text-yellow-400',
+    dot: 'bg-[#D4A843]',
+    bg: 'bg-[#D4A843]/10 border-[#D4A843]/20',
+    text: 'text-[#B8923A]',
   },
   error: {
-    dot: 'bg-red-500',
-    bg: 'bg-red-500/10 border-red-500/20',
-    text: 'text-red-400',
+    dot: 'bg-[#C4735B]',
+    bg: 'bg-[#C4735B]/10 border-[#C4735B]/20',
+    text: 'text-[#B0614A]',
   },
   info: {
-    dot: 'bg-blue-500',
-    bg: 'bg-blue-500/10 border-blue-500/20',
-    text: 'text-blue-400',
+    dot: 'bg-[#7BA3C4]',
+    bg: 'bg-[#7BA3C4]/10 border-[#7BA3C4]/20',
+    text: 'text-[#6890B0]',
   },
   neutral: {
-    dot: 'bg-gray-500',
-    bg: 'bg-gray-500/10 border-gray-500/20',
-    text: 'text-gray-400',
+    dot: 'bg-[#8C857C]',
+    bg: 'bg-[#8C857C]/10 border-[#8C857C]/20',
+    text: 'text-[#8C857C]',
   },
 };
 

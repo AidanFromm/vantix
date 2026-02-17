@@ -32,7 +32,7 @@ function AnimatedCounter({ value, prefix = '', suffix = '' }: { value: number; p
   return <motion.span>{display}</motion.span>;
 }
 
-function Sparkline({ data, color = '#10b981' }: { data: number[]; color?: string }) {
+function Sparkline({ data, color = '#B8895A' }: { data: number[]; color?: string }) {
   const width = 80;
   const height = 32;
   const padding = 2;
@@ -105,8 +105,8 @@ function TrendIndicator({ value, label }: { value: number; label?: string }) {
   const isNeutral = value === 0;
   
   const Icon = isNeutral ? Minus : isPositive ? TrendingUp : TrendingDown;
-  const color = isNeutral ? 'text-gray-400' : isPositive ? 'text-emerald-400' : 'text-red-400';
-  const bgColor = isNeutral ? 'bg-gray-500/10' : isPositive ? 'bg-emerald-500/10' : 'bg-red-500/10';
+  const color = isNeutral ? 'text-[#8C857C]' : isPositive ? 'text-[#8DB580]' : 'text-[#C4735B]';
+  const bgColor = isNeutral ? 'bg-[#8C857C]/10' : isPositive ? 'bg-[#8DB580]/10' : 'bg-[#C4735B]/10';
 
   return (
     <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full ${bgColor}`}>
@@ -114,7 +114,7 @@ function TrendIndicator({ value, label }: { value: number; label?: string }) {
       <span className={`text-xs font-medium ${color}`}>
         {isPositive ? '+' : ''}{value}%
       </span>
-      {label && <span className="text-xs text-gray-500">{label}</span>}
+      {label && <span className="text-xs text-[#8C857C]">{label}</span>}
     </div>
   );
 }
@@ -156,37 +156,39 @@ export default function KPICard({
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className={`
         group relative overflow-hidden
-        bg-black/40 backdrop-blur-xl
-        border border-white/10 rounded-2xl
+        bg-white
+        border border-[#E8E2DA] rounded-2xl
+        shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]
         p-5 transition-all duration-300
-        hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/5
+        hover:shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]
+        hover:scale-[1.01]
         ${className}
       `}
     >
       {/* Subtle gradient overlay on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#B8895A]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       <div className="relative z-10">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
             {Icon && (
-              <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+              <div className="p-2 rounded-lg bg-[#B8895A]/10 text-[#B8895A]">
                 <Icon size={16} />
               </div>
             )}
-            <span className="text-sm font-medium text-gray-400">{title}</span>
+            <span className="text-sm font-medium text-[#8C857C]">{title}</span>
           </div>
           
           {sparklineData && sparklineData.length > 0 && (
-            <Sparkline data={sparklineData} color={trend && trend < 0 ? '#f87171' : '#10b981'} />
+            <Sparkline data={sparklineData} color={trend && trend < 0 ? '#C4735B' : '#B8895A'} />
           )}
         </div>
 
         {/* Value */}
         <div className="flex items-end justify-between">
           <div>
-            <h3 className="text-3xl font-bold text-white tracking-tight">
+            <h3 className="text-3xl font-bold text-[#2D2A26] tracking-tight">
               {isVisible && <AnimatedCounter value={value} prefix={prefix} suffix={suffix} />}
             </h3>
             
