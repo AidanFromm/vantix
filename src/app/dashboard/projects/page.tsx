@@ -4,10 +4,26 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Search, X, Clock, DollarSign, Briefcase, Zap,
-  AlertTriangle, CheckCircle2, Loader2, Calendar, Trash2,
+  AlertTriangle, CheckCircle2, Loader2, Trash2, Users, Flag, Shield,
 } from 'lucide-react';
-import { getProjects, createProject, updateProject, deleteProject, getClients } from '@/lib/supabase';
-import type { Project, ProjectStatus, Client } from '@/lib/types';
+import Link from 'next/link';
+
+interface Client { id: string; name: string; status: string; }
+interface Project {
+  id: string; name: string; client_id?: string; status: string; health?: string;
+  deadline?: string; budget?: number; spent: number; progress: number;
+  description?: string; tags: string[]; notes?: string; milestones?: { name: string; done: boolean }[];
+  created_at: string; updated_at: string; client?: Client;
+}
+type ProjectStatus = string;
+
+function lsGet<T>(key: string, fallback: T[] = []): T[] {
+  try { if (typeof window === 'undefined') return fallback; const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
+}
+function lsSet<T>(key: string, data: T[]) {
+  try { if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(data)); } catch {}
+}
+function generateId(): string { return crypto?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
   lead: { label: 'Lead', color: 'text-[#8C857C]', bg: 'bg-[#8C857C]/10', border: 'border-[#8C857C]/30' },
@@ -22,37 +38,30 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
 function formatCurrency(n: number) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n); }
 function daysUntil(d: string) { return Math.ceil((new Date(d).getTime() - Date.now()) / 86400000); }
 
-function ProjectModal({ project, clients, onClose, onSave }: { project?: Project | null; clients: Client[]; onClose: () => void; onSave: (data: Partial<Project>) => Promise<void> }) {
+function computeHealth(project: Project): { label: string; color: string; icon: typeof CheckCircle2 } {
+  if (!project.deadline) return { label: 'On Track', color: 'text-emerald-600', icon: CheckCircle2 };
+  const days = daysUntil(project.deadline);
+  const progress = project.progress || 0;
+  if (days < 0) return { label: 'Behind', color: 'text-red-600', icon: AlertTriangle };
+  if (days <= 7 && progress < 80) return { label: 'At Risk', color: 'text-amber-600', icon: AlertTriangle };
+  if (days <= 14 && progress < 50) return { label: 'At Risk', color: 'text-amber-600', icon: AlertTriangle };
+  return { label: 'On Track', color: 'text-emerald-600', icon: CheckCircle2 };
+}
+
+function ProjectModal({ project, clients, onClose, onSave }: { project?: Project | null; clients: Client[]; onClose: () => void; onSave: (data: Partial<Project>) => void }) {
   const [form, setForm] = useState({
-    name: project?.name || '',
-    client_id: project?.client_id || '',
-    status: project?.status || 'lead' as ProjectStatus,
-    budget: project?.budget || 0,
-    deadline: project?.deadline || '',
-    description: project?.description || '',
-    notes: project?.notes || '',
+    name: project?.name || '', client_id: project?.client_id || '', status: project?.status || 'lead',
+    budget: project?.budget || 0, spent: project?.spent || 0, progress: project?.progress || 0,
+    deadline: project?.deadline || '', description: project?.description || '', notes: project?.notes || '',
   });
   const [saving, setSaving] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name.trim()) return;
-    setSaving(true);
-    try {
-      await onSave({
-        name: form.name,
-        client_id: form.client_id || undefined,
-        status: form.status,
-        budget: form.budget || undefined,
-        deadline: form.deadline || undefined,
-        description: form.description || undefined,
-        notes: form.notes || undefined,
-      });
-      onClose();
-    } catch (err) { console.error(err); } finally { setSaving(false); }
-  };
-
   const inputCls = 'w-full bg-[#FAFAFA] border border-[#E8E2DA] rounded-xl px-4 py-3 text-sm text-[#2D2A26] focus:outline-none focus:border-[#B8895A]/50 transition-colors';
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); if (!form.name.trim()) return; setSaving(true);
+    onSave({ name: form.name, client_id: form.client_id || undefined, status: form.status, budget: form.budget || undefined, spent: form.spent, progress: form.progress, deadline: form.deadline || undefined, description: form.description || undefined, notes: form.notes || undefined });
+    onClose();
+  };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -66,25 +75,24 @@ function ProjectModal({ project, clients, onClose, onSave }: { project?: Project
           <div><label className="text-xs text-[#8C857C] mb-1.5 block">Project Name *</label><input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required className={inputCls} /></div>
           <div><label className="text-xs text-[#8C857C] mb-1.5 block">Client</label>
             <select value={form.client_id} onChange={e => setForm(p => ({ ...p, client_id: e.target.value }))} className={inputCls}>
-              <option value="">No client</option>
-              {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              <option value="">No client</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           <div><label className="text-xs text-[#8C857C] mb-1.5 block">Status</label>
-            <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value as ProjectStatus }))} className={inputCls}>
+            <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value }))} className={inputCls}>
               {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div><label className="text-xs text-[#8C857C] mb-1.5 block">Budget</label><input type="number" value={form.budget} onChange={e => setForm(p => ({ ...p, budget: parseFloat(e.target.value) || 0 }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#8C857C] mb-1.5 block">Deadline</label><input type="date" value={form.deadline} onChange={e => setForm(p => ({ ...p, deadline: e.target.value }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#8C857C] mb-1.5 block">Spent</label><input type="number" value={form.spent} onChange={e => setForm(p => ({ ...p, spent: parseFloat(e.target.value) || 0 }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#8C857C] mb-1.5 block">Progress %</label><input type="number" min={0} max={100} value={form.progress} onChange={e => setForm(p => ({ ...p, progress: parseInt(e.target.value) || 0 }))} className={inputCls} /></div>
           </div>
+          <div><label className="text-xs text-[#8C857C] mb-1.5 block">Deadline</label><input type="date" value={form.deadline} onChange={e => setForm(p => ({ ...p, deadline: e.target.value }))} className={inputCls} /></div>
           <div><label className="text-xs text-[#8C857C] mb-1.5 block">Description</label><textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#F5F0EB] text-[#8C857C] text-sm hover:bg-[#EDE7DF]">Cancel</button>
-            <button type="submit" disabled={saving || !form.name.trim()} className="flex-1 px-4 py-3 rounded-xl bg-[#B8895A] text-white font-medium text-sm hover:bg-[#A67A4B] disabled:opacity-50 flex items-center justify-center gap-2">
-              {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : project ? 'Update Project' : 'Create Project'}
-            </button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#F5F0EB] text-[#8C857C] text-sm">Cancel</button>
+            <button type="submit" disabled={saving || !form.name.trim()} className="flex-1 px-4 py-3 rounded-xl bg-[#B8895A] text-white font-medium text-sm disabled:opacity-50">{project ? 'Update' : 'Create'}</button>
           </div>
         </form>
       </motion.div>
@@ -102,16 +110,17 @@ export default function ProjectsPage() {
   const [editingProject, setEditingProject] = useState<Project | null | undefined>(undefined);
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(() => {
     try {
-      const [projRes, clientRes] = await Promise.all([
-        getProjects({ status: statusFilter !== 'all' ? statusFilter : undefined }),
-        getClients(),
-      ]);
-      setProjects(projRes.data || []);
-      setClients(clientRes.data || []);
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      const allClients = lsGet<Client>('vantix_clients');
+      setClients(allClients);
+      let projs = lsGet<Project>('vantix_projects');
+      // Attach client data
+      projs = projs.map(p => ({ ...p, client: allClients.find(c => c.id === p.client_id) }));
+      if (statusFilter !== 'all') projs = projs.filter(p => p.status === statusFilter);
+      setProjects(projs);
+    } catch (e) { console.error(e); }
+    setLoading(false);
   }, [statusFilter]);
 
   useEffect(() => { loadData(); }, [loadData]);
@@ -126,36 +135,35 @@ export default function ProjectsPage() {
     total: projects.length,
     active: projects.filter(p => p.status === 'active').length,
     totalBudget: projects.reduce((s, p) => s + (p.budget || 0), 0),
-    totalPaid: projects.reduce((s, p) => s + ((p as any).paid || p.spent || 0), 0),
+    totalSpent: projects.reduce((s, p) => s + (p.spent || 0), 0),
   }), [projects]);
 
-  const handleSave = async (data: Partial<Project>) => {
-    if (editingProject) {
-      const { error } = await updateProject(editingProject.id, data);
-      if (error) throw error;
-    } else {
-      const { error } = await createProject(data);
-      if (error) throw error;
-    }
-    await loadData();
+  const handleSave = (data: Partial<Project>) => {
+    try {
+      const items = lsGet<Project>('vantix_projects');
+      const now = new Date().toISOString();
+      if (editingProject) {
+        const idx = items.findIndex(p => p.id === editingProject.id);
+        if (idx >= 0) items[idx] = { ...items[idx], ...data, updated_at: now };
+      } else {
+        items.unshift({ id: generateId(), spent: 0, progress: 0, health: 'green', tags: [], created_at: now, updated_at: now, ...data } as Project);
+      }
+      lsSet('vantix_projects', items);
+      loadData();
+    } catch (e) { console.error(e); }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('Delete this project?')) return;
     setDeleting(id);
-    try {
-      const { error } = await deleteProject(id);
-      if (error) throw error;
-      await loadData();
-    } catch (err) { console.error(err); }
-    finally { setDeleting(null); }
+    try { const items = lsGet<Project>('vantix_projects').filter(p => p.id !== id); lsSet('vantix_projects', items); loadData(); } catch (e) { console.error(e); }
+    setDeleting(null);
   };
 
   if (loading) return (
     <div className="space-y-6 animate-pulse">
       <div className="h-8 w-48 bg-[#E8E2DA] rounded-lg" />
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-[#E8E2DA]/50 rounded-2xl" />)}</div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">{[...Array(6)].map((_, i) => <div key={i} className="h-48 bg-[#E8E2DA]/50 rounded-2xl" />)}</div>
     </div>
   );
 
@@ -171,7 +179,7 @@ export default function ProjectsPage() {
           { label: 'Total Projects', value: String(stats.total), icon: Briefcase, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
           { label: 'Active', value: String(stats.active), icon: Zap, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
           { label: 'Total Budget', value: formatCurrency(stats.totalBudget), icon: DollarSign, color: 'text-[#B8895A]', bg: 'bg-[#B8895A]/10', border: 'border-[#B8895A]/20' },
-          { label: 'Total Paid', value: formatCurrency(stats.totalPaid), icon: CheckCircle2, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+          { label: 'Total Spent', value: formatCurrency(stats.totalSpent), icon: CheckCircle2, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className={`bg-white border ${stat.border} rounded-2xl p-4 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]`}>
             <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#8C857C]">{stat.label}</span><div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}><stat.icon size={18} className={stat.color} /></div></div>
@@ -195,43 +203,77 @@ export default function ProjectsPage() {
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-20 h-20 rounded-2xl bg-[#B8895A]/10 flex items-center justify-center mb-6"><Briefcase size={40} className="text-[#B8895A]" /></div>
           <h3 className="text-xl font-semibold text-[#2D2A26] mb-2">No projects yet</h3>
-          <p className="text-[#8C857C] max-w-md mb-6">Create your first project to start tracking work, budgets, and deadlines.</p>
-          <button onClick={() => { setEditingProject(null); setShowModal(true); }} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#B8895A]/10 text-[#B8895A] border border-[#B8895A]/30 hover:bg-[#B8895A]/20 font-medium"><Plus size={18} /> Create Your First Project</button>
+          <p className="text-[#8C857C] max-w-md mb-6">Create your first project to start tracking work.</p>
+          <button onClick={() => { setEditingProject(null); setShowModal(true); }} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#B8895A]/10 text-[#B8895A] border border-[#B8895A]/30 font-medium"><Plus size={18} /> Create Your First Project</button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map((project, i) => {
             const sc = STATUS_CONFIG[project.status] || STATUS_CONFIG.lead;
             const days = project.deadline ? daysUntil(project.deadline) : null;
-            const paid = (project as any).paid || project.spent || 0;
-            const progress = project.progress ?? (project.budget ? Math.round((paid / project.budget) * 100) : 0);
+            const progress = project.progress || 0;
+            const healthInfo = computeHealth(project);
+            const HealthIcon = healthInfo.icon;
+            const budgetPct = project.budget ? Math.round((project.spent / project.budget) * 100) : 0;
+            const overBudget = project.budget ? project.spent > project.budget : false;
+            const milestones = project.milestones || [];
 
             return (
               <motion.div key={project.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
                 className="group relative overflow-hidden rounded-2xl bg-white border border-[#E8E2DA] p-5 hover:border-[#B8895A]/30 hover:shadow-lg transition-all duration-300 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start justify-between mb-3">
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base font-semibold text-[#2D2A26] truncate group-hover:text-[#B8895A] transition-colors">{project.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${sc.bg} ${sc.color} ${sc.border}`}>{sc.label}</span>
-                      {project.client && <span className="text-[10px] text-[#8C857C]">{project.client.name}</span>}
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${healthInfo.color}`}>
+                        <HealthIcon size={10} /> {healthInfo.label}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mb-4">
+                {/* Progress Bar */}
+                <div className="mb-3">
                   <div className="flex justify-between text-xs text-[#8C857C] mb-1"><span>Progress</span><span className="text-[#2D2A26] font-medium">{progress}%</span></div>
-                  <div className="h-2 bg-[#F5F0EB] rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full ${progress >= 80 ? 'bg-emerald-500' : progress >= 50 ? 'bg-blue-500' : 'bg-[#B8895A]'}`} style={{ width: `${Math.min(progress, 100)}%` }} />
+                  <div className="h-2.5 bg-[#F5F0EB] rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full transition-all duration-700 ${progress >= 80 ? 'bg-emerald-500' : progress >= 50 ? 'bg-blue-500' : 'bg-[#B8895A]'}`} style={{ width: `${Math.min(progress, 100)}%` }} />
                   </div>
                 </div>
 
+                {/* Budget vs Actual */}
+                {project.budget ? (
+                  <div className="mb-3 p-2.5 rounded-lg bg-[#FAFAFA] border border-[#E8E2DA]">
+                    <div className="flex items-center justify-between text-xs mb-1.5">
+                      <span className="text-[#8C857C]">Budget</span>
+                      <span className={`font-semibold ${overBudget ? 'text-red-600' : 'text-[#2D2A26]'}`}>{formatCurrency(project.spent)} / {formatCurrency(project.budget)}</span>
+                    </div>
+                    <div className="h-1.5 bg-[#E8E2DA] rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${overBudget ? 'bg-red-500' : budgetPct > 80 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min(budgetPct, 100)}%` }} />
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Milestones */}
+                {milestones.length > 0 && (
+                  <div className="mb-3 flex items-center gap-1.5">
+                    <Flag size={12} className="text-[#8C857C]" />
+                    <div className="flex gap-1">
+                      {milestones.slice(0, 5).map((m, mi) => (
+                        <div key={mi} className={`w-3 h-3 rounded-full border ${m.done ? 'bg-emerald-500 border-emerald-400' : 'bg-white border-[#E8E2DA]'}`} title={m.name} />
+                      ))}
+                    </div>
+                    <span className="text-[10px] text-[#8C857C]">{milestones.filter(m => m.done).length}/{milestones.length}</span>
+                  </div>
+                )}
+
+                {/* Client + Deadline */}
                 <div className="flex items-center justify-between text-xs mb-3">
-                  <div className="flex items-center gap-1 text-[#8C857C]"><DollarSign size={12} />{project.budget ? <span>{formatCurrency(paid)} / {formatCurrency(project.budget)}</span> : <span>No budget</span>}</div>
+                  {project.client ? (
+                    <Link href="/dashboard/clients" className="flex items-center gap-1 text-[#B8895A] hover:underline"><Users size={12} />{project.client.name}</Link>
+                  ) : <span className="text-[#8C857C]">No client</span>}
                   {days !== null && <div className={`flex items-center gap-1 ${days < 0 ? 'text-red-500' : days <= 7 ? 'text-amber-500' : 'text-[#8C857C]'}`}><Clock size={12} />{days < 0 ? `${Math.abs(days)}d over` : `${days}d left`}</div>}
                 </div>
-
-                {(project.tags?.length ?? 0) > 0 && <div className="flex flex-wrap gap-1 mb-3">{project.tags!.slice(0, 3).map(t => <span key={t} className="px-2 py-0.5 rounded-md bg-[#F5F0EB] text-[10px] text-[#8C857C]">{t}</span>)}</div>}
 
                 <div className="flex items-center gap-2 pt-3 border-t border-[#E8E2DA]">
                   <button onClick={() => { setEditingProject(project); setShowModal(true); }} className="flex-1 text-center px-3 py-2 rounded-lg bg-[#F5F0EB] text-[#8C857C] hover:text-[#B8895A] hover:bg-[#B8895A]/10 text-xs font-medium transition-colors">Edit</button>

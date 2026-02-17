@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <pattern id="wg3" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+      <rect width="200" height="200" fill="#D4A45E"/>
+      <line x1="0" y1="6" x2="200" y2="8" stroke="#C89550" stroke-width="2" opacity="0.5"/>
+      <line x1="0" y1="18" x2="200" y2="20" stroke="#B88545" stroke-width="1.5" opacity="0.4"/>
+      <line x1="0" y1="32" x2="200" y2="30" stroke="#C89550" stroke-width="2.5" opacity="0.3"/>
+      <line x1="0" y1="44" x2="200" y2="46" stroke="#B88545" stroke-width="1.5" opacity="0.5"/>
+      <line x1="0" y1="58" x2="200" y2="56" stroke="#C89550" stroke-width="2" opacity="0.35"/>
+      <line x1="0" y1="70" x2="200" y2="72" stroke="#B88545" stroke-width="1.5" opacity="0.45"/>
+      <line x1="0" y1="84" x2="200" y2="82" stroke="#C89550" stroke-width="2.5" opacity="0.3"/>
+      <line x1="0" y1="96" x2="200" y2="98" stroke="#B88545" stroke-width="1.5" opacity="0.5"/>
+      <line x1="0" y1="110" x2="200" y2="108" stroke="#C89550" stroke-width="2" opacity="0.4"/>
+      <line x1="0" y1="122" x2="200" y2="124" stroke="#B88545" stroke-width="1.5" opacity="0.35"/>
+      <line x1="0" y1="136" x2="200" y2="134" stroke="#C89550" stroke-width="2.5" opacity="0.45"/>
+      <line x1="0" y1="150" x2="200" y2="152" stroke="#B88545" stroke-width="1.5" opacity="0.3"/>
+      <line x1="0" y1="164" x2="200" y2="166" stroke="#C89550" stroke-width="2" opacity="0.4"/>
+      <line x1="0" y1="178" x2="200" y2="176" stroke="#B88545" stroke-width="1.5" opacity="0.5"/>
+      <line x1="0" y1="192" x2="200" y2="194" stroke="#C89550" stroke-width="2" opacity="0.35"/>
+      <ellipse cx="60" cy="70" rx="8" ry="5" fill="#AA7838" opacity="0.3"/>
+      <ellipse cx="140" cy="140" rx="6" ry="4" fill="#AA7838" opacity="0.25"/>
+      <ellipse cx="100" cy="180" rx="5" ry="3" fill="#AA7838" opacity="0.2"/>
+    </pattern>
+    <pattern id="wd3" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+      <rect width="200" height="200" fill="#B08050"/>
+      <line x1="0" y1="12" x2="200" y2="14" stroke="#A07040" stroke-width="2" opacity="0.5"/>
+      <line x1="0" y1="32" x2="200" y2="30" stroke="#906535" stroke-width="1.5" opacity="0.4"/>
+      <line x1="0" y1="52" x2="200" y2="54" stroke="#A07040" stroke-width="2" opacity="0.3"/>
+    </pattern>
+    <filter id="ds3" x="-10%" y="-10%" width="135%" height="135%">
+      <feDropShadow dx="5" dy="5" stdDeviation="8" flood-color="#00000045"/>
+    </filter>
+    <filter id="bevel3">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+      <feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.6" specularExponent="20" result="spec">
+        <fePointLight x="100" y="80" z="200"/>
+      </feSpecularLighting>
+      <feComposite in="spec" in2="SourceAlpha" operator="in" result="specOut"/>
+      <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="0.4" k4="0"/>
+    </filter>
+  </defs>
+  
+  <rect width="512" height="512" fill="#FAFAFA"/>
+  
+  <!-- Left plank - wider/thicker -->
+  <g filter="url(#ds3)">
+    <rect x="98" y="50" width="75" height="355" rx="5" ry="5" fill="url(#wd3)" transform="rotate(-15, 165, 228)"/>
+    <rect x="95" y="48" width="75" height="355" rx="5" ry="5" fill="url(#wg3)" transform="rotate(-15, 162, 226)" stroke="#8C6E3A" stroke-width="2"/>
+    <!-- Highlight edge -->
+    <rect x="95" y="48" width="8" height="355" rx="3" ry="3" fill="#E8C878" opacity="0.25" transform="rotate(-15, 162, 226)"/>
+  </g>
+  
+  <!-- Right plank - wider/thicker -->
+  <g filter="url(#ds3)">
+    <rect x="339" y="50" width="75" height="355" rx="5" ry="5" fill="url(#wd3)" transform="rotate(15, 346, 228)"/>
+    <rect x="342" y="48" width="75" height="355" rx="5" ry="5" fill="url(#wg3)" transform="rotate(15, 349, 226)" stroke="#8C6E3A" stroke-width="2"/>
+    <rect x="409" y="48" width="8" height="355" rx="3" ry="3" fill="#E8C878" opacity="0.25" transform="rotate(15, 349, 226)"/>
+  </g>
+  
+  <!-- Cross brace - thicker -->
+  <g filter="url(#ds3)">
+    <rect x="182" y="335" width="148" height="42" rx="4" ry="4" fill="url(#wd3)"/>
+    <rect x="180" y="333" width="148" height="42" rx="4" ry="4" fill="url(#wg3)" stroke="#8C6E3A" stroke-width="1.5"/>
+    <rect x="180" y="333" width="148" height="5" rx="2" ry="2" fill="#E8C878" opacity="0.2"/>
+  </g>
+  
+  <!-- VANTIX text - bolder -->
+  <text x="256" y="470" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="46" font-weight="900" letter-spacing="10" fill="#2D2A26">VANTIX</text>
+</svg>

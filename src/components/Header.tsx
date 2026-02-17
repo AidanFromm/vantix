@@ -7,6 +7,8 @@ import { Menu, X, ArrowRight, LayoutDashboard, Sparkles } from 'lucide-react';
 
 const navLinks = [
   { href: '/services', label: 'Services' },
+  { href: '/roi-calculator', label: 'ROI Calculator' },
+  { href: '/ai-assessment', label: 'AI Assessment' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/#pricing', label: 'Pricing' },
   { href: '/#contact', label: 'Contact' },

@@ -1,24 +1,118 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import {
-  DollarSign, TrendingDown, TrendingUp, Briefcase, Users, Plus,
-  UserPlus, FileText, BarChart3, Zap, Clock, Sparkles, Target,
-  Activity, RefreshCw,
+  DollarSign, TrendingUp, Briefcase, Users, Plus,
+  UserPlus, FileText, BarChart3, Clock, Target,
+  Activity, RefreshCw, ArrowRight, CheckCircle2, AlertTriangle,
 } from 'lucide-react';
-import { getDashboardStats, getActivities, getProjects, getInvoices } from '@/lib/supabase';
-import type { DashboardStats, Activity as ActivityType, Project, Invoice } from '@/lib/types';
+import Link from 'next/link';
 
-function AnimatedNumber({ value, prefix = '', duration = 1500 }: { value: number; prefix?: string; duration?: number }) {
+interface InvoiceData { id: string; status: string; total?: number; amount?: number; paid_at?: string; paid_date?: string; due_date?: string; created_at: string; }
+interface LeadData { id: string; status: string; estimated_value?: number; name: string; company?: string; created_at: string; }
+interface ProjectData { id: string; status: string; name: string; health?: string; budget?: number; spent?: number; progress?: number; client_id?: string; deadline?: string; }
+interface TaskData { id: string; title: string; due_date?: string; column: string; priority: string; }
+interface ActivityData { id: string; type: string; title: string; description?: string; created_at: string; }
+
+function lsGet<T>(key: string, fallback: T[] = []): T[] {
+  try { if (typeof window === 'undefined') return fallback; const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
+}
+
+function AnimatedNumber({ value, prefix = '' }: { value: number; prefix?: string }) {
   const [display, setDisplay] = useState(0);
   useEffect(() => {
     let start: number; let frame: number;
-    const animate = (ts: number) => { if (!start) start = ts; const p = Math.min((ts - start) / duration, 1); setDisplay(Math.floor((1 - Math.pow(1 - p, 3)) * value)); if (p < 1) frame = requestAnimationFrame(animate); };
+    const animate = (ts: number) => { if (!start) start = ts; const p = Math.min((ts - start) / 1500, 1); setDisplay(Math.floor((1 - Math.pow(1 - p, 3)) * value)); if (p < 1) frame = requestAnimationFrame(animate); };
     frame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frame);
-  }, [value, duration]);
+  }, [value]);
   return <span className="tabular-nums">{prefix === '$' ? `$${display.toLocaleString()}` : display.toLocaleString()}</span>;
+}
+
+function RevenueChart({ invoices }: { invoices: InvoiceData[] }) {
+  const monthData = useMemo(() => {
+    const now = new Date();
+    const months: { label: string; value: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthStr = d.toLocaleDateString('en-US', { month: 'short' });
+      const year = d.getFullYear();
+      const month = d.getMonth();
+      const total = invoices
+        .filter(inv => {
+          if (inv.status !== 'paid') return false;
+          const paidDate = inv.paid_at || inv.paid_date || inv.created_at;
+          const pd = new Date(paidDate);
+          return pd.getFullYear() === year && pd.getMonth() === month;
+        })
+        .reduce((s, inv) => s + (inv.total || inv.amount || 0), 0);
+      months.push({ label: monthStr, value: total });
+    }
+    return months;
+  }, [invoices]);
+
+  const max = Math.max(...monthData.map(m => m.value), 1);
+  const chartH = 140;
+  const chartW = 400;
+  const padding = 40;
+  const usableW = chartW - padding * 2;
+  const usableH = chartH - 30;
+
+  const points = monthData.map((m, i) => ({
+    x: padding + (i / (monthData.length - 1)) * usableW,
+    y: 10 + usableH - (m.value / max) * usableH,
+  }));
+
+  const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+  const areaD = pathD + ` L ${points[points.length - 1].x} ${chartH - 20} L ${points[0].x} ${chartH - 20} Z`;
+
+  return (
+    <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#B8895A" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#B8895A" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+      {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
+        <line key={i} x1={padding} x2={chartW - padding} y1={10 + usableH * (1 - pct)} y2={10 + usableH * (1 - pct)} stroke="#E8E2DA" strokeWidth="0.5" />
+      ))}
+      <path d={areaD} fill="url(#revGrad)" />
+      <path d={pathD} fill="none" stroke="#B8895A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      {points.map((p, i) => (
+        <g key={i}>
+          <circle cx={p.x} cy={p.y} r="4" fill="white" stroke="#B8895A" strokeWidth="2" />
+          <text x={p.x} y={chartH - 6} textAnchor="middle" className="fill-[#8C857C]" fontSize="10">{monthData[i].label}</text>
+          {monthData[i].value > 0 && <text x={p.x} y={p.y - 10} textAnchor="middle" className="fill-[#2D2A26]" fontSize="9" fontWeight="600">${(monthData[i].value / 1000).toFixed(1)}k</text>}
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function LeadFunnel({ leads }: { leads: LeadData[] }) {
+  const stages = ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'];
+  const stageLabels: Record<string, string> = { new: 'New', contacted: 'Contacted', qualified: 'Qualified', proposal: 'Proposal', negotiation: 'Negotiation', won: 'Won', lost: 'Lost' };
+  const stageColors: Record<string, string> = { new: '#3B82F6', contacted: '#8B5CF6', qualified: '#F59E0B', proposal: '#F97316', negotiation: '#EC4899', won: '#10B981', lost: '#EF4444' };
+
+  const counts = stages.map(s => ({ stage: s, count: leads.filter(l => l.status === s).length }));
+  const maxCount = Math.max(...counts.map(c => c.count), 1);
+
+  return (
+    <div className="space-y-2">
+      {counts.filter(c => c.count > 0 || ['new', 'won', 'lost'].includes(c.stage)).map(({ stage, count }) => (
+        <div key={stage} className="flex items-center gap-3">
+          <span className="text-xs text-[#8C857C] w-20 text-right">{stageLabels[stage]}</span>
+          <div className="flex-1 h-6 bg-[#F5F0EB] rounded-lg overflow-hidden">
+            <div className="h-full rounded-lg transition-all duration-500 flex items-center px-2" style={{ width: `${Math.max((count / maxCount) * 100, count > 0 ? 12 : 0)}%`, backgroundColor: stageColors[stage] }}>
+              {count > 0 && <span className="text-[10px] font-bold text-white">{count}</span>}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function LoadingSkeleton() {
@@ -34,21 +128,21 @@ function LoadingSkeleton() {
 export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [greeting, setGreeting] = useState('');
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [activities, setActivities] = useState<ActivityType[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceData[]>([]);
+  const [leads, setLeads] = useState<LeadData[]>([]);
+  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [tasks, setTasks] = useState<TaskData[]>([]);
+  const [activities, setActivities] = useState<ActivityData[]>([]);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(() => {
     try {
-      const results = await Promise.allSettled([getDashboardStats(), getActivities(15), getProjects({ status: 'active' })]);
-      const statsRes = results[0].status === 'fulfilled' ? results[0].value : { data: null };
-      const activitiesRes = results[1].status === 'fulfilled' ? results[1].value : { data: null };
-      const projectsRes = results[2].status === 'fulfilled' ? results[2].value : { data: null };
-      if (statsRes.data) setStats(statsRes.data);
-      if (activitiesRes.data) setActivities(activitiesRes.data);
-      if (projectsRes.data) setProjects(projectsRes.data);
-    } catch (err) { console.error(err); }
-    finally { setIsLoading(false); }
+      setInvoices(lsGet<InvoiceData>('vantix_invoices'));
+      setLeads(lsGet<LeadData>('vantix_leads'));
+      setProjects(lsGet<ProjectData>('vantix_projects'));
+      setTasks(lsGet<TaskData>('vantix_tasks'));
+      setActivities(lsGet<ActivityData>('vantix_activities'));
+    } catch (e) { console.error(e); }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -57,14 +151,34 @@ export default function DashboardPage() {
     loadData();
   }, [loadData]);
 
-  if (isLoading) return <LoadingSkeleton />;
+  const revenueStats = useMemo(() => {
+    const now = new Date();
+    const thisMonth = invoices.filter(i => { if (i.status !== 'paid') return false; const d = new Date(i.paid_at || i.paid_date || i.created_at); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }).reduce((s, i) => s + (i.total || i.amount || 0), 0);
+    const lastMonth = invoices.filter(i => { if (i.status !== 'paid') return false; const d = new Date(i.paid_at || i.paid_date || i.created_at); const lm = new Date(now.getFullYear(), now.getMonth() - 1, 1); return d.getMonth() === lm.getMonth() && d.getFullYear() === lm.getFullYear(); }).reduce((s, i) => s + (i.total || i.amount || 0), 0);
+    const ytd = invoices.filter(i => { if (i.status !== 'paid') return false; const d = new Date(i.paid_at || i.paid_date || i.created_at); return d.getFullYear() === now.getFullYear(); }).reduce((s, i) => s + (i.total || i.amount || 0), 0);
+    return { thisMonth, lastMonth, ytd };
+  }, [invoices]);
 
-  const kpiData = stats ? [
-    { title: 'Revenue', value: stats.totalRevenue, prefix: '$', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { title: 'Outstanding', value: stats.outstandingAmount, prefix: '$', icon: TrendingDown, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100', sub: `${stats.outstandingInvoices} invoices` },
-    { title: 'Active Projects', value: stats.activeProjects, prefix: '', icon: Briefcase, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-    { title: 'New Leads', value: stats.newLeads, prefix: '', icon: Target, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-  ] : [];
+  const pipelineByStage = useMemo(() => {
+    const stages: Record<string, number> = {};
+    leads.filter(l => !['won', 'lost'].includes(l.status)).forEach(l => { stages[l.status] = (stages[l.status] || 0) + (l.estimated_value || 0); });
+    return stages;
+  }, [leads]);
+
+  const activeProjectStats = useMemo(() => {
+    const active = projects.filter(p => p.status === 'active');
+    return { total: active.length, onTrack: active.filter(p => p.health !== 'red' && p.health !== 'yellow').length, atRisk: active.filter(p => p.health === 'yellow').length, behind: active.filter(p => p.health === 'red').length };
+  }, [projects]);
+
+  const upcomingTasks = useMemo(() => {
+    const now = new Date();
+    const week = new Date(now.getTime() + 7 * 86400000);
+    return tasks.filter(t => t.due_date && t.column !== 'done' && new Date(t.due_date) <= week).sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime()).slice(0, 5);
+  }, [tasks]);
+
+  const recentActivities = useMemo(() => activities.slice(0, 8), [activities]);
+
+  const totalPipeline = Object.values(pipelineByStage).reduce((s, v) => s + v, 0);
 
   const getRelativeTime = (date: string): string => {
     const diff = Date.now() - new Date(date).getTime();
@@ -72,9 +186,18 @@ export default function DashboardPage() {
     if (m < 1) return 'Just now'; if (m < 60) return `${m}m ago`; if (h < 24) return `${h}h ago`; return `${d}d ago`;
   };
 
-  const getIcon = (type: string) => {
+  const getActivityIcon = (type: string) => {
     switch (type) { case 'payment': return { icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' }; case 'project': return { icon: Briefcase, color: 'text-purple-600', bg: 'bg-purple-50' }; case 'lead': return { icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' }; default: return { icon: Activity, color: 'text-[#8C857C]', bg: 'bg-[#F5F0EB]' }; }
   };
+
+  if (isLoading) return <LoadingSkeleton />;
+
+  const kpiData = [
+    { title: 'This Month', value: revenueStats.thisMonth, prefix: '$', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { title: 'Last Month', value: revenueStats.lastMonth, prefix: '$', icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    { title: 'YTD Revenue', value: revenueStats.ytd, prefix: '$', icon: BarChart3, color: 'text-[#B8895A]', bg: 'bg-[#B8895A]/10', border: 'border-[#B8895A]/20' },
+    { title: 'Pipeline', value: totalPipeline, prefix: '$', icon: Target, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+  ];
 
   return (
     <div className="space-y-8 pb-12">
@@ -92,60 +215,98 @@ export default function DashboardPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-        {kpiData.length > 0 ? kpiData.map((data, i) => (
-          <motion.div key={data.title} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} whileHover={{ y: -4, transition: { duration: 0.2 } }}
+        {kpiData.map((data, i) => (
+          <motion.div key={data.title} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
             className={`bg-white border ${data.border} rounded-2xl p-5 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff] hover:shadow-lg transition-all`}>
             <div className="flex items-start justify-between mb-4">
               <span className="text-sm font-medium text-[#8C857C] uppercase tracking-wide">{data.title}</span>
               <div className={`p-2.5 rounded-xl ${data.bg}`}><data.icon size={18} className={data.color} /></div>
             </div>
-            <h3 className={`text-3xl lg:text-4xl font-bold text-[#2D2A26] tracking-tight`}><AnimatedNumber value={data.value} prefix={data.prefix} duration={1500 + i * 200} /></h3>
-            {(data as any).sub && <p className="text-xs text-[#8C857C] mt-2">{(data as any).sub}</p>}
-          </motion.div>
-        )) : [...Array(4)].map((_, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="bg-white border border-[#E8E2DA] rounded-2xl p-5 flex flex-col items-center justify-center min-h-[140px] shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-            <BarChart3 size={20} className="text-[#B8895A] mb-2" /><p className="text-xs text-[#8C857C]">No data yet</p>
+            <h3 className="text-3xl lg:text-4xl font-bold text-[#2D2A26] tracking-tight"><AnimatedNumber value={data.value} prefix={data.prefix} /></h3>
           </motion.div>
         ))}
       </div>
 
-      {/* Activity + Projects */}
+      {/* Revenue Chart + Lead Funnel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Activity Feed */}
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="lg:col-span-2 bg-white border border-[#E8E2DA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+          <div className="px-6 py-4 border-b border-[#E8E2DA] flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-[#B8895A]/10"><TrendingUp size={18} className="text-[#B8895A]" /></div>
+            <div><h3 className="text-sm font-semibold text-[#2D2A26]">Revenue (Last 6 Months)</h3><p className="text-xs text-[#8C857C]">Paid invoices over time</p></div>
+          </div>
+          <div className="p-6"><RevenueChart invoices={invoices} /></div>
+        </motion.div>
+
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white border border-[#E8E2DA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#E8E2DA]"><div className="flex items-center gap-3"><div className="p-2 rounded-xl bg-blue-50"><Sparkles size={18} className="text-blue-600" /></div><div><h3 className="text-sm font-semibold text-[#2D2A26]">Recent Activity</h3><p className="text-xs text-[#8C857C]">What&apos;s happening</p></div></div></div>
-          <div className="p-4 space-y-1 max-h-[320px] overflow-y-auto">
-            {activities.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-center"><Sparkles size={24} className="text-blue-300 mb-3" /><p className="text-sm text-[#2D2A26] mb-1">No activity yet</p><p className="text-xs text-[#8C857C]">Activity will appear here as you work</p></div>
-            ) : activities.map((a, i) => {
-              const { icon: Icon, color, bg } = getIcon(a.type);
+          <div className="px-6 py-4 border-b border-[#E8E2DA] flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-purple-50"><Target size={18} className="text-purple-600" /></div>
+            <div><h3 className="text-sm font-semibold text-[#2D2A26]">Lead Funnel</h3><p className="text-xs text-[#8C857C]">{leads.length} total leads</p></div>
+          </div>
+          <div className="p-5"><LeadFunnel leads={leads} /></div>
+        </motion.div>
+      </div>
+
+      {/* Active Projects + Pipeline */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Project Status */}
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white border border-[#E8E2DA] rounded-2xl p-5 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 rounded-xl bg-[#B8895A]/10"><Briefcase size={18} className="text-[#B8895A]" /></div>
+            <h3 className="text-sm font-semibold text-[#2D2A26]">Active Projects</h3>
+          </div>
+          <div className="text-4xl font-bold text-[#2D2A26] mb-4">{activeProjectStats.total}</div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> On Track</span><span className="font-semibold text-[#2D2A26]">{activeProjectStats.onTrack}</span></div>
+            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-amber-500" /> At Risk</span><span className="font-semibold text-[#2D2A26]">{activeProjectStats.atRisk}</span></div>
+            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-red-500" /> Behind</span><span className="font-semibold text-[#2D2A26]">{activeProjectStats.behind}</span></div>
+          </div>
+        </motion.div>
+
+        {/* Upcoming Tasks */}
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="bg-white border border-[#E8E2DA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+          <div className="px-6 py-4 border-b border-[#E8E2DA] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-blue-50"><Clock size={18} className="text-blue-600" /></div>
+              <h3 className="text-sm font-semibold text-[#2D2A26]">Upcoming Tasks</h3>
+            </div>
+            <Link href="/dashboard/tasks" className="text-xs text-[#B8895A] hover:underline flex items-center gap-1">View all <ArrowRight size={12} /></Link>
+          </div>
+          <div className="p-4 space-y-2">
+            {upcomingTasks.length === 0 ? (
+              <p className="text-sm text-[#8C857C] text-center py-6">No upcoming tasks</p>
+            ) : upcomingTasks.map(t => {
+              const due = new Date(t.due_date!);
+              const now = new Date();
+              const isOverdue = due < now;
+              const isToday = due.toDateString() === now.toDateString();
               return (
-                <motion.div key={a.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 + i * 0.08 }} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-[#F5F0EB] transition-all cursor-pointer">
-                  <div className={`p-2 rounded-lg ${bg}`}><Icon size={14} className={color} /></div>
-                  <div className="flex-1 min-w-0"><p className="text-sm text-[#2D2A26] truncate group-hover:text-[#B8895A] transition-colors">{a.title}</p>{a.description && <p className="text-xs text-[#B8895A] font-medium">{a.description}</p>}</div>
-                  <span className="text-xs text-[#8C857C] shrink-0">{getRelativeTime(a.created_at)}</span>
-                </motion.div>
+                <div key={t.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#F5F0EB] transition-colors">
+                  <div className={`w-2 h-2 rounded-full ${isOverdue ? 'bg-red-500' : isToday ? 'bg-amber-500' : 'bg-[#B8895A]'}`} />
+                  <div className="flex-1 min-w-0"><p className="text-sm text-[#2D2A26] truncate">{t.title}</p></div>
+                  <span className={`text-xs ${isOverdue ? 'text-red-500' : isToday ? 'text-amber-500' : 'text-[#8C857C]'}`}>{due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                </div>
               );
             })}
           </div>
         </motion.div>
 
-        {/* Active Projects */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="lg:col-span-2 bg-white border border-[#E8E2DA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#E8E2DA]"><div className="flex items-center gap-3"><div className="p-2 rounded-xl bg-[#B8895A]/10"><Briefcase size={18} className="text-[#B8895A]" /></div><div><h3 className="text-sm font-semibold text-[#2D2A26]">Active Projects</h3><p className="text-xs text-[#8C857C]">{projects.length} in progress</p></div></div></div>
-          <div className="p-4 space-y-3">
-            {projects.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-center"><Briefcase size={24} className="text-[#B8895A]/30 mb-3" /><p className="text-sm text-[#2D2A26] mb-1">No active projects</p><p className="text-xs text-[#8C857C]">Create your first project to get started</p></div>
-            ) : projects.slice(0, 5).map((project, i) => {
-              const paid = (project as any).paid || project.spent || 0;
-              const progress = project.progress ?? (project.budget ? Math.round((paid / project.budget) * 100) : 0);
-              const healthColor = (project.health === 'yellow') ? 'bg-yellow-400' : (project.health === 'red') ? 'bg-red-400' : 'bg-emerald-400';
+        {/* Recent Activity */}
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="bg-white border border-[#E8E2DA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+          <div className="px-6 py-4 border-b border-[#E8E2DA] flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-blue-50"><Activity size={18} className="text-blue-600" /></div>
+            <h3 className="text-sm font-semibold text-[#2D2A26]">Recent Activity</h3>
+          </div>
+          <div className="p-4 space-y-1 max-h-[260px] overflow-y-auto">
+            {recentActivities.length === 0 ? (
+              <p className="text-sm text-[#8C857C] text-center py-6">No activity yet</p>
+            ) : recentActivities.map(a => {
+              const { icon: Icon, color, bg } = getActivityIcon(a.type);
               return (
-                <motion.div key={project.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 + i * 0.1 }} className="group p-4 rounded-xl bg-[#FAFAFA] hover:bg-[#F5F0EB] border border-[#E8E2DA] hover:border-[#B8895A]/20 transition-all cursor-pointer">
-                  <div className="flex items-center justify-between mb-3"><div className="flex items-center gap-2"><div className={`w-2 h-2 rounded-full ${healthColor}`} /><span className="text-sm font-medium text-[#2D2A26] group-hover:text-[#B8895A] transition-colors">{project.name}</span></div><span className="text-sm font-semibold text-[#2D2A26]">{progress}%</span></div>
-                  <div className="relative h-2 bg-[#E8E2DA] rounded-full overflow-hidden"><motion.div className={`absolute inset-y-0 left-0 rounded-full ${healthColor}`} initial={{ width: 0 }} animate={{ width: `${Math.min(progress, 100)}%` }} transition={{ duration: 1, delay: 0.8 + i * 0.1 }} /></div>
-                  <div className="flex items-center justify-between mt-2"><p className="text-xs text-[#8C857C]">{project.client?.name || 'No client'}</p>{project.budget ? <p className="text-xs text-[#B8895A]">${paid.toLocaleString()} / ${project.budget.toLocaleString()}</p> : null}</div>
-                </motion.div>
+                <div key={a.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#F5F0EB] transition-colors">
+                  <div className={`p-1.5 rounded-lg ${bg}`}><Icon size={12} className={color} /></div>
+                  <div className="flex-1 min-w-0"><p className="text-xs text-[#2D2A26] truncate">{a.title}</p></div>
+                  <span className="text-[10px] text-[#8C857C]">{getRelativeTime(a.created_at)}</span>
+                </div>
               );
             })}
           </div>
@@ -154,19 +315,21 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="bg-white border border-[#E8E2DA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-        <div className="px-6 py-4 border-b border-[#E8E2DA]"><div className="flex items-center gap-3"><div className="p-2 rounded-xl bg-purple-50"><Zap size={18} className="text-purple-600" /></div><h3 className="text-sm font-semibold text-[#2D2A26]">Quick Actions</h3></div></div>
+        <div className="px-6 py-4 border-b border-[#E8E2DA] flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-purple-50"><Plus size={18} className="text-purple-600" /></div>
+          <h3 className="text-sm font-semibold text-[#2D2A26]">Quick Actions</h3>
+        </div>
         <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'New Project', icon: Plus, href: '/dashboard/projects', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-            { label: 'Add Lead', icon: UserPlus, href: '/dashboard/leads', color: 'text-blue-600', bg: 'bg-blue-50' },
-            { label: 'New Client', icon: Users, href: '/dashboard/clients', color: 'text-purple-600', bg: 'bg-purple-50' },
-            { label: 'View Reports', icon: BarChart3, href: '/dashboard/financial', color: 'text-[#B8895A]', bg: 'bg-[#B8895A]/10' },
-          ].map((action, i) => (
-            <motion.a key={action.label} href={action.href} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.8 + i * 0.08 }} whileHover={{ scale: 1.03 }}
-              className="group flex items-center gap-3 p-3 rounded-xl bg-[#FAFAFA] hover:bg-[#F5F0EB] border border-[#E8E2DA] hover:border-[#B8895A]/20 transition-all">
+            { label: 'New Lead', icon: UserPlus, href: '/dashboard/leads', color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'New Project', icon: Briefcase, href: '/dashboard/projects', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+            { label: 'New Invoice', icon: FileText, href: '/dashboard/invoices', color: 'text-purple-600', bg: 'bg-purple-50' },
+            { label: 'View Reports', icon: BarChart3, href: '/dashboard/reports', color: 'text-[#B8895A]', bg: 'bg-[#B8895A]/10' },
+          ].map((action) => (
+            <Link key={action.label} href={action.href} className="group flex items-center gap-3 p-3 rounded-xl bg-[#FAFAFA] hover:bg-[#F5F0EB] border border-[#E8E2DA] hover:border-[#B8895A]/20 transition-all">
               <div className={`p-2 rounded-lg ${action.bg}`}><action.icon size={14} className={action.color} /></div>
               <span className="text-sm text-[#8C857C] group-hover:text-[#2D2A26] transition-colors">{action.label}</span>
-            </motion.a>
+            </Link>
           ))}
         </div>
       </motion.div>

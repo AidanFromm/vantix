@@ -4,10 +4,26 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Search, X, FileText, DollarSign, Clock, AlertTriangle,
-  CheckCircle2, Send, ArrowLeft, Trash2, Edit3, Receipt, Loader2, Filter, ChevronDown,
+  CheckCircle2, Send, Trash2, Edit3, Receipt, Loader2, Printer,
 } from 'lucide-react';
-import { getInvoices, createInvoice, updateInvoice, deleteInvoice, getClients, getProjects } from '@/lib/supabase';
-import type { Invoice, InvoiceStatus, Client, Project } from '@/lib/types';
+
+interface Client { id: string; name: string; }
+interface Project { id: string; name: string; }
+interface Invoice {
+  id: string; invoice_number?: string; client_id?: string; project_id?: string;
+  total: number; amount?: number; status: string; due_date?: string;
+  paid_at?: string; paid_date?: string; notes?: string; created_at: string;
+  client?: Client; project?: Project;
+}
+type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
+
+function lsGet<T>(key: string, fallback: T[] = []): T[] {
+  try { if (typeof window === 'undefined') return fallback; const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
+}
+function lsSet<T>(key: string, data: T[]) {
+  try { if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(data)); } catch {}
+}
+function generateId(): string { return crypto?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
 function formatCurrency(n: number): string { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n); }
 function formatDate(d: string): string { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
@@ -20,9 +36,19 @@ const statusConfig: Record<InvoiceStatus, { label: string; color: string; bg: st
   cancelled: { label: 'Cancelled', color: 'text-gray-400', bg: 'bg-gray-50', border: 'border-gray-200', icon: X },
 };
 
-function StatusBadge({ status }: { status: InvoiceStatus }) {
-  const c = statusConfig[status]; if (!c) return null; const Icon = c.icon;
+function StatusBadge({ status }: { status: string }) {
+  const c = statusConfig[status as InvoiceStatus]; if (!c) return null; const Icon = c.icon;
   return <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${c.color} ${c.bg} border ${c.border}`}><Icon size={12} />{c.label}</span>;
+}
+
+function autoDetectOverdue(invoices: Invoice[]): Invoice[] {
+  const today = new Date().toISOString().split('T')[0];
+  return invoices.map(inv => {
+    if (inv.status === 'sent' && inv.due_date && inv.due_date < today) {
+      return { ...inv, status: 'overdue' };
+    }
+    return inv;
+  });
 }
 
 export default function InvoicesPage() {
@@ -31,20 +57,33 @@ export default function InvoicesPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showForm, setShowForm] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
+  const loadData = useCallback(() => {
     try {
-      const [iRes, cRes, pRes] = await Promise.all([getInvoices({ status: statusFilter !== 'all' ? statusFilter : undefined }), getClients(), getProjects()]);
-      setInvoices(iRes.data || []);
-      setClients(cRes.data || []);
-      setProjects(pRes.data || []);
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      const allClients = lsGet<Client>('vantix_clients');
+      const allProjects = lsGet<Project>('vantix_projects');
+      setClients(allClients);
+      setProjects(allProjects);
+      let invs = lsGet<Invoice>('vantix_invoices');
+      invs = autoDetectOverdue(invs);
+      invs = invs.map(inv => ({
+        ...inv,
+        client: allClients.find(c => c.id === inv.client_id),
+        project: allProjects.find(p => p.id === inv.project_id),
+      }));
+      if (statusFilter !== 'all') invs = invs.filter(i => i.status === statusFilter);
+      // Persist overdue detection
+      lsSet('vantix_invoices', lsGet<Invoice>('vantix_invoices').map(inv => {
+        if (inv.status === 'sent' && inv.due_date && inv.due_date < new Date().toISOString().split('T')[0]) return { ...inv, status: 'overdue' };
+        return inv;
+      }));
+      setInvoices(invs);
+    } catch (e) { console.error(e); }
+    setLoading(false);
   }, [statusFilter]);
 
   useEffect(() => { loadData(); }, [loadData]);
@@ -56,37 +95,71 @@ export default function InvoicesPage() {
   }, [invoices, search]);
 
   const stats = useMemo(() => {
-    let outstanding = 0, paid = 0, overdueCount = 0;
-    invoices.forEach(inv => {
+    const all = lsGet<Invoice>('vantix_invoices');
+    const detected = autoDetectOverdue(all);
+    let outstanding = 0, paid = 0, overdueCount = 0, total = 0;
+    detected.forEach(inv => {
       const amt = inv.total || inv.amount || 0;
+      total += amt;
       if (inv.status === 'paid') paid += amt;
       else if (inv.status === 'sent' || inv.status === 'overdue') { outstanding += amt; if (inv.status === 'overdue') overdueCount++; }
     });
-    return { outstanding, paid, overdueCount, total: invoices.length };
+    return { outstanding, paid, overdueCount, total: detected.length, grandTotal: total };
   }, [invoices]);
 
-  const handleSave = async (data: Partial<Invoice>) => {
+  const handleSave = (data: Partial<Invoice>) => {
     try {
-      if (editingInvoice) { const { error } = await updateInvoice(editingInvoice.id, data); if (error) throw error; }
-      else { const { error } = await createInvoice(data); if (error) throw error; }
-      setShowForm(false); setEditingInvoice(null); await loadData();
-    } catch (err) { console.error(err); }
+      const items = lsGet<Invoice>('vantix_invoices');
+      const now = new Date().toISOString();
+      if (editingInvoice) {
+        const idx = items.findIndex(i => i.id === editingInvoice.id);
+        if (idx >= 0) items[idx] = { ...items[idx], ...data };
+      } else {
+        items.unshift({ id: generateId(), created_at: now, status: 'draft', total: 0, ...data } as Invoice);
+      }
+      lsSet('vantix_invoices', items);
+      setShowForm(false); setEditingInvoice(null); loadData();
+    } catch (e) { console.error(e); }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('Delete this invoice?')) return;
     setDeleting(id);
-    try { const { error } = await deleteInvoice(id); if (error) throw error; await loadData(); }
-    catch (err) { console.error(err); } finally { setDeleting(null); }
+    try { lsSet('vantix_invoices', lsGet<Invoice>('vantix_invoices').filter(i => i.id !== id)); loadData(); } catch (e) { console.error(e); }
+    setDeleting(null);
   };
 
-  const handleStatusChange = async (id: string, status: InvoiceStatus) => {
+  const handleStatusChange = (id: string, status: string) => {
     try {
-      const updates: Partial<Invoice> = { status };
-      if (status === 'paid') updates.paid_at = new Date().toISOString().split('T')[0];
-      await updateInvoice(id, updates);
-      await loadData();
-    } catch (err) { console.error(err); }
+      const items = lsGet<Invoice>('vantix_invoices');
+      const idx = items.findIndex(i => i.id === id);
+      if (idx >= 0) {
+        items[idx] = { ...items[idx], status };
+        if (status === 'paid') items[idx].paid_at = new Date().toISOString().split('T')[0];
+      }
+      lsSet('vantix_invoices', items);
+      // Log activity
+      const activities = lsGet<Record<string, unknown>>('vantix_activities');
+      activities.unshift({ id: generateId(), type: 'payment', title: `Invoice ${items[idx]?.invoice_number || id.slice(0, 8)} marked as ${status}`, created_at: new Date().toISOString() });
+      lsSet('vantix_activities', activities);
+      loadData();
+    } catch (e) { console.error(e); }
+  };
+
+  const handlePrint = (inv: Invoice) => {
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.write(`<html><head><title>Invoice ${inv.invoice_number || inv.id.slice(0,8)}</title><style>body{font-family:system-ui;padding:40px;color:#2D2A26}h1{color:#B8895A}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #E8E2DA}.total{font-size:24px;font-weight:bold}</style></head><body>`);
+    w.document.write(`<h1>INVOICE</h1><p><strong>${inv.invoice_number || inv.id.slice(0,8)}</strong></p>`);
+    w.document.write(`<p>Client: ${inv.client?.name || 'N/A'}</p>`);
+    w.document.write(`<p>Date: ${formatDate(inv.created_at)}</p>`);
+    w.document.write(`<p>Due: ${inv.due_date ? formatDate(inv.due_date) : 'N/A'}</p>`);
+    w.document.write(`<p>Status: ${inv.status.toUpperCase()}</p>`);
+    w.document.write(`<hr/><p class="total">Total: ${formatCurrency(inv.total || inv.amount || 0)}</p>`);
+    if (inv.notes) w.document.write(`<p><em>${inv.notes}</em></p>`);
+    w.document.write(`</body></html>`);
+    w.document.close();
+    w.print();
   };
 
   const statCards = [
@@ -108,7 +181,7 @@ export default function InvoicesPage() {
           <motion.div key={s.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`rounded-2xl bg-white border ${s.border} p-4 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]`}>
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-xl ${s.bg} flex items-center justify-center`}><s.icon size={18} className={s.color} /></div>
-              <div><p className="text-xs text-[#8C857C]">{s.label}</p><p className={`text-lg font-bold text-[#2D2A26]`}>{s.value}</p></div>
+              <div><p className="text-xs text-[#8C857C]">{s.label}</p><p className="text-lg font-bold text-[#2D2A26]">{s.value}</p></div>
             </div>
           </motion.div>
         ))}
@@ -123,7 +196,7 @@ export default function InvoicesPage() {
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8C857C]" />
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by client or invoice number..." className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E8E2DA] rounded-xl text-sm text-[#2D2A26] focus:outline-none focus:border-[#B8895A]/50" />
             </div>
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as any)} className="bg-white border border-[#E8E2DA] rounded-xl px-3 py-2 text-sm text-[#2D2A26] focus:outline-none focus:border-[#B8895A]/50">
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-white border border-[#E8E2DA] rounded-xl px-3 py-2 text-sm text-[#2D2A26] focus:outline-none focus:border-[#B8895A]/50">
               <option value="all">All Status</option>
               {(['draft','sent','paid','overdue','cancelled'] as const).map(s => <option key={s} value={s}>{statusConfig[s].label}</option>)}
             </select>
@@ -160,7 +233,8 @@ export default function InvoicesPage() {
                           <td className="px-5 py-3.5 text-right">
                             <div className="flex items-center justify-end gap-1">
                               {inv.status === 'draft' && <button onClick={() => handleStatusChange(inv.id, 'sent')} className="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50" title="Mark Sent"><Send size={14} /></button>}
-                              {(inv.status === 'sent' || inv.status === 'overdue') && <button onClick={() => handleStatusChange(inv.id, 'paid')} className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50" title="Mark Paid"><CheckCircle2 size={14} /></button>}
+                              {(inv.status === 'sent' || inv.status === 'overdue') && <button onClick={() => handleStatusChange(inv.id, 'paid')} className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50" title="Record Payment"><CheckCircle2 size={14} /></button>}
+                              <button onClick={() => handlePrint(inv)} className="p-1.5 rounded-lg text-[#8C857C] hover:text-[#B8895A] hover:bg-[#B8895A]/10" title="Print/PDF"><Printer size={14} /></button>
                               <button onClick={() => { setEditingInvoice(inv); setShowForm(true); }} className="p-1.5 rounded-lg text-[#8C857C] hover:text-[#B8895A] hover:bg-[#B8895A]/10"><Edit3 size={14} /></button>
                               <button onClick={() => handleDelete(inv.id)} disabled={deleting === inv.id} className="p-1.5 rounded-lg text-[#8C857C] hover:text-red-500 hover:bg-red-50">
                                 {deleting === inv.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
@@ -185,13 +259,13 @@ export default function InvoicesPage() {
   );
 }
 
-function InvoiceFormModal({ invoice, clients, projects, onClose, onSave }: { invoice: Invoice | null; clients: Client[]; projects: Project[]; onClose: () => void; onSave: (data: Partial<Invoice>) => Promise<void> }) {
+function InvoiceFormModal({ invoice, clients, projects, onClose, onSave }: { invoice: Invoice | null; clients: Client[]; projects: Project[]; onClose: () => void; onSave: (data: Partial<Invoice>) => void }) {
   const [form, setForm] = useState({
     invoice_number: invoice?.invoice_number || '',
     client_id: invoice?.client_id || '',
     project_id: invoice?.project_id || '',
     total: invoice?.total || invoice?.amount || 0,
-    status: invoice?.status || 'draft' as InvoiceStatus,
+    status: invoice?.status || 'draft',
     due_date: invoice?.due_date || '',
     paid_at: invoice?.paid_at || invoice?.paid_date || '',
     notes: invoice?.notes || '',
@@ -199,22 +273,9 @@ function InvoiceFormModal({ invoice, clients, projects, onClose, onSave }: { inv
   const [saving, setSaving] = useState(false);
   const inputCls = 'w-full bg-[#FAFAFA] border border-[#E8E2DA] rounded-xl px-4 py-3 text-sm text-[#2D2A26] focus:outline-none focus:border-[#B8895A]/50';
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.total) return;
-    setSaving(true);
-    try {
-      await onSave({
-        invoice_number: form.invoice_number || undefined,
-        client_id: form.client_id || undefined,
-        project_id: form.project_id || undefined,
-        total: form.total,
-        status: form.status,
-        due_date: form.due_date || undefined,
-        paid_at: form.paid_at || undefined,
-        notes: form.notes || undefined,
-      });
-    } catch (err) { console.error(err); } finally { setSaving(false); }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); if (!form.total) return; setSaving(true);
+    onSave({ invoice_number: form.invoice_number || undefined, client_id: form.client_id || undefined, project_id: form.project_id || undefined, total: form.total, status: form.status, due_date: form.due_date || undefined, paid_at: form.paid_at || undefined, notes: form.notes || undefined });
   };
 
   return (
@@ -230,12 +291,12 @@ function InvoiceFormModal({ invoice, clients, projects, onClose, onSave }: { inv
             <div><label className="block text-xs text-[#8C857C] mb-1.5">Amount ($) *</label><input type="number" min={0} step={0.01} value={form.total || ''} onChange={e => setForm(f => ({ ...f, total: Number(e.target.value) }))} className={inputCls} required /></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="block text-xs text-[#8C857C] mb-1.5">Client</label><select value={form.client_id} onChange={e => setForm(f => ({ ...f, client_id: e.target.value }))} className={inputCls}><option value="">Select client...</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
-            <div><label className="block text-xs text-[#8C857C] mb-1.5">Project</label><select value={form.project_id} onChange={e => setForm(f => ({ ...f, project_id: e.target.value }))} className={inputCls}><option value="">Select project...</option>{projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
+            <div><label className="block text-xs text-[#8C857C] mb-1.5">Client</label><select value={form.client_id} onChange={e => setForm(f => ({ ...f, client_id: e.target.value }))} className={inputCls}><option value="">Select...</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
+            <div><label className="block text-xs text-[#8C857C] mb-1.5">Project</label><select value={form.project_id} onChange={e => setForm(f => ({ ...f, project_id: e.target.value }))} className={inputCls}><option value="">Select...</option>{projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
           </div>
           <div><label className="block text-xs text-[#8C857C] mb-1.5">Status</label>
             <div className="flex flex-wrap gap-2">
-              {(['draft','sent','paid','overdue','cancelled'] as InvoiceStatus[]).map(s => {
+              {(['draft','sent','paid','overdue','cancelled'] as const).map(s => {
                 const cfg = statusConfig[s];
                 return <button key={s} type="button" onClick={() => setForm(f => ({ ...f, status: s, ...(s === 'paid' && !f.paid_at ? { paid_at: new Date().toISOString().split('T')[0] } : {}) }))} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${form.status === s ? `${cfg.bg} ${cfg.color} ${cfg.border}` : 'bg-[#F5F0EB] text-[#8C857C] border-[#E8E2DA]'}`}>{cfg.label}</button>;
               })}
@@ -249,7 +310,7 @@ function InvoiceFormModal({ invoice, clients, projects, onClose, onSave }: { inv
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#F5F0EB] text-[#8C857C] text-sm">Cancel</button>
             <button type="submit" disabled={saving || !form.total} className="flex-1 px-4 py-3 rounded-xl bg-[#B8895A] text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">
-              {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : invoice ? 'Update Invoice' : 'Create Invoice'}
+              {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : invoice ? 'Update' : 'Create'}
             </button>
           </div>
         </form>

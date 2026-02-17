@@ -10,6 +10,8 @@ const quickLinks = [
   { href: '/#portfolio', label: 'Portfolio' },
   { href: '/#pricing', label: 'Pricing' },
   { href: '/#contact', label: 'Contact' },
+  { href: '/roi-calculator', label: 'ROI Calculator' },
+  { href: '/ai-assessment', label: 'AI Assessment' },
 ];
 
 const serviceLinks = [
