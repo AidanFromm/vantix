@@ -41,7 +41,7 @@ interface Lead {
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
-const TYPING_DELAY = 900; // ms
+const TYPING_DELAY = 900;
 
 const STORAGE_KEY = "vantix_chat_leads";
 
@@ -169,7 +169,6 @@ export default function ChatWidget() {
   const [awaitingField, setAwaitingField] = useState<CollectField | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll on new messages
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -257,7 +256,6 @@ export default function ChatWidget() {
       return;
     }
 
-    // Free text fallback
     const flow = buildFlow(text);
     addBotMessages(flow.messages);
   }, [input, awaitingField, currentLead, addBotMessages, nextCollectPrompt]);
@@ -281,12 +279,11 @@ export default function ChatWidget() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/25 hover:bg-emerald-400 transition-colors"
+            className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-[#C4956A] to-[#A67B52] text-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] hover:from-[#B8895A] hover:to-[#96704A] transition-colors"
             aria-label="Open chat"
           >
             <MessageCircle className="h-6 w-6" />
-            {/* Pulse ring */}
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-30" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C4956A] opacity-20" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -299,31 +296,31 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
-            className="fixed bottom-6 right-6 z-50 flex flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-[#0A0A0F] shadow-2xl
+            className="fixed bottom-6 right-6 z-50 flex flex-col overflow-hidden rounded-3xl border border-[#E8E5E0] bg-[#FAF9F6] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]
               w-[calc(100vw-3rem)] max-w-[400px] h-[500px]
               sm:w-[400px]
               max-sm:bottom-0 max-sm:right-0 max-sm:w-full max-sm:h-full max-sm:rounded-none max-sm:border-0"
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-3">
+            <div className="flex items-center justify-between border-b border-[#E8E5E0] bg-white px-4 py-3">
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleReset}
-                  className="text-zinc-400 hover:text-white transition-colors"
+                  className="text-[#C5C3BE] hover:text-[#2D2A26] transition-colors"
                   aria-label="Reset chat"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                  <span className="text-sm font-medium text-white">
+                  <div className="h-2 w-2 rounded-full bg-[#B8895A]" />
+                  <span className="text-sm font-medium text-[#2D2A26]">
                     Vantix AI
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="text-zinc-400 hover:text-white transition-colors"
+                className="text-[#C5C3BE] hover:text-[#2D2A26] transition-colors"
                 aria-label="Close chat"
               >
                 <X className="h-5 w-5" />
@@ -338,10 +335,10 @@ export default function ChatWidget() {
               {messages.map((msg) => (
                 <div key={msg.id}>
                   <div
-                    className={`max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                    className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                       msg.role === "bot"
-                        ? "bg-zinc-800 text-zinc-100"
-                        : "ml-auto bg-emerald-600 text-white"
+                        ? "bg-white text-[#2D2A26] shadow-[3px_3px_6px_#d1cdc7,-3px_-3px_6px_#ffffff]"
+                        : "ml-auto bg-gradient-to-r from-[#C4956A] to-[#A67B52] text-white"
                     }`}
                   >
                     {msg.text}
@@ -350,7 +347,7 @@ export default function ChatWidget() {
                         href={msg.linkHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-2 flex items-center gap-1.5 text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+                        className="mt-2 flex items-center gap-1.5 text-[#B8895A] underline underline-offset-2 hover:text-[#96704A]"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                         {msg.linkLabel || "Open link"}
@@ -364,7 +361,7 @@ export default function ChatWidget() {
                         <button
                           key={qr}
                           onClick={() => handleQuickReply(qr)}
-                          className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs text-zinc-300 hover:border-emerald-500 hover:text-emerald-400 transition-colors"
+                          className="rounded-full border border-[#E8E5E0] bg-white px-3 py-1.5 text-xs text-[#8C857C] hover:border-[#B8895A] hover:text-[#B8895A] transition-colors shadow-[2px_2px_4px_#d1cdc7,-2px_-2px_4px_#ffffff]"
                         >
                           {qr}
                         </button>
@@ -377,8 +374,8 @@ export default function ChatWidget() {
               {/* Typing indicator */}
               {typing && (
                 <div className="flex items-center gap-1.5 px-3.5 py-2.5">
-                  <Loader2 className="h-4 w-4 animate-spin text-emerald-500" />
-                  <span className="text-xs text-zinc-500">
+                  <Loader2 className="h-4 w-4 animate-spin text-[#B8895A]" />
+                  <span className="text-xs text-[#C5C3BE]">
                     Vantix AI is typing...
                   </span>
                 </div>
@@ -391,19 +388,19 @@ export default function ChatWidget() {
                 e.preventDefault();
                 handleSend();
               }}
-              className="flex items-center gap-2 border-t border-zinc-800 bg-zinc-900 px-4 py-3"
+              className="flex items-center gap-2 border-t border-[#E8E5E0] bg-white px-4 py-3"
             >
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 rounded-lg bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none focus:ring-1 focus:ring-emerald-500/50"
+                className="flex-1 rounded-full bg-[#F5F3EF] px-4 py-2 text-sm text-[#2D2A26] placeholder-[#C5C3BE] outline-none focus:ring-1 focus:ring-[#B8895A]/50 shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]"
               />
               <button
                 type="submit"
                 disabled={!input.trim()}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500 text-white transition-colors hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-r from-[#C4956A] to-[#A67B52] text-white transition-colors hover:from-[#B8895A] hover:to-[#96704A] disabled:opacity-40 disabled:cursor-not-allowed shadow-[3px_3px_6px_#d1cdc7,-3px_-3px_6px_#ffffff]"
                 aria-label="Send message"
               >
                 <Send className="h-4 w-4" />

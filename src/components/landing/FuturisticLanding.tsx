@@ -10,17 +10,17 @@ import {
 } from 'lucide-react';
 
 // ============================================
-// VANTIX AI - Premium Landing Page
+// VANTIX AI - Warm Neumorphic Landing Page
 // ============================================
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' as const } },
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } },
 };
 
 const staggerContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 
 function useAnimateInView(threshold = 0.15) {
@@ -56,30 +56,32 @@ function Navigation() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#0A0A0F]/80 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'
+        scrolled
+          ? 'bg-[#FAF9F6]/80 backdrop-blur-xl border-b border-[#E8E5E0]'
+          : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="#" className="text-2xl font-bold text-white tracking-tight">
-          vantix<span className="text-emerald-400">.</span>
+        <a href="#" className="text-2xl font-bold text-[#2D2A26] tracking-tight">
+          vantix<span className="text-[#B8895A]">.</span>
         </a>
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+            <a key={l.href} href={l.href} className="text-sm text-[#8C857C] hover:text-[#2D2A26] transition-colors">
               {l.label}
             </a>
           ))}
-          <a href="/login" className="text-sm text-gray-400 hover:text-white transition-colors">
+          <a href="/login" className="text-sm text-[#8C857C] hover:text-[#2D2A26] transition-colors">
             Login
           </a>
           <a
             href="#contact"
-            className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-semibold rounded-full transition-all"
+            className="px-6 py-2.5 bg-gradient-to-r from-[#C4956A] to-[#A67B52] hover:from-[#B8895A] hover:to-[#96704A] text-white text-sm font-semibold rounded-full transition-all shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff] hover:shadow-[inset_3px_3px_6px_#96704A,inset_-3px_-3px_6px_#d4a878]"
           >
             Book a Call
           </a>
         </div>
-        <button className="md:hidden text-white" onClick={() => setMobileOpen(!mobileOpen)}>
+        <button className="md:hidden text-[#2D2A26]" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -89,18 +91,18 @@ function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#0A0A0F]/95 backdrop-blur-xl border-b border-white/5 overflow-hidden"
+            className="md:hidden bg-[#FAF9F6]/95 backdrop-blur-xl border-b border-[#E8E5E0] overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {links.map((l) => (
-                <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)} className="text-gray-300 hover:text-white transition-colors">
+                <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)} className="text-[#8C857C] hover:text-[#2D2A26] transition-colors">
                   {l.label}
                 </a>
               ))}
-              <a href="/login" onClick={() => setMobileOpen(false)} className="text-gray-300 hover:text-white transition-colors">
+              <a href="/login" onClick={() => setMobileOpen(false)} className="text-[#8C857C] hover:text-[#2D2A26] transition-colors">
                 Login
               </a>
-              <a href="#contact" onClick={() => setMobileOpen(false)} className="px-5 py-2.5 bg-emerald-500 text-black text-sm font-semibold rounded-full text-center">
+              <a href="#contact" onClick={() => setMobileOpen(false)} className="px-6 py-2.5 bg-gradient-to-r from-[#C4956A] to-[#A67B52] text-white text-sm font-semibold rounded-full text-center">
                 Book a Call
               </a>
             </div>
@@ -112,61 +114,24 @@ function Navigation() {
 }
 
 // ============================================
-// PARTICLE GRID BACKGROUND
+// GRID BACKGROUND
 // ============================================
-function ParticleGrid() {
+function GridBackground({ variant = 'grid' }: { variant?: 'grid' | 'solid' }) {
+  if (variant === 'solid') {
+    return <div className="absolute inset-0 bg-[#FAF9F6]" />;
+  }
   return (
-    <div className="absolute inset-0 overflow-hidden">
-      {/* Radial gradient overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08)_0%,transparent_70%)]" />
-      {/* Animated grid */}
+    <div className="absolute inset-0 bg-[#F5F3EF]">
       <div
-        className="absolute inset-0 opacity-[0.07]"
+        className="absolute inset-0 opacity-100"
         style={{
-          backgroundImage: `linear-gradient(rgba(16,185,129,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.3) 1px, transparent 1px)`,
-          backgroundSize: '60px 60px',
-          animation: 'gridMove 20s linear infinite',
+          backgroundImage: `
+            linear-gradient(to right, #E8E5E0 1px, transparent 1px),
+            linear-gradient(to bottom, #E8E5E0 1px, transparent 1px)
+          `,
+          backgroundSize: '48px 48px',
         }}
       />
-      {/* Floating particles via CSS */}
-      {Array.from({ length: 30 }).map((_, i) => (
-        <div
-          key={i}
-          className="absolute w-1 h-1 rounded-full bg-emerald-400/30"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animation: `particleFloat ${8 + Math.random() * 12}s ease-in-out infinite`,
-            animationDelay: `${Math.random() * 5}s`,
-          }}
-        />
-      ))}
-      {/* Neural network lines */}
-      <svg className="absolute inset-0 w-full h-full opacity-[0.04]">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <line
-            key={i}
-            x1={`${10 + Math.random() * 80}%`}
-            y1={`${10 + Math.random() * 80}%`}
-            x2={`${10 + Math.random() * 80}%`}
-            y2={`${10 + Math.random() * 80}%`}
-            stroke="#10b981"
-            strokeWidth="1"
-          >
-            <animate attributeName="opacity" values="0;0.5;0" dur={`${4 + Math.random() * 6}s`} repeatCount="indefinite" />
-          </line>
-        ))}
-      </svg>
-      <style jsx>{`
-        @keyframes gridMove {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(60px, 60px); }
-        }
-        @keyframes particleFloat {
-          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-          50% { transform: translate(${Math.random() > 0.5 ? '' : '-'}30px, -40px) scale(1.5); opacity: 0.7; }
-        }
-      `}</style>
     </div>
   );
 }
@@ -177,31 +142,30 @@ function ParticleGrid() {
 function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <ParticleGrid />
-      {/* Top gradient fade */}
-      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#0A0A0F] to-transparent z-10" />
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0A0A0F] to-transparent z-10" />
+      <GridBackground />
+      {/* Subtle warm radial glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.06)_0%,transparent_60%)]" />
 
-      <div className="relative z-20 max-w-5xl mx-auto px-6 text-center">
+      <div className="relative z-20 max-w-5xl mx-auto px-6 text-center pt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 mb-8"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C5C3BE] bg-white mb-8 shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff]"
         >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-sm text-emerald-400 font-medium">AI-First Digital Transformation</span>
+          <span className="w-2 h-2 rounded-full bg-[#B8895A] animate-pulse" />
+          <span className="text-sm text-[#8C857C] font-medium">AI-First Digital Transformation</span>
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[0.95] tracking-tight mb-6"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-[#2D2A26] leading-[0.95] tracking-tight mb-6"
         >
           Your Business.
           <br />
-          <span className="bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent">
+          <span className="text-[#B8895A]">
             Powered by AI.
           </span>
         </motion.h1>
@@ -210,7 +174,7 @@ function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.6 }}
-          className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-lg sm:text-xl text-[#8C857C] max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           We build AI systems that generate revenue, cut costs, and run your operations — while you focus on growth.
         </motion.p>
@@ -223,7 +187,7 @@ function HeroSection() {
         >
           <a
             href="#services"
-            className="group px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-full transition-all inline-flex items-center justify-center gap-2"
+            className="group px-8 py-4 bg-gradient-to-r from-[#C4956A] to-[#A67B52] hover:from-[#B8895A] hover:to-[#96704A] text-white font-semibold rounded-full transition-all inline-flex items-center justify-center gap-2 shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_#96704A,inset_-4px_-4px_8px_#d4a878] hover:scale-[1.02]"
           >
             See What AI Can Do For You
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -236,7 +200,7 @@ function HeroSection() {
           transition={{ delay: 1.5, duration: 1 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
         >
-          <ArrowDown size={20} className="text-gray-600 animate-bounce" />
+          <ArrowDown size={20} className="text-[#C5C3BE] animate-bounce" />
         </motion.div>
       </div>
     </section>
@@ -272,7 +236,7 @@ function AnimatedCounter({ target, suffix = '', prefix = '' }: { target: number;
 
 function SocialProofBar() {
   return (
-    <section className="relative py-12 border-y border-white/5">
+    <section className="relative py-12 border-y border-[#E8E5E0] bg-[#FAF9F6]">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial="hidden"
@@ -287,10 +251,10 @@ function SocialProofBar() {
             { prefix: '', target: 98, suffix: '%', label: 'Client Retention Rate' },
           ].map((stat, i) => (
             <motion.div key={i} variants={fadeUp} className="flex flex-col items-center">
-              <span className="text-3xl md:text-4xl font-bold text-white">
+              <span className="text-3xl md:text-4xl font-bold text-[#B8895A]">
                 <AnimatedCounter target={stat.target} suffix={stat.suffix} prefix={stat.prefix} />
               </span>
-              <span className="text-sm text-gray-500 mt-1">{stat.label}</span>
+              <span className="text-sm text-[#8C857C] mt-1">{stat.label}</span>
             </motion.div>
           ))}
         </motion.div>
@@ -323,17 +287,18 @@ function ProblemSection() {
 
   return (
     <section className="py-24 md:py-32 relative">
-      <div className="max-w-7xl mx-auto px-6" ref={ref}>
+      <GridBackground />
+      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
           className="text-center mb-16"
         >
-          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             The Problem
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight max-w-3xl mx-auto">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] leading-tight max-w-3xl mx-auto">
             You are spending 40+ hours a week on tasks AI can handle in seconds
           </motion.h2>
         </motion.div>
@@ -345,15 +310,15 @@ function ProblemSection() {
           className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
         >
           {/* Before */}
-          <motion.div variants={fadeUp} className="relative p-8 rounded-2xl border border-red-500/10 bg-red-500/[0.02]">
+          <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] border border-[#E8E5E0]/50">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-3 h-3 rounded-full bg-red-500/50" />
-              <span className="text-red-400 font-semibold text-sm uppercase tracking-wider">Without AI</span>
+              <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
+              <span className="text-[#8C857C] font-semibold text-sm uppercase tracking-wider">Without AI</span>
             </div>
             <ul className="space-y-4">
               {before.map((item, i) => (
-                <motion.li key={i} variants={fadeUp} className="flex items-start gap-3 text-gray-400">
-                  <X size={16} className="text-red-400/60 mt-1 shrink-0" />
+                <motion.li key={i} variants={fadeUp} className="flex items-start gap-3 text-[#8C857C]">
+                  <X size={16} className="text-[#C5C3BE] mt-1 shrink-0" />
                   <span>{item}</span>
                 </motion.li>
               ))}
@@ -361,15 +326,15 @@ function ProblemSection() {
           </motion.div>
 
           {/* After */}
-          <motion.div variants={fadeUp} className="relative p-8 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.02]">
+          <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] border border-[#B8895A]/20">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-emerald-400 font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
+              <div className="w-3 h-3 rounded-full bg-[#B8895A]" />
+              <span className="text-[#B8895A] font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
             </div>
             <ul className="space-y-4">
               {after.map((item, i) => (
-                <motion.li key={i} variants={fadeUp} className="flex items-start gap-3 text-gray-300">
-                  <CheckCircle2 size={16} className="text-emerald-400 mt-1 shrink-0" />
+                <motion.li key={i} variants={fadeUp} className="flex items-start gap-3 text-[#2D2A26]">
+                  <CheckCircle2 size={16} className="text-[#B8895A] mt-1 shrink-0" />
                   <span>{item}</span>
                 </motion.li>
               ))}
@@ -400,20 +365,21 @@ function ServicesSection() {
 
   return (
     <section id="services" className="py-24 md:py-32 relative">
-      <div className="max-w-7xl mx-auto px-6" ref={ref}>
+      <GridBackground variant="solid" />
+      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
           className="text-center mb-16"
         >
-          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             What We Deploy
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] leading-tight">
             AI Systems That Run Your Business
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-gray-400 mt-4 max-w-2xl mx-auto">
+          <motion.p variants={fadeUp} className="text-[#8C857C] mt-4 max-w-2xl mx-auto">
             While your competitors are figuring out ChatGPT, we are building AI systems that run entire businesses.
           </motion.p>
         </motion.div>
@@ -422,21 +388,21 @@ function ServicesSection() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {services.map((s, i) => (
             <motion.div
               key={i}
               variants={fadeUp}
-              whileHover={{ y: -6, scale: 1.02 }}
+              whileHover={{ y: -4, scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="group relative p-6 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-sm hover:border-emerald-500/20 hover:bg-emerald-500/[0.03] transition-all cursor-default"
+              className="group relative p-8 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] hover:shadow-[8px_8px_16px_#d1cdc7,-8px_-8px_16px_#ffffff] border border-transparent hover:border-[#B8895A]/20 transition-all cursor-default"
             >
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:bg-emerald-500/20 transition-colors">
-                <s.icon size={22} className="text-emerald-400" />
+              <div className="w-12 h-12 rounded-2xl bg-[#F5F3EF] flex items-center justify-center mb-5 group-hover:bg-[#B8895A]/10 transition-colors shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]">
+                <s.icon size={22} className="text-[#B8895A]" />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-2">{s.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
+              <h3 className="text-[#2D2A26] font-semibold text-lg mb-2">{s.title}</h3>
+              <p className="text-[#8C857C] text-sm leading-relaxed">{s.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -460,7 +426,7 @@ function ROISection() {
 
   return (
     <section id="roi" className="py-24 md:py-32 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[0.02] via-transparent to-transparent" />
+      <GridBackground />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
@@ -468,10 +434,10 @@ function ROISection() {
           variants={staggerContainer}
           className="text-center mb-16"
         >
-          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             ROI
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
             The Numbers Don&apos;t Lie
           </motion.h2>
         </motion.div>
@@ -486,11 +452,11 @@ function ROISection() {
             <motion.div
               key={i}
               variants={fadeUp}
-              className="text-center p-6 rounded-2xl border border-white/5 bg-white/[0.02]"
+              className="text-center p-8 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff]"
             >
-              <s.icon size={28} className="text-emerald-400 mx-auto mb-4" />
-              <div className="text-3xl md:text-4xl font-bold text-white mb-1">{s.value}</div>
-              <div className="text-sm text-gray-500">{s.label}</div>
+              <s.icon size={28} className="text-[#B8895A] mx-auto mb-4" />
+              <div className="text-3xl md:text-4xl font-bold text-[#B8895A] mb-1">{s.value}</div>
+              <div className="text-sm text-[#8C857C]">{s.label}</div>
             </motion.div>
           ))}
         </motion.div>
@@ -507,32 +473,33 @@ function CaseStudy() {
 
   return (
     <section className="py-24 md:py-32 relative">
-      <div className="max-w-7xl mx-auto px-6" ref={ref}>
+      <GridBackground variant="solid" />
+      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
         >
-          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4 text-center">
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4 text-center">
             Case Study
           </motion.p>
           <motion.div
             variants={fadeUp}
-            className="relative p-8 md:p-12 rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-sm overflow-hidden"
+            className="relative p-8 md:p-12 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] border border-[#B8895A]/15 overflow-hidden"
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#B8895A]/5 rounded-full blur-3xl" />
             <div className="relative grid md:grid-cols-2 gap-10 items-center">
               <div>
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Secured Tampa</h3>
-                <p className="text-emerald-400 text-sm font-medium mb-6">
+                <h3 className="text-2xl md:text-3xl font-bold text-[#2D2A26] mb-2">Secured Tampa</h3>
+                <p className="text-[#B8895A] text-sm font-medium mb-6">
                   From Instagram DMs to a full AI-powered e-commerce platform
                 </p>
-                <p className="text-gray-400 leading-relaxed mb-6">
+                <p className="text-[#8C857C] leading-relaxed mb-6">
                   Secured Tampa was running their entire business through Instagram DMs — manually responding to every inquiry, tracking orders in spreadsheets, and losing customers to slow response times. We built them a complete AI-powered e-commerce ecosystem with automated customer service, intelligent product recommendations, and real-time inventory management.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   {['AI Chatbot', 'E-Commerce', 'Automation', 'Analytics'].map((tag) => (
-                    <span key={tag} className="px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-xs font-medium">
+                    <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B8895A]/20 bg-[#B8895A]/5 text-[#B8895A] text-xs font-medium">
                       {tag}
                     </span>
                   ))}
@@ -548,10 +515,10 @@ function CaseStudy() {
                   <motion.div
                     key={i}
                     variants={fadeUp}
-                    className="p-5 rounded-xl border border-white/5 bg-white/[0.03] text-center"
+                    className="p-5 rounded-2xl bg-[#F5F3EF] shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff] text-center"
                   >
-                    <div className="text-2xl font-bold text-emerald-400">{m.value}</div>
-                    <div className="text-xs text-gray-500 mt-1">{m.label}</div>
+                    <div className="text-2xl font-bold text-[#B8895A]">{m.value}</div>
+                    <div className="text-xs text-[#8C857C] mt-1">{m.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -578,17 +545,18 @@ function ProcessSection() {
 
   return (
     <section id="process" className="py-24 md:py-32 relative">
-      <div className="max-w-7xl mx-auto px-6" ref={ref}>
+      <GridBackground />
+      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
           className="text-center mb-16"
         >
-          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             Our Process
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
             How We Work
           </motion.h2>
         </motion.div>
@@ -600,16 +568,16 @@ function ProcessSection() {
           className="max-w-3xl mx-auto relative"
         >
           {/* Timeline line */}
-          <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-emerald-500/50 via-emerald-500/20 to-transparent" />
+          <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-[#B8895A]/50 via-[#C5C3BE]/30 to-transparent" />
 
           {steps.map((step, i) => (
             <motion.div key={i} variants={fadeUp} className="relative pl-16 md:pl-20 pb-12 last:pb-0">
-              <div className="absolute left-3 md:left-5 w-6 h-6 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-emerald-400" />
+              <div className="absolute left-3 md:left-5 w-6 h-6 rounded-full bg-white border-2 border-[#B8895A] flex items-center justify-center shadow-[3px_3px_6px_#d1cdc7,-3px_-3px_6px_#ffffff]">
+                <div className="w-2 h-2 rounded-full bg-[#B8895A]" />
               </div>
-              <span className="text-emerald-500/40 text-xs font-mono font-bold">{step.num}</span>
-              <h3 className="text-xl font-bold text-white mt-1 mb-2">{step.title}</h3>
-              <p className="text-gray-400 leading-relaxed">{step.desc}</p>
+              <span className="text-[#C5C3BE] text-xs font-mono font-bold">{step.num}</span>
+              <h3 className="text-xl font-bold text-[#2D2A26] mt-1 mb-2">{step.title}</h3>
+              <p className="text-[#8C857C] leading-relaxed">{step.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -639,17 +607,18 @@ function TeamSection() {
 
   return (
     <section id="team" className="py-24 md:py-32 relative">
-      <div className="max-w-7xl mx-auto px-6" ref={ref}>
+      <GridBackground variant="solid" />
+      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
           className="text-center mb-16"
         >
-          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             The Team
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
             Built by Builders
           </motion.h2>
         </motion.div>
@@ -658,20 +627,20 @@ function TeamSection() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
-          className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto"
+          className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto"
         >
           {team.map((t, i) => (
             <motion.div
               key={i}
               variants={fadeUp}
-              className="p-8 rounded-2xl border border-white/5 bg-white/[0.02] text-center"
+              className="p-10 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] text-center"
             >
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 border border-emerald-500/20 mx-auto mb-5 flex items-center justify-center">
-                <span className="text-2xl font-bold text-emerald-400">{t.name.split(' ').map(n => n[0]).join('')}</span>
+              <div className="w-20 h-20 rounded-full bg-[#F5F3EF] border-2 border-[#B8895A]/20 mx-auto mb-5 flex items-center justify-center shadow-[4px_4px_8px_#d1cdc7,-4px_-4px_8px_#ffffff]">
+                <span className="text-2xl font-bold text-[#B8895A]">{t.name.split(' ').map(n => n[0]).join('')}</span>
               </div>
-              <h3 className="text-xl font-bold text-white">{t.name}</h3>
-              <p className="text-emerald-400 text-sm font-medium mb-4">{t.role}</p>
-              <p className="text-gray-500 text-sm leading-relaxed">{t.desc}</p>
+              <h3 className="text-xl font-bold text-[#2D2A26]">{t.name}</h3>
+              <p className="text-[#B8895A] text-sm font-medium mb-4">{t.role}</p>
+              <p className="text-[#8C857C] text-sm leading-relaxed">{t.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -689,16 +658,16 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   return (
     <motion.div
       variants={fadeUp}
-      className="border border-white/5 rounded-xl overflow-hidden"
+      className="rounded-2xl bg-white shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff] overflow-hidden"
     >
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-6 text-left hover:bg-white/[0.02] transition-colors"
+        className="w-full flex items-center justify-between p-6 text-left hover:bg-[#F5F3EF]/50 transition-colors"
       >
-        <span className="text-white font-medium pr-4">{q}</span>
+        <span className="text-[#2D2A26] font-medium pr-4">{q}</span>
         <ChevronDown
           size={18}
-          className={`text-gray-500 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+          className={`text-[#C5C3BE] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
         />
       </button>
       <AnimatePresence>
@@ -710,7 +679,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <p className="px-6 pb-6 text-gray-400 leading-relaxed">{a}</p>
+            <p className="px-6 pb-6 text-[#8C857C] leading-relaxed">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -732,17 +701,18 @@ function FAQSection() {
 
   return (
     <section id="faq" className="py-24 md:py-32 relative">
-      <div className="max-w-3xl mx-auto px-6" ref={ref}>
+      <GridBackground />
+      <div className="max-w-3xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
           className="text-center mb-16"
         >
-          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
             FAQ
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
             Questions? Answered.
           </motion.h2>
         </motion.div>
@@ -751,7 +721,7 @@ function FAQSection() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
-          className="space-y-3"
+          className="space-y-4"
         >
           {faqs.map((f, i) => (
             <FAQItem key={i} q={f.q} a={f.a} />
@@ -769,22 +739,23 @@ function FinalCTA() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section id="contact" className="py-24 md:py-32 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/[0.03] to-transparent" />
+    <section id="contact" className="py-24 md:py-32 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#F5F3EF] via-[#EDE8E0] to-[#F5F3EF]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.08)_0%,transparent_60%)]" />
       <div className="max-w-4xl mx-auto px-6 text-center relative" ref={ref}>
         <motion.div
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={staggerContainer}
         >
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#2D2A26] leading-tight mb-6">
             Ready to Let AI
             <br />
-            <span className="bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent">
+            <span className="text-[#B8895A]">
               Run Your Business?
             </span>
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-gray-400 text-lg max-w-2xl mx-auto mb-10">
+          <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto mb-10">
             Book a free discovery call. We will show you exactly which parts of your business AI can transform — and what the ROI looks like.
           </motion.p>
           <motion.div variants={fadeUp}>
@@ -792,14 +763,14 @@ function FinalCTA() {
               href="https://cal.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 px-10 py-5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-lg rounded-full transition-all"
+              className="group inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-[#C4956A] to-[#A67B52] hover:from-[#B8895A] hover:to-[#96704A] text-white font-bold text-lg rounded-full transition-all shadow-[8px_8px_16px_#d1cdc7,-8px_-8px_16px_#ffffff] hover:shadow-[inset_4px_4px_8px_#96704A,inset_-4px_-4px_8px_#d4a878] hover:scale-[1.02]"
             >
               <Calendar size={20} />
               Book Your Free Discovery Call
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
           </motion.div>
-          <motion.p variants={fadeUp} className="text-gray-600 text-sm mt-6">
+          <motion.p variants={fadeUp} className="text-[#C5C3BE] text-sm mt-6">
             No commitment. No pressure. Just a conversation about what is possible.
           </motion.p>
         </motion.div>
@@ -813,35 +784,35 @@ function FinalCTA() {
 // ============================================
 function Footer() {
   return (
-    <footer className="border-t border-white/5 py-12">
+    <footer className="border-t border-[#E8E5E0] py-12 bg-[#F5F3EF]">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-10 mb-10">
           <div className="md:col-span-2">
-            <span className="text-2xl font-bold text-white tracking-tight">
-              vantix<span className="text-emerald-400">.</span>
+            <span className="text-2xl font-bold text-[#2D2A26] tracking-tight">
+              vantix<span className="text-[#B8895A]">.</span>
             </span>
-            <p className="text-gray-500 mt-4 max-w-sm leading-relaxed">
+            <p className="text-[#8C857C] mt-4 max-w-sm leading-relaxed">
               We deploy AI systems that generate revenue, cut costs, and automate operations for businesses ready to scale.
             </p>
           </div>
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Quick Links</h4>
+            <h4 className="text-[#2D2A26] font-semibold text-sm mb-4">Quick Links</h4>
             <ul className="space-y-2">
               {['Services', 'Results', 'Process', 'Team', 'FAQ'].map((l) => (
                 <li key={l}>
-                  <a href={`#${l.toLowerCase()}`} className="text-gray-500 hover:text-white text-sm transition-colors">{l}</a>
+                  <a href={`#${l.toLowerCase()}`} className="text-[#8C857C] hover:text-[#2D2A26] text-sm transition-colors">{l}</a>
                 </li>
               ))}
             </ul>
           </div>
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Contact</h4>
-            <ul className="space-y-2 text-sm text-gray-500">
+            <h4 className="text-[#2D2A26] font-semibold text-sm mb-4">Contact</h4>
+            <ul className="space-y-2 text-sm text-[#8C857C]">
               <li>
-                <a href="tel:9084987753" className="hover:text-white transition-colors">(908) 498-7753</a>
+                <a href="tel:9084987753" className="hover:text-[#2D2A26] transition-colors">(908) 498-7753</a>
               </li>
               <li>
-                <a href="mailto:usevantix@gmail.com" className="hover:text-white transition-colors">usevantix@gmail.com</a>
+                <a href="mailto:usevantix@gmail.com" className="hover:text-[#2D2A26] transition-colors">usevantix@gmail.com</a>
               </li>
             </ul>
             <div className="flex gap-4 mt-4">
@@ -850,15 +821,15 @@ function Footer() {
                 { icon: Linkedin, href: '#' },
                 { icon: Instagram, href: '#' },
               ].map((s, i) => (
-                <a key={i} href={s.href} className="text-gray-600 hover:text-emerald-400 transition-colors">
+                <a key={i} href={s.href} className="text-[#C5C3BE] hover:text-[#B8895A] transition-colors">
                   <s.icon size={18} />
                 </a>
               ))}
             </div>
           </div>
         </div>
-        <div className="border-t border-white/5 pt-8 text-center">
-          <p className="text-gray-600 text-sm">
+        <div className="border-t border-[#E8E5E0] pt-8 text-center">
+          <p className="text-[#C5C3BE] text-sm">
             {new Date().getFullYear()} Vantix. All rights reserved.
           </p>
         </div>
@@ -876,7 +847,7 @@ export function FuturisticLanding() {
   }, []);
 
   return (
-    <div className="bg-[#0A0A0F] text-gray-100 min-h-screen selection:bg-emerald-500/30 selection:text-white">
+    <div className="bg-[#FAF9F6] text-[#2D2A26] min-h-screen selection:bg-[#B8895A]/20 selection:text-[#2D2A26]">
       <Navigation />
       <HeroSection />
       <SocialProofBar />
