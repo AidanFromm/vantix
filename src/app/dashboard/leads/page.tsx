@@ -163,7 +163,28 @@ function KanbanColumn({ status, leads, onSelect, onDrop }: { status: typeof STAT
 
 // ─── Scraped Leads Tab ────────────────────────────────────────────────────────
 
+const SCRAPED_STATUSES = [
+  { id: 'all', label: 'All', color: 'text-gray-400', bg: 'bg-white/10' },
+  { id: 'new', label: 'New', color: 'text-blue-400', bg: 'bg-blue-500/10' },
+  { id: 'verified', label: 'Verified', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  { id: 'sent', label: 'Sent', color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+  { id: 'replied', label: 'Replied', color: 'text-purple-400', bg: 'bg-purple-500/10' },
+  { id: 'dead', label: 'Dead', color: 'text-red-400', bg: 'bg-red-500/10' },
+  { id: 'added_to_leads', label: 'Converted', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  { id: 'ignored', label: 'Ignored', color: 'text-gray-500', bg: 'bg-gray-500/10' },
+];
+
 function ScrapedLeadsView({ scrapedLeads, onConvert }: { scrapedLeads: ScrapedLead[]; onConvert: (s: ScrapedLead) => void }) {
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: scrapedLeads.length };
+    scrapedLeads.forEach(s => { counts[s.status] = (counts[s.status] || 0) + 1; });
+    return counts;
+  }, [scrapedLeads]);
+
+  const filtered = useMemo(() => statusFilter === 'all' ? scrapedLeads : scrapedLeads.filter(s => s.status === statusFilter), [scrapedLeads, statusFilter]);
+
   if (scrapedLeads.length === 0) {
     return (
       <div className="text-center py-16">
@@ -175,25 +196,37 @@ function ScrapedLeadsView({ scrapedLeads, onConvert }: { scrapedLeads: ScrapedLe
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      {/* Status counts */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+        {SCRAPED_STATUSES.filter(s => s.id === 'all' || (statusCounts[s.id] || 0) > 0).map(s => (
+          <button key={s.id} onClick={() => setStatusFilter(s.id)} className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${statusFilter === s.id ? `${s.bg} border-current ${s.color}` : 'bg-white/[0.03] border-white/10 text-gray-500 hover:border-white/20'}`}>
+            <span className="text-lg font-bold">{statusCounts[s.id] || 0}</span>
+            <span className="text-[10px] font-medium uppercase tracking-wider">{s.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-        {scrapedLeads.map((s, i) => (
+        {filtered.map((s, i) => (
           <motion.div key={s.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="p-4 rounded-xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10 hover:border-emerald-500/30 transition-all">
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1 min-w-0"><h4 className="text-sm font-semibold text-white truncate">{s.business_name || 'Unknown Business'}</h4>{s.address && <p className="text-xs text-gray-500 truncate mt-0.5">{s.address}</p>}</div>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${s.status === 'added_to_leads' ? 'bg-emerald-500/10 text-emerald-400' : s.status === 'ignored' ? 'bg-red-500/10 text-red-400' : 'bg-blue-500/10 text-blue-400'}`}>{s.status === 'added_to_leads' ? 'Added' : s.status === 'ignored' ? 'Ignored' : 'New'}</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${s.status === 'added_to_leads' ? 'bg-emerald-500/10 text-emerald-400' : s.status === 'ignored' ? 'bg-red-500/10 text-red-400' : s.status === 'replied' ? 'bg-purple-500/10 text-purple-400' : s.status === 'sent' ? 'bg-yellow-500/10 text-yellow-400' : s.status === 'verified' ? 'bg-emerald-500/10 text-emerald-400' : s.status === 'dead' ? 'bg-red-500/10 text-red-400' : 'bg-blue-500/10 text-blue-400'}`}>{s.status === 'added_to_leads' ? 'Converted' : s.status.charAt(0).toUpperCase() + s.status.slice(1)}</span>
             </div>
             <div className="space-y-1 mb-3">
               {s.email && <p className="text-xs text-gray-400 flex items-center gap-1.5"><Mail size={11} />{s.email}</p>}
               {s.phone && <p className="text-xs text-gray-400 flex items-center gap-1.5"><Phone size={11} />{s.phone}</p>}
               {s.website && <p className="text-xs text-gray-400 flex items-center gap-1.5"><Globe size={11} />{s.website}</p>}
             </div>
-            {s.status === 'new' && (
+            {s.status !== 'added_to_leads' && s.status !== 'ignored' && (
               <button onClick={() => onConvert(s)} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors text-xs font-medium"><Plus size={12} /> Convert to Lead</button>
             )}
           </motion.div>
         ))}
       </div>
+      {filtered.length === 0 && <p className="text-center text-gray-500 py-8 text-sm">No leads with status &ldquo;{statusFilter}&rdquo;</p>}
     </div>
   );
 }
@@ -293,7 +326,7 @@ export default function LeadsPage() {
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 rounded-xl p-1">
           <button onClick={() => setActiveView('pipeline')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeView === 'pipeline' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-500 hover:text-white'}`}><Target size={15} /> Pipeline</button>
-          <button onClick={() => setActiveView('scraped')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeView === 'scraped' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-500 hover:text-white'}`}><Download size={15} /> Scraped ({scrapedLeads.length})</button>
+          <button onClick={() => setActiveView('scraped')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeView === 'scraped' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-500 hover:text-white'}`}><Download size={15} /> Cold Outreach ({scrapedLeads.length})</button>
         </div>
         {activeView === 'pipeline' && (
           <div className="relative flex-1 sm:max-w-xs">

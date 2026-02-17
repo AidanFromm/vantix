@@ -96,7 +96,8 @@ function Navigation() {
             Login
           </a>
           <a
-            href="#contact"
+            href="#contact-form"
+            onClick={(e) => { e.preventDefault(); document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' }); }}
             className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full transition-all shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8]"
             style={woodButtonStyle}
           >
@@ -124,7 +125,7 @@ function Navigation() {
               <a href="/login" onClick={() => setMobileOpen(false)} className="text-[#8C857C] hover:text-[#2D2A26] transition-colors">
                 Login
               </a>
-              <a href="#contact" onClick={() => setMobileOpen(false)} className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full text-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]" style={woodButtonStyle}>
+              <a href="#contact-form" onClick={(e) => { e.preventDefault(); setMobileOpen(false); document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full text-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]" style={woodButtonStyle}>
                 Book a Call
               </a>
             </div>
@@ -198,7 +199,7 @@ function HeroSection() {
           transition={{ duration: 0.7, delay: 0.6 }}
           className="text-lg sm:text-xl text-[#8C857C] max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          We build AI systems that generate revenue, cut costs, and run your operations â€” while you focus on growth.
+          We build AI systems that generate revenue, cut costs, and run your operations â€" while you focus on growth.
         </motion.p>
 
         <motion.div
@@ -379,7 +380,7 @@ const services = [
   { icon: BarChart3, title: 'AI Analytics & Insights', desc: 'Real-time business intelligence that tells you what is happening, why, and what to do next. No more guessing.' },
   { icon: Mail, title: 'AI Email Marketing', desc: 'Writes, personalizes, sends, and follows up. Every email tailored to every recipient. At scale.' },
   { icon: Package, title: 'AI Inventory Management', desc: 'Demand prediction and auto-reorder. Never overstock, never run out, never lose a sale to poor planning.' },
-  { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, qualify leads. Your AI receptionist handles it all â€” and never puts anyone on hold.' },
+  { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, qualify leads. Your AI receptionist handles it all â€" and never puts anyone on hold.' },
   { icon: Sparkles, title: 'Custom AI Solutions', desc: 'If you can dream it, we can automate it. Bespoke AI systems built for your exact business needs.' },
 ];
 
@@ -518,7 +519,7 @@ function CaseStudy() {
                   From Instagram DMs to a full AI-powered e-commerce platform
                 </p>
                 <p className="text-[#8C857C] leading-relaxed mb-6">
-                  Secured Tampa was running their entire business through Instagram DMs â€” manually responding to every inquiry, tracking orders in spreadsheets, and losing customers to slow response times. We built them a complete AI-powered e-commerce ecosystem with automated customer service, intelligent product recommendations, and real-time inventory management.
+                  Secured Tampa was running their entire business through Instagram DMs â€" manually responding to every inquiry, tracking orders in spreadsheets, and losing customers to slow response times. We built them a complete AI-powered e-commerce ecosystem with automated customer service, intelligent product recommendations, and real-time inventory management.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   {['AI Chatbot', 'E-Commerce', 'Automation', 'Analytics'].map((tag) => (
@@ -721,8 +722,8 @@ function FAQSection() {
     { q: 'How long does it take to deploy an AI system?', a: 'Most AI systems are live within 2-4 weeks. Simple chatbots and automation can be deployed in under a week. Complex custom solutions may take 4-8 weeks. Either way, you start seeing ROI fast.' },
     { q: 'What if AI makes mistakes with my customers?', a: 'Every system we build has human oversight built in. AI handles the volume, and edge cases get routed to your team. We also continuously train and optimize so accuracy only improves over time.' },
     { q: 'Do I need technical knowledge to use these systems?', a: 'Zero. We build everything with dead-simple dashboards. If you can use a smartphone, you can manage your AI systems. Plus, we provide full training and ongoing support.' },
-    { q: 'What does it cost?', a: 'Every business is different. We price based on the complexity and scope of what you need. Book a discovery call and we will give you a transparent quote with projected ROI â€” most clients see positive returns within 30 days.' },
-    { q: 'Can AI really replace hiring more staff?', a: 'Not replace â€” augment. AI handles the repetitive, high-volume tasks so your team can focus on high-value work. One AI system can do the work of 3-5 employees in specific functions, at a fraction of the cost.' },
+    { q: 'What does it cost?', a: 'Every business is different. We price based on the complexity and scope of what you need. Book a discovery call and we will give you a transparent quote with projected ROI â€" most clients see positive returns within 30 days.' },
+    { q: 'Can AI really replace hiring more staff?', a: 'Not replace â€" augment. AI handles the repetitive, high-volume tasks so your team can focus on high-value work. One AI system can do the work of 3-5 employees in specific functions, at a fraction of the cost.' },
     { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. If an issue arises, we catch it before you even notice. All clients get priority support with guaranteed response times. Your business never skips a beat.' },
   ];
 
@@ -762,6 +763,69 @@ function FAQSection() {
 // ============================================
 // FINAL CTA
 // ============================================
+function ContactForm() {
+  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.email.trim()) return;
+    setStatus('sending');
+    try {
+      const { supabase } = await import('@/lib/supabase');
+      await supabase.from('chat_leads').insert({
+        visitor_name: form.name,
+        email: form.email,
+        phone: form.phone || null,
+        interested_in: form.message || null,
+      });
+      setStatus('sent');
+      setForm({ name: '', email: '', phone: '', message: '' });
+    } catch (err) {
+      console.error(err);
+      setStatus('error');
+    }
+  };
+
+  if (status === 'sent') {
+    return (
+      <div id="contact-form" className="max-w-lg mx-auto mt-12 bg-white rounded-2xl p-8 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] text-center">
+        <CheckCircle2 size={48} className="mx-auto mb-4 text-[#B8895A]" />
+        <h3 className="text-xl font-bold text-[#2D2A26] mb-2">Thank you!</h3>
+        <p className="text-[#8C857C]">We&apos;ll be in touch within 24 hours.</p>
+      </div>
+    );
+  }
+
+  return (
+    <form id="contact-form" onSubmit={handleSubmit} className="max-w-lg mx-auto mt-12 bg-white rounded-2xl p-8 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-[#5C4033] mb-1.5">Name *</label>
+          <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-[#5C4033] mb-1.5">Email *</label>
+          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-[#5C4033] mb-1.5">Phone <span className="text-[#C5C3BE]">(optional)</span></label>
+          <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-[#5C4033] mb-1.5">What do you need?</label>
+          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about your business and what you're looking for..." className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all resize-none" />
+        </div>
+        <button type="submit" disabled={status === 'sending'} className="w-full group inline-flex items-center justify-center gap-2 px-8 py-4 text-[#5C4033] font-bold text-base rounded-full transition-all shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] hover:scale-[1.01] disabled:opacity-60" style={woodButtonStyle}>
+          {status === 'sending' ? 'Sending...' : 'Send Message'}
+          <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+        </button>
+        {status === 'error' && <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>}
+      </div>
+    </form>
+  );
+}
+
 function FinalCTA() {
   const { ref, inView } = useAnimateInView();
 
@@ -783,11 +847,12 @@ function FinalCTA() {
             </span>
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto mb-10">
-            Book a free discovery call. We will show you exactly which parts of your business AI can transform â€” and what the ROI looks like.
+            Book a free discovery call. We will show you exactly which parts of your business AI can transform â€" and what the ROI looks like.
           </motion.p>
           <motion.div variants={fadeUp}>
             <a
-              href="#contact"
+              href="#contact-form"
+              onClick={(e) => { e.preventDefault(); document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' }); }}
               className="group inline-flex items-center gap-2 px-10 py-5 text-[#5C4033] font-bold text-lg rounded-full transition-all shadow-[10px_10px_24px_#c8c4be,-10px_-10px_24px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
               style={woodButtonStyle}
             >
@@ -799,6 +864,9 @@ function FinalCTA() {
           <motion.p variants={fadeUp} className="text-[#C5C3BE] text-sm mt-6">
             No commitment. No pressure. Just a conversation about what is possible.
           </motion.p>
+          <motion.div variants={fadeUp}>
+            <ContactForm />
+          </motion.div>
         </motion.div>
       </div>
     </section>
