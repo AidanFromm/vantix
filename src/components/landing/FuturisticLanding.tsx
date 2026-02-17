@@ -1,12 +1,13 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { useRef, useEffect, useState, useCallback } from 'react';
+import { motion, useInView, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import {
   ArrowRight, Bot, Globe, Zap, BarChart3, Mail, Package,
   Phone, Sparkles, Clock, Users, TrendingUp, Shield, ChevronDown,
   MessageSquare, Calendar, Search, Cpu, CheckCircle2,
-  Twitter, Linkedin, Instagram, Menu, X, Target, Layers, Rocket, Settings
+  Twitter, Linkedin, Instagram, Menu, X, Target, Layers, Rocket, Settings,
+  Star, Quote
 } from 'lucide-react';
 
 // ============================================
@@ -18,15 +19,42 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
 };
 
+const fadeLeft = {
+  hidden: { opacity: 0, x: -40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const fadeRight = {
+  hidden: { opacity: 0, x: 40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const scaleUp = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 100, damping: 15 } },
+};
+
+const popIn = {
+  hidden: { opacity: 0, scale: 0.5 },
+  visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 12 } },
+};
+
 const staggerContainer = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const woodButtonStyle = {
-  background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878, #E6C78C)`,
-  border: '1px solid rgba(139,90,43,0.2)',
-};
+const woodButtonClass = "text-white font-semibold rounded-xl px-8 py-4 shadow-lg hover:shadow-xl transition-all hover:brightness-90";
+
+function woodButtonProps() {
+  return {
+    style: {
+      backgroundImage: 'url(/wood-texture.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    },
+  };
+}
 
 function WoodDivider() {
   return (
@@ -45,6 +73,133 @@ function useAnimateInView(threshold = 0.15) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, amount: threshold });
   return { ref, inView };
+}
+
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  return mobile;
+}
+
+// ============================================
+// ANIMATED COUNTER HOOK
+// ============================================
+function useCounter(target: number, inView: boolean, duration = 2000) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const step = Math.ceil(target / (duration / 30));
+    const interval = setInterval(() => {
+      start += step;
+      if (start >= target) {
+        setCount(target);
+        clearInterval(interval);
+      } else {
+        setCount(start);
+      }
+    }, 30);
+    return () => clearInterval(interval);
+  }, [inView, target, duration]);
+  return count;
+}
+
+// ============================================
+// TYPEWRITER HOOK
+// ============================================
+function useTypewriter(phrases: string[], typingSpeed = 60, deletingSpeed = 30, pauseMs = 2000) {
+  const [text, setText] = useState('');
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const current = phrases[phraseIdx];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!deleting && charIdx < current.length) {
+      timeout = setTimeout(() => {
+        setText(current.slice(0, charIdx + 1));
+        setCharIdx(charIdx + 1);
+      }, typingSpeed);
+    } else if (!deleting && charIdx === current.length) {
+      timeout = setTimeout(() => setDeleting(true), pauseMs);
+    } else if (deleting && charIdx > 0) {
+      timeout = setTimeout(() => {
+        setText(current.slice(0, charIdx - 1));
+        setCharIdx(charIdx - 1);
+      }, deletingSpeed);
+    } else if (deleting && charIdx === 0) {
+      setDeleting(false);
+      setPhraseIdx((phraseIdx + 1) % phrases.length);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [charIdx, deleting, phraseIdx, phrases, typingSpeed, deletingSpeed, pauseMs]);
+
+  return text;
+}
+
+// ============================================
+// PARTICLE DOT GRID
+// ============================================
+function DotGrid() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (isMobile) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animId: number;
+    const dots: { x: number; y: number; baseY: number; speed: number; phase: number }[] = [];
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      dots.length = 0;
+      const spacing = 40;
+      for (let x = 0; x < canvas.width; x += spacing) {
+        for (let y = 0; y < canvas.height; y += spacing) {
+          dots.push({ x, y, baseY: y, speed: 0.3 + Math.random() * 0.5, phase: Math.random() * Math.PI * 2 });
+        }
+      }
+    };
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    let time = 0;
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 0.01;
+      for (const dot of dots) {
+        dot.y = dot.baseY + Math.sin(time * dot.speed + dot.phase) * 3;
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(184, 137, 90, 0.15)';
+        ctx.fill();
+      }
+      animId = requestAnimationFrame(animate);
+    };
+
+    animate();
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', resize);
+    };
+  }, [isMobile]);
+
+  if (isMobile) return null;
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
 }
 
 // ============================================
@@ -81,7 +236,7 @@ function Navigation() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[#5C4033] font-extrabold text-sm" style={woodButtonStyle}>V</div>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-extrabold text-sm" {...woodButtonProps()}>V</div>
           <span className="text-2xl font-extrabold text-[#3A3632] tracking-tight">vantix<span className="text-[#B8895A]">.</span></span>
         </a>
         <div className="hidden md:flex items-center gap-8">
@@ -92,8 +247,8 @@ function Navigation() {
           ))}
           <a
             href="#booking"
-            className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full transition-all shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8]"
-            style={woodButtonStyle}
+            className={`${woodButtonClass} rounded-full px-6 py-2.5 text-sm`}
+            {...woodButtonProps()}
           >
             Book a Call
           </a>
@@ -116,7 +271,7 @@ function Navigation() {
                   {l.label}
                 </a>
               ))}
-              <a href="#booking" onClick={() => setMobileOpen(false)} className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full text-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]" style={woodButtonStyle}>
+              <a href="#booking" onClick={() => setMobileOpen(false)} className={`${woodButtonClass} rounded-full px-6 py-2.5 text-sm text-center`} {...woodButtonProps()}>
                 Book a Call
               </a>
             </div>
@@ -124,6 +279,45 @@ function Navigation() {
         )}
       </AnimatePresence>
     </motion.nav>
+  );
+}
+
+// ============================================
+// STICKY CTA BAR
+// ============================================
+function StickyCTABar() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > window.innerHeight);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ y: -60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -60, opacity: 0 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+          className="fixed top-0 left-0 right-0 z-[60] bg-[#2D2A26]/90 backdrop-blur-xl border-b border-[#B8895A]/20"
+        >
+          <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+            <span className="text-white/80 text-sm font-medium hidden sm:block">Ready to automate?</span>
+            <a
+              href="#booking"
+              className={`${woodButtonClass} rounded-full px-6 py-2 text-sm inline-flex items-center gap-2`}
+              {...woodButtonProps()}
+            >
+              Book Free Audit
+              <ArrowRight size={14} />
+            </a>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -148,12 +342,21 @@ function GridBackground({ variant = 'grid' }: { variant?: 'grid' | 'solid' }) {
 }
 
 // ============================================
-// HERO SECTION
+// HERO SECTION (with typewriter + dot grid)
 // ============================================
 function HeroSection() {
+  const isMobile = useIsMobile();
+  const typedText = useTypewriter([
+    'We automate customer support',
+    'We build custom platforms',
+    'We deploy AI that never sleeps',
+    'We scale your operations',
+  ]);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <GridBackground />
+      <DotGrid />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.06)_0%,transparent_60%)]" />
 
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center pt-20">
@@ -178,14 +381,17 @@ function HeroSection() {
           Automating. <span className="text-[#B8895A]">Are You?</span>
         </motion.h1>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.6 }}
-          className="text-lg sm:text-xl text-[#8C857C] max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="h-16 sm:h-12 flex items-center justify-center mb-10"
         >
-          We deploy AI systems that reclaim 40+ hours of your week, capture every lead, and run your operations — while you sleep.
-        </motion.p>
+          <p className="text-lg sm:text-xl text-[#8C857C] max-w-2xl mx-auto leading-relaxed">
+            <span>{typedText}</span>
+            <span className="inline-block w-0.5 h-5 bg-[#B8895A] ml-1 animate-pulse" />
+          </p>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -195,8 +401,8 @@ function HeroSection() {
         >
           <a
             href="#booking"
-            className="group px-8 py-4 text-[#5C4033] font-semibold rounded-full transition-all inline-flex items-center justify-center gap-2 shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
-            style={woodButtonStyle}
+            className={`group ${woodButtonClass} rounded-full inline-flex items-center justify-center gap-2 hover:scale-[1.02]`}
+            {...woodButtonProps()}
           >
             Book Your Free AI Audit
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -217,16 +423,21 @@ function HeroSection() {
 }
 
 // ============================================
-// TRUST BAR
+// ANIMATED COUNTER TRUST BAR
 // ============================================
-function TrustBar() {
-  const { ref, inView } = useAnimateInView();
+function AnimatedCounterSection() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.3 });
+
+  const hours = useCounter(40, inView);
+  const pages = useCounter(122, inView);
+  const weeks = useCounter(3, inView, 1000);
 
   const metrics = [
-    { value: '40+', label: 'Hours Saved Weekly' },
-    { value: '122', label: 'Pages in 3 Weeks' },
-    { value: '24/7', label: 'AI Never Sleeps' },
-    { value: '85%', label: 'Faster Response Time' },
+    { value: `${hours}+`, label: 'Hours Saved Per Client Weekly' },
+    { value: `${pages}`, label: 'Pages Built for SecuredTampa' },
+    { value: `${weeks}`, label: 'Week Average Delivery' },
+    { value: '24/7', label: 'AI Operations' },
   ];
 
   return (
@@ -239,11 +450,126 @@ function TrustBar() {
           className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
         >
           {metrics.map((m, i) => (
-            <motion.div key={i} variants={fadeUp} className="flex flex-col items-center">
-              <span className="text-3xl md:text-4xl font-bold text-[#B8895A]">{m.value}</span>
+            <motion.div key={i} variants={popIn} className="flex flex-col items-center">
+              <span className="text-3xl md:text-5xl font-bold text-[#B8895A] tabular-nums">{m.value}</span>
               <span className="text-sm text-[#8C857C] mt-1">{m.label}</span>
             </motion.div>
           ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// BEFORE / AFTER INTERACTIVE COMPARISON
+// ============================================
+function BeforeAfterSection() {
+  const [showAfter, setShowAfter] = useState(false);
+  const { ref, inView } = useAnimateInView();
+
+  const before = [
+    'Manual processes',
+    'Scattered tools',
+    '9-5 operations',
+    'Slow response times',
+  ];
+
+  const after = [
+    'Automated workflows',
+    'Unified platform',
+    '24/7 AI operations',
+    'Instant responses',
+  ];
+
+  return (
+    <section className="py-24 relative" ref={ref}>
+      <GridBackground variant="solid" />
+      <div className="max-w-5xl mx-auto px-6 relative">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="text-center mb-12"
+        >
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
+            The Transformation
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
+            See the Difference
+          </motion.h2>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="relative"
+        >
+          {/* Toggle */}
+          <div className="flex justify-center mb-10">
+            <button
+              onClick={() => setShowAfter(!showAfter)}
+              className="relative flex items-center bg-white rounded-full p-1.5 shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] border border-[#E8E5E0]"
+            >
+              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${!showAfter ? 'bg-[#2D2A26] text-white' : 'text-[#8C857C]'}`}>
+                Before
+              </span>
+              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${showAfter ? 'text-white' : 'text-[#8C857C]'}`} {...(showAfter ? woodButtonProps() : {})}>
+                After Vantix
+              </span>
+            </button>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <AnimatePresence mode="wait">
+              {!showAfter ? (
+                <motion.div
+                  key="before"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -30 }}
+                  className="md:col-span-2 p-10 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]"
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
+                    <span className="text-[#8C857C] font-semibold text-sm uppercase tracking-wider">Without AI Automation</span>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    {before.map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#F5F3F0]">
+                        <X size={18} className="text-[#C5C3BE] shrink-0" />
+                        <span className="text-[#8C857C] font-medium">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="after"
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 30 }}
+                  className="md:col-span-2 p-10 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/20"
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-3 h-3 rounded-full bg-[#B8895A]" />
+                    <span className="text-[#B8895A] font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    {after.map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#B8895A]/5">
+                        <CheckCircle2 size={18} className="text-[#B8895A] shrink-0" />
+                        <span className="text-[#2D2A26] font-medium">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </motion.div>
       </div>
     </section>
@@ -278,7 +604,8 @@ function ProblemSection() {
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="text-center mb-16"
         >
@@ -292,11 +619,12 @@ function ProblemSection() {
 
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
         >
-          <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]/50">
+          <motion.div variants={fadeLeft} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]/50">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
               <span className="text-[#8C857C] font-semibold text-sm uppercase tracking-wider">Before Vantix</span>
@@ -311,7 +639,7 @@ function ProblemSection() {
             </ul>
           </motion.div>
 
-          <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/20">
+          <motion.div variants={fadeRight} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/20">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#B8895A]" />
               <span className="text-[#B8895A] font-semibold text-sm uppercase tracking-wider">After Vantix</span>
@@ -338,7 +666,7 @@ const services = [
   { icon: Bot, title: 'AI Chatbots & Agents', desc: 'Your best salesperson — never sleeps, never calls in sick, qualifies every lead and books every appointment. 24/7.' },
   { icon: Globe, title: 'AI-Powered Websites', desc: 'Self-optimizing platforms that learn from every visitor. More conversions. More revenue. Zero guesswork.' },
   { icon: Search, title: 'Automated Lead Gen', desc: 'Find, qualify, and nurture prospects across every channel — while you focus on closing deals.' },
-  { icon: BarChart3, title: 'AI Analytics', desc: 'Know exactly what&apos;s happening, why it&apos;s happening, and what to do next. Decisions powered by data, not hunches.' },
+  { icon: BarChart3, title: 'AI Analytics', desc: 'Know exactly what\u2019s happening, why it\u2019s happening, and what to do next. Decisions powered by data, not hunches.' },
   { icon: Mail, title: 'AI Email & Outreach', desc: 'Personalized at scale. Every email tailored, timed, and optimized for maximum response rates.' },
   { icon: Package, title: 'Smart Inventory', desc: 'Demand prediction meets auto-reorder. Never overstock. Never run out. Never miss a sale.' },
   { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, handle inquiries. Your AI receptionist sounds human and works around the clock.' },
@@ -346,15 +674,14 @@ const services = [
 ];
 
 function ServicesSection() {
-  const { ref, inView } = useAnimateInView();
-
   return (
     <section id="services" className="py-24 relative">
       <GridBackground variant="solid" />
-      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
+      <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="text-center mb-16"
         >
@@ -371,14 +698,15 @@ function ServicesSection() {
 
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {services.map((s, i) => (
             <motion.div
               key={i}
-              variants={fadeUp}
+              variants={scaleUp}
               className="group relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#c0bcb6,-12px_-12px_28px_#ffffff] border border-transparent hover:border-[#B8895A]/20 transition-all cursor-default"
             >
               <div className="w-12 h-12 rounded-2xl bg-[#FAFAFA] flex items-center justify-center mb-5 group-hover:bg-[#B8895A]/10 transition-colors shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]">
@@ -395,18 +723,66 @@ function ServicesSection() {
 }
 
 // ============================================
+// FLOATING TECH STACK
+// ============================================
+function TechStackSection() {
+  const isMobile = useIsMobile();
+  const techs = [
+    'Next.js', 'React', 'Supabase', 'Stripe', 'Tailwind CSS', 'OpenAI', 'Vercel', 'Node.js',
+  ];
+
+  return (
+    <section className="py-20 relative overflow-hidden">
+      <GridBackground variant="solid" />
+      <div className="max-w-5xl mx-auto px-6 relative">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="text-center mb-12"
+        >
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
+            Our Stack
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#2D2A26]">
+            Built With the Best
+          </motion.h2>
+        </motion.div>
+
+        <div className="flex flex-wrap justify-center gap-6">
+          {techs.map((tech, i) => (
+            <motion.div
+              key={tech}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08, duration: 0.5 }}
+              animate={!isMobile ? { y: [0, -8, 0] } : undefined}
+              {...(!isMobile ? { transition: { y: { repeat: Infinity, duration: 2.5 + i * 0.3, ease: 'easeInOut' }, opacity: { duration: 0.5 }, default: { delay: i * 0.08 } } } : {})}
+              className="px-6 py-4 rounded-2xl bg-white shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] border border-[#E8E5E0]/50 text-[#2D2A26] font-semibold text-sm"
+            >
+              {tech}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
 // CASE STUDY HIGHLIGHT
 // ============================================
 function CaseStudyHighlight() {
-  const { ref, inView } = useAnimateInView();
-
   return (
     <section className="py-24 relative">
       <GridBackground variant="solid" />
-      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
+      <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
         >
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4 text-center">
@@ -418,7 +794,7 @@ function CaseStudyHighlight() {
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#B8895A]/5 rounded-full blur-3xl" />
             <div className="relative grid md:grid-cols-2 gap-10 items-center">
-              <div>
+              <motion.div variants={fadeLeft}>
                 <h3 className="text-2xl md:text-3xl font-bold text-[#2D2A26] mb-2">Secured Tampa</h3>
                 <p className="text-[#B8895A] text-sm font-medium mb-6">
                   From Instagram DMs to a 122-page e-commerce empire — in 3 weeks.
@@ -440,7 +816,7 @@ function CaseStudyHighlight() {
                   Read the Full Case Study
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </a>
-              </div>
+              </motion.div>
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { value: '122', label: 'Pages Built' },
@@ -450,7 +826,10 @@ function CaseStudyHighlight() {
                 ].map((m, i) => (
                   <motion.div
                     key={i}
-                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={popIn}
                     className="p-5 rounded-2xl bg-[#FAFAFA] shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff] text-center"
                   >
                     <div className="text-2xl font-bold text-[#B8895A]">{m.value}</div>
@@ -467,25 +846,27 @@ function CaseStudyHighlight() {
 }
 
 // ============================================
-// PROCESS
+// ANIMATED PROCESS TIMELINE
 // ============================================
-function ProcessSection() {
-  const { ref, inView } = useAnimateInView();
+function ProcessTimeline() {
+  const isMobile = useIsMobile();
 
   const steps = [
-    { num: '01', title: 'Free AI Audit', desc: 'We map every bottleneck, manual process, and missed opportunity in your business. You get a clear picture of what AI can fix — and the ROI to expect.', icon: Search },
-    { num: '02', title: 'Custom Blueprint', desc: 'A tailored strategy with projected savings, implementation timeline, and exactly what your AI systems will do. No vague proposals.', icon: Target },
-    { num: '03', title: 'Rapid Deployment', desc: 'We build and deploy your AI systems in weeks, not months. Half our team works while you sleep — so timelines that shock you are our standard.', icon: Rocket },
-    { num: '04', title: 'Scale & Optimize', desc: 'Your AI gets smarter every day. We monitor, optimize, and scale what works — so your business compounds without adding headcount.', icon: TrendingUp },
+    { icon: Search, title: 'Discovery', desc: 'We map every bottleneck, manual process, and missed opportunity in your business. You get a clear picture of what AI can fix.', timeline: 'Week 1' },
+    { icon: Target, title: 'Strategy', desc: 'A tailored blueprint with projected savings, implementation timeline, and exactly what your AI systems will do.', timeline: 'Week 1-2' },
+    { icon: Layers, title: 'Build', desc: 'We build your AI systems in weeks, not months. Half our team works while you sleep — speed is in our DNA.', timeline: 'Week 2-4' },
+    { icon: Rocket, title: 'Deploy', desc: 'Systems go live with monitoring, failsafes, and human escalation paths. Launch day is a non-event because everything is tested.', timeline: 'Week 4' },
+    { icon: TrendingUp, title: 'Optimize', desc: 'Your AI gets smarter every day. We monitor, optimize, and scale what works — so results compound over time.', timeline: 'Ongoing' },
   ];
 
   return (
     <section id="process" className="py-24 relative">
       <GridBackground />
-      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
+      <div className="max-w-4xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="text-center mb-16"
         >
@@ -493,45 +874,69 @@ function ProcessSection() {
             How It Works
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
-            From First Call to Full Automation in Weeks
+            From First Call to Full Automation
           </motion.h2>
         </motion.div>
 
-        <motion.div
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={staggerContainer}
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto"
-        >
+        <div className="relative">
+          {/* Vertical line */}
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#B8895A]/30 to-transparent md:-translate-x-px" />
+
           {steps.map((step, i) => (
-            <motion.div key={i} variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] text-center">
-              <div className="w-12 h-12 rounded-2xl bg-[#FAFAFA] flex items-center justify-center mx-auto mb-5 shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]">
-                <step.icon size={22} className="text-[#B8895A]" />
+            <motion.div
+              key={i}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={i % 2 === 0 ? fadeLeft : fadeRight}
+              className={`relative flex items-start gap-6 mb-12 last:mb-0 ${
+                !isMobile ? (i % 2 === 0 ? 'md:flex-row md:text-right' : 'md:flex-row-reverse md:text-left') : ''
+              }`}
+            >
+              {/* Timeline dot */}
+              <motion.div
+                variants={popIn}
+                className="absolute left-6 md:left-1/2 w-3 h-3 rounded-full bg-[#B8895A] border-4 border-[#FAFAFA] shadow-md -translate-x-1.5 md:-translate-x-1.5 mt-6 z-10"
+              />
+
+              {!isMobile && i % 2 === 0 && <div className="hidden md:block md:w-1/2" />}
+
+              <div className={`ml-12 md:ml-0 md:w-1/2 ${!isMobile ? (i % 2 === 0 ? 'md:pr-12' : 'md:pl-12') : ''}`}>
+                <div className="p-6 rounded-2xl bg-white shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] border border-[#E8E5E0]/50">
+                  <div className={`flex items-center gap-3 mb-3 ${!isMobile && i % 2 === 0 ? 'md:justify-end' : ''}`}>
+                    <div className="w-10 h-10 rounded-xl bg-[#B8895A]/10 flex items-center justify-center">
+                      <step.icon size={18} className="text-[#B8895A]" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-[#2D2A26]">{step.title}</h3>
+                      <span className="text-xs text-[#B8895A] font-medium">{step.timeline}</span>
+                    </div>
+                  </div>
+                  <p className="text-[#8C857C] text-sm leading-relaxed">{step.desc}</p>
+                </div>
               </div>
-              <span className="text-[#C5C3BE] text-xs font-mono font-bold">{step.num}</span>
-              <h3 className="text-lg font-bold text-[#2D2A26] mt-1 mb-2">{step.title}</h3>
-              <p className="text-[#8C857C] text-sm leading-relaxed">{step.desc}</p>
+
+              {!isMobile && i % 2 !== 0 && <div className="hidden md:block md:w-1/2" />}
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
 // ============================================
-// TESTIMONIAL
+// TESTIMONIAL (enhanced with stars + avatar)
 // ============================================
 function TestimonialSection() {
-  const { ref, inView } = useAnimateInView();
-
   return (
     <section className="py-24 relative">
       <GridBackground variant="solid" />
-      <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
+      <div className="max-w-4xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="text-center"
         >
@@ -542,16 +947,32 @@ function TestimonialSection() {
             Don&apos;t Take Our Word For It
           </motion.h2>
           <motion.div
-            variants={fadeUp}
+            variants={scaleUp}
             className="relative p-10 md:p-14 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]/50"
           >
-            <MessageSquare size={32} className="text-[#B8895A]/30 mx-auto mb-6" />
+            {/* Quotation mark */}
+            <div className="text-[#B8895A]/10 text-8xl font-serif leading-none mb-2 select-none">&ldquo;</div>
+
+            {/* Stars */}
+            <div className="flex justify-center gap-1 mb-6">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={20} className="text-[#B8895A] fill-[#B8895A]" />
+              ))}
+            </div>
+
             <blockquote className="text-xl md:text-2xl text-[#2D2A26] font-medium leading-relaxed mb-8">
-              &ldquo;Shopify shut us down and we were stuck selling through Instagram DMs. Vantix built us a complete custom platform — 122 pages, POS integration, shipping, everything — in 3 weeks. It&apos;s better than anything Shopify could have done.&rdquo;
+              Shopify shut us down and we were stuck selling through Instagram DMs. Vantix built us a complete custom platform — 122 pages, POS integration, shipping, everything — in 3 weeks. It&apos;s better than anything Shopify could have done.
             </blockquote>
-            <div>
-              <p className="text-[#2D2A26] font-semibold">Dave</p>
-              <p className="text-[#8C857C] text-sm">Founder, SecuredTampa</p>
+
+            <div className="flex items-center justify-center gap-4">
+              {/* Initials avatar */}
+              <div className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg" {...woodButtonProps()}>
+                D
+              </div>
+              <div className="text-left">
+                <p className="text-[#2D2A26] font-semibold">Dave</p>
+                <p className="text-[#8C857C] text-sm">Founder, SecuredTampa</p>
+              </div>
             </div>
           </motion.div>
         </motion.div>
@@ -564,8 +985,6 @@ function TestimonialSection() {
 // ROI SECTION
 // ============================================
 function ROISection() {
-  const { ref, inView } = useAnimateInView();
-
   const stats = [
     { value: '40+', label: 'Hours Reclaimed Per Week', icon: Clock },
     { value: '3x', label: 'More Qualified Leads', icon: TrendingUp },
@@ -576,10 +995,11 @@ function ROISection() {
   return (
     <section id="roi" className="py-24 relative">
       <GridBackground />
-      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
+      <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="text-center mb-16"
         >
@@ -593,14 +1013,15 @@ function ROISection() {
 
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto"
         >
           {stats.map((s, i) => (
             <motion.div
               key={i}
-              variants={fadeUp}
+              variants={popIn}
               className="text-center p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff]"
             >
               <s.icon size={28} className="text-[#B8895A] mx-auto mb-4" />
@@ -618,8 +1039,6 @@ function ROISection() {
 // TEAM
 // ============================================
 function TeamSection() {
-  const { ref, inView } = useAnimateInView();
-
   const team = [
     {
       name: 'Kyle Ventura',
@@ -638,10 +1057,11 @@ function TeamSection() {
   return (
     <section id="team" className="py-24 relative">
       <GridBackground variant="solid" />
-      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
+      <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="text-center mb-16"
         >
@@ -658,14 +1078,15 @@ function TeamSection() {
 
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto"
         >
           {team.map((t, i) => (
             <motion.div
               key={i}
-              variants={fadeUp}
+              variants={i === 0 ? fadeLeft : fadeRight}
               className="p-10 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] text-center"
             >
               <div className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] border-2 border-white/80">
@@ -715,24 +1136,23 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 }
 
 function FAQSection() {
-  const { ref, inView } = useAnimateInView();
-
   const faqs = [
-    { q: 'How fast can you deploy an AI system?', a: 'Most systems go live in 2–4 weeks. Simple automations and chatbots can launch in under a week. We built a 122-page e-commerce platform with POS integration in just 3 weeks — speed is built into our DNA because half our team works 24/7.' },
+    { q: 'How fast can you deploy an AI system?', a: 'Most systems go live in 2-4 weeks. Simple automations and chatbots can launch in under a week. We built a 122-page e-commerce platform with POS integration in just 3 weeks — speed is built into our DNA because half our team works 24/7.' },
     { q: 'What if AI makes mistakes with my customers?', a: 'Every system includes human oversight and escalation paths. AI handles the volume — edge cases route to your team. We continuously train and optimize, so accuracy improves over time. You stay in control.' },
     { q: 'Do I need technical knowledge?', a: 'None. We build everything with simple dashboards you can manage from your phone. Full training included. Ongoing support included. If you can send an email, you can run your AI systems.' },
     { q: 'What does it cost?', a: 'Projects typically start at $4,500 for focused automations and scale based on complexity. Every quote includes projected ROI so you can see the payback before you commit. Book a free audit — we\'ll give you real numbers, not a range.' },
-    { q: 'Can AI really replace hiring more staff?', a: 'It augments and eliminates the need. One AI system can handle the workload of 3–5 employees for specific functions — customer service, lead qualification, data entry, scheduling. Your existing team gets freed up for high-value work that actually grows the business.' },
+    { q: 'Can AI really replace hiring more staff?', a: 'It augments and eliminates the need. One AI system can handle the workload of 3-5 employees for specific functions — customer service, lead qualification, data entry, scheduling. Your existing team gets freed up for high-value work that actually grows the business.' },
     { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. Issues get caught before you notice them. All clients get priority support with guaranteed response times. We treat your downtime like our emergency — because it is.' },
   ];
 
   return (
     <section id="faq" className="py-24 relative">
       <GridBackground />
-      <div className="max-w-3xl mx-auto px-6 relative" ref={ref}>
+      <div className="max-w-3xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="text-center mb-16"
         >
@@ -746,7 +1166,8 @@ function FAQSection() {
 
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="space-y-4"
         >
@@ -773,7 +1194,8 @@ function BookingSection() {
       <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
           className="text-center mb-12"
         >
@@ -790,7 +1212,8 @@ function BookingSection() {
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ delay: 0.3 }}
           className="rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0] overflow-hidden"
           style={{ minHeight: '660px' }}
@@ -880,7 +1303,12 @@ function ContactForm() {
           <label className="block text-sm font-medium text-[#5C4033] mb-1.5">What&apos;s eating your time?</label>
           <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all resize-none" />
         </div>
-        <button type="submit" disabled={status === 'sending'} className="w-full group inline-flex items-center justify-center gap-2 px-8 py-4 text-[#5C4033] font-bold text-base rounded-full transition-all shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] hover:scale-[1.01] disabled:opacity-60" style={woodButtonStyle}>
+        <button
+          type="submit"
+          disabled={status === 'sending'}
+          className={`w-full group inline-flex items-center justify-center gap-2 ${woodButtonClass} disabled:opacity-60`}
+          {...woodButtonProps()}
+        >
           {status === 'sending' ? 'Sending...' : 'Start Automating This Week'}
           <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
         </button>
@@ -891,16 +1319,15 @@ function ContactForm() {
 }
 
 function FinalCTA() {
-  const { ref, inView } = useAnimateInView();
-
   return (
     <section id="contact" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#FAFAFA] via-[#F0EDE8] to-[#FAFAFA]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.08)_0%,transparent_60%)]" />
-      <div className="max-w-4xl mx-auto px-6 text-center relative" ref={ref}>
+      <div className="max-w-4xl mx-auto px-6 text-center relative">
         <motion.div
           initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true }}
           variants={staggerContainer}
         >
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#2D2A26] leading-tight mb-6">
@@ -920,8 +1347,8 @@ function FinalCTA() {
           <motion.div variants={fadeUp}>
             <a
               href="#booking"
-              className="group inline-flex items-center gap-2 px-10 py-5 text-[#5C4033] font-bold text-lg rounded-full transition-all shadow-[10px_10px_24px_#c8c4be,-10px_-10px_24px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
-              style={woodButtonStyle}
+              className={`group inline-flex items-center gap-2 ${woodButtonClass} rounded-full px-10 py-5 text-lg hover:scale-[1.02]`}
+              {...woodButtonProps()}
             >
               <Calendar size={20} />
               Book Your Free AI Audit
@@ -950,7 +1377,7 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-12 mb-14">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[#5C4033] font-extrabold text-sm" style={woodButtonStyle}>V</div>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-extrabold text-sm" {...woodButtonProps()}>V</div>
               <span className="text-2xl font-extrabold text-[#3A3632] tracking-tight">vantix<span className="text-[#B8895A]">.</span></span>
             </div>
             <p className="text-[#8C857C] mt-4 max-w-sm leading-relaxed">
@@ -1019,14 +1446,19 @@ export function FuturisticLanding() {
   return (
     <div className="bg-[#FAFAFA] text-[#2D2A26] min-h-screen selection:bg-[#B8895A]/20 selection:text-[#2D2A26] scroll-smooth">
       <Navigation />
+      <StickyCTABar />
       <HeroSection />
-      <TrustBar />
+      <AnimatedCounterSection />
+      <WoodDivider />
+      <BeforeAfterSection />
       <WoodDivider />
       <ProblemSection />
       <WoodDivider />
       <ServicesSection />
       <WoodDivider />
-      <ProcessSection />
+      <TechStackSection />
+      <WoodDivider />
+      <ProcessTimeline />
       <WoodDivider />
       <CaseStudyHighlight />
       <WoodDivider />
