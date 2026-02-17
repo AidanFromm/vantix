@@ -279,7 +279,10 @@ export default function ChatWidget() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-[#C4956A] to-[#A67B52] text-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] hover:from-[#B8895A] hover:to-[#96704A] transition-colors"
+            className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full text-[#5C4033] shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] transition-colors"
+            style={{
+              background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
+            }}
             aria-label="Open chat"
           >
             <MessageCircle className="h-6 w-6" />
@@ -296,7 +299,7 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
-            className="fixed bottom-6 right-6 z-50 flex flex-col overflow-hidden rounded-3xl border border-[#E8E5E0] bg-[#FAF9F6] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]
+            className="fixed bottom-6 right-6 z-50 flex flex-col overflow-hidden rounded-3xl border border-[#E8E5E0] bg-[#FAFAFA] shadow-[10px_10px_24px_#c8c4be,-10px_-10px_24px_#ffffff]
               w-[calc(100vw-3rem)] max-w-[400px] h-[500px]
               sm:w-[400px]
               max-sm:bottom-0 max-sm:right-0 max-sm:w-full max-sm:h-full max-sm:rounded-none max-sm:border-0"
@@ -338,8 +341,15 @@ export default function ChatWidget() {
                     className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                       msg.role === "bot"
                         ? "bg-white text-[#2D2A26] shadow-[3px_3px_6px_#d1cdc7,-3px_-3px_6px_#ffffff]"
-                        : "ml-auto bg-gradient-to-r from-[#C4956A] to-[#A67B52] text-white"
+                        : "ml-auto text-[#5C4033]"
                     }`}
+                    style={
+                      msg.role === "user"
+                        ? {
+                            background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
+                          }
+                        : undefined
+                    }
                   >
                     {msg.text}
                     {msg.linkHref && (
@@ -395,12 +405,15 @@ export default function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 rounded-full bg-[#F5F3EF] px-4 py-2 text-sm text-[#2D2A26] placeholder-[#C5C3BE] outline-none focus:ring-1 focus:ring-[#B8895A]/50 shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]"
+                className="flex-1 rounded-full bg-[#FAFAFA] px-4 py-2 text-sm text-[#2D2A26] placeholder-[#C5C3BE] outline-none focus:ring-1 focus:ring-[#B8895A]/50 shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]"
               />
               <button
                 type="submit"
                 disabled={!input.trim()}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-r from-[#C4956A] to-[#A67B52] text-white transition-colors hover:from-[#B8895A] hover:to-[#96704A] disabled:opacity-40 disabled:cursor-not-allowed shadow-[3px_3px_6px_#d1cdc7,-3px_-3px_6px_#ffffff]"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-[#5C4033] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff]"
+                style={{
+                  background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
+                }}
                 aria-label="Send message"
               >
                 <Send className="h-4 w-4" />

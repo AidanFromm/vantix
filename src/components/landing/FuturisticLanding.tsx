@@ -57,7 +57,7 @@ function Navigation() {
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[#FAF9F6]/80 backdrop-blur-xl border-b border-[#E8E5E0]'
+          ? 'bg-[#FAFAFA]/80 backdrop-blur-xl border-b border-[#E8E5E0]'
           : 'bg-transparent'
       }`}
     >
@@ -76,7 +76,10 @@ function Navigation() {
           </a>
           <a
             href="#contact"
-            className="px-6 py-2.5 bg-gradient-to-r from-[#C4956A] to-[#A67B52] hover:from-[#B8895A] hover:to-[#96704A] text-white text-sm font-semibold rounded-full transition-all shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff] hover:shadow-[inset_3px_3px_6px_#96704A,inset_-3px_-3px_6px_#d4a878]"
+            className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full transition-all shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8]"
+            style={{
+              background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
+            }}
           >
             Book a Call
           </a>
@@ -91,7 +94,7 @@ function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#FAF9F6]/95 backdrop-blur-xl border-b border-[#E8E5E0] overflow-hidden"
+            className="md:hidden bg-[#FAFAFA]/95 backdrop-blur-xl border-b border-[#E8E5E0] overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {links.map((l) => (
@@ -102,7 +105,7 @@ function Navigation() {
               <a href="/login" onClick={() => setMobileOpen(false)} className="text-[#8C857C] hover:text-[#2D2A26] transition-colors">
                 Login
               </a>
-              <a href="#contact" onClick={() => setMobileOpen(false)} className="px-6 py-2.5 bg-gradient-to-r from-[#C4956A] to-[#A67B52] text-white text-sm font-semibold rounded-full text-center">
+              <a href="#contact" onClick={() => setMobileOpen(false)} className="px-6 py-2.5 text-[#5C4033] text-sm font-semibold rounded-full text-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]" style={{ background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)` }}>
                 Book a Call
               </a>
             </div>
@@ -118,12 +121,12 @@ function Navigation() {
 // ============================================
 function GridBackground({ variant = 'grid' }: { variant?: 'grid' | 'solid' }) {
   if (variant === 'solid') {
-    return <div className="absolute inset-0 bg-[#FAF9F6]" />;
+    return <div className="absolute inset-0 bg-[#FAFAFA]" />;
   }
   return (
-    <div className="absolute inset-0 bg-[#F5F3EF]">
+    <div className="absolute inset-0 bg-[#FAFAFA]">
       <div
-        className="absolute inset-0 opacity-100"
+        className="absolute inset-0 opacity-40"
         style={{
           backgroundImage: `
             linear-gradient(to right, #E8E5E0 1px, transparent 1px),
@@ -151,7 +154,7 @@ function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C5C3BE] bg-white mb-8 shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff]"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C5C3BE] bg-white mb-8 shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]"
         >
           <span className="w-2 h-2 rounded-full bg-[#B8895A] animate-pulse" />
           <span className="text-sm text-[#8C857C] font-medium">AI-First Digital Transformation</span>
@@ -187,7 +190,10 @@ function HeroSection() {
         >
           <a
             href="#services"
-            className="group px-8 py-4 bg-gradient-to-r from-[#C4956A] to-[#A67B52] hover:from-[#B8895A] hover:to-[#96704A] text-white font-semibold rounded-full transition-all inline-flex items-center justify-center gap-2 shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_#96704A,inset_-4px_-4px_8px_#d4a878] hover:scale-[1.02]"
+            className="group px-8 py-4 text-[#5C4033] font-semibold rounded-full transition-all inline-flex items-center justify-center gap-2 shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
+            style={{
+              background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
+            }}
           >
             See What AI Can Do For You
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -236,7 +242,7 @@ function AnimatedCounter({ target, suffix = '', prefix = '' }: { target: number;
 
 function SocialProofBar() {
   return (
-    <section className="relative py-12 border-y border-[#E8E5E0] bg-[#FAF9F6]">
+    <section className="relative py-12 border-y border-[#E8E5E0] bg-[#FAFAFA]">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial="hidden"
@@ -310,7 +316,7 @@ function ProblemSection() {
           className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
         >
           {/* Before */}
-          <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] border border-[#E8E5E0]/50">
+          <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]/50">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
               <span className="text-[#8C857C] font-semibold text-sm uppercase tracking-wider">Without AI</span>
@@ -326,7 +332,7 @@ function ProblemSection() {
           </motion.div>
 
           {/* After */}
-          <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] border border-[#B8895A]/20">
+          <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/20">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#B8895A]" />
               <span className="text-[#B8895A] font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
@@ -396,9 +402,9 @@ function ServicesSection() {
               variants={fadeUp}
               whileHover={{ y: -4, scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="group relative p-8 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] hover:shadow-[8px_8px_16px_#d1cdc7,-8px_-8px_16px_#ffffff] border border-transparent hover:border-[#B8895A]/20 transition-all cursor-default"
+              className="group relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#c0bcb6,-12px_-12px_28px_#ffffff] border border-transparent hover:border-[#B8895A]/20 transition-all cursor-default"
             >
-              <div className="w-12 h-12 rounded-2xl bg-[#F5F3EF] flex items-center justify-center mb-5 group-hover:bg-[#B8895A]/10 transition-colors shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]">
+              <div className="w-12 h-12 rounded-2xl bg-[#FAFAFA] flex items-center justify-center mb-5 group-hover:bg-[#B8895A]/10 transition-colors shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]">
                 <s.icon size={22} className="text-[#B8895A]" />
               </div>
               <h3 className="text-[#2D2A26] font-semibold text-lg mb-2">{s.title}</h3>
@@ -452,7 +458,7 @@ function ROISection() {
             <motion.div
               key={i}
               variants={fadeUp}
-              className="text-center p-8 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff]"
+              className="text-center p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff]"
             >
               <s.icon size={28} className="text-[#B8895A] mx-auto mb-4" />
               <div className="text-3xl md:text-4xl font-bold text-[#B8895A] mb-1">{s.value}</div>
@@ -485,7 +491,7 @@ function CaseStudy() {
           </motion.p>
           <motion.div
             variants={fadeUp}
-            className="relative p-8 md:p-12 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] border border-[#B8895A]/15 overflow-hidden"
+            className="relative p-8 md:p-12 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/15 overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#B8895A]/5 rounded-full blur-3xl" />
             <div className="relative grid md:grid-cols-2 gap-10 items-center">
@@ -515,7 +521,7 @@ function CaseStudy() {
                   <motion.div
                     key={i}
                     variants={fadeUp}
-                    className="p-5 rounded-2xl bg-[#F5F3EF] shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff] text-center"
+                    className="p-5 rounded-2xl bg-[#FAFAFA] shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff] text-center"
                   >
                     <div className="text-2xl font-bold text-[#B8895A]">{m.value}</div>
                     <div className="text-xs text-[#8C857C] mt-1">{m.label}</div>
@@ -572,7 +578,7 @@ function ProcessSection() {
 
           {steps.map((step, i) => (
             <motion.div key={i} variants={fadeUp} className="relative pl-16 md:pl-20 pb-12 last:pb-0">
-              <div className="absolute left-3 md:left-5 w-6 h-6 rounded-full bg-white border-2 border-[#B8895A] flex items-center justify-center shadow-[3px_3px_6px_#d1cdc7,-3px_-3px_6px_#ffffff]">
+              <div className="absolute left-3 md:left-5 w-6 h-6 rounded-full bg-white border-2 border-[#B8895A] flex items-center justify-center shadow-[5px_5px_12px_#c8c4be,-5px_-5px_12px_#ffffff]">
                 <div className="w-2 h-2 rounded-full bg-[#B8895A]" />
               </div>
               <span className="text-[#C5C3BE] text-xs font-mono font-bold">{step.num}</span>
@@ -633,9 +639,9 @@ function TeamSection() {
             <motion.div
               key={i}
               variants={fadeUp}
-              className="p-10 rounded-3xl bg-white shadow-[6px_6px_12px_#d1cdc7,-6px_-6px_12px_#ffffff] text-center"
+              className="p-10 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] text-center"
             >
-              <div className="w-20 h-20 rounded-full bg-[#F5F3EF] border-2 border-[#B8895A]/20 mx-auto mb-5 flex items-center justify-center shadow-[4px_4px_8px_#d1cdc7,-4px_-4px_8px_#ffffff]">
+              <div className="w-20 h-20 rounded-full bg-[#FAFAFA] border-2 border-[#B8895A]/20 mx-auto mb-5 flex items-center justify-center shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]">
                 <span className="text-2xl font-bold text-[#B8895A]">{t.name.split(' ').map(n => n[0]).join('')}</span>
               </div>
               <h3 className="text-xl font-bold text-[#2D2A26]">{t.name}</h3>
@@ -658,11 +664,11 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   return (
     <motion.div
       variants={fadeUp}
-      className="rounded-2xl bg-white shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff] overflow-hidden"
+      className="rounded-2xl bg-white shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] overflow-hidden"
     >
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-6 text-left hover:bg-[#F5F3EF]/50 transition-colors"
+        className="w-full flex items-center justify-between p-6 text-left hover:bg-[#FAFAFA]/50 transition-colors"
       >
         <span className="text-[#2D2A26] font-medium pr-4">{q}</span>
         <ChevronDown
@@ -740,7 +746,7 @@ function FinalCTA() {
 
   return (
     <section id="contact" className="py-24 md:py-32 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#F5F3EF] via-[#EDE8E0] to-[#F5F3EF]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#FAFAFA] via-[#F0EDE8] to-[#FAFAFA]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.08)_0%,transparent_60%)]" />
       <div className="max-w-4xl mx-auto px-6 text-center relative" ref={ref}>
         <motion.div
@@ -763,7 +769,10 @@ function FinalCTA() {
               href="https://cal.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-[#C4956A] to-[#A67B52] hover:from-[#B8895A] hover:to-[#96704A] text-white font-bold text-lg rounded-full transition-all shadow-[8px_8px_16px_#d1cdc7,-8px_-8px_16px_#ffffff] hover:shadow-[inset_4px_4px_8px_#96704A,inset_-4px_-4px_8px_#d4a878] hover:scale-[1.02]"
+              className="group inline-flex items-center gap-2 px-10 py-5 text-[#5C4033] font-bold text-lg rounded-full transition-all shadow-[10px_10px_24px_#c8c4be,-10px_-10px_24px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
+              style={{
+                background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
+              }}
             >
               <Calendar size={20} />
               Book Your Free Discovery Call
@@ -784,7 +793,7 @@ function FinalCTA() {
 // ============================================
 function Footer() {
   return (
-    <footer className="border-t border-[#E8E5E0] py-12 bg-[#F5F3EF]">
+    <footer className="border-t border-[#E8E5E0] py-12 bg-[#FAFAFA]">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-10 mb-10">
           <div className="md:col-span-2">
@@ -847,7 +856,7 @@ export function FuturisticLanding() {
   }, []);
 
   return (
-    <div className="bg-[#FAF9F6] text-[#2D2A26] min-h-screen selection:bg-[#B8895A]/20 selection:text-[#2D2A26]">
+    <div className="bg-[#FAFAFA] text-[#2D2A26] min-h-screen selection:bg-[#B8895A]/20 selection:text-[#2D2A26]">
       <Navigation />
       <HeroSection />
       <SocialProofBar />
