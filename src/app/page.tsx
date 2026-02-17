@@ -1,10 +1,15 @@
-import { FuturisticLanding } from '@/components/landing/FuturisticLanding';
+import { ConsultantLanding } from '@/components/landing/ConsultantLanding';
 
 export const metadata = {
-  title: 'Vantix | Digital Solutions That Actually Work',
-  description: 'We build websites, apps, and automation systems that help businesses scale. Custom digital infrastructure for modern businesses.',
+  title: 'Vantix | AI Consultants Who Actually Build',
+  description: 'We consult, build, and manage AI systems that work. Strategy + implementation + ongoing support from one partner. Book a free discovery call.',
+  openGraph: {
+    title: 'Vantix | AI Consultants Who Actually Build',
+    description: 'Most consultants hand you a strategy deck and disappear. We consult, build, and manage—so your AI actually works.',
+    type: 'website',
+  },
 };
 
 export default function Home() {
-  return <FuturisticLanding />;
+  return <ConsultantLanding />;
 }
