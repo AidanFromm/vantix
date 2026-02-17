@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ChatWidgetWrapper from "@/components/ChatWidgetWrapper";
 
 export const metadata: Metadata = {
   title: "Vantix | Custom Digital Solutions",
@@ -42,8 +43,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script defer data-domain="usevantix.com" src="https://plausible.io/js/script.js"></script>
+      </head>
       <body className="antialiased">
         {children}
+        <ChatWidgetWrapper />
       </body>
     </html>
   );

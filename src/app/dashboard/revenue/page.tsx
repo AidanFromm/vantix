@@ -14,10 +14,9 @@ interface Transaction {
 }
 
 const mockTransactions: Transaction[] = [
-  { id: '1', type: 'income', description: 'Secured Tampa - Website + Inventory', amount: 4500, date: '2026-02-10', category: 'Project', client: 'Dave' },
+  { id: '1', type: 'income', description: 'Secured Tampa — Dave deposit ($2K of $4.5K)', amount: 2000, date: '2026-01-15', category: 'Project', client: 'Dave' },
   { id: '2', type: 'expense', description: 'DigitalOcean Server', amount: 24, date: '2026-02-01', category: 'Infrastructure' },
   { id: '3', type: 'expense', description: 'Vercel Pro', amount: 20, date: '2026-02-01', category: 'Infrastructure' },
-  { id: '4', type: 'income', description: 'CardLedger Subscription', amount: 6.99, date: '2026-02-01', category: 'Subscription' },
 ];
 
 export default function RevenuePage() {
@@ -128,7 +127,7 @@ export default function RevenuePage() {
       </div>
 
       <p className="text-xs text-[var(--color-muted)] text-center">
-        💡 Connect Stripe or QuickBooks for automatic tracking
+        Pending: $2,500 remaining from Dave on delivery + $100/mo maintenance after launch
       </p>
     </div>
   );

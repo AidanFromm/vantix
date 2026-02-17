@@ -1,25 +1,16 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Plus,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Filter,
-  User,
-  AlertTriangle,
-  Clock,
-  CheckCircle2,
-  BarChart3,
-  Tag,
+  Plus, Trash2, X, User, AlertTriangle, Clock, CheckCircle2,
+  BarChart3, Tag, Calendar, Link2, GripVertical, ArrowRight,
+  Layers, CircleDot, Eye, Zap,
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 // --- Types ---
-
-type Column = 'backlog' | 'todo' | 'in_progress' | 'review' | 'done';
+type Column = 'todo' | 'in_progress' | 'review' | 'done';
 type Priority = 'low' | 'medium' | 'high' | 'urgent';
 type Assignee = 'Kyle' | 'Aidan' | 'Vantix' | 'Botskii';
 
@@ -28,463 +19,255 @@ interface Task {
   title: string;
   description: string;
   column: Column;
-  assignee: Assignee;
   priority: Priority;
-  dueDate: string;
-  tags: string[];
-  createdAt: string;
-  completedAt?: string;
+  assignee: Assignee;
+  due_date?: string;
+  project_link?: string;
+  created_at: string;
 }
 
-// --- Constants ---
+// --- Supabase ---
+async function getTasks() {
+  const { data, error } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
+  return { data: data as Task[] | null, error };
+}
+async function createTask(t: Partial<Task>) {
+  const { data, error } = await supabase.from('tasks').insert(t).select().single();
+  return { data: data as Task | null, error };
+}
+async function updateTask(id: string, u: Partial<Task>) {
+  const { data, error } = await supabase.from('tasks').update(u).eq('id', id).select().single();
+  return { data: data as Task | null, error };
+}
+async function deleteTask(id: string) {
+  return await supabase.from('tasks').delete().eq('id', id);
+}
 
-const STORAGE_KEY = 'vantix_tasks';
-const COLUMNS: { key: Column; label: string }[] = [
-  { key: 'backlog', label: 'Backlog' },
-  { key: 'todo', label: 'To Do' },
-  { key: 'in_progress', label: 'In Progress' },
-  { key: 'review', label: 'Review' },
-  { key: 'done', label: 'Done' },
+// --- Config ---
+const COLUMNS: { key: Column; label: string; icon: typeof Clock; color: string; bg: string }[] = [
+  { key: 'todo', label: 'To Do', icon: CircleDot, color: 'text-zinc-400', bg: 'bg-zinc-400/10' },
+  { key: 'in_progress', label: 'In Progress', icon: Zap, color: 'text-blue-400', bg: 'bg-blue-400/10' },
+  { key: 'review', label: 'Review', icon: Eye, color: 'text-amber-400', bg: 'bg-amber-400/10' },
+  { key: 'done', label: 'Done', icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
 ];
 
+const PRIORITY_CFG: Record<Priority, { color: string; bg: string }> = {
+  low: { color: 'text-zinc-400', bg: 'bg-zinc-400/10' },
+  medium: { color: 'text-blue-400', bg: 'bg-blue-400/10' },
+  high: { color: 'text-amber-400', bg: 'bg-amber-400/10' },
+  urgent: { color: 'text-red-400', bg: 'bg-red-400/10' },
+};
+
 const ASSIGNEES: Assignee[] = ['Kyle', 'Aidan', 'Vantix', 'Botskii'];
-
-const PRIORITY_CONFIG: Record<Priority, { label: string; color: string; border: string; bg: string }> = {
-  low: { label: 'Low', color: 'text-gray-400', border: 'border-l-gray-500', bg: 'bg-gray-500/10' },
-  medium: { label: 'Medium', color: 'text-yellow-400', border: 'border-l-yellow-500', bg: 'bg-yellow-500/10' },
-  high: { label: 'High', color: 'text-orange-400', border: 'border-l-orange-500', bg: 'bg-orange-500/10' },
-  urgent: { label: 'Urgent', color: 'text-red-400', border: 'border-l-red-500', bg: 'bg-red-500/10' },
-};
-
 const ASSIGNEE_COLORS: Record<Assignee, string> = {
-  Kyle: 'bg-purple-500/20 text-purple-400',
-  Aidan: 'bg-blue-500/20 text-blue-400',
-  Vantix: 'bg-emerald-500/20 text-emerald-400',
-  Botskii: 'bg-cyan-500/20 text-cyan-400',
+  Kyle: 'bg-blue-500', Aidan: 'bg-purple-500', Vantix: 'bg-emerald-500', Botskii: 'bg-amber-500',
 };
 
-const DEFAULT_TAGS = ['frontend', 'backend', 'design', 'bug', 'feature', 'ops', 'docs'];
-
-const defaultTasks: Task[] = [];
-
-// --- Helpers ---
-
-function loadTasks(): Task[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      // migrate old format
-      if (parsed.length > 0 && 'status' in parsed[0] && !('column' in parsed[0])) {
-        return parsed.map((t: any) => ({
-          id: t.id,
-          title: t.title,
-          description: t.description || '',
-          column: t.status === 'done' ? 'done' as Column : 'todo' as Column,
-          assignee: t.assignee === 'bot1' ? 'Vantix' : t.assignee === 'bot2' ? 'Botskii' : 'Kyle',
-          priority: t.priority || 'medium',
-          dueDate: '',
-          tags: [],
-          createdAt: t.createdAt || new Date().toISOString().split('T')[0],
-          completedAt: t.status === 'done' ? t.createdAt : undefined,
-        }));
-      }
-      return parsed;
-    }
-  } catch { /* fallback */ }
-  return defaultTasks;
-}
-
-function isOverdue(task: Task): boolean {
-  if (!task.dueDate || task.column === 'done') return false;
-  return new Date(task.dueDate) < new Date(new Date().toISOString().split('T')[0]);
-}
-
-function isCompletedThisWeek(task: Task): boolean {
-  if (!task.completedAt) return false;
-  const now = new Date();
-  const weekAgo = new Date(now);
-  weekAgo.setDate(weekAgo.getDate() - 7);
-  return new Date(task.completedAt) >= weekAgo;
-}
-
-// --- Components ---
-
-function StatCard({ label, value, icon: Icon, color }: { label: string; value: number; icon: React.ElementType; color: string }) {
-  return (
-    <div className="bg-[#111] border border-white/[0.06] rounded-xl p-4 flex items-center gap-3">
-      <div className={`p-2 rounded-lg ${color}`}>
-        <Icon size={18} />
-      </div>
-      <div>
-        <p className="text-2xl font-bold">{value}</p>
-        <p className="text-xs text-neutral-500">{label}</p>
-      </div>
-    </div>
-  );
-}
-
-function TaskCard({
-  task,
-  colIndex,
-  totalCols,
-  onMove,
-  onDelete,
-}: {
-  task: Task;
-  colIndex: number;
-  totalCols: number;
-  onMove: (id: string, direction: 'left' | 'right') => void;
-  onDelete: (id: string) => void;
-}) {
-  const prio = PRIORITY_CONFIG[task.priority];
-  const overdue = isOverdue(task);
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className={`group relative p-3 rounded-lg border-l-[3px] ${prio.border} bg-[#111] border border-white/[0.06] hover:border-white/[0.12] transition-colors ${overdue ? 'ring-1 ring-red-500/40' : ''}`}
-    >
-      {overdue && (
-        <div className="absolute -top-1.5 -right-1.5 bg-red-500 rounded-full p-0.5">
-          <AlertTriangle size={10} className="text-white" />
-        </div>
-      )}
-      <div className="flex items-start justify-between gap-2">
-        <h4 className="text-sm font-medium leading-tight">{task.title}</h4>
-        <button
-          onClick={() => onDelete(task.id)}
-          className="p-0.5 opacity-0 group-hover:opacity-100 text-neutral-600 hover:text-red-400 transition-all shrink-0"
-        >
-          <Trash2 size={12} />
-        </button>
-      </div>
-      {task.description && (
-        <p className="text-xs text-neutral-500 mt-1 line-clamp-2">{task.description}</p>
-      )}
-      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-        <span className={`text-[10px] px-1.5 py-0.5 rounded ${ASSIGNEE_COLORS[task.assignee]}`}>
-          {task.assignee}
-        </span>
-        <span className={`text-[10px] px-1.5 py-0.5 rounded ${prio.bg} ${prio.color}`}>
-          {prio.label}
-        </span>
-        {task.tags.map(tag => (
-          <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] text-neutral-500">
-            {tag}
-          </span>
-        ))}
-      </div>
-      {task.dueDate && (
-        <p className={`text-[10px] mt-1.5 ${overdue ? 'text-red-400' : 'text-neutral-600'}`}>
-          Due: {task.dueDate}
-        </p>
-      )}
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/[0.04]">
-        <button
-          onClick={() => onMove(task.id, 'left')}
-          disabled={colIndex === 0}
-          className="p-1 rounded hover:bg-white/[0.06] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronLeft size={14} className="text-neutral-400" />
-        </button>
-        <button
-          onClick={() => onMove(task.id, 'right')}
-          disabled={colIndex === totalCols - 1}
-          className="p-1 rounded hover:bg-white/[0.06] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronRight size={14} className="text-neutral-400" />
-        </button>
-      </div>
-    </motion.div>
-  );
-}
-
-// --- Main ---
+const fadeUp = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.25 } } };
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [loaded, setLoaded] = useState(false);
-  const [showAdd, setShowAdd] = useState(false);
-  const [filterAssignee, setFilterAssignee] = useState<Assignee | 'all'>('all');
-  const [filterPriority, setFilterPriority] = useState<Priority | 'all'>('all');
-  const [filterTag, setFilterTag] = useState<string>('all');
-  const [myTasksMode, setMyTasksMode] = useState(false);
-  const [newTask, setNewTask] = useState({
-    title: '',
-    description: '',
-    assignee: 'Kyle' as Assignee,
-    priority: 'medium' as Priority,
-    dueDate: '',
-    tags: [] as string[],
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [dragTask, setDragTask] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    title: '', description: '', column: 'todo' as Column, priority: 'medium' as Priority,
+    assignee: 'Kyle' as Assignee, due_date: '', project_link: '',
   });
 
-  useEffect(() => {
-    setTasks(loadTasks());
-    setLoaded(true);
+  const load = useCallback(async () => {
+    setLoading(true);
+    try { const { data } = await getTasks(); if (data) setTasks(data); } catch {}
+    setLoading(false);
   }, []);
 
-  const save = useCallback((updated: Task[]) => {
-    setTasks(updated);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(updated)); } catch {}
-  }, []);
+  useEffect(() => { load(); }, [load]);
 
-  const moveTask = useCallback((id: string, direction: 'left' | 'right') => {
-    setTasks(prev => {
-      const updated = prev.map(t => {
-        if (t.id !== id) return t;
-        const idx = COLUMNS.findIndex(c => c.key === t.column);
-        const newIdx = direction === 'left' ? idx - 1 : idx + 1;
-        if (newIdx < 0 || newIdx >= COLUMNS.length) return t;
-        const newCol = COLUMNS[newIdx].key;
-        return {
-          ...t,
-          column: newCol,
-          completedAt: newCol === 'done' ? new Date().toISOString().split('T')[0] : undefined,
-        };
-      });
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(updated)); } catch {}
-      return updated;
-    });
-  }, []);
-
-  const deleteTask = useCallback((id: string) => {
-    save(tasks.filter(t => t.id !== id));
-  }, [tasks, save]);
-
-  const addTask = () => {
-    if (!newTask.title.trim()) return;
-    save([
-      {
-        id: Date.now().toString(),
-        ...newTask,
-        column: 'todo',
-        createdAt: new Date().toISOString().split('T')[0],
-      },
-      ...tasks,
-    ]);
-    setNewTask({ title: '', description: '', assignee: 'Kyle', priority: 'medium', dueDate: '', tags: [] });
-    setShowAdd(false);
+  const resetForm = () => {
+    setForm({ title: '', description: '', column: 'todo', priority: 'medium', assignee: 'Kyle', due_date: '', project_link: '' });
+    setEditId(null); setShowForm(false);
   };
 
-  const toggleTag = (tag: string) => {
-    setNewTask(prev => ({
-      ...prev,
-      tags: prev.tags.includes(tag) ? prev.tags.filter(t => t !== tag) : [...prev.tags, tag],
-    }));
+  const handleSubmit = async () => {
+    try {
+      if (editId) await updateTask(editId, form);
+      else await createTask(form);
+      resetForm(); load();
+    } catch {}
   };
 
-  const filtered = useMemo(() => {
-    let f = tasks;
-    if (myTasksMode) f = f.filter(t => t.assignee === 'Kyle');
-    if (filterAssignee !== 'all') f = f.filter(t => t.assignee === filterAssignee);
-    if (filterPriority !== 'all') f = f.filter(t => t.priority === filterPriority);
-    if (filterTag !== 'all') f = f.filter(t => t.tags.includes(filterTag));
-    return f;
-  }, [tasks, filterAssignee, filterPriority, filterTag, myTasksMode]);
+  const handleDrop = async (col: Column) => {
+    if (!dragTask) return;
+    try { await updateTask(dragTask, { column: col }); load(); } catch {}
+    setDragTask(null);
+  };
 
-  const stats = useMemo(() => ({
-    total: tasks.length,
-    inProgress: tasks.filter(t => t.column === 'in_progress').length,
-    completedWeek: tasks.filter(isCompletedThisWeek).length,
-    overdue: tasks.filter(isOverdue).length,
-  }), [tasks]);
+  const startEdit = (t: Task) => {
+    setForm({ title: t.title, description: t.description, column: t.column, priority: t.priority, assignee: t.assignee, due_date: t.due_date || '', project_link: t.project_link || '' });
+    setEditId(t.id); setShowForm(true);
+  };
 
-  const allTags = useMemo(() => {
-    const s = new Set<string>();
-    tasks.forEach(t => t.tags.forEach(tag => s.add(tag)));
-    return Array.from(s).sort();
-  }, [tasks]);
-
-  if (!loaded) return null;
+  const moveTask = async (id: string, direction: 'left' | 'right') => {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    const colKeys = COLUMNS.map(c => c.key);
+    const idx = colKeys.indexOf(task.column);
+    const newIdx = direction === 'right' ? Math.min(idx + 1, colKeys.length - 1) : Math.max(idx - 1, 0);
+    if (newIdx === idx) return;
+    try { await updateTask(id, { column: colKeys[newIdx] }); load(); } catch {}
+  };
 
   return (
-    <div className="space-y-6 max-w-full">
+    <div className="min-h-screen bg-zinc-950 p-4 md:p-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Task Board</h1>
-          <p className="text-sm text-neutral-500 mt-1">{tasks.length} tasks across {COLUMNS.length} columns</p>
+          <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+            <div className="p-2 bg-emerald-500/10 rounded-xl"><Layers className="w-6 h-6 text-emerald-400" /></div>
+            Tasks
+          </h1>
+          <p className="text-zinc-500 mt-1 text-sm">Kanban board for project task management</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setMyTasksMode(!myTasksMode)}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${myTasksMode ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/[0.04] text-neutral-400 border border-white/[0.06] hover:border-white/[0.12]'}`}
-          >
-            <User size={14} />
-            My Tasks
-          </button>
-          <button
-            onClick={() => setShowAdd(true)}
-            className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-black px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-          >
-            <Plus size={16} />
-            Add Task
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-sm text-zinc-500">
+            <span>{tasks.length} total</span>
+            <span className="text-zinc-700">|</span>
+            <span className="text-emerald-400">{tasks.filter(t => t.column === 'done').length} done</span>
+          </div>
+          <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-medium transition-colors">
+            <Plus className="w-4 h-4" /> New Task
           </button>
         </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard label="Total Tasks" value={stats.total} icon={BarChart3} color="bg-white/[0.06] text-white" />
-        <StatCard label="In Progress" value={stats.inProgress} icon={Clock} color="bg-blue-500/20 text-blue-400" />
-        <StatCard label="Done This Week" value={stats.completedWeek} icon={CheckCircle2} color="bg-emerald-500/20 text-emerald-400" />
-        <StatCard label="Overdue" value={stats.overdue} icon={AlertTriangle} color="bg-red-500/20 text-red-400" />
-      </div>
-
-      {/* Filters */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <Filter size={14} className="text-neutral-500" />
-        <select
-          value={filterAssignee}
-          onChange={e => setFilterAssignee(e.target.value as any)}
-          className="bg-[#111] border border-white/[0.06] rounded-lg px-2 py-1.5 text-xs text-neutral-300 focus:outline-none focus:border-emerald-500/50"
-        >
-          <option value="all">All Assignees</option>
-          {ASSIGNEES.map(a => <option key={a} value={a}>{a}</option>)}
-        </select>
-        <select
-          value={filterPriority}
-          onChange={e => setFilterPriority(e.target.value as any)}
-          className="bg-[#111] border border-white/[0.06] rounded-lg px-2 py-1.5 text-xs text-neutral-300 focus:outline-none focus:border-emerald-500/50"
-        >
-          <option value="all">All Priorities</option>
-          {(['low', 'medium', 'high', 'urgent'] as Priority[]).map(p => <option key={p} value={p}>{PRIORITY_CONFIG[p].label}</option>)}
-        </select>
-        <select
-          value={filterTag}
-          onChange={e => setFilterTag(e.target.value)}
-          className="bg-[#111] border border-white/[0.06] rounded-lg px-2 py-1.5 text-xs text-neutral-300 focus:outline-none focus:border-emerald-500/50"
-        >
-          <option value="all">All Tags</option>
-          {allTags.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
-      </div>
+      </motion.div>
 
       {/* Kanban Board */}
-      <div className="flex gap-3 overflow-x-auto pb-4" style={{ WebkitOverflowScrolling: 'touch' as any }}>
-        {COLUMNS.map((col, colIdx) => {
-          const colTasks = filtered.filter(t => t.column === col.key);
-          return (
-            <div key={col.key} className="flex-shrink-0 w-[260px]">
-              <div className="flex items-center justify-between mb-3 px-1">
-                <h3 className="text-sm font-semibold text-neutral-300">{col.label}</h3>
-                <span className="text-xs text-neutral-600 bg-white/[0.04] px-2 py-0.5 rounded-full">{colTasks.length}</span>
-              </div>
-              <div className="space-y-2 min-h-[200px]">
-                <AnimatePresence>
-                  {colTasks.map(task => (
-                    <TaskCard
-                      key={task.id}
-                      task={task}
-                      colIndex={colIdx}
-                      totalCols={COLUMNS.length}
-                      onMove={moveTask}
-                      onDelete={deleteTask}
-                    />
-                  ))}
+      {loading ? (
+        <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" /></div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {COLUMNS.map(col => {
+            const colTasks = tasks.filter(t => t.column === col.key);
+            const ColIcon = col.icon;
+            return (
+              <div key={col.key}
+                onDragOver={e => e.preventDefault()}
+                onDrop={() => handleDrop(col.key)}
+                className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 min-h-[300px]"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className={`p-1.5 rounded-lg ${col.bg}`}><ColIcon className={`w-3.5 h-3.5 ${col.color}`} /></div>
+                    <span className="text-sm font-semibold text-white">{col.label}</span>
+                  </div>
+                  <span className="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">{colTasks.length}</span>
+                </div>
+                <AnimatePresence mode="popLayout">
+                  {colTasks.length === 0 ? (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-8 text-zinc-600 text-sm">
+                      No tasks
+                    </motion.div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {colTasks.map(task => {
+                        const pcfg = PRIORITY_CFG[task.priority];
+                        return (
+                          <motion.div key={task.id} layout variants={fadeUp} initial="hidden" animate="visible" exit="hidden"
+                            draggable onDragStart={() => setDragTask(task.id)}
+                            className="bg-zinc-900 border border-zinc-800 rounded-xl p-3.5 cursor-grab active:cursor-grabbing hover:border-zinc-700 transition-all group"
+                          >
+                            <div className="flex items-start justify-between mb-2">
+                              <p className="text-sm font-medium text-white leading-snug flex-1 mr-2">{task.title}</p>
+                              <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => startEdit(task)} className="p-1 text-zinc-500 hover:text-white rounded"><Tag className="w-3 h-3" /></button>
+                                <button onClick={async () => { await deleteTask(task.id); load(); }} className="p-1 text-zinc-500 hover:text-red-400 rounded"><Trash2 className="w-3 h-3" /></button>
+                              </div>
+                            </div>
+                            {task.description && <p className="text-xs text-zinc-500 mb-2.5 line-clamp-2">{task.description}</p>}
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${pcfg.bg} ${pcfg.color}`}>{task.priority}</span>
+                                <div className="flex items-center gap-1">
+                                  <div className={`w-4 h-4 rounded-full ${ASSIGNEE_COLORS[task.assignee]} flex items-center justify-center`}>
+                                    <span className="text-[8px] font-bold text-white">{task.assignee[0]}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => moveTask(task.id, 'left')} className="p-1 text-zinc-600 hover:text-white rounded" title="Move left"><ArrowRight className="w-3 h-3 rotate-180" /></button>
+                                <button onClick={() => moveTask(task.id, 'right')} className="p-1 text-zinc-600 hover:text-white rounded" title="Move right"><ArrowRight className="w-3 h-3" /></button>
+                              </div>
+                            </div>
+                            {task.due_date && (
+                              <div className="flex items-center gap-1 mt-2 text-[10px] text-zinc-500">
+                                <Calendar className="w-3 h-3" />{new Date(task.due_date).toLocaleDateString()}
+                              </div>
+                            )}
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </AnimatePresence>
-                {colTasks.length === 0 && (
-                  <div className="text-center py-8 text-neutral-700 text-xs">No tasks</div>
-                )}
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
-      {/* Add Task Modal */}
+      {/* Modal */}
       <AnimatePresence>
-        {showAdd && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
-            onClick={() => setShowAdd(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              onClick={e => e.stopPropagation()}
-              className="bg-[#111] border border-white/[0.06] rounded-xl p-5 w-full max-w-md space-y-4"
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">New Task</h2>
-                <button onClick={() => setShowAdd(false)} className="p-1 hover:bg-white/[0.06] rounded-lg">
-                  <X size={18} />
+        {showForm && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={resetForm}>
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+              <h2 className="text-xl font-bold text-white mb-6">{editId ? 'Edit' : 'New'} Task</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Title</label>
+                  <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Task title" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Description</label>
+                  <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-colors resize-none" placeholder="Describe the task..." />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-400 mb-1.5">Column</label>
+                    <select value={form.column} onChange={e => setForm(f => ({ ...f, column: e.target.value as Column }))} className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                      {COLUMNS.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-400 mb-1.5">Priority</label>
+                    <select value={form.priority} onChange={e => setForm(f => ({ ...f, priority: e.target.value as Priority }))} className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                      {(['low','medium','high','urgent'] as Priority[]).map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase()+p.slice(1)}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-400 mb-1.5">Assignee</label>
+                    <select value={form.assignee} onChange={e => setForm(f => ({ ...f, assignee: e.target.value as Assignee }))} className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                      {ASSIGNEES.map(a => <option key={a} value={a}>{a}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-400 mb-1.5">Due Date</label>
+                    <input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-emerald-500 transition-colors" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Project Link</label>
+                  <input value={form.project_link} onChange={e => setForm(f => ({ ...f, project_link: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-colors" placeholder="https://..." />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 mt-8">
+                <button onClick={resetForm} className="px-5 py-2.5 text-zinc-400 hover:text-white transition-colors">Cancel</button>
+                <button onClick={handleSubmit} disabled={!form.title} className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-white rounded-xl font-medium transition-colors">
+                  {editId ? 'Update' : 'Create'}
                 </button>
               </div>
-              <input
-                type="text"
-                value={newTask.title}
-                onChange={e => setNewTask({ ...newTask, title: e.target.value })}
-                placeholder="Task title..."
-                className="w-full bg-[#0a0a0a] border border-white/[0.06] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500/50"
-              />
-              <input
-                type="text"
-                value={newTask.description}
-                onChange={e => setNewTask({ ...newTask, description: e.target.value })}
-                placeholder="Description..."
-                className="w-full bg-[#0a0a0a] border border-white/[0.06] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500/50"
-              />
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs text-neutral-500 mb-1">Assignee</label>
-                  <select
-                    value={newTask.assignee}
-                    onChange={e => setNewTask({ ...newTask, assignee: e.target.value as Assignee })}
-                    className="w-full bg-[#0a0a0a] border border-white/[0.06] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500/50"
-                  >
-                    {ASSIGNEES.map(a => <option key={a} value={a}>{a}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs text-neutral-500 mb-1">Priority</label>
-                  <select
-                    value={newTask.priority}
-                    onChange={e => setNewTask({ ...newTask, priority: e.target.value as Priority })}
-                    className="w-full bg-[#0a0a0a] border border-white/[0.06] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500/50"
-                  >
-                    {(['low', 'medium', 'high', 'urgent'] as Priority[]).map(p => <option key={p} value={p}>{PRIORITY_CONFIG[p].label}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs text-neutral-500 mb-1">Due Date</label>
-                <input
-                  type="date"
-                  value={newTask.dueDate}
-                  onChange={e => setNewTask({ ...newTask, dueDate: e.target.value })}
-                  className="w-full bg-[#0a0a0a] border border-white/[0.06] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500/50"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-neutral-500 mb-1">Tags</label>
-                <div className="flex flex-wrap gap-1.5">
-                  {DEFAULT_TAGS.map(tag => (
-                    <button
-                      key={tag}
-                      onClick={() => toggleTag(tag)}
-                      className={`text-[10px] px-2 py-1 rounded transition-colors ${newTask.tags.includes(tag) ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/[0.04] text-neutral-500 border border-white/[0.06]'}`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <button
-                onClick={addTask}
-                disabled={!newTask.title.trim()}
-                className="w-full bg-emerald-500 text-black py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-40 hover:bg-emerald-600"
-              >
-                Create Task
-              </button>
             </motion.div>
           </motion.div>
         )}
@@ -492,4 +275,3 @@ export default function TasksPage() {
     </div>
   );
 }
-

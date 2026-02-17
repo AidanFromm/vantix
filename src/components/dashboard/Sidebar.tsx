@@ -10,6 +10,7 @@ import {
   Zap,
   FolderKanban,
   DollarSign,
+  FileText,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -31,6 +32,7 @@ const navItems: NavItem[] = [
   { href: '/dashboard/leads', label: 'Leads', icon: Zap },
   { href: '/dashboard/projects', label: 'Projects', icon: FolderKanban },
   { href: '/dashboard/financial', label: 'Financial', icon: DollarSign },
+  { href: '/dashboard/invoices', label: 'Invoices', icon: FileText },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 

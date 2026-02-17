@@ -13,10 +13,7 @@ interface PipelineItem {
 }
 
 const mockPipeline: PipelineItem[] = [
-  { id: '1', title: 'Gym Website', description: 'Local gym needs modern website', stage: 'lead', contact: 'Mike' },
-  { id: '2', title: 'E-commerce Store', description: 'Sneaker reseller platform', stage: 'qualified', value: 5000, contact: 'James' },
-  { id: '3', title: 'App Development', description: 'Fitness tracking app', stage: 'meeting', value: 12000, contact: 'Sarah' },
-  { id: '4', title: 'Website Redesign', description: 'Restaurant site update', stage: 'proposal', value: 3500, contact: 'Owner' },
+  { id: '1', title: 'Secured Tampa (Dave App)', description: 'Sneaker/Pokemon store app — $4,500 total, $2K paid, $2.5K on delivery', stage: 'closed', value: 4500, contact: 'Dave' },
 ];
 
 const stages = ['lead', 'qualified', 'meeting', 'proposal', 'closed'] as const;

@@ -17,24 +17,33 @@ interface TeamMember {
 const mockTeam: TeamMember[] = [
   { 
     id: '1', 
+    name: 'Kyle', 
+    role: 'Co-Founder', 
+    type: 'human', 
+    status: 'online',
+    tasks: { completed: 8, pending: 2 },
+    lastActive: 'Now'
+  },
+  { 
+    id: '2', 
     name: 'Aidan', 
-    role: 'Founder / Tech Lead', 
+    role: 'Co-Founder', 
     type: 'human', 
     status: 'online',
     tasks: { completed: 12, pending: 3 },
     lastActive: 'Now'
   },
   { 
-    id: '2', 
-    name: 'Kyle', 
-    role: 'Co-Founder / Business', 
-    type: 'human', 
-    status: 'offline',
-    tasks: { completed: 8, pending: 2 },
-    lastActive: '2 hours ago'
+    id: '3', 
+    name: 'Vantix', 
+    role: 'AI Assistant', 
+    type: 'bot', 
+    status: 'online',
+    tasks: { completed: 34, pending: 2 },
+    lastActive: 'Now'
   },
   { 
-    id: '3', 
+    id: '4', 
     name: 'Botskii', 
     role: 'AI Assistant', 
     type: 'bot', 

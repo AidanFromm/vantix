@@ -1,8 +1,8 @@
 import { FuturisticLanding } from '@/components/landing/FuturisticLanding';
 
 export const metadata = {
-  title: 'Vantix | Digital Solutions That Actually Work',
-  description: 'We build websites, apps, and automation systems that help businesses scale. Custom digital infrastructure for modern businesses.',
+  title: 'Vantix | AI-Powered Business Solutions',
+  description: 'We deploy AI systems that generate revenue, cut costs, and automate operations. Custom AI chatbots, websites, automation, and analytics for businesses ready to scale.',
 };
 
 export default function Home() {

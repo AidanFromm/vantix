@@ -1,1161 +1,393 @@
-'use client'
+'use client';
 
-import { useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  DndContext,
-  DragOverlay,
-  closestCorners,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragStartEvent,
-  DragEndEvent,
-} from '@dnd-kit/core'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  useSortable,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import {
-  Plus,
-  Filter,
-  Search,
-  X,
-  Calendar,
-  DollarSign,
-  Clock,
-  User,
-  Bot,
-  FileText,
-  MessageSquare,
-  CheckCircle2,
-  AlertCircle,
-  Folder,
-  ChevronRight,
-  MoreHorizontal,
-  Sparkles,
-  Zap,
-  Users,
-  ArrowRight,
-} from 'lucide-react'
+  Plus, Search, X, Clock, DollarSign, Briefcase, Users, Zap,
+  AlertTriangle, CheckCircle2, Loader2, Filter, BarChart3,
+  Calendar, ArrowRight, ChevronRight, FileText, Target, TrendingUp,
+} from 'lucide-react';
+import { getProjects, createProject, updateProject, getClients } from '@/lib/supabase';
+import type { Project, ProjectStatus, ProjectHealth, Client } from '@/lib/types';
 
-// Types
-type ProjectStatus = 'LEAD' | 'PROPOSAL' | 'ACTIVE' | 'REVIEW' | 'COMPLETE'
-type HealthStatus = 'healthy' | 'warning' | 'critical'
-type Assignee = 'botskii' | 'vantix-bot' | 'aidan' | 'kyle' | 'together'
+// ─── Config ───────────────────────────────────────────────────────────────────
 
-interface Task {
-  id: string
-  title: string
-  completed: boolean
-  assignee?: Assignee
+const STATUS_CONFIG: Record<ProjectStatus, { label: string; color: string; bgColor: string; borderColor: string }> = {
+  lead: { label: 'Lead', color: 'text-slate-400', bgColor: 'bg-slate-500/10', borderColor: 'border-slate-500/30' },
+  proposal: { label: 'Proposal', color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30' },
+  active: { label: 'Active', color: 'text-emerald-400', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/30' },
+  'on-hold': { label: 'On Hold', color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/30' },
+  review: { label: 'Review', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/30' },
+  complete: { label: 'Complete', color: 'text-teal-400', bgColor: 'bg-teal-500/10', borderColor: 'border-teal-500/30' },
+  archived: { label: 'Archived', color: 'text-gray-400', bgColor: 'bg-gray-500/10', borderColor: 'border-gray-500/30' },
+};
+
+const HEALTH_CONFIG: Record<ProjectHealth, { icon: typeof CheckCircle2; color: string; label: string }> = {
+  green: { icon: CheckCircle2, color: 'text-emerald-400', label: 'On Track' },
+  yellow: { icon: AlertTriangle, color: 'text-amber-400', label: 'At Risk' },
+  red: { icon: AlertTriangle, color: 'text-red-400', label: 'Critical' },
+};
+
+const KANBAN_STATUSES: ProjectStatus[] = ['lead', 'proposal', 'active', 'review', 'complete'];
+
+function formatCurrency(n: number) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n); }
+function formatDate(d: string) { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+function daysUntil(d: string) { return Math.ceil((new Date(d).getTime() - Date.now()) / 86400000); }
+
+// ─── Loading Skeleton ─────────────────────────────────────────────────────────
+function LoadingSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse">
+      <div className="flex justify-between"><div className="h-8 w-48 bg-white/5 rounded-lg" /><div className="h-10 w-36 bg-white/5 rounded-xl" /></div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-white/5 rounded-2xl" />)}</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">{[...Array(6)].map((_, i) => <div key={i} className="h-64 bg-white/5 rounded-2xl" />)}</div>
+    </div>
+  );
 }
 
-interface Activity {
-  id: string
-  type: 'status_change' | 'comment' | 'task_complete' | 'file_upload' | 'assignment'
-  content: string
-  timestamp: Date
-  actor: string
-}
+// ─── Add/Edit Project Modal ───────────────────────────────────────────────────
 
-interface ProjectFile {
-  id: string
-  name: string
-  type: string
-  size: string
-  uploadedAt: Date
-}
+function ProjectModal({ project, clients, onClose, onSave }: { project?: Project | null; clients: Client[]; onClose: () => void; onSave: (data: Partial<Project>) => Promise<void> }) {
+  const [form, setForm] = useState({
+    name: project?.name || '', client_id: project?.client_id || '', status: project?.status || 'lead' as ProjectStatus,
+    health: project?.health || 'green' as ProjectHealth, budget: project?.budget || 0, spent: project?.spent || 0,
+    progress: project?.progress || 0, deadline: project?.deadline || '', description: project?.description || '',
+    notes: project?.notes || '', tags: project?.tags?.join(', ') || '',
+  });
+  const [saving, setSaving] = useState(false);
 
-interface Project {
-  id: string
-  name: string
-  client: string
-  status: ProjectStatus
-  health: HealthStatus
-  progress: number
-  budgetSpent: number
-  budgetTotal: number
-  deadline: Date
-  assignee: Assignee
-  description: string
-  tasks: Task[]
-  activities: Activity[]
-  files: ProjectFile[]
-  notes: string
-  createdAt: Date
-}
-
-// Assignee configuration
-const assigneeConfig: Record<Assignee, { name: string; icon: 'bot' | 'user'; color: string; avatar: string }> = {
-  'botskii': { name: 'Botskii', icon: 'bot', color: 'from-purple-500 to-pink-500', avatar: '🤖' },
-  'vantix-bot': { name: 'Vantix Bot', icon: 'bot', color: 'from-cyan-500 to-blue-500', avatar: '⚡' },
-  'together': { name: 'Together', icon: 'bot', color: 'from-green-500 to-emerald-500', avatar: '🤝' },
-  'aidan': { name: 'Aidan', icon: 'user', color: 'from-orange-500 to-amber-500', avatar: '👤' },
-  'kyle': { name: 'Kyle', icon: 'user', color: 'from-red-500 to-rose-500', avatar: '👨' },
-}
-
-const statusConfig: Record<ProjectStatus, { label: string; color: string; bgColor: string }> = {
-  'LEAD': { label: 'Lead', color: 'text-slate-400', bgColor: 'bg-slate-500/20' },
-  'PROPOSAL': { label: 'Proposal', color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
-  'ACTIVE': { label: 'Active', color: 'text-emerald-400', bgColor: 'bg-emerald-500/20' },
-  'REVIEW': { label: 'Review', color: 'text-amber-400', bgColor: 'bg-amber-500/20' },
-  'COMPLETE': { label: 'Complete', color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
-}
-
-const healthConfig: Record<HealthStatus, { icon: string; color: string; label: string }> = {
-  'healthy': { icon: '🟢', color: 'text-green-400', label: 'On Track' },
-  'warning': { icon: '🟡', color: 'text-yellow-400', label: 'At Risk' },
-  'critical': { icon: '🔴', color: 'text-red-400', label: 'Critical' },
-}
-
-// Sortable Project Card Component
-function SortableProjectCard({ project, onClick }: { project: Project; onClick: () => void }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: project.id })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  }
-
-  const assignee = assigneeConfig[project.assignee]
-  const health = healthConfig[project.health]
-  const daysUntilDeadline = Math.ceil((project.deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim()) return;
+    setSaving(true);
+    try {
+      await onSave({
+        name: form.name, client_id: form.client_id || undefined, status: form.status, health: form.health,
+        budget: form.budget || undefined, spent: form.spent, progress: form.progress,
+        deadline: form.deadline || undefined, description: form.description || undefined,
+        notes: form.notes || undefined, tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+      });
+      onClose();
+    } catch (err) { console.error(err); } finally { setSaving(false); }
+  };
 
   return (
-    <motion.div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="group cursor-grab active:cursor-grabbing"
-      onClick={onClick}
-    >
-      <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-white truncate group-hover:text-purple-300 transition-colors">
-              {project.name}
-            </h3>
-            <p className="text-sm text-slate-400 truncate">{project.client}</p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="relative w-full max-w-lg bg-[#0d0d0d]/95 backdrop-blur-xl border border-white/10 rounded-2xl max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-white/10 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-white">{project ? 'Edit Project' : 'New Project'}</h2>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5 text-gray-500"><X size={18} /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div><label className="text-xs text-gray-500 mb-1.5 block">Project Name *</label><input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50" /></div>
+          <div>
+            <label className="text-xs text-gray-500 mb-1.5 block">Client</label>
+            <select value={form.client_id} onChange={e => setForm(p => ({ ...p, client_id: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50">
+              <option value="">No client</option>
+              {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
           </div>
-          <span className="text-lg ml-2" title={health.label}>{health.icon}</span>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mb-3">
-          <div className="flex justify-between text-xs text-slate-400 mb-1">
-            <span>Progress</span>
-            <span>{project.progress}%</span>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs text-gray-500 mb-1.5 block">Status</label>
+              <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value as ProjectStatus }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50">
+                {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 mb-1.5 block">Health</label>
+              <div className="flex gap-2">
+                {(['green', 'yellow', 'red'] as ProjectHealth[]).map(h => {
+                  const cfg = HEALTH_CONFIG[h];
+                  return <button key={h} type="button" onClick={() => setForm(p => ({ ...p, health: h }))} className={`flex-1 px-3 py-2.5 rounded-xl text-xs font-medium transition-all border ${form.health === h ? `${cfg.color} bg-white/5 border-white/20` : 'text-gray-500 border-white/10 hover:bg-white/5'}`}>{cfg.label}</button>;
+                })}
+              </div>
+            </div>
           </div>
-          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-            <motion.div
-              className={`h-full bg-gradient-to-r ${
-                project.progress >= 80 ? 'from-green-500 to-emerald-500' :
-                project.progress >= 50 ? 'from-blue-500 to-cyan-500' :
-                project.progress >= 25 ? 'from-amber-500 to-yellow-500' :
-                'from-red-500 to-orange-500'
-              }`}
-              initial={{ width: 0 }}
-              animate={{ width: `${project.progress}%` }}
-              transition={{ duration: 1, ease: 'easeOut' }}
-            />
+          <div className="grid grid-cols-3 gap-4">
+            <div><label className="text-xs text-gray-500 mb-1.5 block">Budget</label><div className="relative"><DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400" /><input type="number" value={form.budget} onChange={e => setForm(p => ({ ...p, budget: parseFloat(e.target.value) || 0 }))} className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50" /></div></div>
+            <div><label className="text-xs text-gray-500 mb-1.5 block">Spent</label><div className="relative"><DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" /><input type="number" value={form.spent} onChange={e => setForm(p => ({ ...p, spent: parseFloat(e.target.value) || 0 }))} className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50" /></div></div>
+            <div><label className="text-xs text-gray-500 mb-1.5 block">Progress %</label><input type="number" min={0} max={100} value={form.progress} onChange={e => setForm(p => ({ ...p, progress: parseInt(e.target.value) || 0 }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50" /></div>
           </div>
-        </div>
-
-        {/* Budget */}
-        <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
-          <DollarSign className="w-3 h-3" />
-          <span>${project.budgetSpent.toLocaleString()} / ${project.budgetTotal.toLocaleString()}</span>
-        </div>
-
-        {/* Deadline */}
-        <div className="flex items-center gap-2 text-xs mb-3">
-          <Calendar className="w-3 h-3 text-slate-400" />
-          <span className={
-            daysUntilDeadline < 0 ? 'text-red-400' :
-            daysUntilDeadline <= 7 ? 'text-amber-400' :
-            'text-slate-400'
-          }>
-            {daysUntilDeadline < 0 
-              ? `${Math.abs(daysUntilDeadline)} days overdue`
-              : daysUntilDeadline === 0 
-                ? 'Due today'
-                : `${daysUntilDeadline} days left`
-            }
-          </span>
-        </div>
-
-        {/* Assignee */}
-        <div className="flex items-center gap-2 pt-3 border-t border-white/10">
-          <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${assignee.color} flex items-center justify-center text-sm`}>
-            {assignee.avatar}
+          <div><label className="text-xs text-gray-500 mb-1.5 block">Deadline</label><input type="date" value={form.deadline} onChange={e => setForm(p => ({ ...p, deadline: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50" /></div>
+          <div><label className="text-xs text-gray-500 mb-1.5 block">Description</label><textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={3} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 resize-none" /></div>
+          <div><label className="text-xs text-gray-500 mb-1.5 block">Tags</label><input type="text" value={form.tags} onChange={e => setForm(p => ({ ...p, tags: e.target.value }))} placeholder="web, mobile, priority" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50" /></div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-white/5 text-gray-400 text-sm">Cancel</button>
+            <button type="submit" disabled={saving || !form.name.trim()} className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+              {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : project ? 'Update Project' : 'Create Project'}
+            </button>
           </div>
-          <span className="text-sm text-slate-300">{assignee.name}</span>
-          {assignee.icon === 'bot' && (
-            <Bot className="w-3 h-3 text-purple-400 ml-auto" />
-          )}
-        </div>
-      </div>
+        </form>
+      </motion.div>
     </motion.div>
-  )
+  );
 }
 
-// Project Card for Drag Overlay
-function ProjectCard({ project }: { project: Project }) {
-  const assignee = assigneeConfig[project.assignee]
-  const health = healthConfig[project.health]
+// ─── Project Detail Drawer ────────────────────────────────────────────────────
+
+function ProjectDrawer({ project, onClose, onEdit }: { project: Project; onClose: () => void; onEdit: () => void }) {
+  const sc = STATUS_CONFIG[project.status];
+  const hc = HEALTH_CONFIG[project.health];
+  const HealthIcon = hc.icon;
+  const days = project.deadline ? daysUntil(project.deadline) : null;
+  const budgetPct = project.budget ? Math.round((project.spent / project.budget) * 100) : 0;
 
   return (
-    <div className="bg-white/10 backdrop-blur-xl border border-purple-500/50 rounded-xl p-4 shadow-xl shadow-purple-500/20 w-[280px]">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-white truncate">{project.name}</h3>
-          <p className="text-sm text-slate-400 truncate">{project.client}</p>
-        </div>
-        <span className="text-lg ml-2">{health.icon}</span>
-      </div>
-      <div className="h-2 bg-white/10 rounded-full overflow-hidden mb-3">
-        <div
-          className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-          style={{ width: `${project.progress}%` }}
-        />
-      </div>
-      <div className="flex items-center gap-2">
-        <div className={`w-6 h-6 rounded-full bg-gradient-to-br ${assignee.color} flex items-center justify-center text-xs`}>
-          {assignee.avatar}
-        </div>
-        <span className="text-sm text-slate-300">{assignee.name}</span>
-      </div>
-    </div>
-  )
-}
-
-// Kanban Column Component
-function KanbanColumn({ 
-  status, 
-  projects, 
-  onProjectClick 
-}: { 
-  status: ProjectStatus
-  projects: Project[]
-  onProjectClick: (project: Project) => void
-}) {
-  const config = statusConfig[status]
-  
-  return (
-    <div className="flex-1 min-w-[280px] max-w-[320px]">
-      {/* Column Header */}
-      <div className={`${config.bgColor} backdrop-blur-xl border border-white/10 rounded-xl p-3 mb-4`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className={`font-medium ${config.color}`}>{config.label}</span>
-            <span className="text-xs text-slate-500 bg-white/10 px-2 py-0.5 rounded-full">
-              {projects.length}
-            </span>
-          </div>
-          <button className="p-1 hover:bg-white/10 rounded transition-colors">
-            <MoreHorizontal className="w-4 h-4 text-slate-400" />
-          </button>
-        </div>
-      </div>
-
-      {/* Cards Container */}
-      <SortableContext items={projects.map(p => p.id)} strategy={verticalListSortingStrategy}>
-        <div className="space-y-3 min-h-[200px]">
-          <AnimatePresence mode="popLayout">
-            {projects.map((project) => (
-              <SortableProjectCard 
-                key={project.id} 
-                project={project} 
-                onClick={() => onProjectClick(project)}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
-      </SortableContext>
-    </div>
-  )
-}
-
-// Slide-over Panel Component
-function ProjectSlideOver({ 
-  project, 
-  onClose,
-  onStatusChange,
-  onAssigneeChange,
-}: { 
-  project: Project
-  onClose: () => void
-  onStatusChange: (status: ProjectStatus) => void
-  onAssigneeChange: (assignee: Assignee) => void
-}) {
-  const [activeTab, setActiveTab] = useState<'details' | 'tasks' | 'activity' | 'files'>('details')
-  const assignee = assigneeConfig[project.assignee]
-  const health = healthConfig[project.health]
-  const daysUntilDeadline = Math.ceil((project.deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-
-  return (
-    <>
-      {/* Backdrop */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-        onClick={onClose}
-      />
-
-      {/* Panel */}
-      <motion.div
-        initial={{ x: '100%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '100%' }}
-        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="fixed right-0 top-0 h-full w-full max-w-xl bg-slate-900/95 backdrop-blur-xl border-l border-white/10 z-50 overflow-hidden flex flex-col"
-      >
-        {/* Header */}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex justify-end">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 30, stiffness: 300 }} className="relative w-full max-w-xl h-full bg-[#0d0d0d]/95 backdrop-blur-xl border-l border-white/10 overflow-y-auto flex flex-col">
         <div className="p-6 border-b border-white/10">
           <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-2xl">{health.icon}</span>
-                <h2 className="text-xl font-bold text-white">{project.name}</h2>
-              </div>
-              <p className="text-slate-400">{project.client}</p>
+            <div>
+              <div className="flex items-center gap-3 mb-2"><HealthIcon size={20} className={hc.color} /><h2 className="text-xl font-bold text-white">{project.name}</h2></div>
+              <div className="flex items-center gap-2"><span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${sc.bgColor} ${sc.color} ${sc.borderColor}`}>{sc.label}</span>{project.client && <span className="text-xs text-gray-500">{project.client.name}</span>}</div>
             </div>
-            <button 
-              onClick={onClose}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5 text-slate-400" />
-            </button>
+            <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5 text-gray-500"><X size={20} /></button>
           </div>
-
-          {/* Quick Stats */}
           <div className="grid grid-cols-3 gap-4 mt-6">
-            <div className="bg-white/5 rounded-lg p-3 text-center">
-              <p className="text-2xl font-bold text-white">{project.progress}%</p>
-              <p className="text-xs text-slate-400">Complete</p>
-            </div>
-            <div className="bg-white/5 rounded-lg p-3 text-center">
-              <p className="text-2xl font-bold text-emerald-400">
-                ${(project.budgetTotal - project.budgetSpent).toLocaleString()}
-              </p>
-              <p className="text-xs text-slate-400">Remaining</p>
-            </div>
-            <div className="bg-white/5 rounded-lg p-3 text-center">
-              <p className={`text-2xl font-bold ${
-                daysUntilDeadline < 0 ? 'text-red-400' :
-                daysUntilDeadline <= 7 ? 'text-amber-400' :
-                'text-blue-400'
-              }`}>
-                {Math.abs(daysUntilDeadline)}
-              </p>
-              <p className="text-xs text-slate-400">
-                {daysUntilDeadline < 0 ? 'Days Over' : 'Days Left'}
-              </p>
-            </div>
+            <div className="bg-white/5 rounded-xl p-3 text-center"><p className="text-2xl font-bold text-white">{project.progress}%</p><p className="text-xs text-gray-500">Complete</p></div>
+            <div className="bg-white/5 rounded-xl p-3 text-center"><p className="text-2xl font-bold text-emerald-400">{project.budget ? formatCurrency(project.budget - project.spent) : 'N/A'}</p><p className="text-xs text-gray-500">Remaining</p></div>
+            <div className="bg-white/5 rounded-xl p-3 text-center"><p className={`text-2xl font-bold ${days !== null ? (days < 0 ? 'text-red-400' : days <= 7 ? 'text-amber-400' : 'text-blue-400') : 'text-gray-500'}`}>{days !== null ? Math.abs(days) : 'N/A'}</p><p className="text-xs text-gray-500">{days !== null ? (days < 0 ? 'Days Over' : 'Days Left') : 'No Deadline'}</p></div>
           </div>
         </div>
-
-        {/* Quick Actions */}
-        <div className="px-6 py-4 border-b border-white/10 flex gap-3">
-          {/* Status Dropdown */}
-          <select
-            value={project.status}
-            onChange={(e) => onStatusChange(e.target.value as ProjectStatus)}
-            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500"
-          >
-            {Object.entries(statusConfig).map(([key, config]) => (
-              <option key={key} value={key} className="bg-slate-900">
-                {config.label}
-              </option>
-            ))}
-          </select>
-
-          {/* Assignee Dropdown */}
-          <select
-            value={project.assignee}
-            onChange={(e) => onAssigneeChange(e.target.value as Assignee)}
-            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500"
-          >
-            {Object.entries(assigneeConfig).map(([key, config]) => (
-              <option key={key} value={key} className="bg-slate-900">
-                {config.avatar} {config.name}
-              </option>
-            ))}
-          </select>
+        <div className="flex-1 p-6 space-y-6">
+          {/* Progress bar */}
+          <div><h4 className="text-xs text-gray-500 uppercase tracking-wider mb-2">Progress</h4><div className="h-3 bg-white/5 rounded-full overflow-hidden"><motion.div className={`h-full rounded-full ${project.progress >= 80 ? 'bg-emerald-500' : project.progress >= 50 ? 'bg-blue-500' : 'bg-amber-500'}`} initial={{ width: 0 }} animate={{ width: `${project.progress}%` }} transition={{ duration: 1 }} /></div><p className="text-xs text-gray-500 mt-1 text-right">{project.progress}% complete</p></div>
+          {/* Budget */}
+          {project.budget ? (
+            <div><h4 className="text-xs text-gray-500 uppercase tracking-wider mb-2">Budget</h4><div className="bg-white/5 rounded-xl p-4"><div className="flex justify-between mb-2"><span className="text-gray-400 text-sm">Spent</span><span className="text-white text-sm">{formatCurrency(project.spent)}</span></div><div className="flex justify-between mb-3"><span className="text-gray-400 text-sm">Total</span><span className="text-white text-sm">{formatCurrency(project.budget)}</span></div><div className="h-2 bg-white/5 rounded-full overflow-hidden"><div className={`h-full rounded-full ${budgetPct > 90 ? 'bg-red-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min(budgetPct, 100)}%` }} /></div><p className="text-xs text-gray-500 mt-2 text-right">{budgetPct}% used</p></div></div>
+          ) : null}
+          {project.description && <div><h4 className="text-xs text-gray-500 uppercase tracking-wider mb-2">Description</h4><p className="text-sm text-white">{project.description}</p></div>}
+          {project.deadline && <div><h4 className="text-xs text-gray-500 uppercase tracking-wider mb-2">Deadline</h4><p className="text-sm text-white flex items-center gap-2"><Calendar size={14} className="text-gray-500" />{formatDate(project.deadline)}</p></div>}
+          {project.tags && project.tags.length > 0 && <div className="flex flex-wrap gap-2">{project.tags.map(t => <span key={t} className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-500">{t}</span>)}</div>}
+          {project.notes && <div><h4 className="text-xs text-gray-500 uppercase tracking-wider mb-2">Notes</h4><p className="text-sm text-white whitespace-pre-wrap">{project.notes}</p></div>}
         </div>
-
-        {/* Tabs */}
-        <div className="px-6 py-3 border-b border-white/10">
-          <div className="flex gap-1">
-            {[
-              { id: 'details', label: 'Details', icon: FileText },
-              { id: 'tasks', label: 'Tasks', icon: CheckCircle2 },
-              { id: 'activity', label: 'Activity', icon: Clock },
-              { id: 'files', label: 'Files', icon: Folder },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-purple-500/20 text-purple-400'
-                    : 'text-slate-400 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Tab Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {activeTab === 'details' && (
-            <div className="space-y-6">
-              {/* Description */}
-              <div>
-                <h3 className="text-sm font-medium text-slate-400 mb-2">Description</h3>
-                <p className="text-white">{project.description}</p>
-              </div>
-
-              {/* Assignee */}
-              <div>
-                <h3 className="text-sm font-medium text-slate-400 mb-2">Assigned To</h3>
-                <div className="flex items-center gap-3 bg-white/5 rounded-lg p-3">
-                  <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${assignee.color} flex items-center justify-center text-lg`}>
-                    {assignee.avatar}
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">{assignee.name}</p>
-                    <p className="text-xs text-slate-400">
-                      {assignee.icon === 'bot' ? 'AI Assistant' : 'Team Member'}
-                    </p>
-                  </div>
-                  {assignee.icon === 'bot' && (
-                    <Bot className="w-5 h-5 text-purple-400 ml-auto" />
-                  )}
-                </div>
-              </div>
-
-              {/* Budget Breakdown */}
-              <div>
-                <h3 className="text-sm font-medium text-slate-400 mb-2">Budget</h3>
-                <div className="bg-white/5 rounded-lg p-4">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-slate-400">Spent</span>
-                    <span className="text-white">${project.budgetSpent.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between mb-3">
-                    <span className="text-slate-400">Total</span>
-                    <span className="text-white">${project.budgetTotal.toLocaleString()}</span>
-                  </div>
-                  <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                    <motion.div
-                      className={`h-full ${
-                        (project.budgetSpent / project.budgetTotal) > 0.9
-                          ? 'bg-gradient-to-r from-red-500 to-orange-500'
-                          : 'bg-gradient-to-r from-emerald-500 to-green-500'
-                      }`}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(project.budgetSpent / project.budgetTotal) * 100}%` }}
-                      transition={{ duration: 1 }}
-                    />
-                  </div>
-                  <p className="text-xs text-slate-400 mt-2 text-right">
-                    {Math.round((project.budgetSpent / project.budgetTotal) * 100)}% used
-                  </p>
-                </div>
-              </div>
-
-              {/* Notes */}
-              <div>
-                <h3 className="text-sm font-medium text-slate-400 mb-2">Notes</h3>
-                <div className="bg-white/5 rounded-lg p-4">
-                  <p className="text-white">{project.notes || 'No notes yet.'}</p>
-                </div>
-              </div>
-
-              {/* Timeline */}
-              <div>
-                <h3 className="text-sm font-medium text-slate-400 mb-2">Timeline</h3>
-                <div className="bg-white/5 rounded-lg p-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Created</span>
-                    <span className="text-white">{project.createdAt.toLocaleDateString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Deadline</span>
-                    <span className={
-                      daysUntilDeadline < 0 ? 'text-red-400' :
-                      daysUntilDeadline <= 7 ? 'text-amber-400' :
-                      'text-white'
-                    }>
-                      {project.deadline.toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'tasks' && (
-            <div className="space-y-3">
-              {project.tasks.length === 0 ? (
-                <div className="text-center py-12">
-                  <CheckCircle2 className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-400">No tasks yet</p>
-                </div>
-              ) : (
-                project.tasks.map((task) => (
-                  <motion.div
-                    key={task.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className={`flex items-center gap-3 p-3 rounded-lg ${
-                      task.completed ? 'bg-emerald-500/10' : 'bg-white/5'
-                    }`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      task.completed 
-                        ? 'border-emerald-500 bg-emerald-500' 
-                        : 'border-slate-500'
-                    }`}>
-                      {task.completed && <CheckCircle2 className="w-3 h-3 text-white" />}
-                    </div>
-                    <span className={`flex-1 ${task.completed ? 'text-slate-400 line-through' : 'text-white'}`}>
-                      {task.title}
-                    </span>
-                    {task.assignee && (
-                      <span className="text-xs text-slate-400">
-                        {assigneeConfig[task.assignee].avatar}
-                      </span>
-                    )}
-                  </motion.div>
-                ))
-              )}
-              <button className="w-full p-3 border border-dashed border-white/20 rounded-lg text-slate-400 hover:text-white hover:border-white/40 transition-colors flex items-center justify-center gap-2">
-                <Plus className="w-4 h-4" />
-                Add Task
-              </button>
-            </div>
-          )}
-
-          {activeTab === 'activity' && (
-            <div className="space-y-4">
-              {project.activities.length === 0 ? (
-                <div className="text-center py-12">
-                  <Clock className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-400">No activity yet</p>
-                </div>
-              ) : (
-                project.activities.map((activity) => (
-                  <motion.div
-                    key={activity.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex gap-3"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                      {activity.type === 'task_complete' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
-                      {activity.type === 'comment' && <MessageSquare className="w-4 h-4 text-blue-400" />}
-                      {activity.type === 'status_change' && <ArrowRight className="w-4 h-4 text-purple-400" />}
-                      {activity.type === 'file_upload' && <Folder className="w-4 h-4 text-amber-400" />}
-                      {activity.type === 'assignment' && <User className="w-4 h-4 text-cyan-400" />}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-white text-sm">{activity.content}</p>
-                      <p className="text-xs text-slate-400 mt-1">
-                        {activity.actor} • {activity.timestamp.toLocaleDateString()}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))
-              )}
-            </div>
-          )}
-
-          {activeTab === 'files' && (
-            <div className="space-y-3">
-              {project.files.length === 0 ? (
-                <div className="text-center py-12">
-                  <Folder className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-400">No files yet</p>
-                </div>
-              ) : (
-                project.files.map((file) => (
-                  <motion.div
-                    key={file.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-                      <FileText className="w-5 h-5 text-slate-400" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm truncate">{file.name}</p>
-                      <p className="text-xs text-slate-400">{file.size}</p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-slate-400" />
-                  </motion.div>
-                ))
-              )}
-              <button className="w-full p-3 border border-dashed border-white/20 rounded-lg text-slate-400 hover:text-white hover:border-white/40 transition-colors flex items-center justify-center gap-2">
-                <Plus className="w-4 h-4" />
-                Upload File
-              </button>
-            </div>
-          )}
-        </div>
+        <div className="p-4 border-t border-white/10 flex justify-end"><button onClick={onEdit} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 text-sm"><FileText size={14} /> Edit Project</button></div>
       </motion.div>
-    </>
-  )
+    </motion.div>
+  );
 }
 
-// Add Project Modal
-function AddProjectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (project: Partial<Project>) => void }) {
-  const [name, setName] = useState('')
-  const [client, setClient] = useState('')
-  const [budget, setBudget] = useState('')
-  const [assignee, setAssignee] = useState<Assignee>('botskii')
-  const [deadline, setDeadline] = useState('')
+// ─── Main Component ───────────────────────────────────────────────────────────
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onAdd({
-      name,
-      client,
-      budgetTotal: parseFloat(budget) || 0,
-      assignee,
-      deadline: new Date(deadline),
-    })
-    onClose()
-  }
-
-  return (
-    <>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-        onClick={onClose}
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="fixed inset-0 flex items-center justify-center z-50 p-4"
-        onClick={onClose}
-      >
-        <div 
-          className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 w-full max-w-md"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">New Project</h2>
-            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-              <X className="w-5 h-5 text-slate-400" />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Project Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-purple-500"
-                placeholder="Enter project name"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Client</label>
-              <input
-                type="text"
-                value={client}
-                onChange={(e) => setClient(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-purple-500"
-                placeholder="Client name"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Budget</label>
-              <input
-                type="number"
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-purple-500"
-                placeholder="$0.00"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Assign To</label>
-              <div className="grid grid-cols-5 gap-2">
-                {Object.entries(assigneeConfig).map(([key, config]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setAssignee(key as Assignee)}
-                    className={`p-2 rounded-lg border transition-all ${
-                      assignee === key
-                        ? 'border-purple-500 bg-purple-500/20'
-                        : 'border-white/10 hover:border-white/20'
-                    }`}
-                    title={config.name}
-                  >
-                    <span className="text-xl">{config.avatar}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Deadline</label>
-              <input
-                type="date"
-                value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-purple-500"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium py-2.5 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-colors"
-            >
-              Create Project
-            </button>
-          </form>
-        </div>
-      </motion.div>
-    </>
-  )
-}
-
-// Initial real projects
-const initialRealProjects: Project[] = [
-  {
-    id: 'dave-app',
-    name: 'Dave App',
-    client: 'Secured Tampa (Dave)',
-    status: 'REVIEW',
-    health: 'healthy',
-    progress: 90,
-    budgetTotal: 4500,
-    budgetSpent: 4000,
-    deadline: new Date('2026-02-28'),
-    assignee: 'together',
-    description: 'Sneaker & Pokemon e-commerce app. $4,500 base + 3% rev share.',
-    tasks: [
-      { id: '1', title: 'Final QA testing', completed: true },
-      { id: '2', title: 'Client handoff', completed: false },
-    ],
-    activities: [
-      { id: '1', type: 'status_change', content: 'Moved to Review', timestamp: new Date(), actor: 'Aidan' },
-    ],
-    files: [],
-    notes: 'Owes $2,500 + 3% of online sales for 3 months.',
-    createdAt: new Date('2026-01-15'),
-  },
-  {
-    id: 'cardledger-v2',
-    name: 'CardLedger V2',
-    client: 'CardLedger (Internal)',
-    status: 'ACTIVE',
-    health: 'warning',
-    progress: 65,
-    budgetTotal: 0,
-    budgetSpent: 0,
-    deadline: new Date('2026-03-31'),
-    assignee: 'botskii',
-    description: 'Portfolio tracker for collectible cards - iOS app + web.',
-    tasks: [
-      { id: '1', title: 'Dashboard rebuild', completed: true },
-      { id: '2', title: 'Inventory swipe-to-sell', completed: true },
-      { id: '3', title: 'Native iOS build', completed: false },
-    ],
-    activities: [],
-    files: [],
-    notes: 'Internal project - Robinhood-style UI.',
-    createdAt: new Date('2026-01-01'),
-  },
-  {
-    id: 'j4k-maintenance',
-    name: 'J4K Platform Maintenance',
-    client: 'Just Four Kicks (Kyle)',
-    status: 'ACTIVE',
-    health: 'healthy',
-    progress: 100,
-    budgetTotal: 0,
-    budgetSpent: 0,
-    deadline: new Date('2026-12-31'),
-    assignee: 'vantix-bot',
-    description: 'Ongoing maintenance and features for J4K wholesale platform.',
-    tasks: [],
-    activities: [],
-    files: [],
-    notes: 'Kyle partnership - ongoing.',
-    createdAt: new Date('2026-01-01'),
-  },
-];
-
-// Main Page Component
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>(initialRealProjects)
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [filterAssignee, setFilterAssignee] = useState<Assignee | 'all'>('all')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeId, setActiveId] = useState<string | null>(null)
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'kanban'>('grid');
+  const [showModal, setShowModal] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null | undefined>(undefined);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  const loadData = useCallback(async () => {
+    try {
+      const [projRes, clientRes] = await Promise.all([
+        getProjects({ status: statusFilter !== 'all' ? statusFilter : undefined }),
+        getClients(),
+      ]);
+      if (projRes.data) setProjects(projRes.data);
+      if (clientRes.data) setClients(clientRes.data);
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  }, [statusFilter]);
 
-  // Filter projects
-  const filteredProjects = projects.filter((project) => {
-    const matchesAssignee = filterAssignee === 'all' || project.assignee === filterAssignee
-    const matchesSearch = 
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.client.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesAssignee && matchesSearch
-  })
+  useEffect(() => { loadData(); }, [loadData]);
 
-  // Group by status
-  const projectsByStatus = {
-    LEAD: filteredProjects.filter((p) => p.status === 'LEAD'),
-    PROPOSAL: filteredProjects.filter((p) => p.status === 'PROPOSAL'),
-    ACTIVE: filteredProjects.filter((p) => p.status === 'ACTIVE'),
-    REVIEW: filteredProjects.filter((p) => p.status === 'REVIEW'),
-    COMPLETE: filteredProjects.filter((p) => p.status === 'COMPLETE'),
-  }
+  const filtered = useMemo(() => {
+    if (!search) return projects;
+    const q = search.toLowerCase();
+    return projects.filter(p => p.name.toLowerCase().includes(q) || p.client?.name?.toLowerCase().includes(q));
+  }, [projects, search]);
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string)
-  }
+  const stats = useMemo(() => ({
+    total: projects.length,
+    active: projects.filter(p => p.status === 'active').length,
+    atRisk: projects.filter(p => p.health !== 'green').length,
+    totalBudget: projects.reduce((s, p) => s + (p.budget || 0), 0),
+    totalSpent: projects.reduce((s, p) => s + p.spent, 0),
+  }), [projects]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-    setActiveId(null)
+  const projectsByStatus = useMemo(() => {
+    const grouped: Record<string, Project[]> = {};
+    KANBAN_STATUSES.forEach(s => grouped[s] = []);
+    filtered.forEach(p => { if (grouped[p.status]) grouped[p.status].push(p); });
+    return grouped;
+  }, [filtered]);
 
-    if (!over) return
-
-    const activeProject = projects.find((p) => p.id === active.id)
-    const overProject = projects.find((p) => p.id === over.id)
-
-    if (!activeProject) return
-
-    // If dropped on another project, swap positions and potentially change status
-    if (overProject && activeProject.id !== overProject.id) {
-      setProjects((prev) => {
-        const oldIndex = prev.findIndex((p) => p.id === active.id)
-        const newIndex = prev.findIndex((p) => p.id === over.id)
-        
-        const newProjects = arrayMove(prev, oldIndex, newIndex)
-        
-        // Update status if moved to different column
-        if (activeProject.status !== overProject.status) {
-          return newProjects.map((p) =>
-            p.id === active.id ? { ...p, status: overProject.status } : p
-          )
-        }
-        
-        return newProjects
-      })
+  const handleSaveProject = async (data: Partial<Project>) => {
+    if (editingProject) {
+      const { error } = await updateProject(editingProject.id, data);
+      if (error) throw error;
+    } else {
+      const { error } = await createProject(data);
+      if (error) throw error;
     }
-  }
+    await loadData();
+  };
 
-  const handleStatusChange = (projectId: string, newStatus: ProjectStatus) => {
-    setProjects((prev) =>
-      prev.map((p) => (p.id === projectId ? { ...p, status: newStatus } : p))
-    )
-    if (selectedProject?.id === projectId) {
-      setSelectedProject((prev) => prev ? { ...prev, status: newStatus } : null)
-    }
-  }
+  const handleDropProject = async (projectId: string, newStatus: ProjectStatus) => {
+    try {
+      const { error } = await updateProject(projectId, { status: newStatus });
+      if (error) throw error;
+      setProjects(prev => prev.map(p => p.id === projectId ? { ...p, status: newStatus } : p));
+    } catch (err) { console.error(err); }
+  };
 
-  const handleAssigneeChange = (projectId: string, newAssignee: Assignee) => {
-    setProjects((prev) =>
-      prev.map((p) => (p.id === projectId ? { ...p, assignee: newAssignee } : p))
-    )
-    if (selectedProject?.id === projectId) {
-      setSelectedProject((prev) => prev ? { ...prev, assignee: newAssignee } : null)
-    }
-  }
-
-  const handleAddProject = (projectData: Partial<Project>) => {
-    const newProject: Project = {
-      id: `p${Date.now()}`,
-      name: projectData.name || 'New Project',
-      client: projectData.client || 'Unknown Client',
-      status: 'LEAD',
-      health: 'healthy',
-      progress: 0,
-      budgetSpent: 0,
-      budgetTotal: projectData.budgetTotal || 0,
-      deadline: projectData.deadline || new Date(),
-      assignee: projectData.assignee || 'botskii',
-      description: '',
-      tasks: [],
-      activities: [],
-      files: [],
-      notes: '',
-      createdAt: new Date(),
-    }
-    setProjects((prev) => [newProject, ...prev])
-  }
-
-  const activeProject = activeId ? projects.find((p) => p.id === activeId) : null
-
-  // Stats
-  const stats = {
-    total: filteredProjects.length,
-    active: filteredProjects.filter((p) => p.status === 'ACTIVE').length,
-    atRisk: filteredProjects.filter((p) => p.health !== 'healthy').length,
-    botAssigned: filteredProjects.filter((p) => 
-      assigneeConfig[p.assignee].icon === 'bot'
-    ).length,
-  }
+  if (loading) return <LoadingSkeleton />;
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Projects</h1>
-            <p className="text-slate-400">Manage and track all your projects</p>
-          </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium px-5 py-2.5 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/25"
-          >
-            <Plus className="w-5 h-5" />
-            New Project
-          </button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div><h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Projects</h1><p className="text-sm text-gray-500 mt-1">Track and manage all your projects</p></div>
+        <button onClick={() => { setEditingProject(null); setShowModal(true); }} className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-emerald-500/20 text-sm"><Plus size={18} /> New Project</button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {[
+          { label: 'Total Projects', value: String(stats.total), icon: Briefcase, accent: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+          { label: 'Active', value: String(stats.active), icon: Zap, accent: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+          { label: 'At Risk', value: String(stats.atRisk), icon: AlertTriangle, accent: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+          { label: 'Total Budget', value: formatCurrency(stats.totalBudget), icon: DollarSign, accent: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
+        ].map((stat, i) => (
+          <motion.div key={stat.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className={`bg-gradient-to-br from-white/[0.08] to-white/[0.02] border ${stat.border} rounded-2xl p-4`}>
+            <div className="flex items-center justify-between mb-2"><span className="text-xs text-gray-500">{stat.label}</span><div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}><stat.icon size={18} className={stat.accent} /></div></div>
+            <p className="text-xl sm:text-2xl font-bold text-white">{stat.value}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <div className="relative flex-1 sm:max-w-sm">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input type="text" placeholder="Search projects..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-11 pr-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-sm focus:outline-none focus:border-emerald-500/50" />
         </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                <Folder className="w-5 h-5 text-purple-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{stats.total}</p>
-                <p className="text-xs text-slate-400">Total Projects</p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{stats.active}</p>
-                <p className="text-xs text-slate-400">Active</p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-amber-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{stats.atRisk}</p>
-                <p className="text-xs text-slate-400">At Risk</p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-                <Bot className="w-5 h-5 text-cyan-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{stats.botAssigned}</p>
-                <p className="text-xs text-slate-400">Bot Assigned</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Filters */}
-        <div className="flex items-center gap-4 flex-wrap">
-          {/* Search */}
-          <div className="relative flex-1 min-w-[200px] max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 transition-colors"
-            />
+        <div className="flex items-center gap-2">
+          <div className="flex bg-white/5 border border-white/10 rounded-xl p-1">
+            <button onClick={() => setViewMode('grid')} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${viewMode === 'grid' ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-500'}`}>Grid</button>
+            <button onClick={() => setViewMode('kanban')} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${viewMode === 'kanban' ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-500'}`}>Kanban</button>
           </div>
-
-          {/* Assignee Filter */}
-          <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-1">
-            <button
-              onClick={() => setFilterAssignee('all')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                filterAssignee === 'all'
-                  ? 'bg-white/10 text-white'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Users className="w-4 h-4 inline-block mr-1" />
-              All
-            </button>
-            {Object.entries(assigneeConfig).map(([key, config]) => (
-              <button
-                key={key}
-                onClick={() => setFilterAssignee(key as Assignee)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
-                  filterAssignee === key
-                    ? 'bg-white/10 text-white'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-                title={config.name}
-              >
-                <span>{config.avatar}</span>
-                <span className="hidden sm:inline">{config.name}</span>
-              </button>
-            ))}
-          </div>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500/50">
+            <option value="all">All Status</option>
+            {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+          </select>
         </div>
       </div>
 
-      {/* Kanban Board */}
-      {filteredProjects.length === 0 && !searchQuery && filterAssignee === 'all' ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-20 text-center"
-        >
-          <div className="w-20 h-20 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6">
-            <Folder className="w-10 h-10 text-purple-400" />
-          </div>
+      {/* Content */}
+      {filtered.length === 0 && !search && statusFilter === 'all' ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-6"><Briefcase size={40} className="text-emerald-400" /></div>
           <h3 className="text-xl font-semibold text-white mb-2">No projects yet</h3>
-          <p className="text-slate-400 max-w-md mb-6">
-            Create your first project to start tracking work, managing tasks, and collaborating with your team.
-          </p>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium px-6 py-3 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/25"
-          >
-            <Plus className="w-5 h-5" />
-            Create Your First Project
-          </button>
-        </motion.div>
-      ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="flex gap-4 overflow-x-auto pb-4">
-            {(['LEAD', 'PROPOSAL', 'ACTIVE', 'REVIEW', 'COMPLETE'] as ProjectStatus[]).map((status) => (
-              <KanbanColumn
-                key={status}
-                status={status}
-                projects={projectsByStatus[status]}
-                onProjectClick={setSelectedProject}
-              />
-            ))}
-          </div>
+          <p className="text-gray-500 max-w-md mb-6">Create your first project to start tracking work, budgets, and deadlines.</p>
+          <button onClick={() => { setEditingProject(null); setShowModal(true); }} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors font-medium"><Plus size={18} /> Create Your First Project</button>
+        </div>
+      ) : viewMode === 'grid' ? (
+        /* Grid View */
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {filtered.map((project, i) => {
+            const sc = STATUS_CONFIG[project.status];
+            const hc = HEALTH_CONFIG[project.health];
+            const HealthIcon = hc.icon;
+            const days = project.deadline ? daysUntil(project.deadline) : null;
+            const budgetPct = project.budget ? Math.round((project.spent / project.budget) * 100) : 0;
 
-          <DragOverlay>
-            {activeProject && <ProjectCard project={activeProject} />}
-          </DragOverlay>
-        </DndContext>
+            return (
+              <motion.div key={project.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} onClick={() => setSelectedProject(project)}
+                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/10 p-5 cursor-pointer hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-white truncate group-hover:text-emerald-400 transition-colors">{project.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${sc.bgColor} ${sc.color} ${sc.borderColor}`}>{sc.label}</span>
+                      {project.client && <span className="text-[10px] text-gray-500">{project.client.name}</span>}
+                    </div>
+                  </div>
+                  <HealthIcon size={18} className={hc.color} />
+                </div>
+
+                {/* Progress */}
+                <div className="mb-4">
+                  <div className="flex justify-between text-xs text-gray-500 mb-1"><span>Progress</span><span className="text-white font-medium">{project.progress}%</span></div>
+                  <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div className={`h-full rounded-full ${project.progress >= 80 ? 'bg-emerald-500' : project.progress >= 50 ? 'bg-blue-500' : 'bg-amber-500'}`} initial={{ width: 0 }} animate={{ width: `${project.progress}%` }} transition={{ duration: 1, delay: 0.3 + i * 0.05 }} />
+                  </div>
+                </div>
+
+                {/* Budget & Deadline */}
+                <div className="flex items-center justify-between text-xs mb-3">
+                  <div className="flex items-center gap-1 text-gray-500"><DollarSign size={12} />{project.budget ? <span>{formatCurrency(project.spent)} / {formatCurrency(project.budget)}</span> : <span>No budget</span>}</div>
+                  {days !== null && <div className={`flex items-center gap-1 ${days < 0 ? 'text-red-400' : days <= 7 ? 'text-amber-400' : 'text-gray-500'}`}><Clock size={12} />{days < 0 ? `${Math.abs(days)}d over` : `${days}d left`}</div>}
+                </div>
+
+                {project.tags && project.tags.length > 0 && <div className="flex flex-wrap gap-1 mb-3">{project.tags.slice(0, 3).map(t => <span key={t} className="px-2 py-0.5 rounded-md bg-white/5 text-[10px] text-gray-500">{t}</span>)}</div>}
+
+                {/* Budget bar */}
+                {project.budget ? (
+                  <div className="pt-3 border-t border-white/10">
+                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden"><div className={`h-full rounded-full ${budgetPct > 90 ? 'bg-red-500' : budgetPct > 70 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min(budgetPct, 100)}%` }} /></div>
+                    <p className="text-[10px] text-gray-500 mt-1 text-right">{budgetPct}% of budget used</p>
+                  </div>
+                ) : null}
+              </motion.div>
+            );
+          })}
+        </div>
+      ) : (
+        /* Kanban View */
+        <div className="overflow-x-auto pb-4 -mx-4 px-4 lg:mx-0 lg:px-0">
+          <div className="flex gap-4 lg:grid lg:grid-cols-5 lg:gap-3 min-w-max lg:min-w-0">
+            {KANBAN_STATUSES.map((status, i) => {
+              const sc = STATUS_CONFIG[status];
+              const col = projectsByStatus[status] || [];
+              return (
+                <motion.div key={status} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="min-w-[260px] w-[260px] lg:min-w-0 lg:w-auto lg:flex-1">
+                  <div className={`px-3 py-3 rounded-t-xl border border-b-0 bg-gradient-to-br from-white/[0.08] to-white/[0.03] border-white/[0.1]`}>
+                    <div className="flex items-center gap-2"><div className={`w-2.5 h-2.5 rounded-full ${sc.bgColor.replace('/10', '')}`} /><h3 className={`font-semibold text-sm ${sc.color}`}>{sc.label}</h3><span className="text-xs px-1.5 py-0.5 rounded-md bg-white/10 text-gray-500">{col.length}</span></div>
+                  </div>
+                  <div
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={e => { e.preventDefault(); const id = e.dataTransfer.getData('projectId'); if (id) handleDropProject(id, status); }}
+                    className="p-2.5 rounded-b-xl border border-t-0 border-white/[0.1] min-h-[300px] space-y-2.5"
+                  >
+                    {col.map(p => {
+                      const hc = HEALTH_CONFIG[p.health]; const HI = hc.icon;
+                      return (
+                        <div key={p.id} draggable onDragStart={e => { e.dataTransfer.setData('projectId', p.id); e.dataTransfer.effectAllowed = 'move'; }}>
+                          <motion.div layout className="group cursor-pointer rounded-xl bg-gradient-to-br from-white/[0.08] to-white/[0.03] border border-white/[0.1] hover:border-emerald-500/40 p-3.5 transition-all" onClick={() => setSelectedProject(p)}>
+                            <div className="flex items-start justify-between mb-2"><h3 className="font-semibold text-white text-sm truncate group-hover:text-emerald-300 flex-1">{p.name}</h3><HI size={14} className={hc.color} /></div>
+                            {p.client && <p className="text-xs text-gray-500 mb-2">{p.client.name}</p>}
+                            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-2"><div className="h-full bg-emerald-500 rounded-full" style={{ width: `${p.progress}%` }} /></div>
+                            <div className="flex items-center justify-between text-[10px] text-gray-500"><span>{p.progress}%</span>{p.budget && <span>{formatCurrency(p.spent)}/{formatCurrency(p.budget)}</span>}</div>
+                          </motion.div>
+                        </div>
+                      );
+                    })}
+                    {col.length === 0 && <div className="py-10 text-center"><Briefcase size={18} className="mx-auto mb-2 text-gray-600" /><p className="text-xs text-gray-600">No projects</p></div>}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
       )}
 
-      {/* Slide-over Panel */}
-      <AnimatePresence>
-        {selectedProject && (
-          <ProjectSlideOver
-            project={selectedProject}
-            onClose={() => setSelectedProject(null)}
-            onStatusChange={(status) => handleStatusChange(selectedProject.id, status)}
-            onAssigneeChange={(assignee) => handleAssigneeChange(selectedProject.id, assignee)}
-          />
-        )}
-      </AnimatePresence>
+      {/* Empty search result */}
+      {filtered.length === 0 && (search || statusFilter !== 'all') && (
+        <div className="text-center py-12"><p className="text-gray-500">No projects match your filters</p></div>
+      )}
 
-      {/* Add Project Modal */}
-      <AnimatePresence>
-        {showAddModal && (
-          <AddProjectModal
-            onClose={() => setShowAddModal(false)}
-            onAdd={handleAddProject}
-          />
-        )}
-      </AnimatePresence>
+      {/* Drawer */}
+      <AnimatePresence>{selectedProject && <ProjectDrawer project={selectedProject} onClose={() => setSelectedProject(null)} onEdit={() => { setEditingProject(selectedProject); setShowModal(true); setSelectedProject(null); }} />}</AnimatePresence>
+
+      {/* Modal */}
+      <AnimatePresence>{showModal && <ProjectModal project={editingProject} clients={clients} onClose={() => { setShowModal(false); setEditingProject(undefined); }} onSave={handleSaveProject} />}</AnimatePresence>
     </div>
-  )
+  );
 }

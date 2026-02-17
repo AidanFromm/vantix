@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { Menu, X, ArrowRight, LayoutDashboard, Sparkles } from 'lucide-react';
 
 const navLinks = [
-  { href: '/#services', label: 'Services' },
-  { href: '/#portfolio', label: 'Portfolio' },
+  { href: '/services', label: 'Services' },
+  { href: '/portfolio', label: 'Portfolio' },
   { href: '/#pricing', label: 'Pricing' },
   { href: '/#contact', label: 'Contact' },
 ];

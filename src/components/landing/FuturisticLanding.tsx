@@ -1,41 +1,32 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import Link from 'next/link';
-import { ArrowRight, ArrowDown, Globe, Smartphone, Cpu, Database, Check, Star, Zap, Clock, Shield, MessageSquare, ChevronDown, Users, TrendingUp, Award } from 'lucide-react';
+import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
+import {
+  ArrowRight, ArrowDown, Bot, Globe, Zap, BarChart3, Mail, Package,
+  Phone, Sparkles, Clock, Users, TrendingUp, Shield, ChevronDown,
+  MessageSquare, Calendar, Search, Cpu, CheckCircle2, ExternalLink,
+  Twitter, Linkedin, Instagram, Menu, X
+} from 'lucide-react';
 
 // ============================================
-// FUTURISTIC LANDING - Premium Marketing Copy
+// VANTIX AI - Premium Landing Page
 // ============================================
 
-export function FuturisticLanding() {
-  const [mounted, setMounted] = useState(false);
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' as const } },
+};
 
-  useEffect(() => {
-    setMounted(true);
-    window.scrollTo(0, 0);
-  }, []);
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
 
-  if (!mounted) return null;
-
-  return (
-    <div className="bg-[#fafafa] text-gray-900 min-h-screen">
-      <Navigation />
-      <HeroSection />
-      <SocialProofBar />
-      <ProblemSection />
-      <WhatWeDoSection />
-      <WhyUsSection />
-      <ProcessSection />
-      <ResultsSection />
-      <TestimonialsSection />
-      <WhoIsThisFor />
-      <FAQSection />
-      <FinalCTA />
-      <Footer />
-    </div>
-  );
+function useAnimateInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: threshold });
+  return { ref, inView };
 }
 
 // ============================================
@@ -43,864 +34,723 @@ export function FuturisticLanding() {
 // ============================================
 function Navigation() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 px-6 lg:px-12 py-5 transition-all duration-300 ${
-      scrolled ? 'bg-white/90 backdrop-blur-lg shadow-sm' : ''
-    }`}>
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">V</span>
-          </div>
-          <span className="font-semibold text-gray-900 tracking-wide">VANTIX</span>
-        </Link>
-        
-        <div className="hidden md:flex items-center gap-8">
-          <Link href="#services" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Services</Link>
-          <Link href="#results" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Results</Link>
-          <Link href="#process" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Process</Link>
-          <Link href="#faq" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">FAQ</Link>
-        </div>
+  const links = [
+    { label: 'Services', href: '#services' },
+    { label: 'Results', href: '#roi' },
+    { label: 'Process', href: '#process' },
+    { label: 'Team', href: '#team' },
+    { label: 'FAQ', href: '#faq' },
+  ];
 
-        <Link
-          href="#contact"
-          className="px-5 py-2.5 bg-emerald-500 text-white text-sm font-medium rounded-full hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/25"
-        >
-          Get a Free Quote
-        </Link>
+  return (
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-[#0A0A0F]/80 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="#" className="text-2xl font-bold text-white tracking-tight">
+          vantix<span className="text-emerald-400">.</span>
+        </a>
+        <div className="hidden md:flex items-center gap-8">
+          {links.map((l) => (
+            <a key={l.href} href={l.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+              {l.label}
+            </a>
+          ))}
+          <a
+            href="#contact"
+            className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-semibold rounded-full transition-all"
+          >
+            Book a Call
+          </a>
+        </div>
+        <button className="md:hidden text-white" onClick={() => setMobileOpen(!mobileOpen)}>
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
-    </nav>
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-[#0A0A0F]/95 backdrop-blur-xl border-b border-white/5 overflow-hidden"
+          >
+            <div className="px-6 py-4 flex flex-col gap-4">
+              {links.map((l) => (
+                <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)} className="text-gray-300 hover:text-white transition-colors">
+                  {l.label}
+                </a>
+              ))}
+              <a href="#contact" onClick={() => setMobileOpen(false)} className="px-5 py-2.5 bg-emerald-500 text-black text-sm font-semibold rounded-full text-center">
+                Book a Call
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
 }
 
 // ============================================
-// HERO - Hook + Promise
+// PARTICLE GRID BACKGROUND
 // ============================================
-function HeroSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end start'],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
+function ParticleGrid() {
   return (
-    <motion.section
-      ref={ref}
-      className="relative min-h-screen flex items-center pt-20 overflow-hidden"
-    >
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-emerald-50/50 via-transparent to-transparent" />
-      
-      {/* Subtle pattern */}
-      <div 
-        className="absolute inset-0 opacity-[0.3]"
+    <div className="absolute inset-0 overflow-hidden">
+      {/* Radial gradient overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08)_0%,transparent_70%)]" />
+      {/* Animated grid */}
+      <div
+        className="absolute inset-0 opacity-[0.07]"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #d1fae5 1px, transparent 0)`,
-          backgroundSize: '32px 32px',
+          backgroundImage: `linear-gradient(rgba(16,185,129,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.3) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px',
+          animation: 'gridMove 20s linear infinite',
         }}
       />
-
-      {/* Floating shapes */}
-      <motion.div
-        animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-32 right-[15%] w-64 h-64 bg-gradient-to-br from-emerald-200/40 to-cyan-200/20 rounded-3xl blur-sm"
-      />
-      <motion.div
-        animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-32 left-[10%] w-48 h-48 bg-gradient-to-br from-emerald-300/30 to-transparent rounded-full blur-sm"
-      />
-
-      <motion.div style={{ y, opacity }} className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-20">
-        <div className="max-w-4xl">
-          {/* Urgency tag */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-emerald-100 mb-8"
+      {/* Floating particles via CSS */}
+      {Array.from({ length: 30 }).map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-1 h-1 rounded-full bg-emerald-400/30"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animation: `particleFloat ${8 + Math.random() * 12}s ease-in-out infinite`,
+            animationDelay: `${Math.random() * 5}s`,
+          }}
+        />
+      ))}
+      {/* Neural network lines */}
+      <svg className="absolute inset-0 w-full h-full opacity-[0.04]">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <line
+            key={i}
+            x1={`${10 + Math.random() * 80}%`}
+            y1={`${10 + Math.random() * 80}%`}
+            x2={`${10 + Math.random() * 80}%`}
+            y2={`${10 + Math.random() * 80}%`}
+            stroke="#10b981"
+            strokeWidth="1"
           >
-            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-600">Only taking <span className="font-semibold text-emerald-600">3 new clients</span> this month</span>
-          </motion.div>
-
-          {/* Main headline - Pain point + Solution */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.1] text-gray-900 mb-6"
-          >
-            Stop losing money to{' '}
-            <span className="text-emerald-500">outdated tech</span>
-            {' '}and manual busywork
-          </motion.h1>
-
-          {/* Subheadline - Benefit-focused */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-lg md:text-xl text-gray-500 max-w-2xl mb-10 leading-relaxed"
-          >
-            We build custom websites, apps, and automation systems that{' '}
-            <span className="text-gray-900 font-medium">actually make you money</span>—not 
-            just look pretty. In 3-5 weeks, you&apos;ll have a system that works as hard as you do.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex flex-wrap gap-4"
-          >
-            <Link
-              href="#contact"
-              className="group px-8 py-4 bg-emerald-500 text-white font-medium rounded-full hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/25"
-            >
-              Get Your Free Strategy Call
-              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link
-              href="#results"
-              className="px-8 py-4 bg-white text-gray-700 font-medium rounded-full hover:bg-gray-50 transition-all border border-gray-200"
-            >
-              See Client Results
-            </Link>
-          </motion.div>
-
-          {/* Trust signals */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="flex flex-wrap items-center gap-6 mt-12 pt-8 border-t border-gray-200"
-          >
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} className="fill-yellow-400 text-yellow-400" />
-              ))}
-              <span className="ml-2 text-sm text-gray-600">5.0 from 15+ clients</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Shield size={16} className="text-emerald-500" />
-              <span>100% satisfaction guarantee</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Clock size={16} className="text-emerald-500" />
-              <span>24hr response time</span>
-            </div>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="flex flex-col items-center gap-2 text-gray-400"
-        >
-          <ArrowDown size={20} />
-        </motion.div>
-      </motion.div>
-    </motion.section>
+            <animate attributeName="opacity" values="0;0.5;0" dur={`${4 + Math.random() * 6}s`} repeatCount="indefinite" />
+          </line>
+        ))}
+      </svg>
+      <style jsx>{`
+        @keyframes gridMove {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(60px, 60px); }
+        }
+        @keyframes particleFloat {
+          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+          50% { transform: translate(${Math.random() > 0.5 ? '' : '-'}30px, -40px) scale(1.5); opacity: 0.7; }
+        }
+      `}</style>
+    </div>
   );
 }
 
 // ============================================
-// SOCIAL PROOF BAR - Quick credibility
+// HERO SECTION
 // ============================================
+function HeroSection() {
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <ParticleGrid />
+      {/* Top gradient fade */}
+      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#0A0A0F] to-transparent z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0A0A0F] to-transparent z-10" />
+
+      <div className="relative z-20 max-w-5xl mx-auto px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 mb-8"
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-sm text-emerald-400 font-medium">AI-First Digital Transformation</span>
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[0.95] tracking-tight mb-6"
+        >
+          Your Business.
+          <br />
+          <span className="bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent">
+            Powered by AI.
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+        >
+          We build AI systems that generate revenue, cut costs, and run your operations — while you focus on growth.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.8 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center"
+        >
+          <a
+            href="#services"
+            className="group px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-full transition-all inline-flex items-center justify-center gap-2"
+          >
+            See What AI Can Do For You
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          </a>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 1 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        >
+          <ArrowDown size={20} className="text-gray-600 animate-bounce" />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// SOCIAL PROOF BAR
+// ============================================
+function AnimatedCounter({ target, suffix = '', prefix = '' }: { target: number; suffix?: string; prefix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const step = target / 60;
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) {
+        setCount(target);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, 16);
+    return () => clearInterval(timer);
+  }, [inView, target]);
+
+  return <span ref={ref}>{prefix}{count.toLocaleString()}{suffix}</span>;
+}
+
 function SocialProofBar() {
   return (
-    <section className="py-8 bg-white border-y border-gray-100">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 text-center">
-          <div>
-            <p className="text-3xl md:text-4xl font-bold text-gray-900">$6M+</p>
-            <p className="text-sm text-gray-500">Revenue Generated</p>
-          </div>
-          <div className="hidden sm:block w-px h-12 bg-gray-200" />
-          <div>
-            <p className="text-3xl md:text-4xl font-bold text-gray-900">50+</p>
-            <p className="text-sm text-gray-500">Projects Shipped</p>
-          </div>
-          <div className="hidden sm:block w-px h-12 bg-gray-200" />
-          <div>
-            <p className="text-3xl md:text-4xl font-bold text-gray-900">99.9%</p>
-            <p className="text-sm text-gray-500">Uptime Guaranteed</p>
-          </div>
-          <div className="hidden sm:block w-px h-12 bg-gray-200" />
-          <div>
-            <p className="text-3xl md:text-4xl font-bold text-gray-900">3-5</p>
-            <p className="text-sm text-gray-500">Weeks to Launch</p>
-          </div>
-        </div>
+    <section className="relative py-12 border-y border-white/5">
+      <div className="max-w-7xl mx-auto px-6">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 text-center"
+        >
+          {[
+            { prefix: '$', target: 2, suffix: 'M+', label: 'Client Revenue Powered' },
+            { prefix: '', target: 50, suffix: '+', label: 'AI Systems Deployed' },
+            { prefix: '', target: 98, suffix: '%', label: 'Client Retention Rate' },
+          ].map((stat, i) => (
+            <motion.div key={i} variants={fadeUp} className="flex flex-col items-center">
+              <span className="text-3xl md:text-4xl font-bold text-white">
+                <AnimatedCounter target={stat.target} suffix={stat.suffix} prefix={stat.prefix} />
+              </span>
+              <span className="text-sm text-gray-500 mt-1">{stat.label}</span>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
 }
 
 // ============================================
-// PROBLEM SECTION - Agitate the pain
+// THE PROBLEM
 // ============================================
 function ProblemSection() {
-  const problems = [
-    {
-      icon: Clock,
-      title: "Drowning in manual tasks",
-      description: "You're spending hours on repetitive work that could be automated. Time you could be using to grow your business."
-    },
-    {
-      icon: TrendingUp,
-      title: "Missing out on revenue",
-      description: "Your current website or systems aren't converting. Every day you wait is money left on the table."
-    },
-    {
-      icon: Users,
-      title: "Can't find reliable developers",
-      description: "You've tried freelancers who ghost. Agencies that overcharge and underdeliver. You need a partner who actually gets it done."
-    }
+  const { ref, inView } = useAnimateInView();
+
+  const before = [
+    'Answering the same customer questions manually',
+    'Missing leads because you were busy',
+    'Spending hours on email campaigns',
+    'Guessing what your customers want',
+    'Hiring more staff to keep up',
+  ];
+
+  const after = [
+    'AI chatbot handles 90% of inquiries 24/7',
+    'AI captures and qualifies every lead instantly',
+    'AI writes, sends, and optimizes every email',
+    'Real-time analytics predict customer behavior',
+    'AI scales your operations at zero headcount cost',
   ];
 
   return (
-    <section className="py-20 lg:py-28 bg-[#fafafa]">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section className="py-24 md:py-32 relative">
+      <div className="max-w-7xl mx-auto px-6" ref={ref}>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">Sound Familiar?</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900 mb-6">
-            You know you need better tech.
-            <br />
-            <span className="text-gray-400">But where do you start?</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-          {problems.map((problem, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="p-8 bg-white rounded-2xl border border-gray-100"
-            >
-              <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-6">
-                <problem.icon size={24} className="text-red-500" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{problem.title}</h3>
-              <p className="text-gray-500 leading-relaxed">{problem.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
-// WHAT WE DO - The Solution
-// ============================================
-function WhatWeDoSection() {
-  const services = [
-    {
-      icon: Globe,
-      title: 'Web Apps & Websites',
-      tagline: 'That actually convert',
-      description: 'Custom-built sites that turn visitors into customers. Not templates—real solutions designed around YOUR business.',
-      benefits: ['Mobile-first design', 'Lightning fast', 'SEO optimized', 'Analytics built-in'],
-      price: 'From $2,500'
-    },
-    {
-      icon: Smartphone,
-      title: 'Mobile Apps',
-      tagline: 'Your business in every pocket',
-      description: 'iOS and Android apps your customers will actually use. Push notifications, offline mode, the whole package.',
-      benefits: ['Native performance', 'App Store ready', 'Push notifications', 'Offline capable'],
-      price: 'From $5,000'
-    },
-    {
-      icon: Cpu,
-      title: 'AI & Automation',
-      tagline: 'Work smarter, not harder',
-      description: 'Bots and systems that handle the boring stuff while you sleep. Imagine waking up to more sales, not more emails.',
-      benefits: ['24/7 operation', 'Custom workflows', 'AI integrations', 'Real-time alerts'],
-      price: 'From $3,000'
-    },
-    {
-      icon: Database,
-      title: 'Backend & APIs',
-      tagline: 'The engine behind the scenes',
-      description: 'Powerful, scalable infrastructure that grows with you. No more crashes when you go viral.',
-      benefits: ['99.9% uptime', 'Auto-scaling', 'Secure by default', 'Real-time data'],
-      price: 'From $4,000'
-    },
-  ];
-
-  return (
-    <section id="services" className="py-24 lg:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">Our Services</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900 mb-6">
-            Everything you need to
-            <br />
-            <span className="text-emerald-500">dominate online</span>
-          </h2>
-          <p className="text-gray-500 text-lg">
-            No bloated packages. No hidden fees. Just exactly what you need to win.
-          </p>
-        </motion.div>
-
-        {/* Services grid */}
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-          {services.map((service, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="group p-8 lg:p-10 bg-gray-50 rounded-2xl hover:bg-emerald-50 transition-all border border-transparent hover:border-emerald-200"
-            >
-              <div className="flex items-start justify-between mb-6">
-                <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                  <service.icon size={28} className="text-emerald-500" />
-                </div>
-                <span className="text-sm font-semibold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">
-                  {service.price}
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-1">{service.title}</h3>
-              <p className="text-emerald-600 text-sm font-medium mb-4">{service.tagline}</p>
-              <p className="text-gray-500 leading-relaxed mb-6">{service.description}</p>
-              <div className="grid grid-cols-2 gap-2">
-                {service.benefits.map((benefit, j) => (
-                  <div key={j} className="flex items-center gap-2 text-sm text-gray-600">
-                    <Check size={14} className="text-emerald-500" />
-                    {benefit}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-12"
-        >
-          <Link
-            href="#contact"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 text-white font-medium rounded-full hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/25"
-          >
-            Get a Custom Quote
-            <ArrowRight size={18} />
-          </Link>
-          <p className="text-sm text-gray-400 mt-4">Free consultation • No commitment</p>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
-// WHY US - Differentiators
-// ============================================
-function WhyUsSection() {
-  const reasons = [
-    {
-      icon: Zap,
-      title: "We move fast",
-      description: "Most projects launch in 3-5 weeks. Not 3-5 months. You'll have updates every step of the way."
-    },
-    {
-      icon: MessageSquare,
-      title: "We actually communicate",
-      description: "No ghosting. No corporate BS. Direct access to the people building your product. 24hr response guarantee."
-    },
-    {
-      icon: Shield,
-      title: "We guarantee results",
-      description: "If you're not happy, we'll make it right or refund you. That's how confident we are in our work."
-    },
-    {
-      icon: Award,
-      title: "We've done this before",
-      description: "50+ projects. $6M+ in client revenue generated. We know what works because we've built what works."
-    },
-  ];
-
-  return (
-    <section className="py-24 lg:py-32 bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left - Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <p className="text-emerald-400 font-medium text-sm tracking-wide uppercase mb-4">Why Vantix</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium mb-6">
-              We&apos;re not like other agencies.
-              <br />
-              <span className="text-gray-400">And that&apos;s the point.</span>
-            </h2>
-            <p className="text-gray-400 text-lg leading-relaxed">
-              Big agencies charge $50k for a basic website. Freelancers disappear mid-project. 
-              We&apos;re the sweet spot: senior-level talent, startup speed, and prices that make sense.
-            </p>
-          </motion.div>
-
-          {/* Right - Reasons */}
-          <div className="grid sm:grid-cols-2 gap-6">
-            {reasons.map((reason, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="p-6 bg-white/5 rounded-xl border border-white/10"
-              >
-                <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-4">
-                  <reason.icon size={20} className="text-emerald-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">{reason.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{reason.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
-// PROCESS - How We Work
-// ============================================
-function ProcessSection() {
-  const steps = [
-    { 
-      num: '01', 
-      title: 'Discovery Call', 
-      duration: '30 min',
-      description: 'We learn about your business, goals, and what\'s not working. You\'ll leave with clarity on next steps—even if we\'re not a fit.' 
-    },
-    { 
-      num: '02', 
-      title: 'Strategy & Quote', 
-      duration: '2-3 days',
-      description: 'We create a detailed roadmap and fixed-price quote. No surprises. You\'ll know exactly what you\'re getting and when.' 
-    },
-    { 
-      num: '03', 
-      title: 'Build Sprint', 
-      duration: '3-5 weeks',
-      description: 'We build your solution with weekly demos. You see progress every week and give feedback that actually gets implemented.' 
-    },
-    { 
-      num: '04', 
-      title: 'Launch & Beyond', 
-      duration: 'Ongoing',
-      description: 'We launch, train your team, and stick around for support. You\'re never left hanging after we ship.' 
-    },
-  ];
-
-  return (
-    <section id="process" className="py-24 lg:py-32 bg-[#fafafa]">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">Our Process</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900 mb-6">
-            From idea to launch in
-            <br />
-            <span className="text-emerald-500">weeks, not months</span>
-          </h2>
-          <p className="text-gray-500 text-lg">
-            A proven system that&apos;s shipped 50+ successful projects.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-4 gap-6 lg:gap-8">
-          {steps.map((step, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="relative p-6 bg-white rounded-2xl border border-gray-100"
-            >
-              {/* Connector line */}
-              {i < steps.length - 1 && (
-                <div className="hidden md:block absolute top-8 left-full w-full h-px bg-gradient-to-r from-emerald-200 to-transparent -translate-x-6 z-0" />
-              )}
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl font-bold text-emerald-500">{step.num}</span>
-                  <span className="text-xs font-medium text-gray-400 bg-gray-100 px-2 py-1 rounded">{step.duration}</span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{step.description}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
-// RESULTS - Proof
-// ============================================
-function ResultsSection() {
-  const projects = [
-    { 
-      name: 'Just Four Kicks', 
-      result: '$5.8M Revenue',
-      metric: '300+ stores served',
-      type: 'B2B E-Commerce Platform',
-      description: 'Built the entire tech stack for a wholesale sneaker operation. Custom inventory, tiered pricing, automated fulfillment.'
-    },
-    { 
-      name: 'CardLedger', 
-      result: '250K+ Cards',
-      metric: 'Tracked across 16 TCGs',
-      type: 'Portfolio Tracker App',
-      description: 'The smartest portfolio tracker for card collectors. Real-time pricing, P&L tracking, market insights.'
-    },
-    { 
-      name: 'Trading Systems', 
-      result: '10,000+ Hours',
-      metric: 'Automated annually',
-      type: 'AI Automation',
-      description: 'Custom trading bots and automation systems that operate 24/7. While our clients sleep, their systems work.'
-    },
-  ];
-
-  return (
-    <section id="results" className="py-24 lg:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mb-16"
-        >
-          <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">Case Studies</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900 mb-6">
-            Real projects.
-            <br />
-            <span className="text-emerald-500">Real results.</span>
-          </h2>
-          <p className="text-gray-500 text-lg">
-            We don&apos;t just build pretty things. We build things that make money.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {projects.map((project, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="group p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:border-emerald-200 transition-all"
-            >
-              <p className="text-sm text-emerald-600 font-medium mb-3">{project.type}</p>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2">{project.name}</h3>
-              <p className="text-gray-500 text-sm mb-6">{project.description}</p>
-              <div className="pt-6 border-t border-gray-200">
-                <p className="text-3xl font-bold text-emerald-500 mb-1">{project.result}</p>
-                <p className="text-sm text-gray-400">{project.metric}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
-// TESTIMONIALS
-// ============================================
-function TestimonialsSection() {
-  const testimonials = [
-    {
-      quote: "They built our entire platform in 4 weeks. Other agencies quoted us 6 months. The system handles $500K+ in monthly orders without breaking a sweat.",
-      name: "Kyle",
-      title: "CEO, Just Four Kicks",
-      avatar: "K"
-    },
-    {
-      quote: "Finally, developers who actually deliver. No excuses, no delays—just results. Our app went from idea to live in under 5 weeks.",
-      name: "Dave",
-      title: "Founder, SecuredTampa",
-      avatar: "D"
-    },
-    {
-      quote: "The automation systems they built save us 40+ hours a week. Best investment we've made in years.",
-      name: "Client",
-      title: "E-Commerce Owner",
-      avatar: "C"
-    }
-  ];
-
-  return (
-    <section className="py-24 lg:py-32 bg-emerald-50">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <p className="text-emerald-600 font-medium text-sm tracking-wide uppercase mb-4">Testimonials</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900">
-            Don&apos;t take our word for it
-          </h2>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="p-8 bg-white rounded-2xl shadow-sm"
-            >
-              {/* Stars */}
-              <div className="flex items-center gap-1 mb-6">
-                {[...Array(5)].map((_, j) => (
-                  <Star key={j} size={16} className="fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-              
-              <p className="text-gray-700 leading-relaxed mb-6">&ldquo;{testimonial.quote}&rdquo;</p>
-              
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                  <span className="text-emerald-600 font-semibold">{testimonial.avatar}</span>
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                  <p className="text-sm text-gray-500">{testimonial.title}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
-// WHO IS THIS FOR
-// ============================================
-function WhoIsThisFor() {
-  const ideal = [
-    "Business owners who want to stop losing money to outdated systems",
-    "Founders ready to launch their MVP in weeks, not months",
-    "Companies that need reliable developers who actually deliver",
-    "Anyone who's tired of agencies that overpromise and underdeliver"
-  ];
-
-  const notIdeal = [
-    "Looking for the cheapest option (we're not)",
-    "Want a $500 Fiverr website",
-    "Not ready to invest in growth",
-    "Need hand-holding on every decision"
-  ];
-
-  return (
-    <section className="py-24 lg:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">Is This You?</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900">
-            We&apos;re not for everyone.
-            <br />
-            <span className="text-gray-400">And that&apos;s okay.</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Ideal fit */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="p-8 bg-emerald-50 rounded-2xl border border-emerald-100"
-          >
-            <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-              <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
-                <Check size={16} className="text-white" />
-              </div>
-              Perfect fit if you&apos;re...
-            </h3>
-            <ul className="space-y-4">
-              {ideal.map((item, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <Check size={18} className="text-emerald-500 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Not ideal */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="p-8 bg-gray-50 rounded-2xl border border-gray-100"
-          >
-            <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                <span className="text-white text-lg">×</span>
-              </div>
-              Not ideal if you&apos;re...
-            </h3>
-            <ul className="space-y-4">
-              {notIdeal.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-gray-500">
-                  <span className="text-gray-300 mt-0.5 flex-shrink-0">—</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================
-// FAQ SECTION
-// ============================================
-function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-  
-  const faqs = [
-    {
-      question: "How much does a typical project cost?",
-      answer: "Projects range from $2,500 for a basic website to $25,000+ for complex apps and automation systems. We provide a fixed-price quote upfront so there are no surprises. Most clients invest between $5,000-$15,000."
-    },
-    {
-      question: "How long does it take to build?",
-      answer: "Most projects launch in 3-5 weeks. Simple websites can be done in 1-2 weeks. Complex apps might take 6-8 weeks. We'll give you a clear timeline before we start, and we stick to it."
-    },
-    {
-      question: "What if I'm not happy with the result?",
-      answer: "We have a 100% satisfaction guarantee. We'll revise until you're thrilled with the result, or we'll refund your money. In 5 years, we've never had to issue a refund—but the guarantee is there."
-    },
-    {
-      question: "Do you offer ongoing support?",
-      answer: "Yes! Every project includes 30 days of free support after launch. After that, we offer monthly maintenance plans starting at $500/month for updates, monitoring, and priority support."
-    },
-    {
-      question: "I'm not technical. Will I understand what's happening?",
-      answer: "Absolutely. We explain everything in plain English and give weekly demos so you can see progress. You'll never feel lost or confused—we're here to make this easy for you."
-    },
-    {
-      question: "Can you work with my existing systems?",
-      answer: "Yes. We've integrated with everything from Shopify to Salesforce to custom APIs. If you have existing tools, we'll work with them. No need to start from scratch."
-    }
-  ];
-
-  return (
-    <section id="faq" className="py-24 lg:py-32 bg-[#fafafa]">
-      <div className="max-w-3xl mx-auto px-6 lg:px-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
           className="text-center mb-16"
         >
-          <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">FAQ</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900">
-            Common questions
-          </h2>
+          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+            The Problem
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight max-w-3xl mx-auto">
+            You are spending 40+ hours a week on tasks AI can handle in seconds
+          </motion.h2>
         </motion.div>
 
-        <div className="space-y-4">
-          {faqs.map((faq, i) => (
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
+        >
+          {/* Before */}
+          <motion.div variants={fadeUp} className="relative p-8 rounded-2xl border border-red-500/10 bg-red-500/[0.02]">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-3 h-3 rounded-full bg-red-500/50" />
+              <span className="text-red-400 font-semibold text-sm uppercase tracking-wider">Without AI</span>
+            </div>
+            <ul className="space-y-4">
+              {before.map((item, i) => (
+                <motion.li key={i} variants={fadeUp} className="flex items-start gap-3 text-gray-400">
+                  <X size={16} className="text-red-400/60 mt-1 shrink-0" />
+                  <span>{item}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* After */}
+          <motion.div variants={fadeUp} className="relative p-8 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.02]">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-emerald-400 font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
+            </div>
+            <ul className="space-y-4">
+              {after.map((item, i) => (
+                <motion.li key={i} variants={fadeUp} className="flex items-start gap-3 text-gray-300">
+                  <CheckCircle2 size={16} className="text-emerald-400 mt-1 shrink-0" />
+                  <span>{item}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// SERVICES
+// ============================================
+const services = [
+  { icon: Bot, title: 'AI Chatbots', desc: '24/7 customer support and lead qualification. Your best salesperson never sleeps, never calls in sick, never asks for a raise.' },
+  { icon: Globe, title: 'AI-Powered Websites', desc: 'Self-optimizing, conversion-focused websites that learn from every visitor and get better over time. Automatically.' },
+  { icon: Search, title: 'Automated Lead Generation', desc: 'Find customers while you sleep. AI identifies, qualifies, and nurtures prospects across every channel.' },
+  { icon: BarChart3, title: 'AI Analytics & Insights', desc: 'Real-time business intelligence that tells you what is happening, why, and what to do next. No more guessing.' },
+  { icon: Mail, title: 'AI Email Marketing', desc: 'Writes, personalizes, sends, and follows up. Every email tailored to every recipient. At scale.' },
+  { icon: Package, title: 'AI Inventory Management', desc: 'Demand prediction and auto-reorder. Never overstock, never run out, never lose a sale to poor planning.' },
+  { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, qualify leads. Your AI receptionist handles it all — and never puts anyone on hold.' },
+  { icon: Sparkles, title: 'Custom AI Solutions', desc: 'If you can dream it, we can automate it. Bespoke AI systems built for your exact business needs.' },
+];
+
+function ServicesSection() {
+  const { ref, inView } = useAnimateInView();
+
+  return (
+    <section id="services" className="py-24 md:py-32 relative">
+      <div className="max-w-7xl mx-auto px-6" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="text-center mb-16"
+        >
+          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+            What We Deploy
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
+            AI Systems That Run Your Business
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-gray-400 mt-4 max-w-2xl mx-auto">
+            While your competitors are figuring out ChatGPT, we are building AI systems that run entire businesses.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
+        >
+          {services.map((s, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-white rounded-xl border border-gray-100 overflow-hidden"
+              variants={fadeUp}
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+              className="group relative p-6 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-sm hover:border-emerald-500/20 hover:bg-emerald-500/[0.03] transition-all cursor-default"
             >
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full p-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
-              >
-                <span className="font-medium text-gray-900 pr-4">{faq.question}</span>
-                <ChevronDown 
-                  size={20} 
-                  className={`text-gray-400 flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-180' : ''}`} 
-                />
-              </button>
-              {openIndex === i && (
-                <div className="px-6 pb-6">
-                  <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
-                </div>
-              )}
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:bg-emerald-500/20 transition-colors">
+                <s.icon size={22} className="text-emerald-400" />
+              </div>
+              <h3 className="text-white font-semibold text-lg mb-2">{s.title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// ROI SECTION
+// ============================================
+function ROISection() {
+  const { ref, inView } = useAnimateInView();
+
+  const stats = [
+    { value: '40+', label: 'Hours Saved Per Week', icon: Clock },
+    { value: '3x', label: 'More Qualified Leads', icon: TrendingUp },
+    { value: '24/7', label: 'Availability', icon: Shield },
+    { value: '$0', label: 'Additional Staff Needed', icon: Users },
+  ];
+
+  return (
+    <section id="roi" className="py-24 md:py-32 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[0.02] via-transparent to-transparent" />
+      <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="text-center mb-16"
+        >
+          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+            ROI
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+            The Numbers Don&apos;t Lie
+          </motion.h2>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto"
+        >
+          {stats.map((s, i) => (
+            <motion.div
+              key={i}
+              variants={fadeUp}
+              className="text-center p-6 rounded-2xl border border-white/5 bg-white/[0.02]"
+            >
+              <s.icon size={28} className="text-emerald-400 mx-auto mb-4" />
+              <div className="text-3xl md:text-4xl font-bold text-white mb-1">{s.value}</div>
+              <div className="text-sm text-gray-500">{s.label}</div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// CASE STUDY
+// ============================================
+function CaseStudy() {
+  const { ref, inView } = useAnimateInView();
+
+  return (
+    <section className="py-24 md:py-32 relative">
+      <div className="max-w-7xl mx-auto px-6" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+        >
+          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4 text-center">
+            Case Study
+          </motion.p>
+          <motion.div
+            variants={fadeUp}
+            className="relative p-8 md:p-12 rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-sm overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
+            <div className="relative grid md:grid-cols-2 gap-10 items-center">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Secured Tampa</h3>
+                <p className="text-emerald-400 text-sm font-medium mb-6">
+                  From Instagram DMs to a full AI-powered e-commerce platform
+                </p>
+                <p className="text-gray-400 leading-relaxed mb-6">
+                  Secured Tampa was running their entire business through Instagram DMs — manually responding to every inquiry, tracking orders in spreadsheets, and losing customers to slow response times. We built them a complete AI-powered e-commerce ecosystem with automated customer service, intelligent product recommendations, and real-time inventory management.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {['AI Chatbot', 'E-Commerce', 'Automation', 'Analytics'].map((tag) => (
+                    <span key={tag} className="px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-xs font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { value: '300%', label: 'Increase in Online Sales' },
+                  { value: '85%', label: 'Faster Response Time' },
+                  { value: '24/7', label: 'Customer Support Active' },
+                  { value: '40hrs', label: 'Saved Per Week' },
+                ].map((m, i) => (
+                  <motion.div
+                    key={i}
+                    variants={fadeUp}
+                    className="p-5 rounded-xl border border-white/5 bg-white/[0.03] text-center"
+                  >
+                    <div className="text-2xl font-bold text-emerald-400">{m.value}</div>
+                    <div className="text-xs text-gray-500 mt-1">{m.label}</div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// PROCESS
+// ============================================
+function ProcessSection() {
+  const { ref, inView } = useAnimateInView();
+
+  const steps = [
+    { num: '01', title: 'Discovery Call', desc: 'We learn your business inside and out. Every pain point, every bottleneck, every missed opportunity.', icon: Phone },
+    { num: '02', title: 'AI Audit', desc: 'We map every process that can be automated and build a custom AI strategy with projected ROI.', icon: Search },
+    { num: '03', title: 'Build & Deploy', desc: 'Our team builds your AI systems and deploys them seamlessly into your existing operations.', icon: Cpu },
+    { num: '04', title: 'Monitor & Scale', desc: 'We continuously optimize your AI systems and scale what works. Your business gets smarter every day.', icon: TrendingUp },
+  ];
+
+  return (
+    <section id="process" className="py-24 md:py-32 relative">
+      <div className="max-w-7xl mx-auto px-6" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="text-center mb-16"
+        >
+          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+            Our Process
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+            How We Work
+          </motion.h2>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="max-w-3xl mx-auto relative"
+        >
+          {/* Timeline line */}
+          <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-emerald-500/50 via-emerald-500/20 to-transparent" />
+
+          {steps.map((step, i) => (
+            <motion.div key={i} variants={fadeUp} className="relative pl-16 md:pl-20 pb-12 last:pb-0">
+              <div className="absolute left-3 md:left-5 w-6 h-6 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center">
+                <div className="w-2 h-2 rounded-full bg-emerald-400" />
+              </div>
+              <span className="text-emerald-500/40 text-xs font-mono font-bold">{step.num}</span>
+              <h3 className="text-xl font-bold text-white mt-1 mb-2">{step.title}</h3>
+              <p className="text-gray-400 leading-relaxed">{step.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// TEAM
+// ============================================
+function TeamSection() {
+  const { ref, inView } = useAnimateInView();
+
+  const team = [
+    {
+      name: 'Kyle Ventura',
+      role: 'Founder & AI Architect',
+      desc: 'Obsessed with building AI systems that make businesses unstoppable. Kyle architects every solution from the ground up with one goal: measurable ROI.',
+    },
+    {
+      name: 'Aidan Fromm',
+      role: 'Co-Founder & Technical Lead',
+      desc: 'Full-stack engineer who turns complex AI concepts into production-ready systems. Aidan ensures every deployment is bulletproof and built to scale.',
+    },
+  ];
+
+  return (
+    <section id="team" className="py-24 md:py-32 relative">
+      <div className="max-w-7xl mx-auto px-6" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="text-center mb-16"
+        >
+          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+            The Team
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+            Built by Builders
+          </motion.h2>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto"
+        >
+          {team.map((t, i) => (
+            <motion.div
+              key={i}
+              variants={fadeUp}
+              className="p-8 rounded-2xl border border-white/5 bg-white/[0.02] text-center"
+            >
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 border border-emerald-500/20 mx-auto mb-5 flex items-center justify-center">
+                <span className="text-2xl font-bold text-emerald-400">{t.name.split(' ').map(n => n[0]).join('')}</span>
+              </div>
+              <h3 className="text-xl font-bold text-white">{t.name}</h3>
+              <p className="text-emerald-400 text-sm font-medium mb-4">{t.role}</p>
+              <p className="text-gray-500 text-sm leading-relaxed">{t.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// FAQ
+// ============================================
+function FAQItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="border border-white/5 rounded-xl overflow-hidden"
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between p-6 text-left hover:bg-white/[0.02] transition-colors"
+      >
+        <span className="text-white font-medium pr-4">{q}</span>
+        <ChevronDown
+          size={18}
+          className={`text-gray-500 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <p className="px-6 pb-6 text-gray-400 leading-relaxed">{a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+function FAQSection() {
+  const { ref, inView } = useAnimateInView();
+
+  const faqs = [
+    { q: 'How long does it take to deploy an AI system?', a: 'Most AI systems are live within 2-4 weeks. Simple chatbots and automation can be deployed in under a week. Complex custom solutions may take 4-8 weeks. Either way, you start seeing ROI fast.' },
+    { q: 'What if AI makes mistakes with my customers?', a: 'Every system we build has human oversight built in. AI handles the volume, and edge cases get routed to your team. We also continuously train and optimize so accuracy only improves over time.' },
+    { q: 'Do I need technical knowledge to use these systems?', a: 'Zero. We build everything with dead-simple dashboards. If you can use a smartphone, you can manage your AI systems. Plus, we provide full training and ongoing support.' },
+    { q: 'What does it cost?', a: 'Every business is different. We price based on the complexity and scope of what you need. Book a discovery call and we will give you a transparent quote with projected ROI — most clients see positive returns within 30 days.' },
+    { q: 'Can AI really replace hiring more staff?', a: 'Not replace — augment. AI handles the repetitive, high-volume tasks so your team can focus on high-value work. One AI system can do the work of 3-5 employees in specific functions, at a fraction of the cost.' },
+    { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. If an issue arises, we catch it before you even notice. All clients get priority support with guaranteed response times. Your business never skips a beat.' },
+  ];
+
+  return (
+    <section id="faq" className="py-24 md:py-32 relative">
+      <div className="max-w-3xl mx-auto px-6" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="text-center mb-16"
+        >
+          <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+            FAQ
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+            Questions? Answered.
+          </motion.h2>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="space-y-3"
+        >
+          {faqs.map((f, i) => (
+            <FAQItem key={i} q={f.q} a={f.a} />
+          ))}
+        </motion.div>
       </div>
     </section>
   );
@@ -910,62 +760,42 @@ function FAQSection() {
 // FINAL CTA
 // ============================================
 function FinalCTA() {
+  const { ref, inView } = useAnimateInView();
+
   return (
-    <section id="contact" className="py-24 lg:py-32 bg-gray-900 text-white">
-      <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+    <section id="contact" className="py-24 md:py-32 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/[0.03] to-transparent" />
+      <div className="max-w-4xl mx-auto px-6 text-center relative" ref={ref}>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
         >
-          {/* Urgency */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 rounded-full mb-8">
-            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            <span className="text-sm text-emerald-300">Only taking 3 new clients this month</span>
-          </div>
-
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium mb-6">
-            Ready to stop leaving
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+            Ready to Let AI
             <br />
-            <span className="text-emerald-400">money on the table?</span>
-          </h2>
-          <p className="text-gray-400 text-lg mb-10 max-w-xl mx-auto">
-            Book a free 30-minute strategy call. We&apos;ll analyze your current setup, 
-            identify opportunities, and give you a clear action plan—even if we&apos;re not a fit.
-          </p>
-
-          {/* Main CTA */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <Link
-              href="mailto:usevantix@gmail.com"
-              className="group px-8 py-4 bg-emerald-500 text-white font-medium rounded-full hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/25"
+            <span className="bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent">
+              Run Your Business?
+            </span>
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-gray-400 text-lg max-w-2xl mx-auto mb-10">
+            Book a free discovery call. We will show you exactly which parts of your business AI can transform — and what the ROI looks like.
+          </motion.p>
+          <motion.div variants={fadeUp}>
+            <a
+              href="https://cal.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 px-10 py-5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-lg rounded-full transition-all"
             >
-              Book Your Free Strategy Call
-              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link
-              href="tel:9084987753"
-              className="px-8 py-4 bg-white/10 text-white font-medium rounded-full hover:bg-white/20 transition-all"
-            >
-              (908) 498-7753
-            </Link>
-          </div>
-
-          {/* Trust signals */}
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
-            <div className="flex items-center gap-2">
-              <Check size={16} className="text-emerald-400" />
-              <span>Free consultation</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check size={16} className="text-emerald-400" />
-              <span>No commitment</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check size={16} className="text-emerald-400" />
-              <span>24hr response</span>
-            </div>
-          </div>
+              <Calendar size={20} />
+              Book Your Free Discovery Call
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </motion.div>
+          <motion.p variants={fadeUp} className="text-gray-600 text-sm mt-6">
+            No commitment. No pressure. Just a conversation about what is possible.
+          </motion.p>
         </motion.div>
       </div>
     </section>
@@ -977,16 +807,87 @@ function FinalCTA() {
 // ============================================
 function Footer() {
   return (
-    <footer className="py-8 px-6 lg:px-12 bg-gray-950 border-t border-white/10">
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-emerald-500 rounded flex items-center justify-center">
-            <span className="text-white font-bold text-xs">V</span>
+    <footer className="border-t border-white/5 py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid md:grid-cols-4 gap-10 mb-10">
+          <div className="md:col-span-2">
+            <span className="text-2xl font-bold text-white tracking-tight">
+              vantix<span className="text-emerald-400">.</span>
+            </span>
+            <p className="text-gray-500 mt-4 max-w-sm leading-relaxed">
+              We deploy AI systems that generate revenue, cut costs, and automate operations for businesses ready to scale.
+            </p>
           </div>
-          <span className="text-sm text-gray-500">© 2026 Vantix LLC</span>
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-4">Quick Links</h4>
+            <ul className="space-y-2">
+              {['Services', 'Results', 'Process', 'Team', 'FAQ'].map((l) => (
+                <li key={l}>
+                  <a href={`#${l.toLowerCase()}`} className="text-gray-500 hover:text-white text-sm transition-colors">{l}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-4">Contact</h4>
+            <ul className="space-y-2 text-sm text-gray-500">
+              <li>
+                <a href="tel:9084987753" className="hover:text-white transition-colors">(908) 498-7753</a>
+              </li>
+              <li>
+                <a href="mailto:usevantix@gmail.com" className="hover:text-white transition-colors">usevantix@gmail.com</a>
+              </li>
+            </ul>
+            <div className="flex gap-4 mt-4">
+              {[
+                { icon: Twitter, href: '#' },
+                { icon: Linkedin, href: '#' },
+                { icon: Instagram, href: '#' },
+              ].map((s, i) => (
+                <a key={i} href={s.href} className="text-gray-600 hover:text-emerald-400 transition-colors">
+                  <s.icon size={18} />
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
-        <p className="text-sm text-gray-500">New Jersey, USA • usevantix@gmail.com</p>
+        <div className="border-t border-white/5 pt-8 text-center">
+          <p className="text-gray-600 text-sm">
+            {new Date().getFullYear()} Vantix. All rights reserved.
+          </p>
+        </div>
       </div>
     </footer>
+  );
+}
+
+// ============================================
+// MAIN EXPORT
+// ============================================
+export function FuturisticLanding() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    window.scrollTo(0, 0);
+  }, []);
+
+  if (!mounted) return null;
+
+  return (
+    <div className="bg-[#0A0A0F] text-gray-100 min-h-screen selection:bg-emerald-500/30 selection:text-white">
+      <Navigation />
+      <HeroSection />
+      <SocialProofBar />
+      <ProblemSection />
+      <ServicesSection />
+      <ROISection />
+      <CaseStudy />
+      <ProcessSection />
+      <TeamSection />
+      <FAQSection />
+      <FinalCTA />
+      <Footer />
+    </div>
   );
 }
