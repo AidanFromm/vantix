@@ -1,89 +1,146 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { ArrowLeft, BookOpen, Bell, CheckCircle2, Send } from 'lucide-react';
+import { useState } from "react";
+import Link from "next/link";
+import { ArrowRight, Mail, Calendar, Clock, Tag } from "lucide-react";
+import { blogPosts } from "@/data/blog-posts";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
-};
+const categories = [
+  "All",
+  "AI Strategy",
+  "Automation",
+  "Case Studies",
+  "Industry Insights",
+] as const;
 
 export default function BlogPage() {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [email, setEmail] = useState("");
 
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    const existing = JSON.parse(localStorage.getItem('vantix_blog_subs') || '[]');
-    existing.push({ email, timestamp: new Date().toISOString() });
-    localStorage.setItem('vantix_blog_subs', JSON.stringify(existing));
-    setSubscribed(true);
-  };
+  const filteredPosts =
+    activeCategory === "All"
+      ? blogPosts
+      : blogPosts.filter((post) => post.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#2D2A26]">
-      <nav className="sticky top-0 z-50 bg-[#FAFAFA]/90 backdrop-blur-md border-b border-[#E8E2DA]">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
-            <ArrowLeft className="w-4 h-4" /> Vantix
-          </Link>
-          <Link
-            href="/contact"
-            className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] transition-all"
-            style={{ background: 'linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878)' }}
-          >
-            Get Started
-          </Link>
-        </div>
-      </nav>
-
-      <section className="max-w-2xl mx-auto px-6 pt-32 pb-24 text-center">
-        <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-          <div className="w-20 h-20 rounded-2xl bg-[#FAFAFA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] flex items-center justify-center mx-auto mb-8">
-            <BookOpen className="w-10 h-10 text-[#B8895A]" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Blog</h1>
-          <p className="text-xl text-[#8C857C] mb-2">Coming Soon</p>
-          <p className="text-[#8C857C] mb-10 max-w-md mx-auto leading-relaxed">
-            We're working on in-depth guides, case studies, and insights on AI automation, business strategy, and building with modern tools.
+    <main className="min-h-screen bg-[#FAFAFA]">
+      {/* Hero */}
+      <section className="pt-32 pb-16 px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#2D2A26] mb-4">
+            Insights & Guides
+          </h1>
+          <p className="text-lg text-[#2D2A26]/60 max-w-2xl mx-auto">
+            Practical strategies for automating your business with AI. No hype,
+            no jargon — just actionable advice backed by real numbers.
           </p>
-
-          {subscribed ? (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#FAFAFA] border border-[#E8E2DA] shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
-              <CheckCircle2 className="w-5 h-5 text-[#B8895A]" />
-              <span className="font-medium">You're on the list. We'll notify you.</span>
-            </motion.div>
-          ) : (
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <input
-                required type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="flex-1 px-5 py-3 rounded-full bg-[#FAFAFA] border border-[#E8E2DA] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#B8895A]/30 transition-shadow text-sm"
-              />
-              <button
-                type="submit"
-                className="flex items-center justify-center gap-2 px-6 py-3 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] transition-all text-sm"
-                style={{ background: 'linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878)' }}
-              >
-                <Bell className="w-4 h-4" /> Notify Me
-              </button>
-            </form>
-          )}
-        </motion.div>
+        </div>
       </section>
 
-      <footer className="border-t border-[#E8E2DA] py-8 text-center text-sm text-[#8C857C]">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>Vantix {new Date().getFullYear()}</p>
-          <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#2D2A26] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#2D2A26] transition-colors">Terms</Link>
-          </div>
+      {/* Category Filters */}
+      <section className="px-6 pb-12">
+        <div className="max-w-5xl mx-auto flex flex-wrap gap-3 justify-center">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                activeCategory === cat
+                  ? "bg-[#B8895A] text-white shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]"
+                  : "bg-[#FAFAFA] text-[#2D2A26]/70 border border-[#E8E2DA] shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff] hover:text-[#B8895A]"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
-      </footer>
-    </div>
+      </section>
+
+      {/* Blog Grid */}
+      <section className="px-6 pb-20">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          {filteredPosts.map((post) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className="group block rounded-2xl border border-[#E8E2DA] bg-[#FAFAFA] p-8 shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] hover:shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] transition-all duration-300"
+            >
+              {/* Category Tag */}
+              <div className="flex items-center gap-2 mb-4">
+                <Tag className="w-3.5 h-3.5 text-[#B8895A]" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#B8895A]">
+                  {post.category}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h2 className="text-xl font-bold text-[#2D2A26] mb-3 group-hover:text-[#B8895A] transition-colors">
+                {post.title}
+              </h2>
+
+              {/* Excerpt */}
+              <p className="text-[#2D2A26]/60 text-sm leading-relaxed mb-6 line-clamp-3">
+                {post.excerpt}
+              </p>
+
+              {/* Meta */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4 text-xs text-[#2D2A26]/40">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5" />
+                    {new Date(post.date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
+                    {post.readTime}
+                  </span>
+                </div>
+                <ArrowRight className="w-5 h-5 text-[#B8895A] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Newsletter Signup */}
+      <section className="px-6 pb-32">
+        <div className="max-w-2xl mx-auto rounded-2xl border border-[#E8E2DA] bg-[#FAFAFA] p-10 shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] text-center">
+          <Mail className="w-10 h-10 text-[#B8895A] mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-[#2D2A26] mb-2">
+            Get automation insights delivered
+          </h3>
+          <p className="text-[#2D2A26]/60 mb-6">
+            One email per week. Practical AI strategies for growing businesses.
+            No spam, unsubscribe anytime.
+          </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setEmail("");
+            }}
+            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+          >
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@company.com"
+              required
+              className="flex-1 px-5 py-3 rounded-xl border border-[#E8E2DA] bg-[#FAFAFA] text-[#2D2A26] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#B8895A]/30 text-sm"
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 rounded-xl bg-[#B8895A] text-white font-medium text-sm shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff] hover:bg-[#a67a4d] transition-colors"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
   );
 }

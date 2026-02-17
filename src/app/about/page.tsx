@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   ArrowRight, ArrowLeft, Zap, Eye, Target, Lightbulb,
-  Users, Bot, Phone, Calendar, Settings, Code
+  Users, Bot, Phone, Calendar, Settings, Code, Clock, Shield
 } from 'lucide-react';
 
 const fadeUp = {
@@ -12,67 +12,77 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
 };
 
+const woodButtonStyle = {
+  background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878, #E6C78C)`,
+  border: '1px solid rgba(139,90,43,0.2)',
+};
+
 const values = [
-  { icon: Zap, title: 'Speed', description: 'We ship fast. Most projects go from concept to deployment in weeks, not months.' },
-  { icon: Eye, title: 'Transparency', description: 'No black boxes. You see every step, every decision, every line of progress.' },
-  { icon: Target, title: 'Results-Driven', description: 'We measure success by impact — revenue generated, time saved, costs cut.' },
-  { icon: Lightbulb, title: 'Innovation', description: 'We stay on the cutting edge so you don\'t have to. New tools, new methods, better outcomes.' },
+  { icon: Zap, title: 'Ship Fast, Ship Right', description: 'We built a 122-page platform in 3 weeks. Speed without sacrifice is our standard — not our exception.' },
+  { icon: Eye, title: 'Radical Transparency', description: 'No black boxes. No surprise invoices. You see every step, every decision, every line of progress in real time.' },
+  { icon: Target, title: 'Outcomes Over Output', description: 'We don\'t measure success by hours logged. We measure it by revenue generated, time saved, and costs eliminated.' },
+  { icon: Shield, title: 'Own Everything', description: 'You own every line of code, every system, every asset. No vendor lock-in. No hostage situations. Ever.' },
 ];
 
 const team = [
-  { name: 'Kyle', role: 'Co-founder, Operations & Strategy', icon: Settings, description: 'Drives client relationships, business strategy, and ensures every project delivers measurable ROI.' },
-  { name: 'Aidan', role: 'Co-founder, Engineering & Design', icon: Code, description: 'Architects and builds the technical solutions — from full-stack applications to AI integrations.' },
+  { name: 'Kyle Ventura', role: 'Co-Founder · Operations & Strategy', icon: Settings, description: 'Kyle doesn\'t just plan AI strategies — he obsesses over your P&L until AI is making you money. Drives client relationships, scopes every project, and won\'t sign off until the ROI is undeniable. Background in business operations and a genuine obsession with making things work better.' },
+  { name: 'Aidan Fromm', role: 'Co-Founder · Engineering & Design', icon: Code, description: 'Aidan turns "that sounds impossible" into "it shipped Tuesday." Architects and builds every technical solution from full-stack applications to deep AI integrations. Built a complete e-commerce platform in 3 weeks. When he\'s not coding, he\'s coding something else.' },
 ];
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#2D2A26]">
+    <div className="min-h-screen bg-[#FAFAFA] text-[#2D2A26] scroll-smooth">
       <nav className="sticky top-0 z-50 bg-[#FAFAFA]/90 backdrop-blur-md border-b border-[#E8E2DA]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#B8895A] transition-colors">
             <ArrowLeft className="w-4 h-4" /> Vantix
           </Link>
           <Link
             href="/contact"
-            className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] transition-all"
-            style={{ background: 'linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878)' }}
+            className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
+            style={woodButtonStyle}
           >
-            Get in Touch
+            Work With Us
           </Link>
         </div>
       </nav>
 
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-        <motion.h1 initial="hidden" animate="visible" variants={fadeUp} className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+        <motion.p initial="hidden" animate="visible" variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
           About Vantix
+        </motion.p>
+        <motion.h1 initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.05 } } }} className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+          A 4-Person Team.<br />Half of Us Never Sleep.
         </motion.h1>
         <motion.p initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.1 } } }} className="text-lg text-[#8C857C] max-w-2xl mx-auto">
-          Founded by two builders who believe AI should work for you, not the other way around.
+          2 humans who obsess over your success. 2 AI assistants who build around the clock. Small enough to care. Powerful enough to deliver enterprise results.
         </motion.p>
       </section>
 
-      {/* Mission */}
+      {/* Origin Story */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#FAFAFA] border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
-          <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
-          <p className="text-[#5C5650] leading-relaxed">
-            We exist to bring AI-first automation to businesses worldwide. Not theoretical AI — practical, deployed systems that generate revenue, cut costs, and scale operations. We handle strategy, implementation, and ongoing support so our clients can focus on what they do best.
-          </p>
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          <h2 className="text-2xl font-bold mb-4">Why We Exist</h2>
+          <div className="space-y-4 text-[#5C5650] leading-relaxed">
+            <p>We started Vantix because we watched business after business get sold overpriced AI "consulting" that never actually shipped anything. Decks without deployments. Strategies without systems. Six-figure invoices for PowerPoints.</p>
+            <p><strong className="text-[#2D2A26]">We decided to be the opposite.</strong> No theory. No fluff. We build AI systems that are live in weeks and generating ROI from day one.</p>
+            <p>Our unfair advantage? Half our team is AI. Two AI assistants work alongside us 24/7 — researching, building, testing, optimizing — while our competitors&apos; teams are asleep. That&apos;s how we built a 122-page e-commerce platform in 3 weeks. That&apos;s how we deliver what agencies 10x our size can&apos;t.</p>
+          </div>
         </motion.div>
       </section>
 
-      {/* Team */}
+      {/* Human Team */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-2xl font-bold mb-8 text-center">
-          The Team
+          The Humans
         </motion.h2>
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {team.map((m, i) => (
             <motion.div key={m.name} initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
-              className="rounded-2xl p-8 bg-[#FAFAFA] border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+              className="rounded-2xl p-8 bg-white border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] hover:border-[#B8895A]/20 transition-all">
               <div className="w-14 h-14 rounded-xl bg-[#FAFAFA] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-5">
                 <m.icon className="w-7 h-7 text-[#B8895A]" />
               </div>
@@ -85,27 +95,45 @@ export default function AboutPage() {
 
         {/* AI Team */}
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 bg-[#FAFAFA] border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] text-center">
-          <div className="w-14 h-14 rounded-xl bg-[#FAFAFA] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-5 mx-auto">
-            <Bot className="w-7 h-7 text-[#B8895A]" />
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#B8895A]/20 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-center md:text-left">
+              <div className="w-14 h-14 rounded-xl bg-[#FAFAFA] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-5 mx-auto md:mx-0">
+                <Bot className="w-7 h-7 text-[#B8895A]" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">The AI Team Members</h3>
+              <p className="text-[#B8895A] text-sm font-medium mb-4">The Half That Never Sleeps</p>
+              <p className="text-[#8C857C] leading-relaxed">
+                This isn&apos;t a gimmick. Our 2 AI assistants are full team members. They research technologies, generate and review code, run tests, draft documentation, and optimize systems — 24 hours a day, 7 days a week, 365 days a year.
+              </p>
+            </div>
+            <div className="space-y-4">
+              {[
+                { icon: Code, text: 'Code generation, review, and testing around the clock' },
+                { icon: Target, text: 'Research and identify the best tools for every project' },
+                { icon: Clock, text: 'Work continues while humans sleep — deadlines crushed' },
+                { icon: Lightbulb, text: 'Continuous optimization of deployed systems' },
+              ].map((item) => (
+                <div key={item.text} className="flex items-start gap-3">
+                  <item.icon className="w-5 h-5 text-[#B8895A] mt-0.5 shrink-0" />
+                  <span className="text-sm text-[#5C5650]">{item.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <h3 className="text-xl font-bold mb-2">Our AI Team</h3>
-          <p className="text-[#8C857C] max-w-lg mx-auto leading-relaxed">
-            Our team includes 2 AI assistants that work 24/7 — building, researching, and optimizing while you sleep. They handle research, code generation, testing, and continuous improvement so we can deliver faster than teams 10x our size.
-          </p>
         </motion.div>
       </section>
 
       {/* Values */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-2xl font-bold mb-8 text-center">
-          Our Values
+          What We Stand For
         </motion.h2>
         <div className="grid sm:grid-cols-2 gap-6">
           {values.map((v, i) => (
             <motion.div key={v.title} initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.08 } } }}
-              className="rounded-2xl p-6 bg-[#FAFAFA] border border-[#E8E2DA] shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
+              className="rounded-2xl p-6 bg-white border border-[#E8E2DA] shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] hover:border-[#B8895A]/20 transition-all">
               <v.icon className="w-6 h-6 text-[#B8895A] mb-3" />
               <h3 className="font-bold mb-1">{v.title}</h3>
               <p className="text-sm text-[#8C857C] leading-relaxed">{v.description}</p>
@@ -117,17 +145,17 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-12 bg-[#FAFAFA] border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
-          <h2 className="text-3xl font-bold mb-4">Let's Build Something Together</h2>
+          className="rounded-2xl p-12 bg-white border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          <h2 className="text-3xl font-bold mb-4">Ready to See What 4 of Us Can Do?</h2>
           <p className="text-[#8C857C] mb-8 max-w-lg mx-auto">
-            Ready to see what AI can do for your business? Let's talk.
+            We take on 3 new clients per month. If you&apos;re serious about automating your business, let&apos;s talk before the spots fill.
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] transition-all"
-            style={{ background: 'linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878)' }}
+            className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
+            style={woodButtonStyle}
           >
-            Get in Touch <ArrowRight className="w-4 h-4" />
+            Book Your Free AI Audit <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
       </section>

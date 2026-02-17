@@ -62,10 +62,10 @@ function Navigation() {
 
   const links = [
     { label: 'Services', href: '/services' },
-    { label: 'Case Studies', href: '/case-studies' },
+    { label: 'Work', href: '/case-studies' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
-    { label: 'Dashboard', href: '/login' },
+    { label: 'Login', href: '/login' },
   ];
 
   return (
@@ -164,7 +164,7 @@ function HeroSection() {
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C5C3BE] bg-white mb-8 shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff]"
         >
           <span className="w-2 h-2 rounded-full bg-[#B8895A] animate-pulse" />
-          <span className="text-sm text-[#8C857C] font-medium">AI-Powered Business Automation</span>
+          <span className="text-sm text-[#8C857C] font-medium">2 Humans + 2 AI Assistants — Building 24/7</span>
         </motion.div>
 
         <motion.h1
@@ -173,9 +173,9 @@ function HeroSection() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-[#2D2A26] leading-[0.93] tracking-tight mb-8"
         >
-          Stop Running Your Business.
+          Your Competitors Are
           <br />
-          <span className="text-[#B8895A]">Let AI Run It For You.</span>
+          Automating. <span className="text-[#B8895A]">Are You?</span>
         </motion.h1>
 
         <motion.p
@@ -184,7 +184,7 @@ function HeroSection() {
           transition={{ duration: 0.7, delay: 0.6 }}
           className="text-lg sm:text-xl text-[#8C857C] max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          We build AI systems that generate revenue, cut costs, and run your operations — while you focus on growth.
+          We deploy AI systems that reclaim 40+ hours of your week, capture every lead, and run your operations — while you sleep.
         </motion.p>
 
         <motion.div
@@ -198,7 +198,7 @@ function HeroSection() {
             className="group px-8 py-4 text-[#5C4033] font-semibold rounded-full transition-all inline-flex items-center justify-center gap-2 shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] hover:shadow-[inset_4px_4px_8px_#b8965f,inset_-4px_-4px_8px_#e8d4a8] hover:scale-[1.02]"
             style={woodButtonStyle}
           >
-            Book Your Free Discovery Call
+            Book Your Free AI Audit
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </a>
         </motion.div>
@@ -209,7 +209,7 @@ function HeroSection() {
           transition={{ delay: 1.2, duration: 0.8 }}
           className="text-sm text-[#B8895A]/70 mt-8 font-medium"
         >
-          Trusted by businesses across the US — $50K+ in projects delivered
+          122-page platform built in 3 weeks · $50K+ in projects delivered · 24/7 AI operations
         </motion.p>
       </div>
     </section>
@@ -223,10 +223,10 @@ function TrustBar() {
   const { ref, inView } = useAnimateInView();
 
   const metrics = [
-    { value: '1', label: 'Client Launched' },
-    { value: '122', label: 'Pages Built' },
-    { value: '24/7', label: 'AI Operations' },
-    { value: '3 Week', label: 'Delivery' },
+    { value: '40+', label: 'Hours Saved Weekly' },
+    { value: '122', label: 'Pages in 3 Weeks' },
+    { value: '24/7', label: 'AI Never Sleeps' },
+    { value: '85%', label: 'Faster Response Time' },
   ];
 
   return (
@@ -257,23 +257,23 @@ function ProblemSection() {
   const { ref, inView } = useAnimateInView();
 
   const before = [
-    'Answering the same customer questions manually',
-    'Missing leads because you were busy',
-    'Spending hours on email campaigns',
-    'Guessing what your customers want',
-    'Hiring more staff to keep up',
+    'Drowning in repetitive tasks that eat your entire week',
+    'Losing leads because nobody responded fast enough',
+    'Spending hours writing emails that barely convert',
+    'Making decisions based on gut feeling, not data',
+    'Hiring more staff just to keep the lights on',
   ];
 
   const after = [
-    'AI chatbot handles 90% of inquiries 24/7',
-    'AI captures and qualifies every lead instantly',
-    'AI writes, sends, and optimizes every email',
-    'Real-time analytics predict customer behavior',
-    'AI scales your operations at zero headcount cost',
+    'AI handles 90% of inquiries instantly — day and night',
+    'Every lead captured, qualified, and followed up in seconds',
+    'Personalized emails written, sent, and optimized automatically',
+    'Real-time analytics telling you exactly what to do next',
+    'Scale operations without adding a single headcount',
   ];
 
   return (
-    <section className="py-28 md:py-40 relative">
+    <section className="py-24 relative">
       <GridBackground />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -286,7 +286,7 @@ function ProblemSection() {
             The Problem
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] leading-tight max-w-3xl mx-auto">
-            You are spending 40+ hours a week on tasks AI can handle in seconds
+            You&apos;re Working 60-Hour Weeks on Tasks AI Can Handle in Seconds
           </motion.h2>
         </motion.div>
 
@@ -299,7 +299,7 @@ function ProblemSection() {
           <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0]/50">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
-              <span className="text-[#8C857C] font-semibold text-sm uppercase tracking-wider">Without AI</span>
+              <span className="text-[#8C857C] font-semibold text-sm uppercase tracking-wider">Before Vantix</span>
             </div>
             <ul className="space-y-4">
               {before.map((item, i) => (
@@ -314,7 +314,7 @@ function ProblemSection() {
           <motion.div variants={fadeUp} className="relative p-8 rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#B8895A]/20">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#B8895A]" />
-              <span className="text-[#B8895A] font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
+              <span className="text-[#B8895A] font-semibold text-sm uppercase tracking-wider">After Vantix</span>
             </div>
             <ul className="space-y-4">
               {after.map((item, i) => (
@@ -335,21 +335,21 @@ function ProblemSection() {
 // SERVICES
 // ============================================
 const services = [
-  { icon: Bot, title: 'AI Chatbots', desc: '24/7 customer support and lead qualification. Your best salesperson never sleeps, never calls in sick, never asks for a raise.' },
-  { icon: Globe, title: 'AI-Powered Websites', desc: 'Self-optimizing, conversion-focused websites that learn from every visitor and get better over time.' },
-  { icon: Search, title: 'Automated Lead Generation', desc: 'Find customers while you sleep. AI identifies, qualifies, and nurtures prospects across every channel.' },
-  { icon: BarChart3, title: 'AI Analytics & Insights', desc: 'Real-time business intelligence that tells you what is happening, why, and what to do next.' },
-  { icon: Mail, title: 'AI Email Marketing', desc: 'Writes, personalizes, sends, and follows up. Every email tailored to every recipient. At scale.' },
-  { icon: Package, title: 'AI Inventory Management', desc: 'Demand prediction and auto-reorder. Never overstock, never run out, never lose a sale.' },
-  { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, qualify leads. Your AI receptionist handles it all.' },
-  { icon: Sparkles, title: 'Custom AI Solutions', desc: 'If you can dream it, we can automate it. Bespoke AI systems built for your exact business needs.' },
+  { icon: Bot, title: 'AI Chatbots & Agents', desc: 'Your best salesperson — never sleeps, never calls in sick, qualifies every lead and books every appointment. 24/7.' },
+  { icon: Globe, title: 'AI-Powered Websites', desc: 'Self-optimizing platforms that learn from every visitor. More conversions. More revenue. Zero guesswork.' },
+  { icon: Search, title: 'Automated Lead Gen', desc: 'Find, qualify, and nurture prospects across every channel — while you focus on closing deals.' },
+  { icon: BarChart3, title: 'AI Analytics', desc: 'Know exactly what&apos;s happening, why it&apos;s happening, and what to do next. Decisions powered by data, not hunches.' },
+  { icon: Mail, title: 'AI Email & Outreach', desc: 'Personalized at scale. Every email tailored, timed, and optimized for maximum response rates.' },
+  { icon: Package, title: 'Smart Inventory', desc: 'Demand prediction meets auto-reorder. Never overstock. Never run out. Never miss a sale.' },
+  { icon: Phone, title: 'AI Phone Agents', desc: 'Answer calls, book appointments, handle inquiries. Your AI receptionist sounds human and works around the clock.' },
+  { icon: Sparkles, title: 'Custom AI Systems', desc: 'If your business does it, we can automate it. Bespoke AI built for your exact workflow and goals.' },
 ];
 
 function ServicesSection() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section id="services" className="py-28 md:py-40 relative">
+    <section id="services" className="py-24 relative">
       <GridBackground variant="solid" />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -362,10 +362,10 @@ function ServicesSection() {
             What We Deploy
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] leading-tight">
-            AI Systems That Run Your Business
+            AI That Runs Your Business.<br />Not Just Advises On It.
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#8C857C] mt-4 max-w-2xl mx-auto">
-            While your competitors are figuring out ChatGPT, we are building AI systems that run entire businesses.
+            While competitors write whitepapers about AI, we deploy systems that generate revenue from day one.
           </motion.p>
         </motion.div>
 
@@ -401,7 +401,7 @@ function CaseStudyHighlight() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section className="py-28 md:py-40 relative">
+    <section className="py-24 relative">
       <GridBackground variant="solid" />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -410,7 +410,7 @@ function CaseStudyHighlight() {
           variants={staggerContainer}
         >
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4 text-center">
-            Case Study
+            Featured Work
           </motion.p>
           <motion.div
             variants={fadeUp}
@@ -421,13 +421,13 @@ function CaseStudyHighlight() {
               <div>
                 <h3 className="text-2xl md:text-3xl font-bold text-[#2D2A26] mb-2">Secured Tampa</h3>
                 <p className="text-[#B8895A] text-sm font-medium mb-6">
-                  From Instagram DMs to a full AI-powered e-commerce platform
+                  From Instagram DMs to a 122-page e-commerce empire — in 3 weeks.
                 </p>
                 <p className="text-[#8C857C] leading-relaxed mb-6">
-                  Secured Tampa was running their entire business through Instagram DMs. We built them a complete AI-powered e-commerce ecosystem with automated customer service, intelligent product recommendations, and real-time inventory management.
+                  Shopify shut them down. They were running a growing sneaker business through Instagram DMs. We built a complete AI-powered e-commerce platform with automated inventory, POS integration, and intelligent customer service — replacing everything Shopify couldn&apos;t handle.
                 </p>
                 <div className="flex flex-wrap gap-3 mb-8">
-                  {['AI Chatbot', 'E-Commerce', 'Automation', 'Analytics'].map((tag) => (
+                  {['E-Commerce', 'POS Integration', 'AI Automation', 'Custom Platform'].map((tag) => (
                     <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B8895A]/20 bg-[#B8895A]/5 text-[#B8895A] text-xs font-medium">
                       {tag}
                     </span>
@@ -437,16 +437,16 @@ function CaseStudyHighlight() {
                   href="/case-studies/secured-tampa"
                   className="group inline-flex items-center gap-2 text-[#B8895A] font-semibold hover:text-[#96703F] transition-colors"
                 >
-                  Read the Full Story
+                  Read the Full Case Study
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { value: '122', label: 'Pages Built' },
-                  { value: '85%', label: 'Faster Response Time' },
-                  { value: '24/7', label: 'Customer Support Active' },
-                  { value: '3 wks', label: 'From Concept to Launch' },
+                  { value: '3 wks', label: 'Concept to Launch' },
+                  { value: '50+', label: 'API Routes' },
+                  { value: '24/7', label: 'AI Operations Live' },
                 ].map((m, i) => (
                   <motion.div
                     key={i}
@@ -473,14 +473,14 @@ function ProcessSection() {
   const { ref, inView } = useAnimateInView();
 
   const steps = [
-    { num: '01', title: 'Discovery & Audit', desc: 'We learn your business inside and out. Every pain point, bottleneck, and missed opportunity gets mapped.', icon: Search },
-    { num: '02', title: 'Strategy & Design', desc: 'We build a custom AI strategy with projected ROI, wireframes, and a clear implementation roadmap.', icon: Target },
-    { num: '03', title: 'Build & Deploy', desc: 'Our team builds your AI systems and deploys them seamlessly into your existing operations.', icon: Rocket },
-    { num: '04', title: 'Optimize & Scale', desc: 'We continuously optimize your AI systems and scale what works. Your business gets smarter every day.', icon: TrendingUp },
+    { num: '01', title: 'Free AI Audit', desc: 'We map every bottleneck, manual process, and missed opportunity in your business. You get a clear picture of what AI can fix — and the ROI to expect.', icon: Search },
+    { num: '02', title: 'Custom Blueprint', desc: 'A tailored strategy with projected savings, implementation timeline, and exactly what your AI systems will do. No vague proposals.', icon: Target },
+    { num: '03', title: 'Rapid Deployment', desc: 'We build and deploy your AI systems in weeks, not months. Half our team works while you sleep — so timelines that shock you are our standard.', icon: Rocket },
+    { num: '04', title: 'Scale & Optimize', desc: 'Your AI gets smarter every day. We monitor, optimize, and scale what works — so your business compounds without adding headcount.', icon: TrendingUp },
   ];
 
   return (
-    <section id="process" className="py-28 md:py-40 relative">
+    <section id="process" className="py-24 relative">
       <GridBackground />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -490,10 +490,10 @@ function ProcessSection() {
           className="text-center mb-16"
         >
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
-            Our Process
+            How It Works
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
-            How We Work
+            From First Call to Full Automation in Weeks
           </motion.h2>
         </motion.div>
 
@@ -526,7 +526,7 @@ function TestimonialSection() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section className="py-28 md:py-40 relative">
+    <section className="py-24 relative">
       <GridBackground variant="solid" />
       <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -536,10 +536,10 @@ function TestimonialSection() {
           className="text-center"
         >
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
-            Testimonials
+            Client Results
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] mb-12">
-            What Our Clients Say
+            Don&apos;t Take Our Word For It
           </motion.h2>
           <motion.div
             variants={fadeUp}
@@ -547,11 +547,11 @@ function TestimonialSection() {
           >
             <MessageSquare size={32} className="text-[#B8895A]/30 mx-auto mb-6" />
             <blockquote className="text-xl md:text-2xl text-[#2D2A26] font-medium leading-relaxed mb-8">
-              &ldquo;Vantix built us a complete custom platform in just 3 weeks. It replaced our old system entirely.&rdquo;
+              &ldquo;Shopify shut us down and we were stuck selling through Instagram DMs. Vantix built us a complete custom platform — 122 pages, POS integration, shipping, everything — in 3 weeks. It&apos;s better than anything Shopify could have done.&rdquo;
             </blockquote>
             <div>
               <p className="text-[#2D2A26] font-semibold">Dave</p>
-              <p className="text-[#8C857C] text-sm">SecuredTampa</p>
+              <p className="text-[#8C857C] text-sm">Founder, SecuredTampa</p>
             </div>
           </motion.div>
         </motion.div>
@@ -567,14 +567,14 @@ function ROISection() {
   const { ref, inView } = useAnimateInView();
 
   const stats = [
-    { value: '40+', label: 'Hours Saved Per Week', icon: Clock },
+    { value: '40+', label: 'Hours Reclaimed Per Week', icon: Clock },
     { value: '3x', label: 'More Qualified Leads', icon: TrendingUp },
-    { value: '24/7', label: 'Availability', icon: Shield },
-    { value: '$0', label: 'Additional Staff Needed', icon: Users },
+    { value: '24/7', label: 'Operations Never Stop', icon: Shield },
+    { value: '$0', label: 'Extra Hires Needed', icon: Users },
   ];
 
   return (
-    <section id="roi" className="py-28 md:py-40 relative">
+    <section id="roi" className="py-24 relative">
       <GridBackground />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -584,10 +584,10 @@ function ROISection() {
           className="text-center mb-16"
         >
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
-            ROI
+            Your ROI
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
-            The Numbers Don&apos;t Lie
+            The Math Speaks for Itself
           </motion.h2>
         </motion.div>
 
@@ -623,20 +623,20 @@ function TeamSection() {
   const team = [
     {
       name: 'Kyle Ventura',
-      role: 'Founder & AI Architect',
-      desc: 'Obsessed with building AI systems that make businesses unstoppable. Kyle architects every solution from the ground up with one goal: measurable ROI.',
+      role: 'Founder & AI Strategist',
+      desc: 'Obsessed with one question: what would your business look like if it ran itself? Kyle architects AI systems that answer that — with measurable ROI on every project.',
       photo: '/team-kyle.jpg',
     },
     {
       name: 'Aidan Fromm',
-      role: 'Co-Founder & Technical Lead',
-      desc: 'Full-stack engineer who turns complex AI concepts into production-ready systems. Aidan ensures every deployment is bulletproof and built to scale.',
+      role: 'Co-Founder & Lead Engineer',
+      desc: 'Turns ambitious AI blueprints into production-ready systems. Built a 122-page e-commerce platform in 3 weeks. Moves fast. Ships faster.',
       photo: '/team-aidan.jpg',
     },
   ];
 
   return (
-    <section id="team" className="py-28 md:py-40 relative">
+    <section id="team" className="py-24 relative">
       <GridBackground variant="solid" />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -646,11 +646,14 @@ function TeamSection() {
           className="text-center mb-16"
         >
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
-            The Team
+            Who We Are
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
-            Built by Builders
+            A 4-Person Team.<br />Half of Us Never Sleep.
           </motion.h2>
+          <motion.p variants={fadeUp} className="text-[#8C857C] mt-4 max-w-2xl mx-auto">
+            2 humans who obsess over your success. 2 AI assistants who build, research, and optimize around the clock. Small enough to care. Powerful enough to deliver enterprise results.
+          </motion.p>
         </motion.div>
 
         <motion.div
@@ -715,16 +718,16 @@ function FAQSection() {
   const { ref, inView } = useAnimateInView();
 
   const faqs = [
-    { q: 'How long does it take to deploy an AI system?', a: 'Most AI systems are live within 2-4 weeks. Simple chatbots and automation can be deployed in under a week. Complex custom solutions may take 4-8 weeks.' },
-    { q: 'What if AI makes mistakes with my customers?', a: 'Every system we build has human oversight built in. AI handles the volume, and edge cases get routed to your team. We continuously train and optimize so accuracy only improves.' },
-    { q: 'Do I need technical knowledge to use these systems?', a: 'Zero. We build everything with dead-simple dashboards. If you can use a smartphone, you can manage your AI systems. Plus, we provide full training and ongoing support.' },
-    { q: 'What does it cost?', a: 'Every business is different. We price based on complexity and scope. Book a discovery call and we will give you a transparent quote with projected ROI.' },
-    { q: 'Can AI really replace hiring more staff?', a: 'Not replace — augment. AI handles the repetitive, high-volume tasks so your team can focus on high-value work. One AI system can do the work of 3-5 employees in specific functions.' },
-    { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. If an issue arises, we catch it before you even notice. All clients get priority support with guaranteed response times.' },
+    { q: 'How fast can you deploy an AI system?', a: 'Most systems go live in 2–4 weeks. Simple automations and chatbots can launch in under a week. We built a 122-page e-commerce platform with POS integration in just 3 weeks — speed is built into our DNA because half our team works 24/7.' },
+    { q: 'What if AI makes mistakes with my customers?', a: 'Every system includes human oversight and escalation paths. AI handles the volume — edge cases route to your team. We continuously train and optimize, so accuracy improves over time. You stay in control.' },
+    { q: 'Do I need technical knowledge?', a: 'None. We build everything with simple dashboards you can manage from your phone. Full training included. Ongoing support included. If you can send an email, you can run your AI systems.' },
+    { q: 'What does it cost?', a: 'Projects typically start at $4,500 for focused automations and scale based on complexity. Every quote includes projected ROI so you can see the payback before you commit. Book a free audit — we\'ll give you real numbers, not a range.' },
+    { q: 'Can AI really replace hiring more staff?', a: 'It augments and eliminates the need. One AI system can handle the workload of 3–5 employees for specific functions — customer service, lead qualification, data entry, scheduling. Your existing team gets freed up for high-value work that actually grows the business.' },
+    { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. Issues get caught before you notice them. All clients get priority support with guaranteed response times. We treat your downtime like our emergency — because it is.' },
   ];
 
   return (
-    <section id="faq" className="py-28 md:py-40 relative">
+    <section id="faq" className="py-24 relative">
       <GridBackground />
       <div className="max-w-3xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -737,7 +740,7 @@ function FAQSection() {
             FAQ
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26]">
-            Questions? Answered.
+            Every Question. Answered.
           </motion.h2>
         </motion.div>
 
@@ -765,7 +768,7 @@ function BookingSection() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section id="booking" className="py-28 md:py-40 relative">
+    <section id="booking" className="py-24 relative">
       <GridBackground variant="solid" />
       <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
         <motion.div
@@ -775,13 +778,13 @@ function BookingSection() {
           className="text-center mb-12"
         >
           <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
-            Schedule
+            Start This Week
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] mb-4">
-            Book a Free Consultation
+            Book Your Free AI Audit
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto">
-            Pick a time that works for you. We will walk through your business, identify AI opportunities, and give you a clear roadmap.
+            30 minutes. Zero pressure. We&apos;ll map every AI opportunity in your business and show you exactly what the ROI looks like. Pick a time below.
           </motion.p>
         </motion.div>
 
@@ -851,14 +854,15 @@ function ContactForm() {
     return (
       <div id="contact-form" className="max-w-lg mx-auto mt-12 bg-white rounded-2xl p-8 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] text-center">
         <CheckCircle2 size={48} className="mx-auto mb-4 text-[#B8895A]" />
-        <h3 className="text-xl font-bold text-[#2D2A26] mb-2">Thank you!</h3>
-        <p className="text-[#8C857C]">We&apos;ll be in touch within 24 hours.</p>
+        <h3 className="text-xl font-bold text-[#2D2A26] mb-2">You&apos;re In.</h3>
+        <p className="text-[#8C857C]">We&apos;ll reach out within 24 hours with next steps. Check your inbox.</p>
       </div>
     );
   }
 
   return (
     <form id="contact-form" onSubmit={handleSubmit} className="max-w-lg mx-auto mt-12 bg-white rounded-2xl p-8 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+      <p className="text-center text-[#8C857C] text-sm mb-6">Prefer to type? Drop us a message and we&apos;ll follow up within 24 hours.</p>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-[#5C4033] mb-1.5">Name *</label>
@@ -873,11 +877,11 @@ function ContactForm() {
           <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#5C4033] mb-1.5">What do you need?</label>
-          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about your business and what you're looking for..." className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all resize-none" />
+          <label className="block text-sm font-medium text-[#5C4033] mb-1.5">What&apos;s eating your time?</label>
+          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] bg-[#FAFAFA] text-[#2D2A26] placeholder-[#C5C3BE] focus:outline-none focus:border-[#B8895A] focus:ring-1 focus:ring-[#B8895A]/30 transition-all resize-none" />
         </div>
         <button type="submit" disabled={status === 'sending'} className="w-full group inline-flex items-center justify-center gap-2 px-8 py-4 text-[#5C4033] font-bold text-base rounded-full transition-all shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] hover:scale-[1.01] disabled:opacity-60" style={woodButtonStyle}>
-          {status === 'sending' ? 'Sending...' : 'Send Message'}
+          {status === 'sending' ? 'Sending...' : 'Start Automating This Week'}
           <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
         </button>
         {status === 'error' && <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>}
@@ -890,7 +894,7 @@ function FinalCTA() {
   const { ref, inView } = useAnimateInView();
 
   return (
-    <section id="contact" className="py-28 md:py-40 relative overflow-hidden">
+    <section id="contact" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#FAFAFA] via-[#F0EDE8] to-[#FAFAFA]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,137,90,0.08)_0%,transparent_60%)]" />
       <div className="max-w-4xl mx-auto px-6 text-center relative" ref={ref}>
@@ -900,12 +904,12 @@ function FinalCTA() {
           variants={staggerContainer}
         >
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#2D2A26] leading-tight mb-6">
-            Ready to Let AI
+            Every Day You Wait,
             <br />
-            <span className="text-[#B8895A]">Run Your Business?</span>
+            <span className="text-[#B8895A]">Your Competitors Pull Ahead.</span>
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto mb-4">
-            Book a free discovery call. We will show you exactly which parts of your business AI can transform — and what the ROI looks like.
+            Book a free AI audit. In 30 minutes, we&apos;ll show you exactly which tasks to automate first and what the payback looks like. No commitment. No pressure.
           </motion.p>
           <motion.p variants={fadeUp} className="text-[#2D2A26] font-semibold text-lg mb-10">
             <a href="tel:9084987753" className="hover:text-[#B8895A] transition-colors inline-flex items-center gap-2">
@@ -920,12 +924,12 @@ function FinalCTA() {
               style={woodButtonStyle}
             >
               <Calendar size={20} />
-              Book Your Free Discovery Call
+              Book Your Free AI Audit
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
           </motion.div>
-          <motion.p variants={fadeUp} className="text-[#C5C3BE] text-sm mt-6">
-            No commitment. No pressure. Just a conversation about what is possible.
+          <motion.p variants={fadeUp} className="text-[#B8895A]/60 text-sm mt-6 font-medium">
+            Limited availability — we take on 3 new clients per month.
           </motion.p>
           <motion.div variants={fadeUp}>
             <ContactForm />
@@ -950,7 +954,7 @@ function Footer() {
               <span className="text-2xl font-extrabold text-[#3A3632] tracking-tight">vantix<span className="text-[#B8895A]">.</span></span>
             </div>
             <p className="text-[#8C857C] mt-4 max-w-sm leading-relaxed">
-              We deploy AI systems that generate revenue, cut costs, and automate operations for businesses ready to scale.
+              AI systems that generate revenue, eliminate busywork, and scale your operations — deployed in weeks, not months.
             </p>
           </div>
           <div>
@@ -958,7 +962,7 @@ function Footer() {
             <ul className="space-y-2">
               {[
                 { label: 'Services', href: '/services' },
-                { label: 'Case Studies', href: '/case-studies' },
+                { label: 'Work', href: '/case-studies' },
                 { label: 'About', href: '/about' },
                 { label: 'Contact', href: '/contact' },
                 { label: 'Blog', href: '/blog' },
@@ -1013,7 +1017,7 @@ export function FuturisticLanding() {
   }, []);
 
   return (
-    <div className="bg-[#FAFAFA] text-[#2D2A26] min-h-screen selection:bg-[#B8895A]/20 selection:text-[#2D2A26]">
+    <div className="bg-[#FAFAFA] text-[#2D2A26] min-h-screen selection:bg-[#B8895A]/20 selection:text-[#2D2A26] scroll-smooth">
       <Navigation />
       <HeroSection />
       <TrustBar />

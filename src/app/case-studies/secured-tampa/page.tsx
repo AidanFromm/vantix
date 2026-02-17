@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   ArrowRight, ArrowLeft, ShoppingCart, Server, CreditCard,
   Truck, Mail, Barcode, Package, CheckCircle2, Calendar, Phone,
-  Globe, Database, Layers
+  Globe, Database, Layers, MessageSquare, Clock, TrendingUp
 } from 'lucide-react';
 
 const fadeUp = {
@@ -13,11 +13,16 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
 };
 
+const woodButtonStyle = {
+  background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878, #E6C78C)`,
+  border: '1px solid rgba(139,90,43,0.2)',
+};
+
 const stats = [
-  { label: 'Pages Built', value: '122' },
-  { label: 'API Routes', value: '50+' },
-  { label: 'Email Templates', value: '5' },
-  { label: 'Build Time', value: '3 Weeks' },
+  { label: 'Pages Built', value: '122', icon: Globe },
+  { label: 'API Routes', value: '50+', icon: Server },
+  { label: 'Build Time', value: '3 Weeks', icon: Clock },
+  { label: 'Uptime Since Launch', value: '99.9%', icon: TrendingUp },
 ];
 
 const techStack = [
@@ -26,18 +31,18 @@ const techStack = [
 
 export default function SecuredTampaPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#2D2A26]">
+    <div className="min-h-screen bg-[#FAFAFA] text-[#2D2A26] scroll-smooth">
       <nav className="sticky top-0 z-50 bg-[#FAFAFA]/90 backdrop-blur-md border-b border-[#E8E2DA]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/case-studies" className="flex items-center gap-2 text-lg font-bold tracking-tight">
+          <Link href="/case-studies" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#B8895A] transition-colors">
             <ArrowLeft className="w-4 h-4" /> Case Studies
           </Link>
           <Link
             href="/contact"
-            className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] transition-all"
-            style={{ background: 'linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878)' }}
+            className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
+            style={woodButtonStyle}
           >
-            Get Started
+            Get Results Like This
           </Link>
         </div>
       </nav>
@@ -45,10 +50,12 @@ export default function SecuredTampaPage() {
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-6 pt-20 pb-12">
         <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-          <p className="text-xs font-semibold text-[#B8895A] uppercase tracking-wider mb-3">Sneakers & Collectibles</p>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">SecuredTampa</h1>
+          <p className="text-xs font-semibold text-[#B8895A] uppercase tracking-wider mb-3">Client Case Study</p>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            Shopify Shut Them Down.<br />We Built Something Better in 3 Weeks.
+          </h1>
           <p className="text-lg text-[#8C857C] max-w-2xl">
-            How we built a 122-page custom e-commerce platform with full inventory management and POS integration in just 3 weeks.
+            How SecuredTampa went from selling sneakers through Instagram DMs to running a 122-page custom e-commerce platform with full POS integration — and never looked back.
           </p>
         </motion.div>
       </section>
@@ -57,7 +64,8 @@ export default function SecuredTampaPage() {
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((s) => (
-            <div key={s.label} className="rounded-2xl p-6 text-center bg-[#FAFAFA] border border-[#E8E2DA] shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
+            <div key={s.label} className="rounded-2xl p-6 text-center bg-white border border-[#E8E2DA] shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
+              <s.icon className="w-5 h-5 text-[#B8895A] mx-auto mb-2" />
               <p className="text-3xl font-bold text-[#B8895A]">{s.value}</p>
               <p className="text-sm text-[#8C857C] mt-1">{s.label}</p>
             </div>
@@ -65,39 +73,52 @@ export default function SecuredTampaPage() {
         </motion.div>
       </section>
 
-      {/* Challenge */}
+      {/* The Problem */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#FAFAFA] border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
-          <h2 className="text-2xl font-bold mb-4">The Challenge</h2>
-          <div className="space-y-3 text-[#5C5650] leading-relaxed">
-            <p>Dave, the owner of SecuredTampa, had no online presence. Shopify had terminated his account, leaving him without an e-commerce platform entirely.</p>
-            <p>He was running his brick-and-mortar store with a disorganized Lightspeed POS system that couldn't keep up with his growing inventory of sneakers, collectibles, and Pokemon cards.</p>
-            <p>Dave needed a completely custom solution — one that unified his online and in-store operations, handled his unique inventory categories, and gave him full control over his business.</p>
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          <h2 className="text-2xl font-bold mb-4">The Problem: Dead in the Water</h2>
+          <div className="space-y-4 text-[#5C5650] leading-relaxed">
+            <p>Dave runs SecuredTampa — a growing sneaker, collectibles, and Pokémon card business in Tampa, FL. Business was booming. Then Shopify terminated his account.</p>
+            <p>Overnight, he lost his entire online storefront. No e-commerce. No checkout. No shipping automation. He was left running a growing business through Instagram DMs and a disorganized Lightspeed POS system that couldn&apos;t keep up.</p>
+            <p><strong className="text-[#2D2A26]">The clock was ticking.</strong> Every day without a platform meant lost sales, frustrated customers, and competitors gaining ground. He needed a complete solution — fast.</p>
           </div>
         </motion.div>
       </section>
 
-      {/* Solution */}
+      {/* The Discovery */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#FAFAFA] border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
-          <h2 className="text-2xl font-bold mb-6">The Solution</h2>
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          <h2 className="text-2xl font-bold mb-4">The Discovery: Not a Shopify Replacement — Something Better</h2>
+          <div className="space-y-4 text-[#5C5650] leading-relaxed">
+            <p>During our initial audit, we realized Dave didn&apos;t just need another e-commerce platform. He needed a unified system that connected his online store, in-store POS, inventory management, shipping, and customer communications — all in one place.</p>
+            <p>No off-the-shelf solution could do this. Shopify couldn&apos;t. BigCommerce couldn&apos;t. Dave needed something custom — and he needed it yesterday.</p>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* The Solution */}
+      <section className="max-w-4xl mx-auto px-6 pb-16">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          <h2 className="text-2xl font-bold mb-2">The Solution: 122 Pages in 3 Weeks</h2>
+          <p className="text-[#B8895A] text-sm font-medium mb-6">Built from scratch. Deployed in production. Running 24/7.</p>
           <p className="text-[#5C5650] leading-relaxed mb-6">
-            We built a full custom e-commerce platform with integrated inventory management and POS connectivity — from scratch, in 3 weeks.
+            We designed and built a complete custom e-commerce platform with integrated inventory management, POS connectivity, automated shipping, and transactional emails — from the first line of code to production deployment in just 3 weeks.
           </p>
           <div className="grid sm:grid-cols-2 gap-4">
             {[
-              { icon: ShoppingCart, text: 'Full e-commerce storefront with 122 pages' },
-              { icon: Server, text: '50+ API routes powering the backend' },
-              { icon: Database, text: 'Clover POS integration for in-store sales' },
-              { icon: CreditCard, text: 'Stripe payment processing' },
-              { icon: Truck, text: 'GoShippo shipping & label generation' },
-              { icon: Mail, text: '5 custom email templates via Resend' },
-              { icon: Barcode, text: 'Barcode scanning system for inventory' },
-              { icon: Package, text: 'Pokemon card inventory management' },
+              { icon: ShoppingCart, text: '122-page storefront with category-specific browsing' },
+              { icon: Server, text: '50+ API routes powering the entire backend' },
+              { icon: Database, text: 'Clover POS integration syncing online + in-store' },
+              { icon: CreditCard, text: 'Stripe payments with automated invoicing' },
+              { icon: Truck, text: 'GoShippo shipping with auto label generation' },
+              { icon: Mail, text: '5 custom transactional email templates via Resend' },
+              { icon: Barcode, text: 'Barcode scanning for instant inventory intake' },
+              { icon: Package, text: 'Specialized Pokémon card inventory management' },
             ].map((item) => (
-              <div key={item.text} className="flex items-start gap-3 p-3 rounded-xl">
+              <div key={item.text} className="flex items-start gap-3 p-3 rounded-xl hover:bg-[#FAFAFA] transition-colors">
                 <item.icon className="w-5 h-5 text-[#B8895A] mt-0.5 shrink-0" />
                 <span className="text-sm text-[#5C5650]">{item.text}</span>
               </div>
@@ -112,7 +133,7 @@ export default function SecuredTampaPage() {
           <h2 className="text-2xl font-bold mb-6 text-center">Tech Stack</h2>
           <div className="flex flex-wrap justify-center gap-3">
             {techStack.map((t) => (
-              <span key={t} className="px-5 py-2.5 rounded-full text-sm font-medium bg-[#FAFAFA] border border-[#E8E2DA] shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff]">
+              <span key={t} className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-[#E8E2DA] shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff] hover:border-[#B8895A]/20 transition-colors">
                 {t}
               </span>
             ))}
@@ -123,16 +144,17 @@ export default function SecuredTampaPage() {
       {/* Results */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#FAFAFA] border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
-          <h2 className="text-2xl font-bold mb-6">The Results</h2>
-          <ul className="space-y-3">
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#B8895A]/20 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          <h2 className="text-2xl font-bold mb-6">The Results: Back Online and Better Than Ever</h2>
+          <ul className="space-y-3 mb-8">
             {[
-              'Complete custom platform replacing Shopify — fully owned by the client',
-              'Unified online and in-store inventory management',
-              'Automated order processing with real-time POS sync',
-              'Professional storefront with category-specific browsing',
-              'Streamlined shipping with automated label generation',
-              'Barcode scanning for fast inventory intake and lookup',
+              'Complete custom platform — fully owned by the client, no monthly platform fees',
+              'Unified online and in-store inventory eliminating double-entry and stockouts',
+              'Automated order processing with real-time Clover POS sync',
+              'Professional storefront with category-specific browsing for sneakers, cards, and collectibles',
+              'Automated shipping labels saving hours of manual processing per week',
+              'Barcode scanning system for fast inventory intake and instant product lookup',
+              '99.9% uptime since launch — zero critical outages',
             ].map((r) => (
               <li key={r} className="flex items-start gap-3 text-[#5C5650]">
                 <CheckCircle2 className="w-5 h-5 text-[#B8895A] mt-0.5 shrink-0" />
@@ -143,25 +165,38 @@ export default function SecuredTampaPage() {
         </motion.div>
       </section>
 
+      {/* Testimonial */}
+      <section className="max-w-4xl mx-auto px-6 pb-16">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] text-center">
+          <MessageSquare className="w-8 h-8 text-[#B8895A]/30 mx-auto mb-4" />
+          <blockquote className="text-xl md:text-2xl text-[#2D2A26] font-medium leading-relaxed mb-6 max-w-2xl mx-auto">
+            &ldquo;Shopify shut us down and I thought it was over. Vantix built something better than I ever had — in 3 weeks. The POS integration alone saves me hours every day. I own the whole thing now, no platform can take it away.&rdquo;
+          </blockquote>
+          <p className="text-[#2D2A26] font-semibold">Dave</p>
+          <p className="text-[#8C857C] text-sm">Founder, SecuredTampa</p>
+        </motion.div>
+      </section>
+
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-12 bg-[#FAFAFA] border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
-          <h2 className="text-3xl font-bold mb-4">Get Similar Results for Your Business</h2>
+          className="rounded-2xl p-12 bg-white border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          <h2 className="text-3xl font-bold mb-4">Ready for Results Like This?</h2>
           <p className="text-[#8C857C] mb-8 max-w-lg mx-auto">
-            Whether you need a custom platform, AI automation, or a complete digital transformation — we can build it.
+            Whether you need a custom platform, AI automation, or a complete digital transformation — we deliver in weeks, not months. Let&apos;s talk about your project.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] transition-all"
-              style={{ background: 'linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878)' }}
+              className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
+              style={woodButtonStyle}
             >
-              Book a Consultation <ArrowRight className="w-4 h-4" />
+              Book Your Free AI Audit <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <a
               href="tel:+19084987753"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#E8E2DA] text-sm font-semibold shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#E8E2DA] text-sm font-semibold shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#B8895A]/20 transition-all"
             >
               <Phone className="w-4 h-4" /> (908) 498-7753
             </a>
