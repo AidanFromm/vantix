@@ -728,7 +728,7 @@ function ServicesSection() {
 function TechStackSection() {
   const isMobile = useIsMobile();
   const techs = [
-    'Next.js', 'React', 'Supabase', 'Stripe', 'Tailwind CSS', 'OpenAI', 'Vercel', 'Node.js',
+    'OpenClaw', 'Claude Code', 'Replicate', 'Gemini', 'Next.js', 'React', 'TypeScript', 'Supabase', 'PostgreSQL', 'Stripe', 'Tailwind CSS', 'Framer Motion', 'OpenAI', 'Vercel', 'Node.js', 'Resend', 'Twilio', 'n8n', 'Cal.com', 'GoShippo',
   ];
 
   return (
