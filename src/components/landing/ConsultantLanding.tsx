@@ -235,8 +235,8 @@ function HeroSection() {
             className="grid grid-cols-3 gap-8 mt-16 pt-8 border-t border-gray-200 max-w-lg"
           >
             <div>
-              <p className="text-2xl md:text-3xl font-bold text-gray-900">$6M+</p>
-              <p className="text-xs text-gray-500 mt-1">Client Revenue</p>
+              <p className="text-2xl md:text-3xl font-bold text-gray-900">50+</p>
+              <p className="text-xs text-gray-500 mt-1">Projects Shipped</p>
             </div>
             <div>
               <p className="text-2xl md:text-3xl font-bold text-gray-900">3-5</p>
@@ -280,9 +280,9 @@ function LogoBar() {
         <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
           {/* Real client logos - text placeholder style */}
           {[
-            { name: 'Just Four Kicks', subtitle: '$5.8M Revenue' },
             { name: 'CardLedger', subtitle: 'Portfolio App' },
             { name: 'SecuredTampa', subtitle: 'E-Commerce' },
+            { name: 'Wholesale Platform', subtitle: 'B2B Automation' },
           ].map((client, i) => (
             <motion.div 
               key={i}
@@ -396,9 +396,9 @@ function SolutionSection() {
               <div className="space-y-4">
                 {/* Success project cards */}
                 {[
-                  { title: 'J4K Platform', result: '$5.8M processed', status: '99.9% uptime' },
+                  { title: 'E-Commerce Platform', result: 'Multi-million processed', status: '99.9% uptime' },
                   { title: 'Trading Bot', result: '24/7 automated', status: 'Running 14 months' },
-                  { title: 'CardLedger App', result: '250K+ cards tracked', status: 'Live on App Store' },
+                  { title: 'CardLedger App', result: '250K+ cards tracked', status: 'Live on web' },
                 ].map((item, i) => (
                   <div key={i} className="bg-white/10 backdrop-blur rounded-xl p-4 border border-emerald-500/20">
                     <div className="flex items-center justify-between mb-2">
@@ -461,7 +461,7 @@ function ServiceTiers() {
       icon: Lightbulb,
       name: 'Discovery',
       tagline: 'Strategy & Roadmap',
-      price: '$2,500',
+      price: 'From $500',
       duration: '1-2 weeks',
       description: 'Deep-dive audit of your business + custom AI roadmap with ROI projections.',
       features: [
@@ -479,7 +479,7 @@ function ServiceTiers() {
       icon: Wrench,
       name: 'Build',
       tagline: 'Implementation',
-      price: '$5,000+',
+      price: 'From $2,500',
       duration: '3-6 weeks',
       description: 'We build your custom AI solution—website, app, automation, or all three.',
       features: [
@@ -497,7 +497,7 @@ function ServiceTiers() {
       icon: HeartHandshake,
       name: 'Partner',
       tagline: 'Ongoing Retainer',
-      price: '$2,000/mo',
+      price: 'From $500/mo',
       duration: 'Ongoing',
       description: 'Continuous optimization, support, and new development. Your AI team on call.',
       features: [
@@ -635,10 +635,10 @@ function ServiceTiers() {
 function ProofSection() {
   const results = [
     {
-      metric: '$5.8M',
-      label: 'Revenue Processed',
-      project: 'Just Four Kicks',
-      description: 'Built the complete tech infrastructure for a B2B sneaker wholesale operation. Custom inventory, tiered pricing, automated fulfillment.',
+      metric: '40+',
+      label: 'Hours Saved Weekly',
+      project: 'B2B Wholesale Platform',
+      description: 'Built custom inventory management, automated pricing, and fulfillment systems. Handles thousands of orders monthly.',
     },
     {
       metric: '250K+',
@@ -648,9 +648,9 @@ function ProofSection() {
     },
     {
       metric: '24/7',
-      label: 'Automated Trading',
+      label: 'Automated Operations',
       project: 'Trading Systems',
-      description: 'AI-powered trading bots running continuously. While clients sleep, their systems work.',
+      description: 'AI-powered bots running continuously. While clients sleep, their systems work.',
     },
   ];
 
@@ -860,10 +860,10 @@ function ProcessSection() {
 function TestimonialsSection() {
   const testimonials = [
     {
-      quote: "They built our entire platform in 4 weeks. Other agencies quoted us 6 months. The system handles $500K+ in monthly orders without breaking a sweat.",
-      name: "Kyle",
-      title: "CEO, Just Four Kicks",
-      metric: "$5.8M Revenue"
+      quote: "They built our entire platform in 4 weeks. Other agencies quoted us 6 months. The system handles thousands of orders monthly without breaking a sweat.",
+      name: "Wholesale Client",
+      title: "B2B E-Commerce",
+      metric: "4 Week Delivery"
     },
     {
       quote: "Finally, developers who actually deliver. No excuses, no delays—just results. Our app went from idea to live in under 5 weeks.",
@@ -947,7 +947,7 @@ function FAQSection() {
     },
     {
       question: "How much does a typical project cost?",
-      answer: "Discovery starts at $2,500. Build projects range from $5,000-$25,000 depending on complexity. Ongoing partnerships start at $2,000/month. We provide fixed pricing upfront—no surprises."
+      answer: "Discovery calls are free. Strategy packages start at $500. Build projects range from $2,500-$15,000 depending on complexity. Ongoing partnerships start at $500/month. We provide fixed pricing upfront—no surprises."
     },
     {
       question: "How long does implementation take?",
@@ -959,7 +959,7 @@ function FAQSection() {
     },
     {
       question: "Do you offer ongoing support?",
-      answer: "Yes. Every project includes 30 days of support. For ongoing optimization and development, our Partnership tier provides continuous AI management starting at $2,000/month."
+      answer: "Yes. Every project includes 30 days of support. For ongoing optimization and development, our Partnership tier provides continuous management starting at $500/month."
     },
     {
       question: "What types of AI do you work with?",
