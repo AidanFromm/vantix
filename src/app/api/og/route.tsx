@@ -12,8 +12,8 @@ export async function GET() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#0a0a0a',
-          backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 50%)',
+          backgroundColor: '#FAFAFA',
+          backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(184, 137, 90, 0.12) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(184, 137, 90, 0.08) 0%, transparent 50%)',
         }}
       >
         {/* V Logo */}
@@ -25,15 +25,18 @@ export async function GET() {
             marginRight: 60,
           }}
         >
-          <svg width="200" height="200" viewBox="0 0 512 512">
-            <defs>
-              <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#10b981" />
-                <stop offset="100%" stopColor="#059669" />
-              </linearGradient>
-            </defs>
-            <path d="M150 100 L256 400 L362 100 L300 100 L256 280 L212 100 Z" fill="url(#glow)"/>
-          </svg>
+          <div style={{
+            width: 160,
+            height: 160,
+            borderRadius: 40,
+            background: 'linear-gradient(135deg, #B8895A, #9A7048)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '8px 8px 24px rgba(0,0,0,0.15), -4px -4px 12px rgba(255,255,255,0.8)',
+          }}>
+            <div style={{ fontSize: 100, fontWeight: 800, color: 'white', lineHeight: 1 }}>V</div>
+          </div>
         </div>
 
         {/* Text */}
@@ -48,27 +51,27 @@ export async function GET() {
             style={{
               fontSize: 80,
               fontWeight: 800,
-              color: 'white',
-              letterSpacing: 6,
+              color: '#2D2A26',
+              letterSpacing: 4,
             }}
           >
             VANTIX
           </div>
           <div
             style={{
-              fontSize: 28,
-              fontWeight: 500,
-              color: '#10b981',
-              letterSpacing: 4,
+              fontSize: 26,
+              fontWeight: 600,
+              color: '#B8895A',
+              letterSpacing: 3,
               marginTop: 8,
             }}
           >
-            GET ORGANIZED
+            AI-POWERED SOLUTIONS
           </div>
           <div
             style={{
               fontSize: 20,
-              color: '#666666',
+              color: '#8C857C',
               marginTop: 16,
             }}
           >
@@ -83,8 +86,8 @@ export async function GET() {
             bottom: 0,
             left: 0,
             right: 0,
-            height: 8,
-            background: 'linear-gradient(90deg, #10b981, #059669)',
+            height: 6,
+            background: 'linear-gradient(90deg, #B8895A, #D4A76A, #B8895A)',
           }}
         />
       </div>
