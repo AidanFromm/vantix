@@ -199,7 +199,7 @@ function HeroSection() {
           transition={{ duration: 0.7, delay: 0.6 }}
           className="text-lg sm:text-xl text-[#8C857C] max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          We build AI systems that generate revenue, cut costs, and run your operations â€" while you focus on growth.
+          We build AI systems that generate revenue, cut costs, and run your operations — while you focus on growth.
         </motion.p>
 
         <motion.div
@@ -222,7 +222,7 @@ function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          className="hidden"
         >
           <ArrowDown size={20} className="text-[#C5C3BE] animate-bounce" />
         </motion.div>

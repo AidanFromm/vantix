@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Realistic wood texture - left plank (grain follows plank angle) -->
+    <pattern id="woodL" x="0" y="0" width="80" height="400" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
+      <rect width="80" height="400" fill="#D4A05A"/>
+      <!-- Primary grain lines -->
+      <path d="M0,8 Q40,6 80,10" stroke="#C4903E" stroke-width="1.8" fill="none" opacity="0.5"/>
+      <path d="M0,22 Q40,19 80,24" stroke="#B8843A" stroke-width="1.2" fill="none" opacity="0.4"/>
+      <path d="M0,38 Q20,36 40,39 Q60,42 80,37" stroke="#C4903E" stroke-width="2" fill="none" opacity="0.3"/>
+      <path d="M0,52 Q40,55 80,51" stroke="#B8843A" stroke-width="1" fill="none" opacity="0.5"/>
+      <path d="M0,68 Q30,65 60,70 Q70,71 80,68" stroke="#C4903E" stroke-width="1.5" fill="none" opacity="0.35"/>
+      <path d="M0,82 Q40,85 80,80" stroke="#B8843A" stroke-width="1.8" fill="none" opacity="0.4"/>
+      <path d="M0,98 Q20,96 50,100 Q70,102 80,97" stroke="#C4903E" stroke-width="1" fill="none" opacity="0.45"/>
+      <path d="M0,115 Q40,112 80,117" stroke="#B8843A" stroke-width="2" fill="none" opacity="0.3"/>
+      <path d="M0,130 Q30,133 60,128 Q70,127 80,131" stroke="#C4903E" stroke-width="1.2" fill="none" opacity="0.5"/>
+      <path d="M0,148 Q40,145 80,150" stroke="#B8843A" stroke-width="1.5" fill="none" opacity="0.35"/>
+      <path d="M0,165 Q40,168 80,163" stroke="#C4903E" stroke-width="1" fill="none" opacity="0.4"/>
+      <path d="M0,182 Q20,180 50,184 Q70,186 80,181" stroke="#B8843A" stroke-width="1.8" fill="none" opacity="0.45"/>
+      <path d="M0,200 Q40,197 80,202" stroke="#C4903E" stroke-width="1.2" fill="none" opacity="0.3"/>
+      <!-- Knot -->
+      <ellipse cx="35" cy="160" rx="8" ry="5" fill="#A07030" opacity="0.35"/>
+      <ellipse cx="35" cy="160" rx="5" ry="3" fill="#8A6025" opacity="0.25"/>
+    </pattern>
+    
+    <!-- Right plank wood (slightly different tone) -->
+    <pattern id="woodR" x="0" y="0" width="80" height="400" patternUnits="userSpaceOnUse" patternTransform="rotate(18)">
+      <rect width="80" height="400" fill="#D09850"/>
+      <path d="M0,10 Q40,7 80,12" stroke="#C08838" stroke-width="1.5" fill="none" opacity="0.5"/>
+      <path d="M0,26 Q40,23 80,28" stroke="#B47E35" stroke-width="1.2" fill="none" opacity="0.4"/>
+      <path d="M0,44 Q25,42 50,46 Q65,48 80,43" stroke="#C08838" stroke-width="2" fill="none" opacity="0.3"/>
+      <path d="M0,60 Q40,63 80,58" stroke="#B47E35" stroke-width="1" fill="none" opacity="0.45"/>
+      <path d="M0,76 Q35,73 70,78" stroke="#C08838" stroke-width="1.5" fill="none" opacity="0.35"/>
+      <path d="M0,94 Q40,97 80,92" stroke="#B47E35" stroke-width="1.8" fill="none" opacity="0.4"/>
+      <path d="M0,112 Q25,110 55,114 Q70,116 80,111" stroke="#C08838" stroke-width="1" fill="none" opacity="0.5"/>
+      <path d="M0,128 Q40,125 80,130" stroke="#B47E35" stroke-width="1.5" fill="none" opacity="0.3"/>
+      <path d="M0,146 Q35,149 70,144" stroke="#C08838" stroke-width="1.2" fill="none" opacity="0.45"/>
+      <path d="M0,164 Q40,161 80,166" stroke="#B47E35" stroke-width="1.8" fill="none" opacity="0.35"/>
+      <path d="M0,182 Q40,185 80,180" stroke="#C08838" stroke-width="1" fill="none" opacity="0.4"/>
+      <!-- Knot -->
+      <ellipse cx="50" cy="95" rx="7" ry="4.5" fill="#9A6828" opacity="0.3"/>
+      <ellipse cx="50" cy="95" rx="4" ry="2.5" fill="#856020" opacity="0.2"/>
+    </pattern>
+    
+    <!-- Nail head -->
+    <radialGradient id="nailG" cx="40%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#D8D8D8"/>
+      <stop offset="25%" stop-color="#B0B0B0"/>
+      <stop offset="60%" stop-color="#808080"/>
+      <stop offset="100%" stop-color="#505050"/>
+    </radialGradient>
+    
+    <!-- Shadows -->
+    <filter id="woodShadow" x="-15%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="6" dy="8" stdDeviation="10" flood-color="rgba(0,0,0,0.3)"/>
+    </filter>
+    
+    <filter id="nailF" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.5)"/>
+    </filter>
+    
+    <filter id="innerGlow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
+      <feOffset dx="0" dy="1" result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" operator="over"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" fill="#FAFAFA"/>
+  
+  <!-- LEFT PLANK — proper 2x4 proportions, cut at angles to form V shape -->
+  <g filter="url(#woodShadow)">
+    <!-- Side/depth of plank (3D effect) -->
+    <polygon points="148,32 200,32 268,440 232,440 160,32" fill="#A07030" opacity="0.5"/>
+    <!-- Main face -->
+    <polygon points="92,32 148,32 232,440 176,440" fill="url(#woodL)" stroke="#8C6830" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Top edge highlight -->
+    <line x1="94" y1="34" x2="146" y2="34" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <!-- Left edge highlight -->
+    <line x1="94" y1="34" x2="178" y2="438" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+    <!-- Right edge shadow -->
+    <line x1="146" y1="34" x2="230" y2="438" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+  </g>
+  
+  <!-- RIGHT PLANK -->
+  <g filter="url(#woodShadow)">
+    <!-- Side/depth -->
+    <polygon points="312,32 364,32 280,440 244,440 312,32" fill="#9A6828" opacity="0.5"/>
+    <!-- Main face -->
+    <polygon points="364,32 420,32 336,440 280,440" fill="url(#woodR)" stroke="#8C6830" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Top edge highlight -->
+    <line x1="366" y1="34" x2="418" y2="34" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <!-- Left edge shadow -->
+    <line x1="366" y1="34" x2="282" y2="438" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+    <!-- Right edge highlight -->
+    <line x1="418" y1="34" x2="334" y2="438" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+  </g>
+  
+  <!-- NAIL — single big nail at the bottom joint where the two planks meet -->
+  <g filter="url(#nailF)">
+    <!-- Nail head - round with flat Phillips cross -->
+    <circle cx="256" cy="410" r="16" fill="url(#nailG)" stroke="#404040" stroke-width="1.5"/>
+    <!-- Phillips cross -->
+    <line x1="246" y1="410" x2="266" y2="410" stroke="#505050" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="256" y1="400" x2="256" y2="420" stroke="#505050" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Highlight reflection -->
+    <ellipse cx="251" cy="405" rx="5" ry="4" fill="white" opacity="0.2"/>
+  </g>
+  
+  <!-- Small accent nails near top of each plank -->
+  <g filter="url(#nailF)">
+    <circle cx="120" cy="80" r="8" fill="url(#nailG)" stroke="#454545" stroke-width="1"/>
+    <line x1="115" y1="80" x2="125" y2="80" stroke="#505050" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="120" y1="75" x2="120" y2="85" stroke="#505050" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="118" cy="77" rx="2.5" ry="2" fill="white" opacity="0.15"/>
+  </g>
+  
+  <g filter="url(#nailF)">
+    <circle cx="392" cy="80" r="8" fill="url(#nailG)" stroke="#454545" stroke-width="1"/>
+    <line x1="387" y1="80" x2="397" y2="80" stroke="#505050" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="392" y1="75" x2="392" y2="85" stroke="#505050" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="390" cy="77" rx="2.5" ry="2" fill="white" opacity="0.15"/>
+  </g>
+</svg>
