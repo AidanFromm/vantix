@@ -150,12 +150,12 @@ export default function ContactPage() {
               <h3 className="font-bold mb-3">Skip the Form — Book a Call</h3>
               <p className="text-sm text-[#8C857C] mb-4">30-minute free AI audit. We&apos;ll map your automation opportunities and show you projected ROI.</p>
               <a
-                href="https://calendly.com/usevantix/consultation"
+                href="https://cal.com/vantix/ai-consultation"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-full border border-[#E8E2DA] text-sm font-semibold shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#B8895A]/20 transition-all"
               >
-                <Calendar className="w-4 h-4 text-[#B8895A]" /> Open Calendly
+                <Calendar className="w-4 h-4 text-[#B8895A]" /> Open Cal.com
               </a>
             </div>
             <div className="rounded-2xl p-6 bg-white border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
@@ -177,14 +177,14 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Calendly Embed */}
+      {/* Cal.com Embed */}
       <section className="max-w-4xl mx-auto px-6 pb-24">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
           <h2 className="text-2xl font-bold mb-2 text-center">Prefer to Talk Live?</h2>
           <p className="text-[#8C857C] text-center mb-6">Pick a time below. 30 minutes. Zero pressure. All value.</p>
           <div className="rounded-2xl overflow-hidden border border-[#E8E2DA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
             <iframe
-              src="https://calendly.com/usevantix/consultation"
+              src="https://cal.com/vantix/ai-consultation"
               width="100%"
               height="650"
               frameBorder="0"
@@ -206,3 +206,4 @@ export default function ContactPage() {
     </div>
   );
 }
+

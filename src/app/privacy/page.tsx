@@ -61,7 +61,7 @@ export default function PrivacyPage() {
         <p>We may use the following third-party services:</p>
         <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
           <li><strong>Plausible Analytics</strong> — privacy-focused website analytics</li>
-          <li><strong>Calendly</strong> — appointment scheduling</li>
+          <li><strong>Cal.com</strong> — appointment scheduling</li>
           <li><strong>Stripe</strong> — payment processing (for contracted services)</li>
           <li><strong>Resend</strong> — transactional email delivery</li>
         </ul>
@@ -103,3 +103,4 @@ export default function PrivacyPage() {
     </div>
   );
 }
+

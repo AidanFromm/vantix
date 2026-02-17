@@ -1183,7 +1183,7 @@ function FAQSection() {
 }
 
 // ============================================
-// BOOKING SECTION (Calendly)
+// BOOKING SECTION (Cal.com)
 // ============================================
 function BookingSection() {
   const { ref, inView } = useAnimateInView();
@@ -1219,7 +1219,7 @@ function BookingSection() {
           style={{ minHeight: '660px' }}
         >
           <iframe
-            src="https://calendly.com/usevantix/consultation"
+            src="https://cal.com/vantix/ai-consultation"
             width="100%"
             height="660"
             frameBorder="0"
@@ -1477,3 +1477,4 @@ export function FuturisticLanding() {
     </div>
   );
 }
+
