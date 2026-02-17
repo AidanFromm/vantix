@@ -38,6 +38,11 @@ export async function updateClient(id: string, updates: Partial<Client>) {
   return { data: data as Client | null, error };
 }
 
+export async function deleteClient(id: string) {
+  const { error } = await supabase.from('clients').delete().eq('id', id);
+  return { error };
+}
+
 // ============================================
 // LEADS
 // ============================================
@@ -71,6 +76,11 @@ export async function createLead(lead: Partial<Lead>) {
 export async function updateLead(id: string, updates: Partial<Lead>) {
   const { data, error } = await supabase.from('leads').update(updates).eq('id', id).select().single();
   return { data: data as Lead | null, error };
+}
+
+export async function deleteLead(id: string) {
+  const { error } = await supabase.from('leads').delete().eq('id', id);
+  return { error };
 }
 
 // ============================================
@@ -108,6 +118,11 @@ export async function updateProject(id: string, updates: Partial<Project>) {
   return { data: data as Project | null, error };
 }
 
+export async function deleteProject(id: string) {
+  const { error } = await supabase.from('projects').delete().eq('id', id);
+  return { error };
+}
+
 // ============================================
 // INVOICES
 // ============================================
@@ -133,6 +148,16 @@ export async function createInvoice(invoice: Partial<Invoice>) {
 export async function updateInvoice(id: string, updates: Partial<Invoice>) {
   const { data, error } = await supabase.from('invoices').update(updates).eq('id', id).select().single();
   return { data: data as Invoice | null, error };
+}
+
+export async function deleteInvoice(id: string) {
+  const { error } = await supabase.from('invoices').delete().eq('id', id);
+  return { error };
+}
+
+export async function deleteExpense(id: string) {
+  const { error } = await supabase.from('expenses').delete().eq('id', id);
+  return { error };
 }
 
 // ============================================

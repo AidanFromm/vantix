@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <pattern id="wood2" x="0" y="0" width="300" height="300" patternUnits="userSpaceOnUse" patternTransform="rotate(0)">
+      <rect width="300" height="300" fill="#C8974F"/>
+      <line x1="0" y1="8" x2="300" y2="10" stroke="#B58545" stroke-width="1.8" opacity="0.45"/>
+      <line x1="0" y1="22" x2="300" y2="20" stroke="#A87838" stroke-width="1.2" opacity="0.35"/>
+      <line x1="0" y1="38" x2="300" y2="40" stroke="#B58545" stroke-width="2.2" opacity="0.3"/>
+      <line x1="0" y1="55" x2="300" y2="53" stroke="#A87838" stroke-width="1" opacity="0.5"/>
+      <line x1="0" y1="70" x2="300" y2="72" stroke="#B58545" stroke-width="1.5" opacity="0.4"/>
+      <line x1="0" y1="88" x2="300" y2="86" stroke="#A87838" stroke-width="1.8" opacity="0.3"/>
+    </pattern>
+    
+    <radialGradient id="nail2" cx="45%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#E8E8E8"/>
+      <stop offset="30%" stop-color="#B8B8B8"/>
+      <stop offset="70%" stop-color="#888888"/>
+      <stop offset="100%" stop-color="#666666"/>
+    </radialGradient>
+    
+    <filter id="shadow2" x="-15%" y="-15%" width="140%" height="140%">
+      <feDropShadow dx="5" dy="6" stdDeviation="8" flood-color="#00000035"/>
+    </filter>
+    
+    <filter id="nailDrop" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#00000050"/>
+    </filter>
+    
+    <clipPath id="leftPlank">
+      <rect x="0" y="0" width="70" height="380" rx="3"/>
+    </clipPath>
+    <clipPath id="rightPlank">
+      <rect x="0" y="0" width="70" height="380" rx="3"/>
+    </clipPath>
+  </defs>
+  
+  <!-- Clean background -->
+  <rect width="512" height="512" fill="#FAFAFA"/>
+  
+  <!-- Left 2x4 plank -->
+  <g filter="url(#shadow2)" transform="translate(130, 40) rotate(-14, 35, 190)">
+    <rect width="70" height="380" rx="3" fill="url(#wood2)" stroke="#8A6835" stroke-width="2"/>
+    <!-- Beveled edge highlight -->
+    <rect x="2" y="2" width="66" height="376" rx="2" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+    <!-- Saw marks at ends -->
+    <line x1="5" y1="4" x2="65" y2="4" stroke="#9A7840" stroke-width="1" opacity="0.6"/>
+    <line x1="5" y1="376" x2="65" y2="376" stroke="#7A5828" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- Right 2x4 plank -->
+  <g filter="url(#shadow2)" transform="translate(312, 40) rotate(14, 35, 190)">
+    <rect width="70" height="380" rx="3" fill="url(#wood2)" stroke="#8A6835" stroke-width="2"/>
+    <rect x="2" y="2" width="66" height="376" rx="2" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+    <line x1="5" y1="4" x2="65" y2="4" stroke="#9A7840" stroke-width="1" opacity="0.6"/>
+    <line x1="5" y1="376" x2="65" y2="376" stroke="#7A5828" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- Big nail at the junction (where planks meet at bottom of V) -->
+  <g filter="url(#nailDrop)">
+    <!-- Nail shaft visible between planks -->
+    <rect x="253" y="370" width="6" height="18" rx="1" fill="#777" transform="rotate(0, 256, 380)"/>
+    <!-- Nail head -->
+    <ellipse cx="256" cy="368" rx="14" ry="14" fill="url(#nail2)" stroke="#555" stroke-width="1.5"/>
+    <!-- Cross slot -->
+    <line x1="249" y1="368" x2="263" y2="368" stroke="#555" stroke-width="2" stroke-linecap="round"/>
+    <line x1="256" y1="361" x2="256" y2="375" stroke="#555" stroke-width="2" stroke-linecap="round"/>
+    <!-- Highlight -->
+    <ellipse cx="253" cy="364" rx="4" ry="3" fill="white" opacity="0.25"/>
+  </g>
+  
+  <!-- Small nail top-left -->
+  <g filter="url(#nailDrop)" transform="translate(155, 110) rotate(-14)">
+    <circle cx="0" cy="0" r="7" fill="url(#nail2)" stroke="#666" stroke-width="1"/>
+    <line x1="-4" y1="0" x2="4" y2="0" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="0" y1="-4" x2="0" y2="4" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Small nail top-right -->
+  <g filter="url(#nailDrop)" transform="translate(357, 110) rotate(14)">
+    <circle cx="0" cy="0" r="7" fill="url(#nail2)" stroke="#666" stroke-width="1"/>
+    <line x1="-4" y1="0" x2="4" y2="0" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="0" y1="-4" x2="0" y2="4" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- VANTIX text -->
+  <text x="256" y="478" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="38" font-weight="800" letter-spacing="10" fill="#2D2A26">VANTIX</text>
+</svg>
