@@ -123,17 +123,21 @@ export interface Invoice {
   client_id?: string;
   project_id?: string;
   
-  amount: number;
+  items?: unknown[];
+  subtotal?: number;
+  tax?: number;
+  total: number;
+  paid?: number;
+  amount?: number; // legacy alias
   
-  issue_date: string;
   due_date?: string;
-  paid_date?: string;
+  paid_at?: string;
+  paid_date?: string; // legacy alias
   
   status: InvoiceStatus;
   notes?: string;
   
   created_at: string;
-  updated_at: string;
   
   // Joined data
   client?: Client;

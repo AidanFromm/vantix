@@ -242,18 +242,22 @@ export default function DashboardPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const [statsRes, activitiesRes, projectsRes, invoicesRes] = await Promise.all([
+      const results = await Promise.allSettled([
         getDashboardStats(),
         getActivities(15),
         getProjects({ status: 'active' }),
         getInvoices(),
       ]);
+      const statsRes = results[0].status === 'fulfilled' ? results[0].value : { data: null };
+      const activitiesRes = results[1].status === 'fulfilled' ? results[1].value : { data: null };
+      const projectsRes = results[2].status === 'fulfilled' ? results[2].value : { data: null };
+      const invoicesRes = results[3].status === 'fulfilled' ? results[3].value : { data: null };
+      
       if (statsRes.data) setStats(statsRes.data);
       if (activitiesRes.data) setActivities(activitiesRes.data);
       if (projectsRes.data) setProjects(projectsRes.data);
       if (invoicesRes.data) {
         setInvoices(invoicesRes.data);
-        // Build chart data from invoices (group by month)
         const monthlyData: Record<string, { revenue: number; expenses: number }> = {};
         const now = new Date();
         for (let i = 5; i >= 0; i--) {
@@ -261,10 +265,10 @@ export default function DashboardPage() {
           const key = d.toLocaleDateString('en-US', { month: 'short' });
           monthlyData[key] = { revenue: 0, expenses: 0 };
         }
-        invoicesRes.data.filter(inv => inv.status === 'paid' && inv.paid_date).forEach(inv => {
-          const d = new Date(inv.paid_date!);
+        invoicesRes.data.filter(inv => inv.status === 'paid' && inv.paid_at).forEach(inv => {
+          const d = new Date(inv.paid_at!);
           const key = d.toLocaleDateString('en-US', { month: 'short' });
-          if (monthlyData[key]) monthlyData[key].revenue += inv.amount;
+          if (monthlyData[key]) monthlyData[key].revenue += (inv.total || 0);
         });
         setChartData(Object.entries(monthlyData).map(([month, data]) => ({ month, ...data })));
       }

@@ -215,25 +215,16 @@ export async function getTeamMembers() {
 // ============================================
 export async function getDashboardStats(): Promise<{ data: DashboardStats | null; error: Error | null }> {
   try {
-    // Get invoices for revenue
-    const { data: invoices } = await supabase.from('invoices').select('amount, status');
+    const { data: invoices } = await supabase.from('invoices').select('total, status').then(r => r, () => ({ data: null, error: null }));
+    const { data: expenses } = await supabase.from('expenses').select('amount').then(r => r, () => ({ data: null, error: null }));
+    const { data: projects } = await supabase.from('projects').select('status').then(r => r, () => ({ data: null, error: null }));
+    const { data: clients } = await supabase.from('clients').select('status').then(r => r, () => ({ data: null, error: null }));
+    const { data: leads } = await supabase.from('leads').select('status').then(r => r, () => ({ data: null, error: null }));
     
-    // Get expenses
-    const { data: expenses } = await supabase.from('expenses').select('amount');
-    
-    // Get projects
-    const { data: projects } = await supabase.from('projects').select('status');
-    
-    // Get clients
-    const { data: clients } = await supabase.from('clients').select('status');
-    
-    // Get leads
-    const { data: leads } = await supabase.from('leads').select('status');
-    
-    const totalRevenue = invoices?.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.amount || 0), 0) || 0;
+    const totalRevenue = invoices?.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total || 0), 0) || 0;
     const totalExpenses = expenses?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
     const outstandingInvoices = invoices?.filter(i => i.status === 'sent' || i.status === 'overdue') || [];
-    const outstandingAmount = outstandingInvoices.reduce((sum, i) => sum + (i.amount || 0), 0);
+    const outstandingAmount = outstandingInvoices.reduce((sum, i) => sum + (i.total || 0), 0);
     
     return {
       data: {

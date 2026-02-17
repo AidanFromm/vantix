@@ -16,10 +16,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem('vantix_user');
-    if (stored) {
-      setUser(JSON.parse(stored));
-    } else {
+    try {
+      const stored = localStorage.getItem('vantix_user');
+      if (stored) {
+        setUser(JSON.parse(stored));
+      } else {
+        router.push('/login');
+      }
+    } catch {
+      localStorage.removeItem('vantix_user');
       router.push('/login');
     }
   }, [router]);
