@@ -69,6 +69,9 @@ function Navigation() {
               {l.label}
             </a>
           ))}
+          <a href="/login" className="text-sm text-gray-400 hover:text-white transition-colors">
+            Login
+          </a>
           <a
             href="#contact"
             className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-semibold rounded-full transition-all"
@@ -94,6 +97,9 @@ function Navigation() {
                   {l.label}
                 </a>
               ))}
+              <a href="/login" onClick={() => setMobileOpen(false)} className="text-gray-300 hover:text-white transition-colors">
+                Login
+              </a>
               <a href="#contact" onClick={() => setMobileOpen(false)} className="px-5 py-2.5 bg-emerald-500 text-black text-sm font-semibold rounded-full text-center">
                 Book a Call
               </a>
