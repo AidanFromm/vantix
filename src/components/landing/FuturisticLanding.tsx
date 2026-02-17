@@ -950,6 +950,54 @@ function Footer() {
 }
 
 // ============================================
+// BOOKING SECTION
+// ============================================
+function BookingSection() {
+  const { ref, inView } = useAnimateInView();
+
+  return (
+    <section id="booking" className="py-28 md:py-40 relative">
+      <GridBackground variant="solid" />
+      <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
+        <motion.div
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={staggerContainer}
+          className="text-center mb-12"
+        >
+          <motion.p variants={fadeUp} className="text-[#B8895A] text-sm font-semibold uppercase tracking-widest mb-4">
+            Schedule
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2D2A26] mb-4">
+            Book a Free Consultation
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-[#8C857C] text-lg max-w-2xl mx-auto">
+            Pick a time that works for you. We will walk through your business, identify AI opportunities, and give you a clear roadmap — no strings attached.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.3 }}
+          className="rounded-3xl bg-white shadow-[8px_8px_20px_#c8c4be,-8px_-8px_20px_#ffffff] border border-[#E8E5E0] overflow-hidden"
+          style={{ minHeight: '660px' }}
+        >
+          <iframe
+            src="https://calendly.com/usevantix/consultation"
+            width="100%"
+            height="660"
+            frameBorder="0"
+            title="Schedule a consultation"
+            className="w-full"
+          />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
 // MAIN EXPORT
 // ============================================
 export function FuturisticLanding() {
@@ -976,6 +1024,8 @@ export function FuturisticLanding() {
       <TeamSection />
       <WoodDivider />
       <FAQSection />
+      <WoodDivider />
+      <BookingSection />
       <WoodDivider />
       <FinalCTA />
       <Footer />
