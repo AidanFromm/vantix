@@ -6,9 +6,11 @@ import {
   DollarSign, TrendingUp, Briefcase, Users, Plus,
   UserPlus, FileText, BarChart3, Clock, Target,
   Activity, RefreshCw, ArrowRight, CheckCircle2, AlertTriangle,
+  Phone, Calendar, X, Bell,
 } from 'lucide-react';
 import Link from 'next/link';
 
+interface BookingAlert { id: string; name: string; email: string; phone?: string; date: string; time: string; notes?: string; created_at: string; dismissed?: boolean; }
 interface InvoiceData { id: string; status: string; total?: number; amount?: number; paid_at?: string; paid_date?: string; due_date?: string; created_at: string; }
 interface LeadData { id: string; status: string; estimated_value?: number; name: string; company?: string; created_at: string; }
 interface ProjectData { id: string; status: string; name: string; health?: string; budget?: number; spent?: number; progress?: number; client_id?: string; deadline?: string; }
@@ -133,6 +135,7 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [tasks, setTasks] = useState<TaskData[]>([]);
   const [activities, setActivities] = useState<ActivityData[]>([]);
+  const [bookings, setBookings] = useState<BookingAlert[]>([]);
 
   const loadData = useCallback(() => {
     try {
@@ -141,6 +144,7 @@ export default function DashboardPage() {
       setProjects(lsGet<ProjectData>('vantix_projects'));
       setTasks(lsGet<TaskData>('vantix_tasks'));
       setActivities(lsGet<ActivityData>('vantix_activities'));
+      setBookings(lsGet<BookingAlert>('vantix_bookings').filter(b => !b.dismissed));
     } catch (e) { console.error(e); }
     setIsLoading(false);
   }, []);
@@ -190,6 +194,15 @@ export default function DashboardPage() {
     switch (type) { case 'payment': return { icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' }; case 'project': return { icon: Briefcase, color: 'text-purple-600', bg: 'bg-purple-50' }; case 'lead': return { icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' }; default: return { icon: Activity, color: 'text-[#8C857C]', bg: 'bg-[#F5F0EB]' }; }
   };
 
+  const dismissBooking = (id: string) => {
+    try {
+      const all = lsGet<BookingAlert>('vantix_bookings');
+      const updated = all.map(b => b.id === id ? { ...b, dismissed: true } : b);
+      localStorage.setItem('vantix_bookings', JSON.stringify(updated));
+      setBookings(prev => prev.filter(b => b.id !== id));
+    } catch (e) { console.error(e); }
+  };
+
   if (isLoading) return <LoadingSkeleton />;
 
   const kpiData = [
@@ -226,6 +239,46 @@ export default function DashboardPage() {
           </motion.div>
         ))}
       </div>
+
+      {/* Booking Alerts */}
+      {bookings.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
+          {bookings.map(booking => (
+            <div key={booking.id} className="bg-[#B8895A]/10 border border-[#B8895A]/30 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="p-3 rounded-xl bg-[#B8895A]/20">
+                  <Bell size={20} className="text-[#B8895A]" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[#2D2A26]">New Consultation Booked</p>
+                  <p className="text-sm text-[#8C857C]">
+                    <span className="font-medium text-[#2D2A26]">{booking.name}</span> — {booking.email}
+                    {booking.phone && <> — {booking.phone}</>}
+                  </p>
+                  <div className="flex items-center gap-3 mt-1 text-xs text-[#8C857C]">
+                    <span className="flex items-center gap-1"><Calendar size={12} /> {booking.date}</span>
+                    <span className="flex items-center gap-1"><Clock size={12} /> {booking.time}</span>
+                  </div>
+                  {booking.notes && <p className="text-xs text-[#8C857C] mt-1 italic">&quot;{booking.notes}&quot;</p>}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 sm:flex-shrink-0">
+                {booking.phone && (
+                  <a href={`tel:${booking.phone}`} className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium shadow-md hover:shadow-lg transition-all" style={{ backgroundImage: 'url(/wood-texture.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                    <Phone size={14} /> Call
+                  </a>
+                )}
+                <a href={`mailto:${booking.email}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#E8E2DA] text-sm font-medium text-[#2D2A26] hover:bg-[#F5F0EB] transition-all">
+                  Email
+                </a>
+                <button onClick={() => dismissBooking(booking.id)} className="p-2 rounded-lg hover:bg-[#E8E2DA] text-[#8C857C] hover:text-[#2D2A26] transition-colors">
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+      )}
 
       {/* Revenue Chart + Lead Funnel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
