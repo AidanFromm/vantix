@@ -865,14 +865,9 @@ function Footer() {
 // MAIN EXPORT
 // ============================================
 export function FuturisticLanding() {
-  const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
-    setMounted(true);
     window.scrollTo(0, 0);
   }, []);
-
-  if (!mounted) return null;
 
   return (
     <div className="bg-[#0A0A0F] text-gray-100 min-h-screen selection:bg-emerald-500/30 selection:text-white">
