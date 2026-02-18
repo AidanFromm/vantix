@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { motion, useInView, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, Bot, Globe, Zap, BarChart3, Mail, Package,
   Phone, Sparkles, Clock, Users, TrendingUp, Shield, ChevronDown,
@@ -44,17 +44,7 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const woodButtonClass = "text-white font-semibold rounded-xl px-8 py-4 shadow-lg hover:shadow-xl transition-all hover:brightness-90 border-b-2 border-[#3A1A0D]";
-
-function woodButtonProps() {
-  return {
-    style: {
-      backgroundImage: 'url(/wood-texture.png)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-    },
-  };
-}
+const woodButtonClass = "bg-[#3E1A0E] hover:bg-[#2D1209] text-white font-semibold rounded-xl px-8 py-4 shadow-md hover:shadow-lg transition-all";
 
 function useAnimateInView(threshold = 0.15) {
   const ref = useRef(null);
@@ -136,14 +126,7 @@ function useTypewriter(phrases: string[], typingSpeed = 60, deletingSpeed = 30, 
 // NAVIGATION
 // ============================================
 function Navigation() {
-  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   const links = [
     { label: 'Services', href: '/services' },
@@ -158,32 +141,27 @@ function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-[#F0DFD1]/90 backdrop-blur-md border-b border-[#E0CCBA]'
-          : 'bg-transparent'
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 bg-[#F0DFD1]/95 backdrop-blur-sm border-b border-[#E0CCBA]"
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#4A2112] flex items-center justify-center text-white font-extrabold text-sm">V</div>
-          <span className="text-2xl font-extrabold text-[#4A2112] tracking-tight">vantix<span className="text-[#6B3A1F]">.</span></span>
+          <div className="w-8 h-8 rounded-lg bg-[#3E1A0E] flex items-center justify-center text-white font-extrabold text-sm">V</div>
+          <span className="text-2xl font-extrabold text-[#3E1A0E] tracking-tight">vantix<span className="text-[#5C3520]">.</span></span>
         </a>
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-[#8B6B56] hover:text-[#4A2112] transition-colors">
+            <a key={l.href} href={l.href} className="text-sm text-[#8B6B56] hover:text-[#3E1A0E] transition-colors">
               {l.label}
             </a>
           ))}
           <a
             href="#booking"
             className={`${woodButtonClass} rounded-full px-6 py-2.5 text-sm`}
-            {...woodButtonProps()}
           >
             Book a Call
           </a>
         </div>
-        <button className="md:hidden text-[#4A2112]" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
+        <button className="md:hidden text-[#3E1A0E]" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -193,15 +171,15 @@ function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#F0DFD1]/95 backdrop-blur-md border-b border-[#E0CCBA] overflow-hidden"
+            className="md:hidden bg-[#F0DFD1]/95 backdrop-blur-sm border-b border-[#E0CCBA] overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {links.map((l) => (
-                <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)} className="text-[#8B6B56] hover:text-[#4A2112] transition-colors">
+                <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)} className="text-[#8B6B56] hover:text-[#3E1A0E] transition-colors">
                   {l.label}
                 </a>
               ))}
-              <a href="#booking" onClick={() => setMobileOpen(false)} className={`${woodButtonClass} rounded-full px-6 py-2.5 text-sm text-center`} {...woodButtonProps()}>
+              <a href="#booking" onClick={() => setMobileOpen(false)} className={`${woodButtonClass} rounded-full px-6 py-2.5 text-sm text-center`}>
                 Book a Call
               </a>
             </div>
@@ -213,46 +191,7 @@ function Navigation() {
 }
 
 // ============================================
-// STICKY CTA BAR
-// ============================================
-function StickyCTABar() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > window.innerHeight);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ y: -60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -60, opacity: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="fixed top-0 left-0 right-0 z-[60] bg-white/90 backdrop-blur-md border-b border-[#E0CCBA]"
-        >
-          <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-            <span className="text-[#4A2112]/80 text-sm font-medium hidden sm:block">Ready to automate?</span>
-            <a
-              href="#booking"
-              className={`${woodButtonClass} rounded-full px-6 py-2 text-sm inline-flex items-center gap-2`}
-              {...woodButtonProps()}
-            >
-              Book Free Audit
-              <ArrowRight size={14} />
-            </a>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-// ============================================
-// HERO SECTION (with typewriter + hero bg image)
+// HERO SECTION
 // ============================================
 function HeroSection() {
   const typedText = useTypewriter([
@@ -263,24 +202,7 @@ function HeroSection() {
   ]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Hero background image */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: 'url(/hero-bg.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      {/* Gradient overlay */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: 'linear-gradient(to bottom, rgba(240,223,209,0.6) 0%, rgba(240,223,209,0.95) 100%)',
-        }}
-      />
-
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#F0DFD1]">
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center pt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -288,7 +210,7 @@ function HeroSection() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#E0CCBA] bg-white mb-8 shadow-sm"
         >
-          <span className="w-2 h-2 rounded-full bg-[#6B3A1F] animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-[#5C3520] animate-pulse" />
           <span className="text-sm text-[#8B6B56] font-medium">2 Humans + 2 AI Assistants — Building 24/7</span>
         </motion.div>
 
@@ -296,11 +218,11 @@ function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[-0.03em] text-[#4A2112] leading-[0.93] mb-8"
+          className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[-0.03em] text-[#3E1A0E] leading-[0.93] mb-8"
         >
           Your Competitors Are
           <br />
-          Automating. <span className="text-[#6B3A1F]">Are You?</span>
+          Automating. <span className="text-[#5C3520]">Are You?</span>
         </motion.h1>
 
         <motion.div
@@ -311,7 +233,7 @@ function HeroSection() {
         >
           <p className="text-base sm:text-lg text-[#8B6B56] max-w-2xl mx-auto leading-relaxed">
             <span>{typedText}</span>
-            <span className="inline-block w-0.5 h-5 bg-[#6B3A1F] ml-1 animate-pulse" />
+            <span className="inline-block w-0.5 h-5 bg-[#5C3520] ml-1 animate-pulse" />
           </p>
         </motion.div>
 
@@ -324,7 +246,6 @@ function HeroSection() {
           <a
             href="#booking"
             className={`group ${woodButtonClass} rounded-full inline-flex items-center justify-center gap-2 hover:scale-[1.02]`}
-            {...woodButtonProps()}
           >
             Book Your Free AI Audit
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -335,7 +256,7 @@ function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.8 }}
-          className="text-sm text-[#6B3A1F]/70 mt-8 font-medium"
+          className="text-sm text-[#5C3520]/70 mt-8 font-medium"
         >
           122-page platform built in 3 weeks · $50K+ in projects delivered · 24/7 AI operations
         </motion.p>
@@ -363,7 +284,7 @@ function AnimatedCounterSection() {
   ];
 
   return (
-    <section className="relative py-24 lg:py-32 bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]" ref={ref}>
+    <section className="relative py-12 lg:py-16 bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial="hidden"
@@ -373,7 +294,7 @@ function AnimatedCounterSection() {
         >
           {metrics.map((m, i) => (
             <motion.div key={i} variants={popIn} className="flex flex-col items-center">
-              <span className="text-3xl md:text-5xl font-bold text-[#6B3A1F] tabular-nums">{m.value}</span>
+              <span className="text-3xl md:text-5xl font-bold text-[#5C3520] tabular-nums">{m.value}</span>
               <span className="text-sm text-[#8B6B56] mt-1">{m.label}</span>
             </motion.div>
           ))}
@@ -405,19 +326,19 @@ function BeforeAfterSection() {
   ];
 
   return (
-    <section className="py-24 lg:py-32 relative" ref={ref}>
+    <section className="py-12 lg:py-16 relative" ref={ref}>
       <div className="max-w-5xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">
             The Transformation
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112]">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E]">
             See the Difference
           </motion.h2>
         </motion.div>
@@ -435,10 +356,10 @@ function BeforeAfterSection() {
               onClick={() => setShowAfter(!showAfter)}
               className="relative flex items-center bg-white rounded-full p-1.5 shadow-sm border border-[#E0CCBA]"
             >
-              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${!showAfter ? 'bg-[#4A2112] text-white' : 'text-[#8B6B56]'}`}>
+              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${!showAfter ? 'bg-[#3E1A0E] text-white' : 'text-[#8B6B56]'}`}>
                 Before
               </span>
-              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${showAfter ? 'text-white' : 'text-[#8B6B56]'}`} {...(showAfter ? woodButtonProps() : {})}>
+              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${showAfter ? 'bg-[#3E1A0E] text-white' : 'text-[#8B6B56]'}`}>
                 After Vantix
               </span>
             </button>
@@ -452,7 +373,7 @@ function BeforeAfterSection() {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -30 }}
-                  className="md:col-span-2 p-10 rounded-xl bg-white shadow-sm border border-[#E0CCBA]"
+                  className="md:col-span-2 p-6 rounded-xl bg-white shadow-sm border border-[#E0CCBA]"
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
@@ -473,17 +394,17 @@ function BeforeAfterSection() {
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 30 }}
-                  className="md:col-span-2 p-10 rounded-xl bg-white shadow-sm border border-[#6B3A1F]/20"
+                  className="md:col-span-2 p-6 rounded-xl bg-white shadow-sm border border-[#5C3520]/20"
                 >
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-3 h-3 rounded-full bg-[#6B3A1F]" />
-                    <span className="text-[#6B3A1F] font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
+                    <div className="w-3 h-3 rounded-full bg-[#5C3520]" />
+                    <span className="text-[#5C3520] font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-6">
                     {after.map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#6B3A1F]/5">
-                        <CheckCircle2 size={18} className="text-[#6B3A1F] shrink-0" />
-                        <span className="text-[#4A2112] font-medium">{item}</span>
+                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#5C3520]/5">
+                        <CheckCircle2 size={18} className="text-[#5C3520] shrink-0" />
+                        <span className="text-[#3E1A0E] font-medium">{item}</span>
                       </div>
                     ))}
                   </div>
@@ -520,19 +441,19 @@ function ProblemSection() {
   ];
 
   return (
-    <section className="py-24 lg:py-32 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
+    <section className="py-12 lg:py-16 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">
             The Problem
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112] leading-tight max-w-3xl mx-auto">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E] leading-tight max-w-3xl mx-auto">
             You&apos;re Working 60-Hour Weeks on Tasks AI Can Handle in Seconds
           </motion.h2>
         </motion.div>
@@ -544,7 +465,7 @@ function ProblemSection() {
           variants={staggerContainer}
           className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
         >
-          <motion.div variants={fadeLeft} className="relative p-10 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow border border-[#E0CCBA]">
+          <motion.div variants={fadeLeft} className="relative p-6 rounded-xl bg-white shadow-sm border border-[#E0CCBA]">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
               <span className="text-[#8B6B56] font-semibold text-sm uppercase tracking-wider">Before Vantix</span>
@@ -559,15 +480,15 @@ function ProblemSection() {
             </ul>
           </motion.div>
 
-          <motion.div variants={fadeRight} className="relative p-10 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow border border-[#6B3A1F]/20">
+          <motion.div variants={fadeRight} className="relative p-6 rounded-xl bg-white shadow-sm border border-[#5C3520]/20">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-3 h-3 rounded-full bg-[#6B3A1F]" />
-              <span className="text-[#6B3A1F] font-semibold text-sm uppercase tracking-wider">After Vantix</span>
+              <div className="w-3 h-3 rounded-full bg-[#5C3520]" />
+              <span className="text-[#5C3520] font-semibold text-sm uppercase tracking-wider">After Vantix</span>
             </div>
             <ul className="space-y-4">
               {after.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[#4A2112] text-base leading-relaxed">
-                  <CheckCircle2 size={16} className="text-[#6B3A1F] mt-1 shrink-0" />
+                <li key={i} className="flex items-start gap-3 text-[#3E1A0E] text-base leading-relaxed">
+                  <CheckCircle2 size={16} className="text-[#5C3520] mt-1 shrink-0" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -595,19 +516,19 @@ const services = [
 
 function ServicesSection() {
   return (
-    <section id="services" className="py-24 lg:py-32 relative">
+    <section id="services" className="py-12 lg:py-16 relative">
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">
             What We Deploy
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112] leading-tight">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E] leading-tight">
             AI That Runs Your Business.<br />Not Just Advises On It.
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#8B6B56] text-base leading-relaxed mt-4 max-w-2xl mx-auto">
@@ -626,12 +547,12 @@ function ServicesSection() {
             <motion.div
               key={i}
               variants={scaleUp}
-              className="group relative p-10 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow border border-[#E0CCBA] hover:border-[#6B3A1F]/20 cursor-default"
+              className="group relative p-6 rounded-xl bg-white shadow-sm border border-[#E0CCBA] hover:border-[#5C3520]/20 cursor-default"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#F5E8DA] flex items-center justify-center mb-5 group-hover:bg-[#6B3A1F]/10 transition-colors">
-                <s.icon size={22} className="text-[#6B3A1F]" />
+              <div className="w-12 h-12 rounded-xl bg-[#F5E8DA] flex items-center justify-center mb-5 group-hover:bg-[#5C3520]/10 transition-colors">
+                <s.icon size={22} className="text-[#5C3520]" />
               </div>
-              <h3 className="text-[#4A2112] font-semibold text-lg mb-2">{s.title}</h3>
+              <h3 className="text-[#3E1A0E] font-semibold text-lg mb-2">{s.title}</h3>
               <p className="text-[#8B6B56] text-sm leading-relaxed">{s.desc}</p>
             </motion.div>
           ))}
@@ -645,25 +566,24 @@ function ServicesSection() {
 // FLOATING TECH STACK
 // ============================================
 function TechStackSection() {
-  const isMobile = useIsMobile();
   const techs = [
     'OpenClaw', 'Claude Code', 'Replicate', 'Gemini', 'Next.js', 'React', 'TypeScript', 'Supabase', 'PostgreSQL', 'Stripe', 'Tailwind CSS', 'Framer Motion', 'OpenAI', 'Vercel', 'Node.js', 'Resend', 'Twilio', 'n8n', 'Cal.com', 'GoShippo',
   ];
 
   return (
-    <section className="py-24 lg:py-32 relative overflow-hidden bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
+    <section className="py-12 lg:py-16 relative overflow-hidden bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
       <div className="max-w-5xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">
             Our Stack
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112]">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E]">
             Built With the Best
           </motion.h2>
         </motion.div>
@@ -675,10 +595,8 @@ function TechStackSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
-              animate={!isMobile ? { y: [0, -8, 0] } : undefined}
-              {...(!isMobile ? { transition: { y: { repeat: Infinity, duration: 2.5 + i * 0.3, ease: 'easeInOut' }, opacity: { duration: 0.5 }, default: { delay: i * 0.08 } } } : {})}
-              className="px-6 py-4 rounded-xl bg-white shadow-sm border border-[#E0CCBA] text-[#4A2112] font-semibold text-sm"
+              transition={{ delay: i * 0.06, duration: 0.5 }}
+              className="px-6 py-4 rounded-xl bg-white shadow-sm border border-[#E0CCBA] text-[#3E1A0E] font-semibold text-sm"
             >
               {tech}
             </motion.div>
@@ -694,7 +612,7 @@ function TechStackSection() {
 // ============================================
 function CaseStudyHighlight() {
   return (
-    <section className="py-24 lg:py-32 relative">
+    <section className="py-12 lg:py-16 relative">
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -702,18 +620,18 @@ function CaseStudyHighlight() {
           viewport={{ once: true }}
           variants={staggerContainer}
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4 text-center">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4 text-center">
             Featured Work
           </motion.p>
           <motion.div
             variants={fadeUp}
-            className="relative p-8 md:p-12 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow border border-[#6B3A1F]/15 overflow-hidden"
+            className="relative p-5 md:p-8 rounded-xl bg-white shadow-sm border border-[#5C3520]/15 overflow-hidden"
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#6B3A1F]/5 rounded-full blur-3xl" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#5C3520]/5 rounded-full blur-3xl" />
             <div className="relative grid md:grid-cols-2 gap-10 items-center">
               <motion.div variants={fadeLeft}>
-                <h3 className="text-2xl md:text-3xl font-bold text-[#4A2112] mb-2">Secured Tampa</h3>
-                <p className="text-[#6B3A1F] text-sm font-medium mb-6">
+                <h3 className="text-2xl md:text-3xl font-bold text-[#3E1A0E] mb-2">Secured Tampa</h3>
+                <p className="text-[#5C3520] text-sm font-medium mb-6">
                   From Instagram DMs to a 122-page e-commerce empire — in 3 weeks.
                 </p>
                 <p className="text-[#8B6B56] text-base leading-relaxed mb-6">
@@ -721,14 +639,14 @@ function CaseStudyHighlight() {
                 </p>
                 <div className="flex flex-wrap gap-3 mb-8">
                   {['E-Commerce', 'POS Integration', 'AI Automation', 'Custom Platform'].map((tag) => (
-                    <span key={tag} className="px-4 py-1.5 rounded-full border border-[#6B3A1F]/20 bg-[#6B3A1F]/5 text-[#6B3A1F] text-xs font-medium">
+                    <span key={tag} className="px-4 py-1.5 rounded-full border border-[#5C3520]/20 bg-[#5C3520]/5 text-[#5C3520] text-xs font-medium">
                       {tag}
                     </span>
                   ))}
                 </div>
                 <a
                   href="/case-studies/secured-tampa"
-                  className="group inline-flex items-center gap-2 text-[#6B3A1F] font-semibold hover:text-[#6b5535] transition-colors"
+                  className="group inline-flex items-center gap-2 text-[#5C3520] font-semibold hover:text-[#3E1A0E] transition-colors"
                 >
                   Read the Full Case Study
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -749,7 +667,7 @@ function CaseStudyHighlight() {
                     variants={popIn}
                     className="p-5 rounded-xl bg-[#F5E8DA] shadow-sm text-center"
                   >
-                    <div className="text-2xl font-bold text-[#6B3A1F]">{m.value}</div>
+                    <div className="text-2xl font-bold text-[#5C3520]">{m.value}</div>
                     <div className="text-xs text-[#8B6B56] mt-1">{m.label}</div>
                   </motion.div>
                 ))}
@@ -763,11 +681,9 @@ function CaseStudyHighlight() {
 }
 
 // ============================================
-// ANIMATED PROCESS TIMELINE
+// ANIMATED PROCESS TIMELINE — ALL LEFT
 // ============================================
 function ProcessTimeline() {
-  const isMobile = useIsMobile();
-
   const steps = [
     { icon: Search, title: 'Discovery', desc: 'We map every bottleneck, manual process, and missed opportunity in your business. You get a clear picture of what AI can fix.', timeline: 'Week 1' },
     { icon: Target, title: 'Strategy', desc: 'A tailored blueprint with projected savings, implementation timeline, and exactly what your AI systems will do.', timeline: 'Week 1-2' },
@@ -777,26 +693,26 @@ function ProcessTimeline() {
   ];
 
   return (
-    <section id="process" className="py-24 lg:py-32 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
+    <section id="process" className="py-12 lg:py-16 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
       <div className="max-w-4xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">
             How It Works
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112]">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E]">
             From First Call to Full Automation
           </motion.h2>
         </motion.div>
 
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#6B3A1F]/30 to-transparent md:-translate-x-px" />
+          <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#5C3520]/30 to-transparent" />
 
           {steps.map((step, i) => (
             <motion.div
@@ -804,35 +720,29 @@ function ProcessTimeline() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
-              variants={i % 2 === 0 ? fadeLeft : fadeRight}
-              className={`relative flex items-start gap-6 mb-12 last:mb-0 ${
-                !isMobile ? (i % 2 === 0 ? 'md:flex-row md:text-right' : 'md:flex-row-reverse md:text-left') : ''
-              }`}
+              variants={fadeUp}
+              className="relative flex items-start gap-6 mb-8 last:mb-0"
             >
               {/* Timeline dot */}
               <motion.div
                 variants={popIn}
-                className="absolute left-6 md:left-1/2 w-3 h-3 rounded-full bg-[#6B3A1F] border-4 border-white shadow-md -translate-x-1.5 md:-translate-x-1.5 mt-6 z-10"
+                className="absolute left-6 w-3 h-3 rounded-full bg-[#5C3520] border-4 border-white shadow-md -translate-x-1.5 mt-6 z-10"
               />
 
-              {!isMobile && i % 2 === 0 && <div className="hidden md:block md:w-1/2" />}
-
-              <div className={`ml-12 md:ml-0 md:w-1/2 ${!isMobile ? (i % 2 === 0 ? 'md:pr-12' : 'md:pl-12') : ''}`}>
-                <div className="p-8 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow border border-[#E0CCBA]">
-                  <div className={`flex items-center gap-3 mb-3 ${!isMobile && i % 2 === 0 ? 'md:justify-end' : ''}`}>
-                    <div className="w-10 h-10 rounded-xl bg-[#6B3A1F]/10 flex items-center justify-center">
-                      <step.icon size={18} className="text-[#6B3A1F]" />
+              <div className="ml-12 flex-1">
+                <div className="p-5 rounded-xl bg-white shadow-sm border border-[#E0CCBA]">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#5C3520]/10 flex items-center justify-center">
+                      <step.icon size={18} className="text-[#5C3520]" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-[#4A2112]">{step.title}</h3>
-                      <span className="text-xs text-[#6B3A1F] font-medium">{step.timeline}</span>
+                      <h3 className="text-lg font-bold text-[#3E1A0E]">{step.title}</h3>
+                      <span className="text-xs text-[#5C3520] font-medium">{step.timeline}</span>
                     </div>
                   </div>
                   <p className="text-[#8B6B56] text-sm leading-relaxed">{step.desc}</p>
                 </div>
               </div>
-
-              {!isMobile && i % 2 !== 0 && <div className="hidden md:block md:w-1/2" />}
             </motion.div>
           ))}
         </div>
@@ -842,11 +752,11 @@ function ProcessTimeline() {
 }
 
 // ============================================
-// TESTIMONIAL (enhanced with stars + avatar)
+// TESTIMONIAL
 // ============================================
 function TestimonialSection() {
   return (
-    <section className="py-24 lg:py-32 relative">
+    <section className="py-12 lg:py-16 relative">
       <div className="max-w-4xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -855,37 +765,36 @@ function TestimonialSection() {
           variants={staggerContainer}
           className="text-center"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">
             Client Results
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112] mb-12">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E] mb-8">
             Don&apos;t Take Our Word For It
           </motion.h2>
           <motion.div
             variants={scaleUp}
-            className="relative p-10 md:p-14 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow border border-[#E0CCBA]"
+            className="relative p-6 md:p-10 rounded-xl bg-white shadow-sm border border-[#E0CCBA]"
           >
             {/* Quotation mark */}
-            <div className="text-[#6B3A1F]/10 text-8xl font-serif leading-none mb-2 select-none">&ldquo;</div>
+            <div className="text-[#5C3520]/10 text-8xl font-serif leading-none mb-2 select-none">&ldquo;</div>
 
             {/* Stars */}
             <div className="flex justify-center gap-1 mb-6">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={20} className="text-[#6B3A1F] fill-[#6B3A1F]" />
+                <Star key={i} size={20} className="text-[#5C3520] fill-[#5C3520]" />
               ))}
             </div>
 
-            <blockquote className="text-xl md:text-2xl text-[#4A2112] font-medium leading-relaxed mb-8">
+            <blockquote className="text-xl md:text-2xl text-[#3E1A0E] font-medium leading-relaxed mb-8">
               Shopify shut us down and we were stuck selling through Instagram DMs. Vantix built us a complete custom platform — 122 pages, POS integration, shipping, everything — in 3 weeks. It&apos;s better than anything Shopify could have done.
             </blockquote>
 
             <div className="flex items-center justify-center gap-4">
-              {/* Initials avatar */}
-              <div className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg" {...woodButtonProps()}>
+              <div className="w-14 h-14 rounded-full flex items-center justify-center bg-[#3E1A0E] text-white font-bold text-lg">
                 D
               </div>
               <div className="text-left">
-                <p className="text-[#4A2112] font-semibold">Dave</p>
+                <p className="text-[#3E1A0E] font-semibold">Dave</p>
                 <p className="text-[#8B6B56] text-sm">Founder, SecuredTampa</p>
               </div>
             </div>
@@ -908,19 +817,19 @@ function ROISection() {
   ];
 
   return (
-    <section id="roi" className="py-24 lg:py-32 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
+    <section id="roi" className="py-12 lg:py-16 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">
             Your ROI
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112]">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E]">
             The Math Speaks for Itself
           </motion.h2>
         </motion.div>
@@ -936,10 +845,10 @@ function ROISection() {
             <motion.div
               key={i}
               variants={popIn}
-              className="text-center p-10 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow border border-[#E0CCBA]"
+              className="text-center p-6 rounded-xl bg-white shadow-sm border border-[#E0CCBA]"
             >
-              <s.icon size={28} className="text-[#6B3A1F] mx-auto mb-4" />
-              <div className="text-3xl md:text-4xl font-bold text-[#6B3A1F] mb-1">{s.value}</div>
+              <s.icon size={28} className="text-[#5C3520] mx-auto mb-4" />
+              <div className="text-3xl md:text-4xl font-bold text-[#5C3520] mb-1">{s.value}</div>
               <div className="text-sm text-[#8B6B56]">{s.label}</div>
             </motion.div>
           ))}
@@ -969,19 +878,19 @@ function TeamSection() {
   ];
 
   return (
-    <section id="team" className="py-24 lg:py-32 relative">
+    <section id="team" className="py-12 lg:py-16 relative">
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">
             Who We Are
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112]">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E]">
             A 4-Person Team.<br />Half of Us Never Sleep.
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#8B6B56] text-base leading-relaxed mt-4 max-w-2xl mx-auto">
@@ -1000,13 +909,13 @@ function TeamSection() {
             <motion.div
               key={i}
               variants={i === 0 ? fadeLeft : fadeRight}
-              className="p-10 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow border border-[#E0CCBA] text-center"
+              className="p-6 rounded-xl bg-white shadow-sm border border-[#E0CCBA] text-center"
             >
               <div className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-sm border-2 border-white/80">
                 <img src={t.photo} alt={t.name} className="w-full h-full object-cover" />
               </div>
-              <h3 className="text-xl font-bold text-[#4A2112]">{t.name}</h3>
-              <p className="text-[#6B3A1F] text-sm font-medium mb-4">{t.role}</p>
+              <h3 className="text-xl font-bold text-[#3E1A0E]">{t.name}</h3>
+              <p className="text-[#5C3520] text-sm font-medium mb-4">{t.role}</p>
               <p className="text-[#8B6B56] text-sm leading-relaxed">{t.desc}</p>
             </motion.div>
           ))}
@@ -1028,7 +937,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between p-6 text-left hover:bg-[#E8D5C4] transition-colors"
       >
-        <span className="text-[#4A2112] font-medium pr-4">{q}</span>
+        <span className="text-[#3E1A0E] font-medium pr-4">{q}</span>
         <ChevronDown size={18} className={`text-[#C5C3BE] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence>
@@ -1059,19 +968,19 @@ function FAQSection() {
   ];
 
   return (
-    <section id="faq" className="py-24 lg:py-32 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
+    <section id="faq" className="py-12 lg:py-16 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
       <div className="max-w-3xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">
             FAQ
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112]">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E]">
             Every Question. Answered.
           </motion.h2>
         </motion.div>
@@ -1094,7 +1003,6 @@ function FAQSection() {
   );
 }
 
-// ============================================
 // ============================================
 // BOOKING SECTION (Custom Calendar)
 // ============================================
@@ -1187,11 +1095,11 @@ function BookingSection() {
   const step = submitted ? 3 : selectedTime ? 2 : selectedDate ? 1 : 0;
 
   return (
-    <section id="booking" className="py-24 lg:py-32 relative">
+    <section id="booking" className="py-12 lg:py-16 relative">
       <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="text-center mb-12">
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#6B3A1F] mb-4">Start This Week</motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#4A2112] mb-4">Book Your Free AI Audit</motion.h2>
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="text-center mb-8">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#5C3520] mb-4">Start This Week</motion.p>
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#3E1A0E] mb-4">Book Your Free AI Audit</motion.h2>
           <motion.p variants={fadeUp} className="text-[#8B6B56] text-base leading-relaxed max-w-2xl mx-auto">30 minutes. Zero pressure. Pick a time below.</motion.p>
         </motion.div>
 
@@ -1200,15 +1108,15 @@ function BookingSection() {
           <AnimatePresence mode="wait">
             {step === 3 ? (
               <motion.div key="done" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-center py-12">
-                <CheckCircle2 className="mx-auto mb-4 text-[#6B3A1F]" size={48} />
-                <h3 className="text-2xl font-bold text-[#4A2112] mb-2">You&apos;re booked!</h3>
+                <CheckCircle2 className="mx-auto mb-4 text-[#5C3520]" size={48} />
+                <h3 className="text-2xl font-bold text-[#3E1A0E] mb-2">You&apos;re booked!</h3>
                 <p className="text-[#8B6B56]">We&apos;ll reach out within 24 hours to confirm.</p>
               </motion.div>
             ) : (
               <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 {/* Date pills */}
                 <div className="mb-6">
-                  <p className="text-sm font-medium text-[#4A2112] mb-3">Select a date</p>
+                  <p className="text-sm font-medium text-[#3E1A0E] mb-3">Select a date</p>
                   <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin' }}>
                     {weekdays.map((d) => {
                       const past = isPastOrToday(d);
@@ -1217,7 +1125,7 @@ function BookingSection() {
                         <button key={d.toISOString()} disabled={past}
                           onClick={() => { setSelectedDate(d); setSelectedTime(null); }}
                           className={`flex-shrink-0 flex flex-col items-center justify-center w-14 h-16 rounded-xl text-xs font-medium transition-all
-                            ${active ? 'bg-[#6B3A1F] text-white shadow-md' : past ? 'bg-[#E8D5C4] text-[#D0C8BD] cursor-not-allowed' : 'bg-[#E8D5C4] text-[#4A2112] hover:bg-[#E0CCBA] cursor-pointer'}`}>
+                            ${active ? 'bg-[#5C3520] text-white shadow-md' : past ? 'bg-[#E8D5C4] text-[#D0C8BD] cursor-not-allowed' : 'bg-[#E8D5C4] text-[#3E1A0E] hover:bg-[#E0CCBA] cursor-pointer'}`}>
                           <span className="text-[10px] uppercase">{dayNames[d.getDay()]}</span>
                           <span className="text-lg font-bold leading-tight">{d.getDate()}</span>
                         </button>
@@ -1230,14 +1138,14 @@ function BookingSection() {
                 <AnimatePresence mode="wait">
                   {step >= 1 && (
                     <motion.div key="times" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-6 overflow-hidden">
-                      <p className="text-sm font-medium text-[#4A2112] mb-3">Select a time</p>
+                      <p className="text-sm font-medium text-[#3E1A0E] mb-3">Select a time</p>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {TIME_SLOTS.map((t) => {
                           const active = selectedTime === t;
                           return (
                             <button key={t} onClick={() => setSelectedTime(t)}
                               className={`py-2.5 rounded-lg text-sm font-medium transition-all
-                                ${active ? 'bg-[#6B3A1F] text-white shadow-md' : 'bg-[#E8D5C4] text-[#4A2112] hover:bg-[#E0CCBA]'}`}>
+                                ${active ? 'bg-[#5C3520] text-white shadow-md' : 'bg-[#E8D5C4] text-[#3E1A0E] hover:bg-[#E0CCBA]'}`}>
                               {t}
                             </button>
                           );
@@ -1252,16 +1160,16 @@ function BookingSection() {
                   {step >= 2 && (
                     <motion.form key="form" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                       onSubmit={handleSubmit} className="space-y-3 overflow-hidden">
-                      <p className="text-sm font-medium text-[#4A2112] mb-1">Your details</p>
+                      <p className="text-sm font-medium text-[#3E1A0E] mb-1">Your details</p>
                       <input type="text" required placeholder="Name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-lg border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#6B3A1F]/30" />
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#E0CCBA] bg-[#F0DFD1] text-[#3E1A0E] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#5C3520]/30" />
                       <input type="email" required placeholder="Email *" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-lg border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#6B3A1F]/30" />
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#E0CCBA] bg-[#F0DFD1] text-[#3E1A0E] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#5C3520]/30" />
                       <input type="tel" placeholder="Phone (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-lg border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#6B3A1F]/30" />
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#E0CCBA] bg-[#F0DFD1] text-[#3E1A0E] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#5C3520]/30" />
                       <textarea placeholder="What's your biggest challenge?" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2}
-                        className="w-full px-4 py-2.5 rounded-lg border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#6B3A1F]/30 resize-none" />
-                      <button type="submit" className={`${woodButtonClass} w-full`} {...woodButtonProps()}>
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#E0CCBA] bg-[#F0DFD1] text-[#3E1A0E] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#5C3520]/30 resize-none" />
+                      <button type="submit" className={`${woodButtonClass} w-full`}>
                         Confirm Booking — {selectedDate && dayNames[selectedDate.getDay()]} {selectedDate?.getDate()} at {selectedTime}
                       </button>
                     </motion.form>
@@ -1319,39 +1227,38 @@ function ContactForm() {
 
   if (status === 'sent') {
     return (
-      <div id="contact-form" className="max-w-lg mx-auto mt-12 bg-white rounded-xl p-8 shadow-sm text-center">
-        <CheckCircle2 size={48} className="mx-auto mb-4 text-[#6B3A1F]" />
-        <h3 className="text-xl font-bold text-[#4A2112] mb-2">You&apos;re In.</h3>
+      <div id="contact-form" className="max-w-lg mx-auto mt-8 bg-white rounded-xl p-6 shadow-sm text-center">
+        <CheckCircle2 size={48} className="mx-auto mb-4 text-[#5C3520]" />
+        <h3 className="text-xl font-bold text-[#3E1A0E] mb-2">You&apos;re In.</h3>
         <p className="text-[#8B6B56]">We&apos;ll reach out within 24 hours with next steps. Check your inbox.</p>
       </div>
     );
   }
 
   return (
-    <form id="contact-form" onSubmit={handleSubmit} className="max-w-lg mx-auto mt-12 bg-white rounded-xl p-8 shadow-sm">
+    <form id="contact-form" onSubmit={handleSubmit} className="max-w-lg mx-auto mt-8 bg-white rounded-xl p-6 shadow-sm">
       <p className="text-center text-[#8B6B56] text-sm mb-6">Prefer to type? Drop us a message and we&apos;ll follow up within 24 hours.</p>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-[#4A2112] mb-1.5">Name *</label>
-          <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] placeholder-[#C5C3BE] focus:outline-none focus:border-[#6B3A1F] focus:ring-1 focus:ring-[#6B3A1F]/30 transition-all" />
+          <label className="block text-sm font-medium text-[#3E1A0E] mb-1.5">Name *</label>
+          <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#3E1A0E] placeholder-[#C5C3BE] focus:outline-none focus:border-[#5C3520] focus:ring-1 focus:ring-[#5C3520]/30 transition-all" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#4A2112] mb-1.5">Email *</label>
-          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] placeholder-[#C5C3BE] focus:outline-none focus:border-[#6B3A1F] focus:ring-1 focus:ring-[#6B3A1F]/30 transition-all" />
+          <label className="block text-sm font-medium text-[#3E1A0E] mb-1.5">Email *</label>
+          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#3E1A0E] placeholder-[#C5C3BE] focus:outline-none focus:border-[#5C3520] focus:ring-1 focus:ring-[#5C3520]/30 transition-all" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#4A2112] mb-1.5">Phone <span className="text-[#C5C3BE]">(optional)</span></label>
-          <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] placeholder-[#C5C3BE] focus:outline-none focus:border-[#6B3A1F] focus:ring-1 focus:ring-[#6B3A1F]/30 transition-all" />
+          <label className="block text-sm font-medium text-[#3E1A0E] mb-1.5">Phone <span className="text-[#C5C3BE]">(optional)</span></label>
+          <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#3E1A0E] placeholder-[#C5C3BE] focus:outline-none focus:border-[#5C3520] focus:ring-1 focus:ring-[#5C3520]/30 transition-all" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#4A2112] mb-1.5">What&apos;s eating your time?</label>
-          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] placeholder-[#C5C3BE] focus:outline-none focus:border-[#6B3A1F] focus:ring-1 focus:ring-[#6B3A1F]/30 transition-all resize-none" />
+          <label className="block text-sm font-medium text-[#3E1A0E] mb-1.5">What&apos;s eating your time?</label>
+          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#3E1A0E] placeholder-[#C5C3BE] focus:outline-none focus:border-[#5C3520] focus:ring-1 focus:ring-[#5C3520]/30 transition-all resize-none" />
         </div>
         <button
           type="submit"
           disabled={status === 'sending'}
           className={`w-full group inline-flex items-center justify-center gap-2 ${woodButtonClass} disabled:opacity-60`}
-          {...woodButtonProps()}
         >
           {status === 'sending' ? 'Sending...' : 'Start Automating This Week'}
           <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -1364,7 +1271,7 @@ function ContactForm() {
 
 function FinalCTA() {
   return (
-    <section id="contact" className="py-24 lg:py-32 relative overflow-hidden bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
+    <section id="contact" className="py-12 lg:py-16 relative overflow-hidden bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E0CCBA]">
       <div className="max-w-4xl mx-auto px-6 text-center relative">
         <motion.div
           initial="hidden"
@@ -1372,16 +1279,16 @@ function FinalCTA() {
           viewport={{ once: true }}
           variants={staggerContainer}
         >
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#4A2112] leading-tight mb-6">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#3E1A0E] leading-tight mb-6">
             Every Day You Wait,
             <br />
-            <span className="text-[#6B3A1F]">Your Competitors Pull Ahead.</span>
+            <span className="text-[#5C3520]">Your Competitors Pull Ahead.</span>
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#8B6B56] text-base leading-relaxed max-w-2xl mx-auto mb-4">
             Book a free AI audit. In 30 minutes, we&apos;ll show you exactly which tasks to automate first and what the payback looks like. No commitment. No pressure.
           </motion.p>
-          <motion.p variants={fadeUp} className="text-[#4A2112] font-semibold text-lg mb-10">
-            <a href="tel:9084987753" className="hover:text-[#6B3A1F] transition-colors inline-flex items-center gap-2">
+          <motion.p variants={fadeUp} className="text-[#3E1A0E] font-semibold text-lg mb-8">
+            <a href="tel:9084987753" className="hover:text-[#5C3520] transition-colors inline-flex items-center gap-2">
               <Phone size={18} />
               (908) 498-7753
             </a>
@@ -1390,14 +1297,13 @@ function FinalCTA() {
             <a
               href="#booking"
               className={`group inline-flex items-center gap-2 ${woodButtonClass} rounded-full px-10 py-5 text-lg hover:scale-[1.02]`}
-              {...woodButtonProps()}
             >
               <Calendar size={20} />
               Book Your Free AI Audit
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
           </motion.div>
-          <motion.p variants={fadeUp} className="text-[#6B3A1F]/60 text-sm mt-6 font-medium">
+          <motion.p variants={fadeUp} className="text-[#5C3520]/60 text-sm mt-6 font-medium">
             Limited availability — we take on 3 new clients per month.
           </motion.p>
           <motion.div variants={fadeUp}>
@@ -1414,13 +1320,13 @@ function FinalCTA() {
 // ============================================
 function Footer() {
   return (
-    <footer className="py-16 bg-[#4A2112] text-white mt-4">
+    <footer className="py-16 bg-[#3E1A0E] text-white mt-4">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-14">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#4A2112] flex items-center justify-center text-white font-extrabold text-sm">V</div>
-              <span className="text-2xl font-extrabold text-white tracking-tight">vantix<span className="text-[#6B3A1F]">.</span></span>
+              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white font-extrabold text-sm">V</div>
+              <span className="text-2xl font-extrabold text-white tracking-tight">vantix<span className="text-[#5C3520]">.</span></span>
             </div>
             <p className="text-white/60 mt-4 max-w-sm leading-relaxed">
               AI systems that generate revenue, eliminate busywork, and scale your operations — deployed in weeks, not months.
@@ -1460,7 +1366,7 @@ function Footer() {
                 { icon: Linkedin, href: '#' },
                 { icon: Instagram, href: '#' },
               ].map((s, i) => (
-                <a key={i} href={s.href} className="text-white/40 hover:text-[#6B3A1F] transition-colors">
+                <a key={i} href={s.href} className="text-white/40 hover:text-white transition-colors">
                   <s.icon size={18} />
                 </a>
               ))}
@@ -1486,9 +1392,8 @@ export function FuturisticLanding() {
   }, []);
 
   return (
-    <div className="bg-[#F0DFD1] text-[#4A2112] min-h-screen selection:bg-[#6B3A1F]/20 selection:text-[#4A2112] scroll-smooth">
+    <div className="bg-[#F0DFD1] text-[#3E1A0E] min-h-screen selection:bg-[#5C3520]/20 selection:text-[#3E1A0E] scroll-smooth">
       <Navigation />
-      <StickyCTABar />
       <HeroSection />
       <AnimatedCounterSection />
       <BeforeAfterSection />
