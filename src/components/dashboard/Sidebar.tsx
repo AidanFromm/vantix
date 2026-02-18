@@ -8,36 +8,93 @@ import {
   LayoutDashboard,
   Users,
   Target,
-  Briefcase,
+  FolderOpen,
   CheckSquare,
+  DollarSign,
+  MessageSquare,
+  Image,
   FileText,
+  Calendar,
+  BarChart3,
+  BookOpen,
   Settings,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   LogOut,
   Menu,
   X,
-  Calendar,
-  BarChart3,
 } from 'lucide-react';
 
 interface NavItem {
   href: string;
   label: string;
   icon: React.ElementType;
-  badge?: number;
+  children?: { href: string; label: string }[];
 }
 
-const navItems: NavItem[] = [
-  { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-  { href: '/dashboard/clients', label: 'Clients', icon: Users },
-  { href: '/dashboard/leads', label: 'Leads', icon: Target },
-  { href: '/dashboard/projects', label: 'Projects', icon: Briefcase },
-  { href: '/dashboard/tasks', label: 'Tasks', icon: CheckSquare },
-  { href: '/dashboard/invoices', label: 'Invoices', icon: FileText },
-  { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar },
-  { href: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+const navSections: { label?: string; items: NavItem[] }[] = [
+  {
+    items: [
+      { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
+    ],
+  },
+  {
+    items: [
+      { href: '/dashboard/clients', label: 'Clients', icon: Users },
+      { href: '/dashboard/leads', label: 'Leads', icon: Target },
+      { href: '/dashboard/projects', label: 'Projects', icon: FolderOpen },
+      { href: '/dashboard/tasks', label: 'Tasks', icon: CheckSquare },
+    ],
+  },
+  {
+    items: [
+      {
+        href: '/dashboard/finances',
+        label: 'Finances',
+        icon: DollarSign,
+        children: [
+          { href: '/dashboard/finances/invoices', label: 'Invoices' },
+          { href: '/dashboard/finances/payments', label: 'Payments' },
+          { href: '/dashboard/finances/revenue', label: 'Revenue' },
+        ],
+      },
+    ],
+  },
+  {
+    items: [
+      {
+        href: '/dashboard/communications',
+        label: 'Communications',
+        icon: MessageSquare,
+        children: [
+          { href: '/dashboard/communications/inbox', label: 'Inbox' },
+          { href: '/dashboard/communications/templates', label: 'Templates' },
+        ],
+      },
+    ],
+  },
+  {
+    items: [
+      { href: '/dashboard/media', label: 'Media Library', icon: Image },
+      { href: '/dashboard/proposals', label: 'Proposals', icon: FileText },
+      { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar },
+      { href: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
+    ],
+  },
+  {
+    items: [
+      { href: '/dashboard/knowledge', label: 'Knowledge Base', icon: BookOpen },
+      { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+    ],
+  },
+];
+
+const teamMembers = [
+  { initial: 'K', online: true },
+  { initial: 'A', online: true },
+  { initial: 'V', online: false },
+  { initial: 'B', online: true },
 ];
 
 interface SidebarContextType {
@@ -80,175 +137,208 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
   const pathname = usePathname();
   const { isCollapsed, setIsCollapsed } = useSidebar();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
-  // Close mobile sidebar on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  // Lock body scroll when mobile sidebar is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
+  // Auto-expand group if a child is active
+  useEffect(() => {
+    navSections.forEach((section) => {
+      section.items.forEach((item) => {
+        if (item.children) {
+          const childActive = item.children.some((c) => pathname === c.href);
+          if (childActive) {
+            setExpandedGroups((prev) => ({ ...prev, [item.href]: true }));
+          }
+        }
+      });
+    });
+  }, [pathname]);
+
+  const toggleGroup = (href: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [href]: !prev[href] }));
+  };
+
+  const isActive = (href: string) => pathname === href;
+  const isGroupActive = (item: NavItem) =>
+    isActive(item.href) || (item.children?.some((c) => pathname === c.href) ?? false);
+
+  const renderNavItem = (item: NavItem) => {
+    const Icon = item.icon;
+    const hasChildren = item.children && item.children.length > 0;
+    const expanded = expandedGroups[item.href] ?? false;
+    const active = hasChildren ? isGroupActive(item) : isActive(item.href);
+
+    return (
+      <div key={item.href}>
+        {hasChildren ? (
+          <button
+            onClick={() => toggleGroup(item.href)}
+            className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg w-full transition-all duration-150 ${
+              isCollapsed ? 'justify-center' : ''
+            } ${
+              active
+                ? 'bg-[#B07A45]/10 text-[#B07A45] font-semibold'
+                : 'text-[#7A746C] hover:text-[#4B4B4B] hover:bg-[#EEE6DC]'
+            }`}
+          >
+            <Icon size={18} className="flex-shrink-0" />
+            {!isCollapsed && (
+              <>
+                <span className="text-sm flex-1 text-left">{item.label}</span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+                />
+              </>
+            )}
+            {isCollapsed && (
+              <div className="absolute left-full ml-3 px-2 py-1 bg-[#1C1C1C] text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-nowrap shadow-lg">
+                {item.label}
+              </div>
+            )}
+          </button>
+        ) : (
+          <Link
+            href={item.href}
+            className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+              isCollapsed ? 'justify-center' : ''
+            } ${
+              active
+                ? 'bg-[#B07A45]/10 text-[#B07A45] font-semibold'
+                : 'text-[#7A746C] hover:text-[#4B4B4B] hover:bg-[#EEE6DC]'
+            }`}
+          >
+            <Icon size={18} className="flex-shrink-0" />
+            {!isCollapsed && <span className="text-sm">{item.label}</span>}
+            {isCollapsed && (
+              <div className="absolute left-full ml-3 px-2 py-1 bg-[#1C1C1C] text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-nowrap shadow-lg">
+                {item.label}
+              </div>
+            )}
+          </Link>
+        )}
+
+        {/* Sub-items */}
+        {hasChildren && !isCollapsed && (
+          <AnimatePresence>
+            {expanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <div className="ml-7 mt-1 space-y-0.5 border-l border-[#E3D9CD] pl-3">
+                  {item.children!.map((child) => (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      className={`block px-3 py-1.5 rounded-md text-sm transition-all duration-150 ${
+                        isActive(child.href)
+                          ? 'bg-[#B07A45]/10 text-[#B07A45] font-semibold'
+                          : 'text-[#7A746C] hover:text-[#4B4B4B] hover:bg-[#EEE6DC]'
+                      }`}
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
+      </div>
+    );
+  };
+
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="relative px-4 py-5 border-b border-[#E3D9CD]">
+      <div className="px-4 py-5 border-b border-[#E3D9CD]">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <img src="/logo-nav.png" alt="Vantix" className="w-9 h-9 object-contain" />
-            <AnimatePresence>
-              {!isCollapsed && (
-                <motion.span
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="text-xl font-bold text-[#1C1C1C]"
-                >
-                  vantix
-                </motion.span>
-              )}
-            </AnimatePresence>
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#B07A45] to-[#8E5E34] flex items-center justify-center">
+              <span className="text-white font-bold text-sm">V</span>
+            </div>
+            {!isCollapsed && (
+              <span className="text-lg font-bold text-[#1C1C1C] tracking-tight">
+                vantix.
+              </span>
+            )}
           </Link>
-          
-          {/* Collapse button - desktop only */}
+
           <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg bg-[#EEE6DC] hover:bg-[#EEE6DC] text-[#7A746C] hover:text-[#1C1C1C] transition-all"
+            onClick={() => isCollapsed ? setIsCollapsed(false) : setIsCollapsed(true)}
+            className="hidden lg:flex w-7 h-7 items-center justify-center rounded-md bg-[#EEE6DC] hover:bg-[#E3D9CD] text-[#7A746C] hover:text-[#1C1C1C] transition-all"
           >
             {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
 
-          {/* Close button - mobile only */}
           <button
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden p-2 rounded-lg text-[#7A746C] hover:text-[#1C1C1C] hover:bg-[#EEE6DC] transition-colors"
+            className="lg:hidden p-1.5 rounded-md text-[#7A746C] hover:text-[#1C1C1C] hover:bg-[#EEE6DC] transition-colors"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
       </div>
 
-      {/* User Profile */}
-      <div className="px-3 py-4 border-b border-[#E3D9CD]">
-        <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
-          <div className="relative flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C89A6A]/40 to-[#8E5E34]/40 border border-[#8E5E34]/30 flex items-center justify-center">
-              <span className="text-[#8E5E34] font-semibold text-sm">
-                {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-              </span>
-            </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#B07A45] rounded-full border-2 border-white" />
-          </div>
-          <AnimatePresence>
-            {!isCollapsed && (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.2 }}
-                className="min-w-0"
-              >
-                <p className="text-sm font-medium text-[#1C1C1C] truncate">{user.name}</p>
-                <p className="text-xs text-[#7A746C] truncate">{user.role}</p>
-              </motion.div>
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-1">
+        {navSections.map((section, sIdx) => (
+          <div key={sIdx}>
+            {sIdx > 0 && (
+              <div className="my-3 border-t border-[#E3D9CD]" />
             )}
-          </AnimatePresence>
+            <div className="space-y-0.5">
+              {section.items.map(renderNavItem)}
+            </div>
+          </div>
+        ))}
+      </nav>
+
+      {/* Team avatars */}
+      <div className="px-4 py-3 border-t border-[#E3D9CD]">
+        {!isCollapsed && (
+          <p className="text-[10px] uppercase tracking-widest text-[#A39B90] font-semibold mb-2">
+            Team
+          </p>
+        )}
+        <div className={`flex ${isCollapsed ? 'flex-col items-center gap-2' : 'gap-2'}`}>
+          {teamMembers.map((member, i) => (
+            <div key={i} className="relative">
+              <div className="w-8 h-8 rounded-full bg-[#EEE6DC] border border-[#E3D9CD] flex items-center justify-center">
+                <span className="text-xs font-semibold text-[#7A746C]">{member.initial}</span>
+              </div>
+              <div
+                className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-[#F4EFE8] ${
+                  member.online ? 'bg-green-500' : 'bg-gray-300'
+                }`}
+              />
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 px-2 py-4 overflow-y-auto">
-        <div className="space-y-1">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            const Icon = item.icon;
-            
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
-                  isCollapsed ? 'justify-center' : ''
-                } ${
-                  isActive
-                    ? 'bg-[#8E5E34] text-white rounded-lg shadow-sm'
-                    : 'text-[#7A746C] hover:text-[#1C1C1C] hover:bg-[#EEE6DC]'
-                }`}
-              >
-                {/* Active indicator */}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeNav"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#EEE6DC] rounded-r-full"
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  />
-                )}
-                
-                <Icon
-                  size={20}
-                  className={`flex-shrink-0 transition-transform duration-200 ${
-                    isActive ? 'text-white' : 'group-hover:scale-110'
-                  }`}
-                />
-                
-                <AnimatePresence>
-                  {!isCollapsed && (
-                    <motion.span
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.15 }}
-                      className="font-medium text-sm whitespace-nowrap"
-                    >
-                      {item.label}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-
-                {/* Badge */}
-                {item.badge && item.badge > 0 && !isCollapsed && (
-                  <span className="ml-auto px-2 py-0.5 text-xs font-semibold bg-[#8E5E34] text-white rounded-full">
-                    {item.badge}
-                  </span>
-                )}
-
-                {/* Tooltip for collapsed state */}
-                {isCollapsed && (
-                  <div className="absolute left-full ml-3 px-2 py-1 bg-[#EEE6DC] text-[#1C1C1C] text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-nowrap border border-[#E3D9CD] shadow-sm">
-                    {item.label}
-                  </div>
-                )}
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
 
       {/* Logout */}
       <div className="p-3 border-t border-[#E3D9CD]">
         <button
           onClick={onLogout}
-          className={`flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-[#7A746C] hover:text-[#B07A45] hover:bg-[#B07A45]/10 transition-all ${
+          className={`flex items-center gap-3 px-3 py-2 w-full rounded-lg text-[#7A746C] hover:text-[#B07A45] hover:bg-[#B07A45]/10 transition-all ${
             isCollapsed ? 'justify-center' : ''
           }`}
         >
           <LogOut size={18} />
-          <AnimatePresence>
-            {!isCollapsed && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-sm font-medium"
-              >
-                Log out
-              </motion.span>
-            )}
-          </AnimatePresence>
+          {!isCollapsed && <span className="text-sm font-medium">Log out</span>}
         </button>
       </div>
     </div>
@@ -256,10 +346,10 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile hamburger button */}
+      {/* Mobile hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-[#EEE6DC]/80 backdrop-blur-xl border border-[#E3D9CD] rounded-xl shadow-sm"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-[#F4EFE8]/90 backdrop-blur-xl border border-[#E3D9CD] rounded-lg shadow-sm"
       >
         <Menu size={20} className="text-[#1C1C1C]" />
       </button>
@@ -280,13 +370,11 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={{
-          width: isCollapsed ? 80 : 256,
-        }}
-        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        animate={{ width: isCollapsed ? 72 : 256 }}
+        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
         className={`
           fixed lg:sticky top-0 left-0 z-50 h-screen
-          bg-[#F4EFE8] backdrop-blur-xl border-r border-[#E3D9CD]
+          bg-[#F4EFE8] border-r border-[#E3D9CD]
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           transition-transform lg:transition-none
         `}
