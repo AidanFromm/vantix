@@ -1,7 +1,8 @@
 'use client';
 
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import {
   ArrowRight, Bot, Globe, Zap, BarChart3, Mail, Package,
   Phone, Sparkles, Clock, Users, TrendingUp, Shield, ChevronDown,
@@ -145,7 +146,7 @@ function Navigation() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2.5">
-          <img src="/logo-nav.png" alt="Vantix" className="w-9 h-9 object-contain" />
+          <Image src="/logo-nav.png" alt="Vantix logo" width={36} height={36} className="w-9 h-9 object-contain" priority />
           <span className="text-2xl font-extrabold text-[#B07A45] tracking-tight">vantix<span className="text-[#8E5E34]">.</span></span>
         </a>
         <div className="hidden md:flex items-center gap-8">
@@ -567,7 +568,7 @@ function ServicesSection() {
 // ============================================
 function ProductShowcase() {
   return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
+    <section className="py-12 lg:py-16 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         {/* AI Dashboard Mockup */}
         <motion.div
@@ -575,7 +576,7 @@ function ProductShowcase() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="flex flex-col lg:flex-row items-center gap-12 mb-20"
+          className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 mb-12 lg:mb-16"
         >
           <motion.div variants={fadeLeft} className="lg:w-5/12">
             <p className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">AI Dashboards</p>
@@ -592,9 +593,11 @@ function ProductShowcase() {
           <motion.div variants={fadeRight} className="lg:w-7/12">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-[#C89A6A]/20 to-transparent rounded-2xl blur-2xl" />
-              <img
+              <Image
                 src="/mockup-1.png"
-                alt="Vantix AI Dashboard"
+                alt="Vantix AI Dashboard showing real-time agent monitoring and automation performance metrics"
+                width={800}
+                height={500}
                 className="relative rounded-2xl shadow-2xl border border-[#E3D9CD]"
                 loading="lazy"
               />
@@ -625,9 +628,11 @@ function ProductShowcase() {
           <motion.div variants={fadeLeft} className="lg:w-7/12">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-bl from-[#C89A6A]/20 to-transparent rounded-2xl blur-2xl" />
-              <img
+              <Image
                 src="/mockup-2.png"
-                alt="Vantix Workflow Automation"
+                alt="Vantix workflow automation builder with connected AI agents and intelligent routing"
+                width={800}
+                height={500}
                 className="relative rounded-2xl shadow-2xl border border-[#E3D9CD]"
                 loading="lazy"
               />
@@ -989,7 +994,7 @@ function TeamSection() {
               className="p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD] text-center"
             >
               <div className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-sm border-2 border-white/80">
-                <img src={t.photo} alt={t.name} className="w-full h-full object-cover" />
+                <Image src={t.photo} alt={`${t.name}, ${t.role} at Vantix`} width={112} height={112} className="w-full h-full object-cover" loading="lazy" />
               </div>
               <h3 className="text-xl font-bold text-[#B07A45]">{t.name}</h3>
               <p className="text-[#8E5E34] text-sm font-medium mb-4">{t.role}</p>
@@ -1463,6 +1468,48 @@ function Footer() {
 // ============================================
 // MAIN EXPORT
 // ============================================
+// ============================================
+// STICKY CTA BAR
+// ============================================
+function StickyCTABar() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 600);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+          className="fixed bottom-0 left-0 right-0 z-40 safe-padding-bottom"
+        >
+          <div className="bg-[#F4EFE8]/95 backdrop-blur-md border-t border-[#E3D9CD] shadow-[0_-2px_12px_rgba(0,0,0,0.06)]">
+            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+              <p className="text-sm text-[#7A746C] hidden sm:block">
+                Ready to automate? Book a free 30-min AI audit.
+              </p>
+              <a
+                href="#booking"
+                className={`${bronzeButtonClass} text-sm px-6 py-2.5 whitespace-nowrap flex-shrink-0 sm:ml-auto`}
+              >
+                Book Free Audit
+                <ArrowRight size={16} className="inline ml-2" />
+              </a>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export function FuturisticLanding() {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -1470,22 +1517,28 @@ export function FuturisticLanding() {
 
   return (
     <div className="bg-[#F4EFE8] text-[#B07A45] min-h-screen selection:bg-[#8E5E34]/20 selection:text-[#B07A45] scroll-smooth">
-      <Navigation />
-      <HeroSection />
-      <AnimatedCounterSection />
-      <ProductShowcase />
-      <BeforeAfterSection />
-      <ProblemSection />
-      <ServicesSection />
-      <TechStackSection />
-      <ProcessTimeline />
-      <CaseStudyHighlight />
-      <TestimonialSection />
-      <ROISection />
-      <TeamSection />
-      <FAQSection />
-      <BookingSection />
+      <header>
+        <Navigation />
+      </header>
+      <main>
+        <HeroSection />
+        <AnimatedCounterSection />
+        <ProductShowcase />
+        <BeforeAfterSection />
+        <ProblemSection />
+        <ServicesSection />
+        <TechStackSection />
+        <ProcessTimeline />
+        <CaseStudyHighlight />
+        <TestimonialSection />
+        <ROISection />
+        <TeamSection />
+        <FAQSection />
+        <BookingSection />
+        <FinalCTA />
+      </main>
       <Footer />
+      <StickyCTABar />
     </div>
   );
 }

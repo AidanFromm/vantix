@@ -6,6 +6,27 @@ export const metadata: Metadata = {
   title: "Vantix — AI-Powered Business Automation",
   description:
     "Vantix is an AI consulting agency that builds intelligent systems to generate revenue, cut costs, and automate operations. Custom AI chatbots, websites, automation, and analytics for businesses ready to scale.",
+  keywords: [
+    "AI automation",
+    "AI consulting",
+    "business automation",
+    "AI chatbots",
+    "custom AI systems",
+    "AI-powered websites",
+    "lead generation automation",
+    "AI phone agents",
+    "workflow automation",
+    "AI analytics",
+    "Vantix",
+  ],
+  authors: [{ name: "Vantix", url: "https://usevantix.com" }],
+  creator: "Vantix",
+  publisher: "Vantix",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "32x32" },
@@ -48,18 +69,46 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Vantix",
-    url: "https://usevantix.com",
-    logo: "https://usevantix.com/og-image.jpg",
-    telephone: "(908) 498-7753",
-    email: "usevantix@gmail.com",
-    description:
-      "AI consulting agency that builds intelligent systems to generate revenue, cut costs, and automate operations.",
-    sameAs: [],
-  };
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Vantix",
+      url: "https://usevantix.com",
+      logo: "https://usevantix.com/og-image.jpg",
+      telephone: "(908) 498-7753",
+      email: "usevantix@gmail.com",
+      description:
+        "AI consulting agency that builds intelligent systems to generate revenue, cut costs, and automate operations.",
+      sameAs: [],
+      founder: [
+        { "@type": "Person", name: "Kyle Ventura", jobTitle: "Founder & AI Strategist" },
+        { "@type": "Person", name: "Aidan Fromm", jobTitle: "Co-Founder & Lead Engineer" },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      name: "Vantix",
+      url: "https://usevantix.com",
+      telephone: "(908) 498-7753",
+      email: "usevantix@gmail.com",
+      description: "AI-powered business automation consulting agency.",
+      priceRange: "$$$$",
+      image: "https://usevantix.com/og-image.jpg",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Vantix",
+      url: "https://usevantix.com",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://usevantix.com/?q={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ];
 
   return (
     <html lang="en">

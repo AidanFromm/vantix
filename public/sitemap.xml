@@ -9,4 +9,9 @@
   <url><loc>https://usevantix.com/blog</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://usevantix.com/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://usevantix.com/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://usevantix.com/portfolio</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://usevantix.com/story</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://usevantix.com/roi-calculator</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://usevantix.com/ai-assessment</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://usevantix.com/audit</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>
