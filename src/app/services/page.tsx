@@ -80,8 +80,7 @@ export default function ServicesPage() {
           </Link>
           <Link
             href="/#booking"
-            className="px-5 py-2 text-sm font-semibold rounded-full text-[#8E5E34] shadow-sm hover:shadow-inner transition-all"
-            
+            className="bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white font-semibold rounded-xl px-8 py-4 shadow-md hover:shadow-lg hover:brightness-110 transition-all"
           >
             Book Your Free Audit
           </Link>
@@ -160,8 +159,7 @@ export default function ServicesPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/#booking"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#8E5E34] font-semibold rounded-full shadow-sm hover:shadow-inner transition-all"
-              
+              className="bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white font-semibold rounded-xl px-8 py-4 shadow-md hover:shadow-lg hover:brightness-110 transition-all"
             >
               Book Your Free Audit <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>

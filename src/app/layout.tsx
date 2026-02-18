@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "AI analytics",
     "Vantix",
   ],
-  authors: [{ name: "Vantix", url: "https://usevantix.com" }],
+  authors: [{ name: "Vantix", url: "https://www.usevantix.com" }],
   creator: "Vantix",
   publisher: "Vantix",
   robots: {
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     title: "Vantix — AI-Powered Business Automation",
     description:
       "We deploy AI systems that generate revenue, cut costs, and automate operations. Strategy, implementation, and ongoing support from one partner.",
-    url: "https://usevantix.com",
+    url: "https://www.usevantix.com",
     siteName: "Vantix",
     images: [
       {
@@ -58,9 +58,9 @@ export const metadata: Metadata = {
       "We deploy AI systems that generate revenue, cut costs, and automate operations.",
     images: ["/og-image.jpg"],
   },
-  metadataBase: new URL("https://usevantix.com"),
+  metadataBase: new URL("https://www.usevantix.com"),
   alternates: {
-    canonical: "https://usevantix.com",
+    canonical: "https://www.usevantix.com",
   },
 };
 
@@ -74,8 +74,8 @@ export default function RootLayout({
       "@context": "https://schema.org",
       "@type": "Organization",
       name: "Vantix",
-      url: "https://usevantix.com",
-      logo: "https://usevantix.com/og-image.jpg",
+      url: "https://www.usevantix.com",
+      logo: "https://www.usevantix.com/og-image.jpg",
       telephone: "(908) 498-7753",
       email: "usevantix@gmail.com",
       description:
@@ -90,23 +90,18 @@ export default function RootLayout({
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
       name: "Vantix",
-      url: "https://usevantix.com",
+      url: "https://www.usevantix.com",
       telephone: "(908) 498-7753",
       email: "usevantix@gmail.com",
       description: "AI-powered business automation consulting agency.",
       priceRange: "$$$$",
-      image: "https://usevantix.com/og-image.jpg",
+      image: "https://www.usevantix.com/og-image.jpg",
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       name: "Vantix",
-      url: "https://usevantix.com",
-      potentialAction: {
-        "@type": "SearchAction",
-        target: "https://usevantix.com/?q={search_term_string}",
-        "query-input": "required name=search_term_string",
-      },
+      url: "https://www.usevantix.com",
     },
   ];
 
@@ -117,21 +112,6 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        {/* Google Analytics — replace GA_MEASUREMENT_ID with your real ID */}
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'GA_MEASUREMENT_ID');
-            `,
-          }}
         />
         <script
           defer

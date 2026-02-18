@@ -7,7 +7,7 @@ import {
   ArrowRight, Bot, Globe, Zap, BarChart3, Mail, Package,
   Phone, Sparkles, Clock, Users, TrendingUp, Shield, ChevronDown,
   MessageSquare, Calendar, Search, Cpu, CheckCircle2,
-  Twitter, Linkedin, Instagram, Menu, X, Target, Layers, Rocket, Settings,
+  Menu, X, Target, Layers, Rocket, Settings,
   Star, Quote
 } from 'lucide-react';
 
@@ -1292,7 +1292,7 @@ function BookingSection() {
                 <AnimatePresence mode="wait">
                   {step >= 1 && (
                     <motion.div key="times" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-6 overflow-hidden">
-                      <p className="text-sm font-medium text-[#B07A45] mb-3">Select a time</p>
+                      <p className="text-sm font-medium text-[#B07A45] mb-3">Select a time <span className="text-[#A39B90] font-normal">(EST)</span></p>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {TIME_SLOTS.map((t) => {
                           const active = selectedTime === t;
@@ -1511,22 +1511,11 @@ function Footer() {
                 <a href="mailto:usevantix@gmail.com" className="hover:text-[#B07A45] transition-colors">usevantix@gmail.com</a>
               </li>
             </ul>
-            <div className="flex gap-4 mt-4">
-              {[
-                { icon: Twitter, href: '#' },
-                { icon: Linkedin, href: '#' },
-                { icon: Instagram, href: '#' },
-              ].map((s, i) => (
-                <a key={i} href={s.href} className="text-[#A39B90] hover:text-[#B07A45] transition-colors">
-                  <s.icon size={18} />
-                </a>
-              ))}
-            </div>
           </div>
         </div>
         <div className="pt-8 border-t border-[#E3D9CD] text-center">
           <p className="text-[#A39B90] text-sm">
-            {new Date().getFullYear()} Vantix. All rights reserved.
+            © {new Date().getFullYear()} Vantix. All rights reserved.
           </p>
         </div>
       </div>

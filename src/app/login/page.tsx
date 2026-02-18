@@ -5,14 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 
-// Temporary users until Supabase is set up
-const TEMP_USERS = [
-  { email: 'aidan@vantix.com', password: 'vantix2024', name: 'Aidan', role: 'admin' },
-  { email: 'kyle@vantix.com', password: 'vantix2024', name: 'Kyle', role: 'admin' },
-  { email: 'botskii@vantix.com', password: 'vantix2024', name: 'Botskii', role: 'bot' },
-  { email: 'kylebot@vantix.com', password: 'vantix2024', name: "Kyle's Bot", role: 'bot' },
-];
-
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -26,19 +18,23 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    // Simulate API delay
-    await new Promise((r) => setTimeout(r, 500));
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const user = TEMP_USERS.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-    );
+      const data = await res.json();
 
-    if (user) {
-      // Store user in localStorage (temporary until Supabase)
-      localStorage.setItem('vantix_user', JSON.stringify(user));
-      router.push('/dashboard');
-    } else {
-      setError('Invalid email or password');
+      if (res.ok && data.success) {
+        localStorage.setItem('vantix_user', JSON.stringify(data.user));
+        router.push('/dashboard');
+      } else {
+        setError(data.error || 'Invalid email or password');
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
     }
 
     setLoading(false);
@@ -110,11 +106,8 @@ export default function LoginPage() {
               {!loading && <ArrowRight size={20} />}
             </button>
           </form>
-
-{/* Demo credentials removed */}
         </div>
       </div>
     </div>
   );
 }
-
