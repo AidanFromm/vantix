@@ -475,7 +475,7 @@ export default function DashboardPage() {
         <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: 'New Lead', icon: UserPlus, href: '/dashboard/leads', color: 'text-blue-600', bg: 'bg-blue-50' },
-            { label: 'New Project', icon: Briefcase, href: '/dashboard/projects', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+            { label: 'New Project', icon: Briefcase, href: '/dashboard/projects', color: 'text-[#8B6D47]', bg: 'bg-[#8B6D47]/10' },
             { label: 'New Invoice', icon: FileText, href: '/dashboard/invoices', color: 'text-purple-600', bg: 'bg-purple-50' },
             { label: 'View Reports', icon: BarChart3, href: '/dashboard/reports', color: 'text-[#8B6D47]', bg: 'bg-[#8B6D47]/10' },
           ].map((action) => (
