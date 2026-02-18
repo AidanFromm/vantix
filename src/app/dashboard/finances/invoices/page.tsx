@@ -26,18 +26,7 @@ interface Invoice {
 
 const STORAGE_KEY = 'vantix_invoices';
 
-const SEED: Invoice[] = [
-  {
-    id: '1', number: 'INV-001', client: 'SecuredTampa',
-    items: [{ description: 'Security System Installation', qty: 1, rate: 2000 }],
-    total: 2000, status: 'paid', dueDate: '2026-01-15', createdAt: '2026-01-01', notes: '',
-  },
-  {
-    id: '2', number: 'INV-002', client: 'SecuredTampa',
-    items: [{ description: 'Monthly Monitoring Q1', qty: 1, rate: 2500 }],
-    total: 2500, status: 'sent', dueDate: '2026-03-01', createdAt: '2026-02-01', notes: '',
-  },
-];
+const SEED: Invoice[] = [];
 
 const CLIENTS = ['SecuredTampa', 'JFK Maintenance', 'Vantix Internal'];
 

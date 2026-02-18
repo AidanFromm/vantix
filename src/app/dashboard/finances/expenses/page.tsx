@@ -43,13 +43,7 @@ const PROJECT_COLORS: Record<string, string> = {
 };
 const INTERVALS = ['Weekly', 'Monthly', 'Quarterly', 'Yearly'];
 
-const SEED: Expense[] = [
-  { id: '1', description: 'Vercel Pro', amount: 20, category: 'Hosting', type: 'Subscription', vendor: 'Vercel', project: 'Vantix General', date: '2026-02-01', recurring_interval: 'Monthly' },
-  { id: '2', description: 'Supabase Pro', amount: 25, category: 'Hosting', type: 'Subscription', vendor: 'Supabase', project: 'Vantix General', date: '2026-02-01', recurring_interval: 'Monthly' },
-  { id: '3', description: 'OpenAI API', amount: 48, category: 'API', type: 'Subscription', vendor: 'OpenAI', project: 'SecuredTampa', date: '2026-02-05', recurring_interval: 'Monthly' },
-  { id: '4', description: 'justfourkicks.store domain', amount: 12, category: 'Domain', type: 'One-Time', vendor: 'Namecheap', project: 'JFK', date: '2026-01-15' },
-  { id: '5', description: 'Contractor - landing page', amount: 300, category: 'Contractor', type: 'One-Time', vendor: 'Fiverr', project: 'SecuredTampa', date: '2026-02-10' },
-];
+const SEED: Expense[] = [];
 
 function lsGet<T>(key: string, fallback: T[]): T[] {
   try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }

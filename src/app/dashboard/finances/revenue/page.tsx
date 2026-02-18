@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { DollarSign, TrendingUp, BarChart3, PieChart, Target, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { getInvoices } from '@/lib/supabase';
 
 interface RevenueData {
   mrr: number;
@@ -14,60 +15,58 @@ interface RevenueData {
   projections: { month: string; amount: number; confidence: number }[];
 }
 
-const STORAGE_KEY = 'vantix_revenue_data';
-
-const SEED_DATA: RevenueData = {
-  mrr: 4200,
-  totalRevenue: 67800,
-  avgDealSize: 3500,
-  revenueGrowth: 12.5,
-  monthlyRevenue: [
-    { month: 'Mar', amount: 4200 },
-    { month: 'Apr', amount: 3800 },
-    { month: 'May', amount: 5100 },
-    { month: 'Jun', amount: 4600 },
-    { month: 'Jul', amount: 5800 },
-    { month: 'Aug', amount: 6200 },
-    { month: 'Sep', amount: 5400 },
-    { month: 'Oct', amount: 6800 },
-    { month: 'Nov', amount: 5900 },
-    { month: 'Dec', amount: 7200 },
-    { month: 'Jan', amount: 6500 },
-    { month: 'Feb', amount: 6300 },
-  ],
-  revenueByClient: [
-    { client: 'Dave - StockX App', amount: 18500 },
-    { client: 'JFK Maintenance', amount: 12000 },
-    { client: 'Tampa Secured', amount: 9800 },
-    { client: 'Local Leads', amount: 7200 },
-    { client: 'Consulting Clients', amount: 5300 },
-    { client: 'Other', amount: 3200 },
-  ],
-  revenueBySource: [
-    { source: 'Projects', amount: 38500, color: '#B07A45' },
-    { source: 'Maintenance', amount: 18200, color: '#C89A6A' },
-    { source: 'Consulting', amount: 11100, color: '#8E5E34' },
-  ],
-  projections: [
-    { month: 'Mar 2026', amount: 7100, confidence: 85 },
-    { month: 'Apr 2026', amount: 7800, confidence: 70 },
-    { month: 'May 2026', amount: 8200, confidence: 55 },
-  ],
-};
-
-function loadData(): RevenueData {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return SEED_DATA;
-}
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 export default function RevenuePage() {
   const [data, setData] = useState<RevenueData | null>(null);
 
   useEffect(() => {
-    setData(loadData());
+    (async () => {
+      try {
+        const { data: invoices } = await getInvoices();
+        const paid = (invoices || []).filter((i: any) => i.status === 'paid');
+        const totalRevenue = paid.reduce((s: number, i: any) => s + (i.amount || i.total || 0), 0);
+        const avgDealSize = paid.length > 0 ? Math.round(totalRevenue / paid.length) : 0;
+
+        // Monthly revenue (last 12 months)
+        const now = new Date();
+        const monthlyRevenue: { month: string; amount: number }[] = [];
+        for (let i = 11; i >= 0; i--) {
+          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          const prefix = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+          const amt = paid.filter((inv: any) => (inv.paid_date || inv.paid_at || inv.created_at || '').startsWith(prefix)).reduce((s: number, inv: any) => s + (inv.amount || inv.total || 0), 0);
+          monthlyRevenue.push({ month: MONTHS[d.getMonth()], amount: amt });
+        }
+
+        // Revenue by client
+        const byClient: Record<string, number> = {};
+        paid.forEach((inv: any) => {
+          const name = inv.client?.name || 'Unknown';
+          byClient[name] = (byClient[name] || 0) + (inv.amount || inv.total || 0);
+        });
+        const revenueByClient = Object.entries(byClient).sort((a, b) => b[1] - a[1]).map(([client, amount]) => ({ client, amount }));
+
+        // Simple MRR estimate (last 3 months avg)
+        const last3 = monthlyRevenue.slice(-3);
+        const mrr = last3.length > 0 ? Math.round(last3.reduce((s, m) => s + m.amount, 0) / last3.length) : 0;
+
+        setData({
+          mrr,
+          totalRevenue,
+          avgDealSize,
+          revenueGrowth: 0,
+          monthlyRevenue,
+          revenueByClient,
+          revenueBySource: totalRevenue > 0 ? [{ source: 'Projects', amount: totalRevenue, color: '#B07A45' }] : [],
+          projections: [],
+        });
+      } catch {
+        setData({
+          mrr: 0, totalRevenue: 0, avgDealSize: 0, revenueGrowth: 0,
+          monthlyRevenue: [], revenueByClient: [], revenueBySource: [], projections: [],
+        });
+      }
+    })();
   }, []);
 
   if (!data) return <div className="min-h-screen bg-[#F4EFE8]" />;

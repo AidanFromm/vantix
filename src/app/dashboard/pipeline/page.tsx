@@ -12,9 +12,7 @@ interface PipelineItem {
   contact?: string;
 }
 
-const mockPipeline: PipelineItem[] = [
-  { id: '1', title: 'Secured Tampa (Dave App)', description: 'Sneaker/Pokemon store app — $4,500 total, $2K paid, $2.5K on delivery', stage: 'closed', value: 4500, contact: 'Dave' },
-];
+const mockPipeline: PipelineItem[] = [];
 
 const stages = ['lead', 'qualified', 'meeting', 'proposal', 'closed'] as const;
 

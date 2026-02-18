@@ -93,72 +93,7 @@ interface ActivityItem {
   type?: string;
 }
 
-// ─── Seed Data ───────────────────────────────────────────────────────
-const SEED_INVOICES: Invoice[] = [
-  { id: '1', client: 'SecuredTampa', amount: 2000, status: 'paid', date: '2026-01-15', paidDate: '2026-01-20' },
-  { id: '2', client: 'SecuredTampa', amount: 2500, status: 'outstanding', date: '2026-02-01', dueDate: '2026-03-01' },
-  { id: '3', client: 'JFK', amount: 1500, status: 'paid', date: '2025-12-01', paidDate: '2025-12-10' },
-  { id: '4', client: 'JFK', amount: 800, status: 'paid', date: '2026-01-10', paidDate: '2026-01-15' },
-  { id: '5', client: 'Dave App', amount: 3200, status: 'paid', date: '2025-11-15', paidDate: '2025-11-20' },
-  { id: '6', client: 'Local Roofing Co', amount: 1800, status: 'outstanding', date: '2026-02-10', dueDate: '2026-03-10' },
-  { id: '7', client: 'SecuredTampa', amount: 1200, status: 'paid', date: '2025-10-01', paidDate: '2025-10-05' },
-  { id: '8', client: 'JFK', amount: 600, status: 'paid', date: '2025-09-15', paidDate: '2025-09-20' },
-];
-
-const SEED_PROJECTS: Project[] = [
-  { id: '1', name: 'SecuredTampa Website', client: 'SecuredTampa', status: 'active', progress: 90, value: 4500 },
-  { id: '2', name: 'JFK Maintenance', client: 'JFK', status: 'active', progress: 45, value: 2400 },
-  { id: '3', name: 'Dave App StockX Integration', client: 'Dave', status: 'active', progress: 60, value: 3200 },
-  { id: '4', name: 'Local Roofing SEO', client: 'Local Roofing Co', status: 'completed', progress: 100, value: 1800 },
-];
-
-const SEED_LEADS: Lead[] = [
-  { id: '1', name: 'Mike Torres', company: 'Tampa Electric', stage: 'new', value: 5000, source: 'Website', createdAt: '2026-02-15' },
-  { id: '2', name: 'Sarah Chen', company: 'Bayshore Dental', stage: 'contacted', value: 3500, source: 'Referral', createdAt: '2026-02-10' },
-  { id: '3', name: 'James Wright', company: 'Gulf Coast HVAC', stage: 'qualified', value: 8000, source: 'Cold Outreach', createdAt: '2026-02-05' },
-  { id: '4', name: 'Lisa Park', company: 'Clearwater Realty', stage: 'proposal', value: 6000, source: 'Website', createdAt: '2026-01-28' },
-  { id: '5', name: 'Tom Bradley', company: 'Suncoast Auto', stage: 'won', value: 4200, source: 'Referral', createdAt: '2026-01-15' },
-];
-
-const SEED_TASKS: TaskItem[] = [
-  { id: '1', title: 'Finalize SecuredTampa homepage design', dueDate: '2026-02-19', status: 'in-progress', priority: 'high', project: 'SecuredTampa' },
-  { id: '2', title: 'Send JFK monthly report', dueDate: '2026-02-20', status: 'pending', priority: 'medium', project: 'JFK' },
-  { id: '3', title: 'Follow up with Gulf Coast HVAC', dueDate: '2026-02-21', status: 'pending', priority: 'high', project: 'Sales' },
-  { id: '4', title: 'Deploy StockX API update', dueDate: '2026-02-22', status: 'pending', priority: 'medium', project: 'Dave App' },
-  { id: '5', title: 'Prepare proposal for Clearwater Realty', dueDate: '2026-02-23', status: 'pending', priority: 'high', project: 'Sales' },
-  { id: '6', title: 'Invoice Local Roofing Co final payment', dueDate: '2026-02-24', status: 'pending', priority: 'low', project: 'Billing' },
-];
-
-const SEED_ACTIVITIES: ActivityItem[] = [
-  { id: '1', description: 'Invoice #006 sent to Local Roofing Co', timestamp: '2026-02-18T01:30:00', type: 'invoice' },
-  { id: '2', description: 'New lead from website: Mike Torres', timestamp: '2026-02-17T22:15:00', type: 'lead' },
-  { id: '3', description: 'Payment received from SecuredTampa - $2,000', timestamp: '2026-02-17T18:00:00', type: 'payment' },
-  { id: '4', description: 'Proposal sent to Clearwater Realty', timestamp: '2026-02-17T14:30:00', type: 'proposal' },
-  { id: '5', description: 'Task completed: SEO audit for Local Roofing', timestamp: '2026-02-17T11:00:00', type: 'task' },
-  { id: '6', description: 'Follow-up email sent to Sarah Chen', timestamp: '2026-02-16T16:45:00', type: 'email' },
-  { id: '7', description: 'JFK maintenance update deployed', timestamp: '2026-02-16T10:30:00', type: 'deploy' },
-  { id: '8', description: 'Meeting scheduled with Gulf Coast HVAC', timestamp: '2026-02-15T15:00:00', type: 'meeting' },
-  { id: '9', description: 'New lead from referral: Sarah Chen', timestamp: '2026-02-15T09:00:00', type: 'lead' },
-  { id: '10', description: 'Contract signed with Suncoast Auto', timestamp: '2026-02-14T13:00:00', type: 'contract' },
-];
-
-const SEED_CLIENTS: Client[] = [
-  { id: '1', name: 'SecuredTampa', health: 92, revenue: 4500, status: 'active', lastContact: '2026-02-17' },
-  { id: '2', name: 'JFK (justfourkicks)', health: 78, revenue: 2900, status: 'active', lastContact: '2026-02-16' },
-  { id: '3', name: 'Dave App', health: 85, revenue: 3200, status: 'active', lastContact: '2026-02-14' },
-  { id: '4', name: 'Local Roofing Co', health: 65, revenue: 1800, status: 'active', lastContact: '2026-02-10' },
-  { id: '5', name: 'Suncoast Auto', health: 95, revenue: 4200, status: 'new', lastContact: '2026-02-14' },
-];
-
-// ─── Revenue by month (seed) ────────────────────────────────────────
-const MONTHLY_REVENUE = [
-  { month: 'Sep', amount: 600 },
-  { month: 'Oct', amount: 1200 },
-  { month: 'Nov', amount: 3200 },
-  { month: 'Dec', amount: 1500 },
-  { month: 'Jan', amount: 3000 },
-  { month: 'Feb', amount: 2000 },
-];
+// No seed data — all data pulled from Supabase via getData()
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 function formatCurrency(n: number): string {
@@ -245,7 +180,7 @@ function MetricCard({
   );
 }
 
-function RevenueChart({ data }: { data: typeof MONTHLY_REVENUE }) {
+function RevenueChart({ data }: { data: { month: string; amount: number }[] }) {
   const max = Math.max(...data.map((d) => d.amount));
   return (
     <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm">
@@ -456,19 +391,14 @@ export default function DashboardOverview() {
           getData('activities').catch(() => []),
           getData('clients').catch(() => []),
         ]);
-        setInvoices(inv.length ? inv : SEED_INVOICES);
-        setProjects(proj.length ? proj : SEED_PROJECTS);
-        setLeads(ld.length ? ld : SEED_LEADS);
-        setTasks(tsk.length ? tsk : SEED_TASKS);
-        setActivities(act.length ? act : SEED_ACTIVITIES);
-        setClients(cl.length ? cl : SEED_CLIENTS);
+        setInvoices(inv);
+        setProjects(proj);
+        setLeads(ld);
+        setTasks(tsk);
+        setActivities(act);
+        setClients(cl);
       } catch {
-        setInvoices(SEED_INVOICES);
-        setProjects(SEED_PROJECTS);
-        setLeads(SEED_LEADS);
-        setTasks(SEED_TASKS);
-        setActivities(SEED_ACTIVITIES);
-        setClients(SEED_CLIENTS);
+        // No seed fallback — leave empty
       }
       setLoading(false);
     }
@@ -527,8 +457,8 @@ export default function DashboardOverview() {
           icon={<DollarSign size={18} />}
           label="Total Revenue"
           value={formatMoney(totalRevenue)}
-          trend="+12.5% from last month"
-          trendUp={true}
+          trend={`${invoices.filter((i) => i.status === 'paid').length} paid invoices`}
+          trendUp={totalRevenue > 0}
         />
         <MetricCard
           icon={<Clock size={18} />}
@@ -541,22 +471,33 @@ export default function DashboardOverview() {
           icon={<Briefcase size={18} />}
           label="Active Projects"
           value={String(activeProjects)}
-          trend="+1 this month"
-          trendUp={true}
+          trend={`${projects.length} total projects`}
+          trendUp={activeProjects > 0}
         />
         <MetricCard
           icon={<Target size={18} />}
           label="Active Leads"
           value={String(activeLeads)}
-          trend={`${formatMoney(leads.reduce((s, l) => s + (l.value || 0), 0))} pipeline`}
-          trendUp={true}
+          trend={activeLeads > 0 ? `${formatMoney(leads.reduce((s, l) => s + (l.value || 0), 0))} pipeline` : 'No active leads'}
+          trendUp={activeLeads > 0}
         />
       </div>
 
       {/* Row 2 — Chart + Pipeline */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <RevenueChart data={MONTHLY_REVENUE} />
+          <RevenueChart data={(() => {
+            const months: { month: string; amount: number }[] = [];
+            const now = new Date();
+            for (let i = 5; i >= 0; i--) {
+              const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+              const prefix = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+              const label = d.toLocaleString('en-US', { month: 'short' });
+              const amt = invoices.filter(inv => inv.status === 'paid' && (inv.paidDate || inv.date || '').startsWith(prefix)).reduce((s, inv) => s + (inv.amount || inv.total || 0), 0);
+              months.push({ month: label, amount: amt });
+            }
+            return months;
+          })()} />
         </div>
         <PipelineCard leads={leads} />
       </div>

@@ -34,26 +34,7 @@ function lsSet(key: string, data: unknown) {
   try { localStorage.setItem(key, JSON.stringify(data)); } catch {}
 }
 
-const SEED_CLIENTS: Client[] = [
-  {
-    id: '1', name: 'Dave', email: 'dave@securedtampa.com', phone: '813-555-0100',
-    company: 'SecuredTampa', status: 'Active', healthScore: 85, revenue: 4500,
-    tags: ['security', 'priority'], notes: 'Long-term client. Monthly retainer.',
-    lastContact: '2026-02-15', createdAt: '2025-06-01',
-    projects: [{ name: 'Security Audit Q1', status: 'In Progress' }, { name: 'Website Redesign', status: 'Complete' }],
-    invoices: [{ id: 'INV-001', amount: 2500, status: 'Paid', date: '2026-01-15' }, { id: 'INV-002', amount: 2000, status: 'Pending', date: '2026-02-01' }],
-    activity: [{ action: 'Invoice sent', date: '2026-02-01' }, { action: 'Call completed', date: '2026-02-15' }],
-  },
-  {
-    id: '2', name: 'JFK', email: 'jfk@justfourkicks.store', phone: '908-555-0200',
-    company: 'Just Four Kicks', status: 'Active', healthScore: 95, revenue: 0,
-    tags: ['ecommerce', 'ongoing'], notes: 'Ongoing development. Sneaker marketplace.',
-    lastContact: '2026-02-17', createdAt: '2025-08-10',
-    projects: [{ name: 'Storefront Build', status: 'In Progress' }, { name: 'StockX Integration', status: 'Planning' }],
-    invoices: [{ id: 'INV-003', amount: 3000, status: 'Paid', date: '2026-01-20' }],
-    activity: [{ action: 'Feature deployed', date: '2026-02-17' }, { action: 'Sprint review', date: '2026-02-10' }],
-  },
-];
+const SEED_CLIENTS: Client[] = [];
 
 const emptyClient: Omit<Client, 'id' | 'createdAt' | 'projects' | 'invoices' | 'activity'> = {
   name: '', email: '', phone: '', company: '', status: 'Active', healthScore: 50,

@@ -76,27 +76,12 @@ function scoreBadgeColor(score: number) {
   return { bg: '#EADADA', text: '#A0403C' };
 }
 
-/* ─── Seed Data ─── */
-function seedLeads(): Lead[] {
-  const now = new Date().toISOString();
-  const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
-  return [
-    { id: uid(), name: 'Maria Gonzalez', email: 'maria@tampabakery.com', phone: '813-555-0101', company: 'Tampa Bakery', source: 'Website', stage: 'new', score: 65, notes: 'Interested in online ordering system', createdAt: daysAgo(3), stageChangedAt: daysAgo(3), activities: [{ id: uid(), date: daysAgo(3), text: 'Lead created from website form' }] },
-    { id: uid(), name: 'Carlos Reyes', email: 'carlos@miamifitness.com', phone: '305-555-0202', company: 'Miami Fitness', source: 'Cold Email', stage: 'contacted', score: 78, notes: 'Responded to cold outreach, wants a demo', createdAt: daysAgo(7), stageChangedAt: daysAgo(4), activities: [{ id: uid(), date: daysAgo(7), text: 'Lead created from cold email campaign' }, { id: uid(), date: daysAgo(4), text: 'Moved to Contacted after email reply' }] },
-    { id: uid(), name: 'Jenny Park', email: 'jenny@orlandoauto.com', phone: '407-555-0303', company: 'Orlando Auto Shop', source: 'Referral', stage: 'qualified', score: 82, notes: 'Referred by existing client. Needs CRM integration.', createdAt: daysAgo(14), stageChangedAt: daysAgo(5), activities: [{ id: uid(), date: daysAgo(14), text: 'Lead created via referral' }, { id: uid(), date: daysAgo(10), text: 'Initial call completed' }, { id: uid(), date: daysAgo(5), text: 'Qualified after discovery call' }] },
-    { id: uid(), name: 'Tony Moretti', email: 'tony@njrestaurant.com', phone: '732-555-0404', company: 'NJ Restaurant Group', source: 'Cold Email', stage: 'proposal', score: 90, notes: 'Multi-location restaurant group. High-value deal.', createdAt: daysAgo(21), stageChangedAt: daysAgo(2), activities: [{ id: uid(), date: daysAgo(21), text: 'Lead created from cold email' }, { id: uid(), date: daysAgo(15), text: 'Demo completed' }, { id: uid(), date: daysAgo(2), text: 'Proposal sent - $4,500/mo package' }] },
-    { id: uid(), name: 'Dave', email: 'dave@securedtampa.com', phone: '813-555-0505', company: 'SecuredTampa', source: 'Referral', stage: 'won', score: 95, notes: 'Long-time partner. Signed annual contract.', createdAt: daysAgo(30), stageChangedAt: daysAgo(1), activities: [{ id: uid(), date: daysAgo(30), text: 'Lead created via referral' }, { id: uid(), date: daysAgo(20), text: 'Multiple demos completed' }, { id: uid(), date: daysAgo(1), text: 'Deal won - Annual contract signed' }] },
-  ];
-}
+/* ─── No seed data — starts empty, fully editable ─── */
 
 function loadLeads(): Lead[] {
   if (typeof window === 'undefined') return [];
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    const seeded = seedLeads();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
-    return seeded;
-  }
+  if (!raw) return [];
   return JSON.parse(raw);
 }
 

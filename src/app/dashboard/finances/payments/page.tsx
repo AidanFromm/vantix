@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { CreditCard, Plus, X, Clock, CheckCircle2, AlertCircle, DollarSign, Timer, FileText, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { getData, createRecord } from '@/lib/data';
 
 type PaymentMethod = 'Zelle' | 'Wire' | 'Card' | 'Cash';
 type PaymentStatus = 'completed' | 'pending' | 'failed';
@@ -16,55 +17,6 @@ interface Payment {
   method: PaymentMethod;
   status: PaymentStatus;
   notes: string;
-}
-
-const STORAGE_KEY = 'vantix_payments';
-
-const SEED_PAYMENTS: Payment[] = [
-  {
-    id: '1',
-    date: '2026-02-15',
-    amount: 2000,
-    client: 'Dave',
-    invoiceNumber: 'INV-001',
-    method: 'Zelle',
-    status: 'completed',
-    notes: 'StockX app milestone 1 payment',
-  },
-  {
-    id: '2',
-    date: '2026-02-10',
-    amount: 500,
-    client: 'JFK',
-    invoiceNumber: 'INV-002',
-    method: 'Wire',
-    status: 'completed',
-    notes: 'Monthly maintenance fee',
-  },
-  {
-    id: '3',
-    date: '2026-02-08',
-    amount: 200,
-    client: 'Lead - Tampa',
-    invoiceNumber: 'INV-003',
-    method: 'Card',
-    status: 'pending',
-    notes: 'Consultation deposit',
-  },
-];
-
-function loadPayments(): Payment[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return SEED_PAYMENTS;
-}
-
-function savePayments(payments: Payment[]) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payments));
-  } catch {}
 }
 
 const STATUS_CONFIG = {
@@ -91,7 +43,14 @@ export default function PaymentsPage() {
   });
 
   useEffect(() => {
-    setPayments(loadPayments());
+    (async () => {
+      try {
+        const data = await getData<Payment>('payments');
+        setPayments(data);
+      } catch {
+        setPayments([]);
+      }
+    })();
   }, []);
 
   const filtered = useMemo(() => {
@@ -122,9 +81,8 @@ export default function PaymentsPage() {
   const completedPayments = payments.filter(p => p.status === 'completed');
   const avgPaymentTime = completedPayments.length > 0 ? Math.round(completedPayments.length > 1 ? 4.2 : 3) : 0;
 
-  function handleRecord() {
-    const newPayment: Payment = {
-      id: Date.now().toString(),
+  async function handleRecord() {
+    const rec = {
       date: form.date,
       amount: parseFloat(form.amount) || 0,
       client: form.client,
@@ -133,9 +91,13 @@ export default function PaymentsPage() {
       status: form.status,
       notes: form.notes,
     };
-    const updated = [newPayment, ...payments];
-    setPayments(updated);
-    savePayments(updated);
+    try {
+      const created = await createRecord<Payment>('payments', rec);
+      setPayments(prev => [created, ...prev]);
+    } catch {
+      const newPayment: Payment = { id: Date.now().toString(), ...rec };
+      setPayments(prev => [newPayment, ...prev]);
+    }
     setShowModal(false);
     setForm({ invoiceNumber: '', amount: '', client: '', method: 'Zelle', date: new Date().toISOString().split('T')[0], notes: '', status: 'completed' });
   }

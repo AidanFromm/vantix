@@ -20,16 +20,7 @@ interface Task {
   completed: boolean
 }
 
-const SEED_TASKS: Task[] = [
-  { id: '1', title: 'Update firewall rules for main site', description: 'Review and update WAF rules for securedtampa.com', project: 'SecuredTampa', assignee: 'Kyle', priority: 'Urgent', status: 'In Progress', dueDate: '2026-02-20', completed: false },
-  { id: '2', title: 'Design new landing page hero', description: 'Create hero section mockup for JFK store relaunch', project: 'JFK', assignee: 'Aidan', priority: 'High', status: 'To Do', dueDate: '2026-02-22', completed: false },
-  { id: '3', title: 'Set up SSL certificate renewal', description: 'Automate SSL renewal for all SecuredTampa client domains', project: 'SecuredTampa', assignee: 'Kyle', priority: 'High', status: 'In Progress', dueDate: '2026-02-19', completed: false },
-  { id: '4', title: 'Product photography upload', description: 'Upload and tag new sneaker photos for JFK store', project: 'JFK', assignee: 'Aidan', priority: 'Medium', status: 'To Do', dueDate: '2026-02-25', completed: false },
-  { id: '5', title: 'Client invoice - February', description: 'Generate and send February invoices to all SecuredTampa clients', project: 'SecuredTampa', assignee: 'Kyle', priority: 'Medium', status: 'To Do', dueDate: '2026-02-28', completed: false },
-  { id: '6', title: 'Fix checkout flow bug', description: 'Resolve Stripe webhook issue on JFK checkout', project: 'JFK', assignee: 'Aidan', priority: 'Urgent', status: 'In Progress', dueDate: '2026-02-18', completed: false },
-  { id: '7', title: 'Write blog post on cybersecurity trends', description: 'SEO blog post for SecuredTampa site', project: 'SecuredTampa', assignee: 'Kyle', priority: 'Low', status: 'Done', dueDate: '2026-02-15', completed: true },
-  { id: '8', title: 'Update StockX API integration', description: 'Migrate to new StockX API endpoints for price fetching', project: 'JFK', assignee: 'Aidan', priority: 'High', status: 'Done', dueDate: '2026-02-16', completed: true },
-]
+const SEED_TASKS: Task[] = []
 
 const PRIORITY_COLORS: Record<string, string> = {
   Urgent: 'bg-red-100 text-red-700 border-red-200',
@@ -52,9 +43,12 @@ const PROJECTS = ['SecuredTampa', 'JFK']
 function loadTasks(): Task[] {
   try {
     const raw = localStorage.getItem('vantix_tasks')
-    if (raw) return JSON.parse(raw)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      return Array.isArray(parsed) ? parsed : []
+    }
   } catch {}
-  return SEED_TASKS
+  return []
 }
 
 function saveTasks(tasks: Task[]) {
