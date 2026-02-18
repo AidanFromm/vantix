@@ -14,24 +14,24 @@ interface StatusBadgeProps {
 
 const statusConfig: Record<StatusType, { dot: string; bg: string; text: string }> = {
   success: {
-    dot: 'bg-[#8DB580]',
-    bg: 'bg-[#8DB580]/10 border-[#8DB580]/20',
-    text: 'text-[#6B9A5E]',
+    dot: 'bg-[#B07A45]',
+    bg: 'bg-[#B07A45]/10 border-[#B07A45]/20',
+    text: 'text-[#B07A45]',
   },
   warning: {
-    dot: 'bg-[#D4A843]',
-    bg: 'bg-[#D4A843]/10 border-[#D4A843]/20',
-    text: 'text-[#B8923A]',
+    dot: 'bg-[#C89A6A]',
+    bg: 'bg-[#C89A6A]/10 border-[#C89A6A]/20',
+    text: 'text-[#B07A45]',
   },
   error: {
-    dot: 'bg-[#C4735B]',
-    bg: 'bg-[#C4735B]/10 border-[#C4735B]/20',
-    text: 'text-[#B0614A]',
+    dot: 'bg-[#B07A45]',
+    bg: 'bg-[#B07A45]/10 border-[#B07A45]/20',
+    text: 'text-[#8E5E34]',
   },
   info: {
-    dot: 'bg-[#7BA3C4]',
-    bg: 'bg-[#7BA3C4]/10 border-[#7BA3C4]/20',
-    text: 'text-[#6890B0]',
+    dot: 'bg-[#7A746C]',
+    bg: 'bg-[#7A746C]/10 border-[#7A746C]/20',
+    text: 'text-[#7A746C]',
   },
   neutral: {
     dot: 'bg-[#7A746C]',

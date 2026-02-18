@@ -26,11 +26,11 @@ const typeIcons: Record<NotificationType, React.ElementType> = {
 
 const typeColors: Record<NotificationType, string> = {
   new_lead: 'text-[#8E5E34]',
-  invoice_overdue: 'text-[#C4735B]',
-  project_deadline: 'text-[#D4A843]',
-  client_replied: 'text-[#7BA3C4]',
-  intake_submitted: 'text-[#9B8ABF]',
-  meeting_reminder: 'text-[#6890B0]',
+  invoice_overdue: 'text-[#B07A45]',
+  project_deadline: 'text-[#C89A6A]',
+  client_replied: 'text-[#7A746C]',
+  intake_submitted: 'text-[#7A746C]',
+  meeting_reminder: 'text-[#7A746C]',
 };
 
 function timeAgo(ts: string): string {
@@ -128,7 +128,7 @@ export default function NotificationBell() {
                   </button>
                 )}
                 {notifications.length > 0 && (
-                  <button onClick={handleClearAll} className="p-1.5 rounded-md text-[#7A746C] hover:text-[#C4735B] hover:bg-[#C4735B]/10 transition-colors" title="Clear all">
+                  <button onClick={handleClearAll} className="p-1.5 rounded-md text-[#7A746C] hover:text-[#B07A45] hover:bg-[#B07A45]/10 transition-colors" title="Clear all">
                     <Trash2 size={16} />
                   </button>
                 )}
@@ -160,7 +160,7 @@ export default function NotificationBell() {
                           {!n.read && <span className="w-2 h-2 rounded-full bg-[#8E5E34] flex-shrink-0" />}
                         </div>
                         <p className="text-xs text-[#7A746C] mt-0.5 line-clamp-2">{n.description}</p>
-                        <p className="text-[10px] text-[#A9A29A] mt-1">{timeAgo(n.timestamp)}</p>
+                        <p className="text-[10px] text-[#A39B90] mt-1">{timeAgo(n.timestamp)}</p>
                       </div>
                     </button>
                   );

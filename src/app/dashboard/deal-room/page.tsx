@@ -21,12 +21,12 @@ const mockDeals: Deal[] = [
 ];
 
 const stageColors: Record<string, string> = {
-  discovery: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  proposal: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  negotiation: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  closing: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-  won: 'bg-green-500/20 text-green-400 border-green-500/30',
-  lost: 'bg-red-500/20 text-red-400 border-red-500/30',
+  discovery: 'bg-[#B07A45]/50/20 text-[#C89A6A] border-[#B07A45]/50/30',
+  proposal: 'bg-[#B07A45]/50/20 text-[#C89A6A] border-[#B07A45]/50/30',
+  negotiation: 'bg-[#B07A45]/20 text-[#C89A6A] border-[#B07A45]/30',
+  closing: 'bg-[#B07A45]/20 text-[#C89A6A] border-[#B07A45]/30',
+  won: 'bg-[#B07A45]/50/20 text-[#C89A6A] border-[#B07A45]/50/30',
+  lost: 'bg-[#B0614A]/50/20 text-[#B0614A] border-[#B0614A]/50/30',
 };
 
 export default function DealRoomPage() {
@@ -55,21 +55,21 @@ export default function DealRoomPage() {
         </div>
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <DollarSign size={16} className="text-blue-400" />
+            <DollarSign size={16} className="text-[#C89A6A]" />
             <span className="text-xs text-[var(--color-muted)]">Pipeline Value</span>
           </div>
-          <p className="text-2xl font-bold text-blue-400">${totalPipeline.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-[#C89A6A]">${totalPipeline.toLocaleString()}</p>
         </div>
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <CheckCircle size={16} className="text-green-400" />
+            <CheckCircle size={16} className="text-[#C89A6A]" />
             <span className="text-xs text-[var(--color-muted)]">Won This Month</span>
           </div>
-          <p className="text-2xl font-bold text-green-400">${wonDeals.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-[#C89A6A]">${wonDeals.toLocaleString()}</p>
         </div>
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Clock size={16} className="text-yellow-400" />
+            <Clock size={16} className="text-[#C89A6A]" />
             <span className="text-xs text-[var(--color-muted)]">Avg Close Time</span>
           </div>
           <p className="text-2xl font-bold">14 days</p>
@@ -87,7 +87,7 @@ export default function DealRoomPage() {
               <div key={deal.id} className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-3">
                 <p className="font-medium text-sm truncate">{deal.name}</p>
                 <p className="text-xs text-[var(--color-muted)]">{deal.client}</p>
-                <p className="text-sm font-semibold text-[#10b981] mt-2">${deal.value.toLocaleString()}</p>
+                <p className="text-sm font-semibold text-[#B07A45] mt-2">${deal.value.toLocaleString()}</p>
               </div>
             ))}
           </div>

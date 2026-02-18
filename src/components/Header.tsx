@@ -38,7 +38,7 @@ export default function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/5'
+          ? 'bg-[#1C1C1C]/90 backdrop-blur-xl border-b border-white/5'
           : 'bg-transparent'
       }`}
     >
@@ -47,11 +47,11 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-3 group">
           <motion.div 
             whileHover={{ scale: 1.1, rotate: 5 }}
-            className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-black font-bold text-xl shadow-lg shadow-emerald-500/25"
+            className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B07A45]/50 to-[#B07A45] flex items-center justify-center text-black font-bold text-xl shadow-lg shadow-[#B07A45]/50/25"
           >
             V
           </motion.div>
-          <span className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">
+          <span className="text-xl font-bold text-white group-hover:text-[#C89A6A] transition-colors">
             Vantix
           </span>
         </Link>
@@ -68,7 +68,7 @@ export default function Header() {
                 className="relative px-4 py-2 text-sm text-white/70 hover:text-white transition-colors cursor-pointer group"
               >
                 {link.label}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-emerald-500 group-hover:w-1/2 transition-all duration-300 rounded-full" />
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#B07A45]/50 group-hover:w-1/2 transition-all duration-300 rounded-full" />
               </motion.a>
             ) : (
               <motion.div key={link.href} whileHover={{ y: -2 }}>
@@ -77,7 +77,7 @@ export default function Header() {
                   className="relative px-4 py-2 text-sm text-white/70 hover:text-white transition-colors block group"
                 >
                   {link.label}
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-emerald-500 group-hover:w-1/2 transition-all duration-300 rounded-full" />
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#B07A45]/50 group-hover:w-1/2 transition-all duration-300 rounded-full" />
                 </Link>
               </motion.div>
             )
@@ -98,7 +98,7 @@ export default function Header() {
             onClick={handleContactClick}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-black px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45] text-black px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-[#B07A45]/50/25 hover:shadow-[#B07A45]/50/40 transition-all cursor-pointer"
           >
             Start Project
             <ArrowRight size={16} />
@@ -124,7 +124,7 @@ export default function Header() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="md:hidden bg-[#0a0a0a]/98 backdrop-blur-xl border-b border-white/5 overflow-hidden"
+            className="md:hidden bg-[#1C1C1C]/98 backdrop-blur-xl border-b border-white/5 overflow-hidden"
           >
             <nav className="flex flex-col px-4 sm:px-6 py-4 sm:py-6 gap-1 sm:gap-2">
               {navLinks.map((link, i) => (
@@ -138,7 +138,7 @@ export default function Header() {
                     <a
                       href="#contact"
                       onClick={(e) => { setMobileOpen(false); handleContactClick(e); }}
-                      className="text-lg text-white/80 hover:text-emerald-400 transition-colors py-3 px-4 rounded-xl hover:bg-[#EEE6DC]/5 block cursor-pointer"
+                      className="text-lg text-white/80 hover:text-[#C89A6A] transition-colors py-3 px-4 rounded-xl hover:bg-[#EEE6DC]/5 block cursor-pointer"
                     >
                       {link.label}
                     </a>
@@ -146,7 +146,7 @@ export default function Header() {
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="text-lg text-white/80 hover:text-emerald-400 transition-colors py-3 px-4 rounded-xl hover:bg-[#EEE6DC]/5 block"
+                      className="text-lg text-white/80 hover:text-[#C89A6A] transition-colors py-3 px-4 rounded-xl hover:bg-[#EEE6DC]/5 block"
                     >
                       {link.label}
                     </Link>
@@ -171,7 +171,7 @@ export default function Header() {
                 <a
                   href="#contact"
                   onClick={(e) => { setMobileOpen(false); handleContactClick(e); }}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-black px-5 py-3.5 rounded-xl font-semibold text-base cursor-pointer"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45] text-black px-5 py-3.5 rounded-xl font-semibold text-base cursor-pointer"
                 >
                   Start Your Project
                   <ArrowRight size={18} />

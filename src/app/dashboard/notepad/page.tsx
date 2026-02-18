@@ -140,7 +140,7 @@ export default function NotepadPage() {
                 />
                 <button
                   onClick={() => deleteNote(activeNote.id)}
-                  className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                  className="p-2 text-[#B0614A] hover:bg-[#B0614A]/50/10 rounded-lg transition-colors"
                 >
                   <Trash2 size={18} />
                 </button>

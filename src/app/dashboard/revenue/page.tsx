@@ -41,7 +41,7 @@ export default function RevenuePage() {
               onClick={() => setPeriod(p)}
               className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
                 period === p
-                  ? 'bg-[#10b981] text-white'
+                  ? 'bg-[#B07A45] text-white'
                   : 'bg-[var(--color-card)] text-[var(--color-muted)] hover:text-white border border-[var(--color-border)]'
               }`}
             >
@@ -56,31 +56,31 @@ export default function RevenuePage() {
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-[var(--color-muted)]">Revenue</span>
-            <div className="p-2 rounded-lg bg-green-500/10">
-              <TrendingUp size={16} className="text-green-400" />
+            <div className="p-2 rounded-lg bg-[#B07A45]/50/10">
+              <TrendingUp size={16} className="text-[#C89A6A]" />
             </div>
           </div>
-          <p className="text-3xl font-bold text-green-400">${income.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-[#C89A6A]">${income.toLocaleString()}</p>
         </div>
 
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-[var(--color-muted)]">Expenses</span>
-            <div className="p-2 rounded-lg bg-red-500/10">
-              <TrendingDown size={16} className="text-red-400" />
+            <div className="p-2 rounded-lg bg-[#B0614A]/50/10">
+              <TrendingDown size={16} className="text-[#B0614A]" />
             </div>
           </div>
-          <p className="text-3xl font-bold text-red-400">${expenses.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-[#B0614A]">${expenses.toLocaleString()}</p>
         </div>
 
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-[var(--color-muted)]">Profit</span>
-            <div className={`p-2 rounded-lg ${profit >= 0 ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
-              <DollarSign size={16} className={profit >= 0 ? 'text-green-400' : 'text-red-400'} />
+            <div className={`p-2 rounded-lg ${profit >= 0 ? 'bg-[#B07A45]/50/10' : 'bg-[#B0614A]/50/10'}`}>
+              <DollarSign size={16} className={profit >= 0 ? 'text-[#C89A6A]' : 'text-[#B0614A]'} />
             </div>
           </div>
-          <p className={`text-3xl font-bold ${profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+          <p className={`text-3xl font-bold ${profit >= 0 ? 'text-[#C89A6A]' : 'text-[#B0614A]'}`}>
             ${profit.toLocaleString()}
           </p>
         </div>
@@ -95,11 +95,11 @@ export default function RevenuePage() {
           {transactions.map(tx => (
             <div key={tx.id} className="p-4 hover:bg-[#EEE6DC]/5 transition-colors flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${tx.type === 'income' ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
+                <div className={`p-2 rounded-lg ${tx.type === 'income' ? 'bg-[#B07A45]/50/10' : 'bg-[#B0614A]/50/10'}`}>
                   {tx.type === 'income' ? (
-                    <ArrowUpRight size={16} className="text-green-400" />
+                    <ArrowUpRight size={16} className="text-[#C89A6A]" />
                   ) : (
-                    <ArrowDownRight size={16} className="text-red-400" />
+                    <ArrowDownRight size={16} className="text-[#B0614A]" />
                   )}
                 </div>
                 <div>
@@ -116,7 +116,7 @@ export default function RevenuePage() {
                 </div>
               </div>
               <div className="text-right">
-                <p className={`font-semibold ${tx.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>
+                <p className={`font-semibold ${tx.type === 'income' ? 'text-[#C89A6A]' : 'text-[#B0614A]'}`}>
                   {tx.type === 'income' ? '+' : '-'}${tx.amount.toLocaleString()}
                 </p>
                 <p className="text-xs text-[var(--color-muted)]">{tx.date}</p>

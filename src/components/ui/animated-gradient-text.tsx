@@ -17,7 +17,7 @@ export function AnimatedGradientText({
   return (
     <motion.span
       className={cn(
-        'inline-block bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent',
+        'inline-block bg-gradient-to-r from-[#C89A6A] via-[#C89A6A] to-[#C89A6A] bg-clip-text text-transparent',
         animate && 'bg-[length:200%_auto] animate-gradient',
         className
       )}
@@ -73,7 +73,7 @@ export function GlowingText({
     <span className={cn('relative inline-block', className)}>
       <span className="relative z-10">{children}</span>
       <motion.span
-        className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/50 to-emerald-500/0 blur-xl"
+        className="absolute inset-0 bg-gradient-to-r from-[#B07A45]/50/0 via-[#B07A45]/50/50 to-[#B07A45]/50/0 blur-xl"
         animate={{
           x: ['-100%', '100%'],
         }}

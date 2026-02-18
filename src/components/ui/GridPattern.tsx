@@ -99,7 +99,7 @@ export function GridPattern({
                   repeat: Infinity,
                   repeatDelay: Math.random() * 3,
                 }}
-                className="fill-emerald-500/30"
+                className="fill-[#B07A45]/50/30"
               />
             ))}
           </svg>
@@ -165,7 +165,7 @@ export function DotPattern({
 export function PerspectiveGrid({
   className,
   lineCount = 20,
-  color = '#10b981',
+  color = '#B07A45',
 }: {
   className?: string;
   lineCount?: number;
@@ -272,7 +272,7 @@ export function NoiseOverlay({
 // Gradient mesh background
 export function GradientMesh({
   className,
-  colors = ['#10b981', '#0ea5e9', '#8b5cf6'],
+  colors = ['#B07A45', '#B07A45', '#B07A45'],
 }: {
   className?: string;
   colors?: string[];
@@ -314,7 +314,7 @@ export function GradientMesh({
 export function BeamPattern({
   className,
   beamCount = 6,
-  color = '#10b981',
+  color = '#B07A45',
 }: {
   className?: string;
   beamCount?: number;

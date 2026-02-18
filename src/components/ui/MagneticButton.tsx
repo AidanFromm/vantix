@@ -26,7 +26,7 @@ export function MagneticButton({
   strength = 0.35,
   radius = 200,
   glow = false,
-  glowColor = '#10b981',
+  glowColor = '#B07A45',
   variant = 'default',
   size = 'md',
   disabled = false,
@@ -83,12 +83,12 @@ export function MagneticButton({
   };
 
   const variantClasses = {
-    default: 'bg-emerald-500 text-white hover:bg-emerald-400',
+    default: 'bg-[#B07A45]/50 text-white hover:bg-[#C89A6A]',
     outline:
-      'bg-transparent border-2 border-emerald-500 text-emerald-400 hover:bg-emerald-500/10',
-    ghost: 'bg-transparent text-emerald-400 hover:bg-emerald-500/10',
+      'bg-transparent border-2 border-[#B07A45]/50 text-[#C89A6A] hover:bg-[#B07A45]/50/10',
+    ghost: 'bg-transparent text-[#C89A6A] hover:bg-[#B07A45]/50/10',
     gradient:
-      'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white',
+      'bg-gradient-to-r from-[#B07A45]/50 via-[#B07A45] to-[#B07A45] text-white',
   };
 
   const Component = href ? motion.a : motion.button;
@@ -265,7 +265,7 @@ export function MagneticArrowButton({
         animate={{ x: position.x, y: position.y }}
         transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
         className={cn(
-          'group relative inline-flex items-center gap-2 text-lg font-medium text-white transition-colors hover:text-emerald-400',
+          'group relative inline-flex items-center gap-2 text-lg font-medium text-white transition-colors hover:text-[#C89A6A]',
           className
         )}
       >
@@ -277,7 +277,7 @@ export function MagneticArrowButton({
           →
         </motion.span>
         <motion.div
-          className="absolute -bottom-1 left-0 h-px bg-gradient-to-r from-emerald-500 to-teal-500"
+          className="absolute -bottom-1 left-0 h-px bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45]"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: isHovered ? 1 : 0 }}
           style={{ originX: 0 }}

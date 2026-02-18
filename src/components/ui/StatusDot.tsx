@@ -24,39 +24,39 @@ const statusConfig: Record<
   }
 > = {
   active: {
-    color: 'bg-emerald-500',
-    bgColor: 'bg-emerald-500/20',
-    ringColor: 'ring-emerald-500/30',
+    color: 'bg-[#B07A45]/50',
+    bgColor: 'bg-[#B07A45]/50/20',
+    ringColor: 'ring-[#B07A45]/50/30',
     label: 'Active',
   },
   success: {
-    color: 'bg-emerald-500',
-    bgColor: 'bg-emerald-500/20',
-    ringColor: 'ring-emerald-500/30',
+    color: 'bg-[#B07A45]/50',
+    bgColor: 'bg-[#B07A45]/50/20',
+    ringColor: 'ring-[#B07A45]/50/30',
     label: 'Success',
   },
   idle: {
-    color: 'bg-amber-500',
-    bgColor: 'bg-amber-500/20',
-    ringColor: 'ring-amber-500/30',
+    color: 'bg-[#B07A45]',
+    bgColor: 'bg-[#B07A45]/20',
+    ringColor: 'ring-[#B07A45]/30',
     label: 'Idle',
   },
   warning: {
-    color: 'bg-amber-500',
-    bgColor: 'bg-amber-500/20',
-    ringColor: 'ring-amber-500/30',
+    color: 'bg-[#B07A45]',
+    bgColor: 'bg-[#B07A45]/20',
+    ringColor: 'ring-[#B07A45]/30',
     label: 'Warning',
   },
   error: {
-    color: 'bg-red-500',
-    bgColor: 'bg-red-500/20',
-    ringColor: 'ring-red-500/30',
+    color: 'bg-[#B0614A]/50',
+    bgColor: 'bg-[#B0614A]/50/20',
+    ringColor: 'ring-[#B0614A]/50/30',
     label: 'Error',
   },
   offline: {
-    color: 'bg-gray-500',
-    bgColor: 'bg-gray-500/20',
-    ringColor: 'ring-gray-500/30',
+    color: 'bg-[#F4EFE8]0',
+    bgColor: 'bg-[#F4EFE8]0/20',
+    ringColor: 'ring-[#F4EFE8]0/30',
     label: 'Offline',
   },
 };
@@ -133,7 +133,7 @@ export function StatusDot({
 
       {/* Label */}
       {showLabel && (
-        <span className={cn('text-gray-400', sizeStyles.text)}>
+        <span className={cn('text-[#A39B90]', sizeStyles.text)}>
           {label || config.label}
         </span>
       )}
@@ -194,7 +194,7 @@ export function ConnectionStatus({
               key={bar}
               className={cn(
                 'w-1 rounded-full',
-                isConnected ? 'bg-emerald-500' : 'bg-gray-600'
+                isConnected ? 'bg-[#B07A45]/50' : 'bg-[#4B4B4B]'
               )}
               style={{ height: `${bar * 25}%` }}
               initial={{ scaleY: 0 }}
@@ -208,7 +208,7 @@ export function ConnectionStatus({
       <span
         className={cn(
           'text-sm font-medium',
-          isConnected ? 'text-emerald-400' : 'text-gray-500'
+          isConnected ? 'text-[#C89A6A]' : 'text-[#F4EFE8]0'
         )}
       >
         {isConnected ? 'Connected' : 'Disconnected'}
@@ -232,12 +232,12 @@ export function LiveIndicator({
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn(
-        'inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-500/20 border border-red-500/30',
+        'inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#B0614A]/50/20 border border-[#B0614A]/50/30',
         className
       )}
     >
       <motion.span
-        className="w-2 h-2 rounded-full bg-red-500"
+        className="w-2 h-2 rounded-full bg-[#B0614A]/50"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [1, 0.7, 1],
@@ -248,7 +248,7 @@ export function LiveIndicator({
           ease: 'easeInOut',
         }}
       />
-      <span className="text-xs font-bold text-red-400 uppercase tracking-wider">
+      <span className="text-xs font-bold text-[#B0614A] uppercase tracking-wider">
         Live
       </span>
     </motion.div>
@@ -265,12 +265,12 @@ export function ActivityIndicator({
 }) {
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <span className="text-sm text-gray-400">{text}</span>
+      <span className="text-sm text-[#A39B90]">{text}</span>
       <div className="flex gap-1">
         {[0, 1, 2].map((i) => (
           <motion.span
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-emerald-500"
+            className="w-1.5 h-1.5 rounded-full bg-[#B07A45]/50"
             animate={{
               scale: [1, 1.3, 1],
               opacity: [0.5, 1, 0.5],
@@ -304,14 +304,14 @@ export function ProgressStatus({
       <StatusDot status={status} size="sm" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-sm text-gray-300 truncate">{label}</span>
+          <span className="text-sm text-[#E3D9CD] truncate">{label}</span>
           <span className="text-sm font-medium text-white">
             {Math.round(progress)}%
           </span>
         </div>
-        <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-[#1C1C1C] rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
+            className="h-full bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45] rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5, ease: 'easeOut' }}

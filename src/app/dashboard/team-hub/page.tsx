@@ -58,10 +58,10 @@ export default function TeamHubPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'online': return 'bg-green-400';
-      case 'busy': return 'bg-yellow-400';
-      case 'offline': return 'bg-gray-400';
-      default: return 'bg-gray-400';
+      case 'online': return 'bg-[#C89A6A]';
+      case 'busy': return 'bg-[#C89A6A]';
+      case 'offline': return 'bg-[#A39B90]';
+      default: return 'bg-[#A39B90]';
     }
   };
 
@@ -88,21 +88,21 @@ export default function TeamHubPage() {
         </div>
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Activity size={16} className="text-green-400" />
+            <Activity size={16} className="text-[#C89A6A]" />
             <span className="text-xs text-[var(--color-muted)]">Online Now</span>
           </div>
-          <p className="text-2xl font-bold text-green-400">{team.filter(m => m.status === 'online').length}</p>
+          <p className="text-2xl font-bold text-[#C89A6A]">{team.filter(m => m.status === 'online').length}</p>
         </div>
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <CheckCircle size={16} className="text-[#10b981]" />
+            <CheckCircle size={16} className="text-[#B07A45]" />
             <span className="text-xs text-[var(--color-muted)]">Tasks Done</span>
           </div>
           <p className="text-2xl font-bold">{totalCompleted}</p>
         </div>
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Clock size={16} className="text-yellow-400" />
+            <Clock size={16} className="text-[#C89A6A]" />
             <span className="text-xs text-[var(--color-muted)]">Pending</span>
           </div>
           <p className="text-2xl font-bold">{totalPending}</p>
@@ -112,14 +112,14 @@ export default function TeamHubPage() {
       {/* Team members */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {team.map(member => (
-          <div key={member.id} className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-5 hover:border-[#10b981]/50 transition-colors">
+          <div key={member.id} className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-5 hover:border-[#B07A45]/50 transition-colors">
             <div className="flex items-start gap-4">
               <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-[#10b981]/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-[#B07A45]/20 flex items-center justify-center">
                   {member.type === 'bot' ? (
-                    <Bot size={20} className="text-[#10b981]" />
+                    <Bot size={20} className="text-[#B07A45]" />
                   ) : (
-                    <User size={20} className="text-[#10b981]" />
+                    <User size={20} className="text-[#B07A45]" />
                   )}
                 </div>
                 <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[var(--color-card)] ${getStatusColor(member.status)}`} />
@@ -128,7 +128,7 @@ export default function TeamHubPage() {
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold">{member.name}</h3>
                   {member.type === 'bot' && (
-                    <Zap size={12} className="text-yellow-400" />
+                    <Zap size={12} className="text-[#C89A6A]" />
                   )}
                 </div>
                 <p className="text-sm text-[var(--color-muted)]">{member.role}</p>
@@ -142,11 +142,11 @@ export default function TeamHubPage() {
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle size={14} className="text-green-400" />
+                    <CheckCircle size={14} className="text-[#C89A6A]" />
                     <span>{member.tasks.completed}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Clock size={14} className="text-yellow-400" />
+                    <Clock size={14} className="text-[#C89A6A]" />
                     <span>{member.tasks.pending}</span>
                   </div>
                 </div>
@@ -170,10 +170,10 @@ export default function TeamHubPage() {
             { name: 'Kyle', action: 'closed deal', target: 'Secured Tampa', time: 'Yesterday' },
           ].map((activity, i) => (
             <div key={i} className="flex items-center gap-3 text-sm">
-              <span className="w-2 h-2 rounded-full bg-[#10b981]" />
+              <span className="w-2 h-2 rounded-full bg-[#B07A45]" />
               <span className="font-medium">{activity.name}</span>
               <span className="text-[var(--color-muted)]">{activity.action}</span>
-              <span className="text-[#10b981]">{activity.target}</span>
+              <span className="text-[#B07A45]">{activity.target}</span>
               <span className="text-[var(--color-muted)] ml-auto text-xs">{activity.time}</span>
             </div>
           ))}

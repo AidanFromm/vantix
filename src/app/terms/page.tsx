@@ -29,14 +29,14 @@ export default function TermsPage() {
         <p>Vantix provides AI consulting, custom software development, automation, and related technology services. The specific scope, deliverables, and timelines for each engagement will be outlined in a separate Statement of Work (SOW) or service agreement.</p>
 
         <h2 className="text-xl font-bold mt-8 mb-3">2. Engagement & Scope</h2>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>All projects begin after mutual agreement on scope, timeline, and pricing</li>
           <li>Changes to scope may result in adjustments to timeline and cost</li>
           <li>We reserve the right to subcontract work to qualified team members or AI tools</li>
         </ul>
 
         <h2 className="text-xl font-bold mt-8 mb-3">3. Payment Terms</h2>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>Payment schedules will be defined in individual service agreements</li>
           <li>Typical structure: deposit upon signing, milestone payments, final payment on delivery</li>
           <li>Late payments may incur a fee of 1.5% per month on outstanding balances</li>
@@ -44,7 +44,7 @@ export default function TermsPage() {
         </ul>
 
         <h2 className="text-xl font-bold mt-8 mb-3">4. Intellectual Property</h2>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>Upon full payment, clients receive ownership of custom-built deliverables as specified in the SOW</li>
           <li>Vantix retains ownership of proprietary tools, frameworks, and reusable components developed independently</li>
           <li>We reserve the right to showcase completed work in our portfolio unless otherwise agreed in writing</li>
@@ -56,7 +56,7 @@ export default function TermsPage() {
 
         <h2 className="text-xl font-bold mt-8 mb-3">6. Limitation of Liability</h2>
         <p>To the maximum extent permitted by law:</p>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>Vantix shall not be liable for indirect, incidental, special, or consequential damages</li>
           <li>Our total liability for any claim shall not exceed the amount paid for the specific service giving rise to the claim</li>
           <li>We do not guarantee specific business outcomes, revenue increases, or cost savings</li>
@@ -66,7 +66,7 @@ export default function TermsPage() {
         <p>We warrant that services will be performed in a professional and workmanlike manner. All deliverables are provided &quot;as is&quot; after the agreed warranty/support period. We do not warrant uninterrupted or error-free operation of any software.</p>
 
         <h2 className="text-xl font-bold mt-8 mb-3">8. Termination</h2>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>Either party may terminate an engagement with 14 days written notice</li>
           <li>Client is responsible for payment of all work completed up to the termination date</li>
           <li>Completed deliverables will be transferred upon receipt of final payment</li>
@@ -74,7 +74,7 @@ export default function TermsPage() {
 
         <h2 className="text-xl font-bold mt-8 mb-3">9. Website Use</h2>
         <p>By using our website, you agree not to:</p>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>Use the site for any unlawful purpose</li>
           <li>Attempt to gain unauthorized access to any part of the site</li>
           <li>Reproduce or distribute content without permission</li>
@@ -85,7 +85,7 @@ export default function TermsPage() {
 
         <h2 className="text-xl font-bold mt-8 mb-3">11. Contact</h2>
         <p>For questions about these Terms, contact us at:</p>
-        <ul className="list-none pl-0 space-y-1 text-[#5C5650]">
+        <ul className="list-none pl-0 space-y-1 text-[#4B4B4B]">
           <li>Email: hello@usevantix.com</li>
           <li>Phone: (908) 498-7753</li>
           <li>Website: <Link href="/contact" className="text-[#8E5E34] hover:underline">usevantix.com/contact</Link></li>

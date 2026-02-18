@@ -97,7 +97,7 @@ function RevenueChart({ invoices }: { invoices: InvoiceData[] }) {
 function LeadFunnel({ leads }: { leads: LeadData[] }) {
   const stages = ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'];
   const stageLabels: Record<string, string> = { new: 'New', contacted: 'Contacted', qualified: 'Qualified', proposal: 'Proposal', negotiation: 'Negotiation', won: 'Won', lost: 'Lost' };
-  const stageColors: Record<string, string> = { new: '#3B82F6', contacted: '#8B5CF6', qualified: '#F59E0B', proposal: '#F97316', negotiation: '#EC4899', won: '#10B981', lost: '#EF4444' };
+  const stageColors: Record<string, string> = { new: '#B07A45', contacted: '#B07A45', qualified: '#B07A45', proposal: '#B07A45', negotiation: '#B07A45', won: '#B07A45', lost: '#8E5E34' };
 
   const counts = stages.map(s => ({ stage: s, count: leads.filter(l => l.status === s).length }));
   const maxCount = Math.max(...counts.map(c => c.count), 1);
@@ -220,7 +220,7 @@ export default function DashboardPage() {
   };
 
   const getActivityIcon = (type: string) => {
-    switch (type) { case 'payment': return { icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' }; case 'project': return { icon: Briefcase, color: 'text-purple-600', bg: 'bg-purple-50' }; case 'lead': return { icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' }; default: return { icon: Activity, color: 'text-[#7A746C]', bg: 'bg-[#EEE6DC]' }; }
+    switch (type) { case 'payment': return { icon: DollarSign, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' }; case 'project': return { icon: Briefcase, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' }; case 'lead': return { icon: Users, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' }; default: return { icon: Activity, color: 'text-[#7A746C]', bg: 'bg-[#EEE6DC]' }; }
   };
 
   const outstandingInvoices = useMemo(() => {
@@ -258,10 +258,10 @@ export default function DashboardPage() {
   if (isLoading) return <LoadingSkeleton />;
 
   const kpiData = [
-    { title: 'This Month', value: revenueStats.thisMonth, prefix: '$', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { title: 'Last Month', value: revenueStats.lastMonth, prefix: '$', icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    { title: 'This Month', value: revenueStats.thisMonth, prefix: '$', icon: DollarSign, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
+    { title: 'Last Month', value: revenueStats.lastMonth, prefix: '$', icon: TrendingUp, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
     { title: 'YTD Revenue', value: revenueStats.ytd, prefix: '$', icon: BarChart3, color: 'text-[#8E5E34]', bg: 'bg-[#8E5E34]/10', border: 'border-[#8E5E34]/20' },
-    { title: 'Pipeline', value: totalPipeline, prefix: '$', icon: Target, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+    { title: 'Pipeline', value: totalPipeline, prefix: '$', icon: Target, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
   ];
 
   return (
@@ -338,7 +338,7 @@ export default function DashboardPage() {
           className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
           <div className="px-6 py-4 border-b border-[#E3D9CD] flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-red-50"><DollarSign size={18} className="text-red-500" /></div>
+              <div className="p-2 rounded-xl bg-[#B0614A]/5"><DollarSign size={18} className="text-[#B0614A]/50" /></div>
               <div>
                 <h3 className="text-sm font-semibold text-[#1C1C1C]">Outstanding Payments</h3>
                 <p className="text-xs text-[#7A746C]">{outstandingInvoices.length} unpaid invoice{outstandingInvoices.length !== 1 ? 's' : ''}</p>
@@ -364,13 +364,13 @@ export default function DashboardPage() {
                   <div className="text-right">
                     <p className="text-sm font-semibold text-[#1C1C1C]">${(inv.total || inv.amount || 0).toLocaleString()}</p>
                     {dueDate && (
-                      <p className={`text-xs ${isOverdue ? 'text-red-500 font-medium' : 'text-[#7A746C]'}`}>
+                      <p className={`text-xs ${isOverdue ? 'text-[#B0614A]/50 font-medium' : 'text-[#7A746C]'}`}>
                         {isOverdue ? `${daysOverdue}d overdue` : `Due ${dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
                       </p>
                     )}
                   </div>
                   <button onClick={() => markPaid(inv.id)}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors">
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#B07A45]/5 text-[#8E5E34] hover:bg-[#B07A45]/10 border border-[#B07A45]/20 transition-colors">
                     Mark Paid
                   </button>
                 </div>
@@ -392,7 +392,7 @@ export default function DashboardPage() {
 
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
           <div className="px-6 py-4 border-b border-[#E3D9CD] flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-purple-50"><Target size={18} className="text-purple-600" /></div>
+            <div className="p-2 rounded-xl bg-[#B07A45]/5"><Target size={18} className="text-[#8E5E34]" /></div>
             <div><h3 className="text-sm font-semibold text-[#1C1C1C]">Lead Funnel</h3><p className="text-xs text-[#7A746C]">{leads.length} total leads</p></div>
           </div>
           <div className="p-5"><LeadFunnel leads={leads} /></div>
@@ -409,9 +409,9 @@ export default function DashboardPage() {
           </div>
           <div className="text-4xl font-bold text-[#1C1C1C] mb-4">{activeProjectStats.total}</div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> On Track</span><span className="font-semibold text-[#1C1C1C]">{activeProjectStats.onTrack}</span></div>
-            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-amber-500" /> At Risk</span><span className="font-semibold text-[#1C1C1C]">{activeProjectStats.atRisk}</span></div>
-            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-red-500" /> Behind</span><span className="font-semibold text-[#1C1C1C]">{activeProjectStats.behind}</span></div>
+            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><CheckCircle2 size={14} className="text-[#B07A45]/50" /> On Track</span><span className="font-semibold text-[#1C1C1C]">{activeProjectStats.onTrack}</span></div>
+            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-[#B07A45]" /> At Risk</span><span className="font-semibold text-[#1C1C1C]">{activeProjectStats.atRisk}</span></div>
+            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-[#B0614A]/50" /> Behind</span><span className="font-semibold text-[#1C1C1C]">{activeProjectStats.behind}</span></div>
           </div>
         </motion.div>
 
@@ -419,7 +419,7 @@ export default function DashboardPage() {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
           <div className="px-6 py-4 border-b border-[#E3D9CD] flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-blue-50"><Clock size={18} className="text-blue-600" /></div>
+              <div className="p-2 rounded-xl bg-[#B07A45]/5"><Clock size={18} className="text-[#8E5E34]" /></div>
               <h3 className="text-sm font-semibold text-[#1C1C1C]">Upcoming Tasks</h3>
             </div>
             <Link href="/dashboard/tasks" className="text-xs text-[#8E5E34] hover:underline flex items-center gap-1">View all <ArrowRight size={12} /></Link>
@@ -434,9 +434,9 @@ export default function DashboardPage() {
               const isToday = due.toDateString() === now.toDateString();
               return (
                 <div key={t.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#EEE6DC] transition-colors">
-                  <div className={`w-2 h-2 rounded-full ${isOverdue ? 'bg-red-500' : isToday ? 'bg-amber-500' : 'bg-[#8E5E34]'}`} />
+                  <div className={`w-2 h-2 rounded-full ${isOverdue ? 'bg-[#B0614A]/50' : isToday ? 'bg-[#B07A45]' : 'bg-[#8E5E34]'}`} />
                   <div className="flex-1 min-w-0"><p className="text-sm text-[#1C1C1C] truncate">{t.title}</p></div>
-                  <span className={`text-xs ${isOverdue ? 'text-red-500' : isToday ? 'text-amber-500' : 'text-[#7A746C]'}`}>{due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                  <span className={`text-xs ${isOverdue ? 'text-[#B0614A]/50' : isToday ? 'text-[#B07A45]' : 'text-[#7A746C]'}`}>{due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                 </div>
               );
             })}
@@ -446,7 +446,7 @@ export default function DashboardPage() {
         {/* Recent Activity */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
           <div className="px-6 py-4 border-b border-[#E3D9CD] flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-blue-50"><Activity size={18} className="text-blue-600" /></div>
+            <div className="p-2 rounded-xl bg-[#B07A45]/5"><Activity size={18} className="text-[#8E5E34]" /></div>
             <h3 className="text-sm font-semibold text-[#1C1C1C]">Recent Activity</h3>
           </div>
           <div className="p-4 space-y-1 max-h-[260px] overflow-y-auto">
@@ -469,14 +469,14 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
         <div className="px-6 py-4 border-b border-[#E3D9CD] flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-purple-50"><Plus size={18} className="text-purple-600" /></div>
+          <div className="p-2 rounded-xl bg-[#B07A45]/5"><Plus size={18} className="text-[#8E5E34]" /></div>
           <h3 className="text-sm font-semibold text-[#1C1C1C]">Quick Actions</h3>
         </div>
         <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'New Lead', icon: UserPlus, href: '/dashboard/leads', color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'New Lead', icon: UserPlus, href: '/dashboard/leads', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
             { label: 'New Project', icon: Briefcase, href: '/dashboard/projects', color: 'text-[#8E5E34]', bg: 'bg-[#8E5E34]/10' },
-            { label: 'New Invoice', icon: FileText, href: '/dashboard/invoices', color: 'text-purple-600', bg: 'bg-purple-50' },
+            { label: 'New Invoice', icon: FileText, href: '/dashboard/invoices', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
             { label: 'View Reports', icon: BarChart3, href: '/dashboard/reports', color: 'text-[#8E5E34]', bg: 'bg-[#8E5E34]/10' },
           ].map((action) => (
             <Link key={action.label} href={action.href} className="group flex items-center gap-3 p-3 rounded-xl bg-[#F4EFE8] hover:bg-[#EEE6DC] border border-[#E3D9CD] hover:border-[#8E5E34]/20 transition-all">

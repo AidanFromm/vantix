@@ -23,13 +23,13 @@ export default function PipelinePage() {
 
   const getStageColor = (stage: string) => {
     const colors: Record<string, string> = {
-      lead: 'border-gray-500',
-      qualified: 'border-blue-500',
-      meeting: 'border-yellow-500',
-      proposal: 'border-purple-500',
-      closed: 'border-green-500',
+      lead: 'border-[#F4EFE8]0',
+      qualified: 'border-[#B07A45]/50',
+      meeting: 'border-[#B07A45]',
+      proposal: 'border-[#B07A45]/50',
+      closed: 'border-[#B07A45]/50',
     };
-    return colors[stage] || 'border-gray-500';
+    return colors[stage] || 'border-[#F4EFE8]0';
   };
 
   return (
@@ -39,7 +39,7 @@ export default function PipelinePage() {
           <h1 className="text-2xl font-bold">Sales Pipeline</h1>
           <p className="text-sm text-[var(--color-muted)] mt-1">Track leads through your sales process</p>
         </div>
-        <button className="px-4 py-2 bg-[#10b981] text-white rounded-lg text-sm flex items-center gap-2 hover:bg-[#0d9668] transition-colors">
+        <button className="px-4 py-2 bg-[#B07A45] text-white rounded-lg text-sm flex items-center gap-2 hover:bg-[#8E5E34] transition-colors">
           <Plus size={16} />
           Add Lead
         </button>
@@ -75,7 +75,7 @@ export default function PipelinePage() {
                 {items.filter(item => item.stage === stage).map(item => (
                   <div
                     key={item.id}
-                    className="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg p-3 hover:border-[#10b981]/50 transition-colors cursor-pointer"
+                    className="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg p-3 hover:border-[#B07A45]/50 transition-colors cursor-pointer"
                   >
                     <div className="flex items-start justify-between mb-1">
                       <p className="font-medium text-sm">{item.title}</p>
@@ -89,7 +89,7 @@ export default function PipelinePage() {
                         <span className="text-xs text-[var(--color-muted)]">{item.contact}</span>
                       )}
                       {item.value && (
-                        <span className="text-xs font-medium text-[#10b981]">${item.value.toLocaleString()}</span>
+                        <span className="text-xs font-medium text-[#B07A45]">${item.value.toLocaleString()}</span>
                       )}
                     </div>
                   </div>

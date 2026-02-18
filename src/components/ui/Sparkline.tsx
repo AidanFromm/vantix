@@ -34,9 +34,9 @@ export function Sparkline({
   animate = true,
   trend = 'auto',
   colors = {
-    up: '#10b981',
-    down: '#ef4444',
-    neutral: '#6b7280',
+    up: '#B07A45',
+    down: '#B0614A',
+    neutral: '#7A746C',
   },
 }: SparklineProps) {
   const ref = useRef<SVGSVGElement>(null);
@@ -255,7 +255,7 @@ export function SparklineCard({
   return (
     <div className={cn('flex items-center justify-between gap-4 p-4', className)}>
       <div>
-        <p className="text-sm text-gray-400">{label}</p>
+        <p className="text-sm text-[#A39B90]">{label}</p>
         <p className="text-2xl font-bold text-white">
           {prefix}
           {value.toLocaleString()}
@@ -264,7 +264,7 @@ export function SparklineCard({
         <p
           className={cn(
             'text-sm font-medium',
-            trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-red-400' : 'text-gray-400'
+            trend === 'up' ? 'text-[#C89A6A]' : trend === 'down' ? 'text-[#B0614A]' : 'text-[#A39B90]'
           )}
         >
           {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'} {changePercent}%

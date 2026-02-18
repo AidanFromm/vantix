@@ -57,7 +57,7 @@ export default function PortfolioPage() {
           <h1 className="text-2xl font-bold">Portfolio</h1>
           <p className="text-sm text-[var(--color-muted)] mt-1">Showcase your best work</p>
         </div>
-        <button className="px-4 py-2 bg-[#10b981] text-white rounded-lg text-sm flex items-center gap-2 hover:bg-[#0d9668] transition-colors">
+        <button className="px-4 py-2 bg-[#B07A45] text-white rounded-lg text-sm flex items-center gap-2 hover:bg-[#8E5E34] transition-colors">
           <Plus size={16} />
           Add Project
         </button>
@@ -69,7 +69,7 @@ export default function PortfolioPage() {
           onClick={() => setSelectedTag(null)}
           className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
             !selectedTag
-              ? 'bg-[#10b981] text-white'
+              ? 'bg-[#B07A45] text-white'
               : 'bg-[var(--color-card)] text-[var(--color-muted)] hover:text-white border border-[var(--color-border)]'
           }`}
         >
@@ -81,7 +81,7 @@ export default function PortfolioPage() {
             onClick={() => setSelectedTag(tag)}
             className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
               selectedTag === tag
-                ? 'bg-[#10b981] text-white'
+                ? 'bg-[#B07A45] text-white'
                 : 'bg-[var(--color-card)] text-[var(--color-muted)] hover:text-white border border-[var(--color-border)]'
             }`}
           >
@@ -93,9 +93,9 @@ export default function PortfolioPage() {
       {/* Portfolio grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map(item => (
-          <div key={item.id} className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl overflow-hidden hover:border-[#10b981]/50 transition-colors">
+          <div key={item.id} className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl overflow-hidden hover:border-[#B07A45]/50 transition-colors">
             {/* Image placeholder */}
-            <div className="aspect-video bg-gradient-to-br from-[#10b981]/20 to-[#10b981]/5 flex items-center justify-center">
+            <div className="aspect-video bg-gradient-to-br from-[#B07A45]/20 to-[#B07A45]/5 flex items-center justify-center">
               <Image size={32} className="text-[var(--color-muted)]" />
             </div>
             
@@ -120,7 +120,7 @@ export default function PortfolioPage() {
                 {item.tags.map(tag => (
                   <span 
                     key={tag} 
-                    className="text-[10px] px-2 py-0.5 bg-[#10b981]/20 text-[#10b981] rounded-full"
+                    className="text-[10px] px-2 py-0.5 bg-[#B07A45]/20 text-[#B07A45] rounded-full"
                   >
                     {tag}
                   </span>

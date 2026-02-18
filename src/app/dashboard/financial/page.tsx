@@ -14,8 +14,8 @@ import type { Invoice, Expense, SubscriptionMeta } from '@/lib/types';
 const formatCurrency = (amount: number): string => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
 
 const CATEGORY_COLORS: Record<string, string> = {
-  'Infrastructure': '#10b981', 'Software & Subscriptions': '#3b82f6', 'AI Services': '#8b5cf6',
-  'Marketing & Advertising': '#ec4899', 'Contractor/Freelancer': '#f59e0b', 'Other': '#6b7280',
+  'Infrastructure': '#B07A45', 'Software & Subscriptions': '#B07A45', 'AI Services': '#B07A45',
+  'Marketing & Advertising': '#B07A45', 'Contractor/Freelancer': '#B07A45', 'Other': '#7A746C',
 };
 
 export default function FinancialPage() {
@@ -52,7 +52,7 @@ export default function FinancialPage() {
   const expenseBreakdown = useMemo(() => {
     const breakdown: Record<string, number> = {};
     expenses.forEach(exp => { const cat = exp.category || 'Other'; breakdown[cat] = (breakdown[cat] || 0) + (exp.amount || 0); });
-    return Object.entries(breakdown).map(([name, amount]) => ({ name, amount, color: CATEGORY_COLORS[name] || '#6b7280' })).sort((a, b) => b.amount - a.amount);
+    return Object.entries(breakdown).map(([name, amount]) => ({ name, amount, color: CATEGORY_COLORS[name] || '#7A746C' })).sort((a, b) => b.amount - a.amount);
   }, [expenses]);
 
   const totalMonthlyExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
@@ -83,10 +83,10 @@ export default function FinancialPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Revenue', value: formatCurrency(kpis.totalRevenue), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-          { label: 'Total Expenses', value: formatCurrency(kpis.totalExpenses), icon: CreditCard, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-          { label: 'Net Profit', value: formatCurrency(kpis.netProfit), icon: TrendingUp, color: kpis.netProfit >= 0 ? 'text-emerald-600' : 'text-red-600', bg: kpis.netProfit >= 0 ? 'bg-emerald-50' : 'bg-red-50', border: kpis.netProfit >= 0 ? 'border-emerald-100' : 'border-red-100' },
-          { label: 'Outstanding', value: `${kpis.outstandingCount} inv`, icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+          { label: 'Total Revenue', value: formatCurrency(kpis.totalRevenue), icon: DollarSign, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
+          { label: 'Total Expenses', value: formatCurrency(kpis.totalExpenses), icon: CreditCard, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
+          { label: 'Net Profit', value: formatCurrency(kpis.netProfit), icon: TrendingUp, color: kpis.netProfit >= 0 ? 'text-[#8E5E34]' : 'text-[#8E5E34]', bg: kpis.netProfit >= 0 ? 'bg-[#B07A45]/5' : 'bg-[#B0614A]/5', border: kpis.netProfit >= 0 ? 'border-[#B07A45]/10' : 'border-[#B0614A]/10' },
+          { label: 'Outstanding', value: `${kpis.outstandingCount} inv`, icon: FileText, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className={`bg-[#EEE6DC] border ${stat.border} rounded-2xl p-5 shadow-sm`}>
             <div className="flex items-center justify-between mb-3"><span className="text-sm text-[#7A746C]">{stat.label}</span><div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center`}><stat.icon size={20} className={stat.color} /></div></div>
@@ -98,11 +98,11 @@ export default function FinancialPage() {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
         <motion.button initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} onClick={() => setShowAddExpense(true)}
-          className="flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 hover:bg-amber-100 transition-colors">
+          className="flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-[#B07A45]/5 border border-[#D8C2A8] text-[#8E5E34] hover:bg-[#B07A45]/10 transition-colors">
           <Receipt size={18} /><span className="font-medium text-sm">Log Expense</span>
         </motion.button>
         <motion.button initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} onClick={downloadReport}
-          className="flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 hover:bg-blue-100 transition-colors">
+          className="flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-[#B07A45]/5 border border-[#B07A45]/20 text-[#8E5E34] hover:bg-[#B07A45]/10 transition-colors">
           <Download size={18} /><span className="font-medium text-sm">Download Report</span>
         </motion.button>
       </div>
@@ -118,7 +118,7 @@ export default function FinancialPage() {
                 <tr><td colSpan={4} className="text-center py-12 text-[#7A746C]">No invoices yet</td></tr>
               ) : invoices.map(inv => {
                 const amt = inv.total || inv.amount || 0;
-                const sc = { draft: 'text-gray-500 bg-gray-50', sent: 'text-blue-600 bg-blue-50', paid: 'text-emerald-600 bg-emerald-50', overdue: 'text-red-600 bg-red-50', cancelled: 'text-gray-400 bg-gray-50' }[inv.status] || '';
+                const sc = { draft: 'text-[#F4EFE8]0 bg-[#F4EFE8]', sent: 'text-[#8E5E34] bg-[#B07A45]/5', paid: 'text-[#8E5E34] bg-[#B07A45]/5', overdue: 'text-[#8E5E34] bg-[#B0614A]/5', cancelled: 'text-[#A39B90] bg-[#F4EFE8]' }[inv.status] || '';
                 return (
                   <tr key={inv.id} className="border-b border-[#E3D9CD]/50 hover:bg-[#EEE6DC]/50 transition-colors">
                     <td className="px-5 py-4"><p className="font-medium text-[#1C1C1C]">{inv.client?.name || 'N/A'}</p><p className="text-xs text-[#7A746C]">{inv.invoice_number || inv.id.slice(0, 8)}</p></td>
@@ -136,7 +136,7 @@ export default function FinancialPage() {
       {/* Expenses */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
-          <div className="p-5 border-b border-[#E3D9CD] flex items-center justify-between"><h2 className="text-lg font-semibold text-[#1C1C1C] flex items-center gap-2"><Receipt size={20} className="text-amber-500" /> Recent Expenses</h2><span className="text-sm text-[#7A746C]">{formatCurrency(totalMonthlyExpenses)}</span></div>
+          <div className="p-5 border-b border-[#E3D9CD] flex items-center justify-between"><h2 className="text-lg font-semibold text-[#1C1C1C] flex items-center gap-2"><Receipt size={20} className="text-[#B07A45]" /> Recent Expenses</h2><span className="text-sm text-[#7A746C]">{formatCurrency(totalMonthlyExpenses)}</span></div>
           <div className="divide-y divide-[#E3D9CD] max-h-80 overflow-y-auto">
             {expenses.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12"><Receipt size={24} className="text-[#7A746C]/30 mb-3" /><p className="text-[#7A746C] text-sm">No expenses logged</p></div>
@@ -145,18 +145,18 @@ export default function FinancialPage() {
               return (
               <div key={expense.id} className="px-5 py-4 hover:bg-[#EEE6DC]/50 transition-colors flex items-center justify-between group">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: CATEGORY_COLORS[expense.category || 'Other'] || '#6b7280' }} />
+                  <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: CATEGORY_COLORS[expense.category || 'Other'] || '#7A746C' }} />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-sm text-[#1C1C1C] truncate">{subMeta?.company_name || expense.description || expense.vendor || 'Expense'}</p>
-                      {subMeta && <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-200 shrink-0">{subMeta.billing_cycle}</span>}
+                      {subMeta && <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#B07A45]/5 text-[#8E5E34] border border-[#B07A45]/20 shrink-0">{subMeta.billing_cycle}</span>}
                     </div>
                     <p className="text-xs text-[#7A746C]">{expense.category || 'Other'}{expense.vendor ? ` · ${expense.vendor}` : ''}{subMeta ? ` · Next: ${new Date(subMeta.next_due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
-                  <div className="text-right"><p className="font-semibold text-amber-600">-{formatCurrency(expense.amount)}</p><p className="text-xs text-[#7A746C]">{new Date(expense.expense_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p></div>
-                  <button onClick={() => handleDeleteExpense(expense.id)} className="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-50 text-[#7A746C] hover:text-red-500 transition-all">
+                  <div className="text-right"><p className="font-semibold text-[#8E5E34]">-{formatCurrency(expense.amount)}</p><p className="text-xs text-[#7A746C]">{new Date(expense.expense_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p></div>
+                  <button onClick={() => handleDeleteExpense(expense.id)} className="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-[#B0614A]/5 text-[#7A746C] hover:text-[#B0614A]/50 transition-all">
                     {deleting === expense.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                   </button>
                 </div>
@@ -167,7 +167,7 @@ export default function FinancialPage() {
         </div>
 
         <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-5 shadow-sm">
-          <h2 className="text-lg font-semibold text-[#1C1C1C] flex items-center gap-2 mb-5"><PieChart size={20} className="text-amber-500" /> Expense Breakdown</h2>
+          <h2 className="text-lg font-semibold text-[#1C1C1C] flex items-center gap-2 mb-5"><PieChart size={20} className="text-[#B07A45]" /> Expense Breakdown</h2>
           {expenseBreakdown.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8"><PieChart size={32} className="text-[#7A746C]/30 mb-4" /><p className="text-[#7A746C] text-sm">No expense data</p></div>
           ) : (

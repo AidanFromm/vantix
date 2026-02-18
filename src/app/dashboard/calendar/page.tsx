@@ -24,8 +24,8 @@ function generateId(): string { return crypto?.randomUUID?.() || Math.random().t
 
 const EVENT_TYPES = ['consultation', 'meeting', 'deadline', 'follow-up'] as const;
 const EVENT_COLORS: Record<string, string> = {
-  consultation: '#8E5E34', meeting: '#7B9E6B', deadline: '#C75B5B', 'follow-up': '#6B8EB8',
-  subscription: '#8B5CF6', task: '#3B82F6', invoice: '#F97316',
+  consultation: '#8E5E34', meeting: '#B07A45', deadline: '#8E5E34', 'follow-up': '#7A746C',
+  subscription: '#B07A45', task: '#B07A45', invoice: '#B07A45',
 };
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
@@ -162,8 +162,8 @@ export default function CalendarPage() {
     <div className="min-h-screen bg-[#F4EFE8] p-4 md:p-8">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#C89A6A] to-[#B07A45] shadow-[3px_3px_8px_#c8c4be,-3px_-3px_8px_#ffffff]">
-            <CalendarIcon size={22} className="text-[#5C4033]" />
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#C89A6A] to-[#B07A45] shadow-[3px_3px_8px_#E3D9CD,-3px_-3px_8px_#ffffff]">
+            <CalendarIcon size={22} className="text-[#8E5E34]" />
           </div>
           <div><h1 className="text-2xl font-bold text-[#1C1C1C]">Calendar</h1><p className="text-sm text-[#7A746C]">Schedule and manage events</p></div>
         </div>
@@ -174,7 +174,7 @@ export default function CalendarPage() {
             ))}
           </div>
           <button onClick={goToToday} className="px-4 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C] hover:bg-[#EEE6DC]">Today</button>
-          <button onClick={() => openCreateForDate(selectedDate)} className="px-5 py-2.5 bg-[#8E5E34] text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-[#A67A4B]"><Plus size={16} /> New Event</button>
+          <button onClick={() => openCreateForDate(selectedDate)} className="px-5 py-2.5 bg-[#8E5E34] text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-[#B07A45]"><Plus size={16} /> New Event</button>
         </div>
       </motion.div>
 
@@ -189,7 +189,7 @@ export default function CalendarPage() {
 
       <div className="flex flex-col lg:flex-row gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex-1">
-          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
+          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff]">
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3D9CD]">
               <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-[#EEE6DC] text-[#7A746C]"><ChevronLeft size={20} /></button>
               <h2 className="text-lg font-bold text-[#1C1C1C]">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
@@ -252,7 +252,7 @@ export default function CalendarPage() {
 
         {/* Sidebar */}
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="lg:w-80 xl:w-96">
-          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
+          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff]">
             <div className="px-5 py-4 border-b border-[#E3D9CD] flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-[#1C1C1C]">{new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h3>
@@ -282,7 +282,7 @@ export default function CalendarPage() {
                       {!ev.source && (
                         <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={e => { e.stopPropagation(); openEdit(ev); }} className="p-1.5 rounded-lg hover:bg-[#EEE6DC] text-[#7A746C] hover:text-[#8E5E34]"><Edit3 size={14} /></button>
-                          <button onClick={e => { e.stopPropagation(); handleDelete(ev.id); }} className="p-1.5 rounded-lg hover:bg-red-50 text-[#7A746C] hover:text-red-500"><Trash2 size={14} /></button>
+                          <button onClick={e => { e.stopPropagation(); handleDelete(ev.id); }} className="p-1.5 rounded-lg hover:bg-[#B0614A]/5 text-[#7A746C] hover:text-[#B0614A]/50"><Trash2 size={14} /></button>
                         </div>
                       )}
                     </div>

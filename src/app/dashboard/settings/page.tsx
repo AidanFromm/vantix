@@ -8,10 +8,10 @@ interface UserData { name: string; email: string; role: string; }
 interface Integration { id: string; name: string; icon: React.ElementType; description: string; benefits: string[]; status: 'connected' | 'ready'; color: string; }
 
 const integrations: Integration[] = [
-  { id: 'github', name: 'GitHub', icon: Github, description: 'Pull project status, commits, and issues into your dashboard.', benefits: ['See latest commits per project', 'Track open issues and PRs', 'Auto-update project activity'], status: 'ready', color: 'from-gray-500 to-gray-700' },
-  { id: 'stripe', name: 'Stripe', icon: CreditCard, description: 'Track payments, revenue, and client invoices.', benefits: ['See total revenue per client', 'Track payment status', 'Get notified on payments'], status: 'ready', color: 'from-purple-500 to-indigo-500' },
-  { id: 'supabase', name: 'Supabase', icon: Database, description: 'Store client data, project notes, and files securely.', benefits: ['Persistent files and notes', 'Real-time sync', 'Secure auth'], status: 'ready', color: 'from-emerald-500 to-emerald-600' },
-  { id: 'vercel', name: 'Vercel', icon: Cloud, description: 'Monitor deployments and build status.', benefits: ['See deployment status', 'Build failure alerts', 'Preview URLs'], status: 'ready', color: 'from-gray-600 to-gray-800' },
+  { id: 'github', name: 'GitHub', icon: Github, description: 'Pull project status, commits, and issues into your dashboard.', benefits: ['See latest commits per project', 'Track open issues and PRs', 'Auto-update project activity'], status: 'ready', color: 'from-[#F4EFE8]0 to-[#1C1C1C]' },
+  { id: 'stripe', name: 'Stripe', icon: CreditCard, description: 'Track payments, revenue, and client invoices.', benefits: ['See total revenue per client', 'Track payment status', 'Get notified on payments'], status: 'ready', color: 'from-[#B07A45]/50 to-[#B07A45]' },
+  { id: 'supabase', name: 'Supabase', icon: Database, description: 'Store client data, project notes, and files securely.', benefits: ['Persistent files and notes', 'Real-time sync', 'Secure auth'], status: 'ready', color: 'from-[#B07A45]/50 to-[#8E5E34]' },
+  { id: 'vercel', name: 'Vercel', icon: Cloud, description: 'Monitor deployments and build status.', benefits: ['See deployment status', 'Build failure alerts', 'Preview URLs'], status: 'ready', color: 'from-[#4B4B4B] to-[#1C1C1C]' },
 ];
 
 const teamMembers = [
@@ -47,7 +47,7 @@ export default function SettingsPage() {
       {/* Integrations */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6 shadow-sm">
         <div className="flex items-center gap-3 mb-2"><div className="w-10 h-10 rounded-xl bg-[#8E5E34]/10 flex items-center justify-center"><Zap className="text-[#8E5E34]" size={20} /></div><div><h2 className="text-xl font-semibold text-[#1C1C1C]">Integrations</h2><p className="text-sm text-[#7A746C]">Connect external services to power up Vantix</p></div></div>
-        <div className="mt-4 p-4 rounded-xl bg-blue-50 border border-blue-200 flex items-start gap-3"><Info size={18} className="text-blue-600 shrink-0 mt-0.5" /><p className="text-sm text-blue-700">Integrations let you pull data from other services directly into Vantix.</p></div>
+        <div className="mt-4 p-4 rounded-xl bg-[#B07A45]/5 border border-[#B07A45]/20 flex items-start gap-3"><Info size={18} className="text-[#8E5E34] shrink-0 mt-0.5" /><p className="text-sm text-[#8E5E34]">Integrations let you pull data from other services directly into Vantix.</p></div>
         <div className="space-y-4 mt-6">
           {integrations.map(integration => {
             const Icon = integration.icon;
@@ -60,14 +60,14 @@ export default function SettingsPage() {
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${integration.color} flex items-center justify-center`}><Icon className="text-white" size={24} /></div>
                       <div><h3 className="font-semibold text-[#1C1C1C]">{integration.name}</h3><p className="text-sm text-[#7A746C]">{integration.description}</p></div>
                     </div>
-                    <span className="flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-200"><Zap size={12} /> Ready</span>
+                    <span className="flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-[#B07A45]/5 text-[#8E5E34] border border-[#B07A45]/20"><Zap size={12} /> Ready</span>
                   </div>
                 </div>
                 {isExpanded && (
                   <div className="border-t border-[#E3D9CD] p-4 bg-[#EEE6DC]">
                     <h4 className="text-sm font-medium text-[#1C1C1C] mb-3">What you&apos;ll get:</h4>
-                    <ul className="space-y-2">{integration.benefits.map((b, i) => <li key={i} className="flex items-center gap-2 text-sm text-[#7A746C]"><CheckCircle2 size={14} className="text-emerald-500" /> {b}</li>)}</ul>
-                    <button className="mt-4 w-full bg-[#8E5E34] hover:bg-[#A67A4B] text-white py-3 rounded-xl font-medium transition-all">Connect {integration.name}</button>
+                    <ul className="space-y-2">{integration.benefits.map((b, i) => <li key={i} className="flex items-center gap-2 text-sm text-[#7A746C]"><CheckCircle2 size={14} className="text-[#B07A45]/50" /> {b}</li>)}</ul>
+                    <button className="mt-4 w-full bg-[#8E5E34] hover:bg-[#B07A45] text-white py-3 rounded-xl font-medium transition-all">Connect {integration.name}</button>
                   </div>
                 )}
               </div>
@@ -78,11 +78,11 @@ export default function SettingsPage() {
 
       {/* Team */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center"><Shield className="text-purple-500" size={20} /></div><div><h2 className="text-xl font-semibold text-[#1C1C1C]">Team Members</h2><p className="text-sm text-[#7A746C]">{teamMembers.length} members with access</p></div></div>
+        <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 rounded-xl bg-[#B07A45]/5 flex items-center justify-center"><Shield className="text-[#B07A45]/50" size={20} /></div><div><h2 className="text-xl font-semibold text-[#1C1C1C]">Team Members</h2><p className="text-sm text-[#7A746C]">{teamMembers.length} members with access</p></div></div>
         <div className="grid md:grid-cols-2 gap-4">
           {teamMembers.map(member => (
             <div key={member.name} className="flex items-center gap-4 p-4 bg-[#F4EFE8] rounded-xl border border-[#E3D9CD]">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${member.type === 'bot' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'bg-purple-50 text-purple-500'}`}>{member.name[0]}</div>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${member.type === 'bot' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'bg-[#B07A45]/5 text-[#B07A45]/50'}`}>{member.name[0]}</div>
               <div><h3 className="font-medium text-[#1C1C1C]">{member.name}</h3><p className="text-sm text-[#7A746C]">{member.role}</p></div>
             </div>
           ))}
@@ -90,7 +90,7 @@ export default function SettingsPage() {
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex justify-end">
-        <button onClick={handleSave} className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${saved ? 'bg-emerald-500 text-white' : 'bg-[#8E5E34] hover:bg-[#A67A4B] text-white'}`}><Save size={20} />{saved ? 'Saved!' : 'Save Changes'}</button>
+        <button onClick={handleSave} className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${saved ? 'bg-[#B07A45]/50 text-white' : 'bg-[#8E5E34] hover:bg-[#B07A45] text-white'}`}><Save size={20} />{saved ? 'Saved!' : 'Save Changes'}</button>
       </motion.div>
     </div>
   );

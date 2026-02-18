@@ -30,13 +30,13 @@ function lsSet<T>(key: string, data: T[]) {
 function generateId(): string { return crypto?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
 const KANBAN_STATUSES: { id: LeadStatus; label: string; color: string; bg: string; border: string }[] = [
-  { id: 'new', label: 'New', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
-  { id: 'contacted', label: 'Contacted', color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-200' },
-  { id: 'qualified', label: 'Qualified', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200' },
-  { id: 'proposal', label: 'Proposal', color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200' },
-  { id: 'negotiation', label: 'Negotiation', color: 'text-pink-600', bg: 'bg-pink-50', border: 'border-pink-200' },
-  { id: 'won', label: 'Won', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-  { id: 'lost', label: 'Lost', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' },
+  { id: 'new', label: 'New', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
+  { id: 'contacted', label: 'Contacted', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
+  { id: 'qualified', label: 'Qualified', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
+  { id: 'proposal', label: 'Proposal', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
+  { id: 'negotiation', label: 'Negotiation', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
+  { id: 'won', label: 'Won', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
+  { id: 'lost', label: 'Lost', color: 'text-[#8E5E34]', bg: 'bg-[#B0614A]/5', border: 'border-[#B0614A]/20' },
 ];
 
 const ALL_STATUSES = [...KANBAN_STATUSES];
@@ -46,7 +46,7 @@ function daysSince(d: string) { return Math.floor((Date.now() - new Date(d).getT
 function formatDate(d: string) { const diff = daysSince(d); if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday'; if (diff < 7) return `${diff}d ago`; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
 
 function ScoreBadge({ score }: { score: number }) {
-  const color = score >= 80 ? 'text-emerald-600 bg-emerald-50' : score >= 50 ? 'text-amber-600 bg-amber-50' : 'text-red-600 bg-red-50';
+  const color = score >= 80 ? 'text-[#8E5E34] bg-[#B07A45]/5' : score >= 50 ? 'text-[#8E5E34] bg-[#B07A45]/5' : 'text-[#8E5E34] bg-[#B0614A]/5';
   return <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${color}`}>{score}</span>;
 }
 
@@ -125,7 +125,7 @@ function KanbanCard({ lead, onSelect, onDelete, deleting }: { lead: Lead; onSele
         {lead.estimated_value ? <div className="flex items-center gap-1 text-[#8E5E34] mb-2"><DollarSign size={14} /><span className="font-bold text-sm">{formatCurrency(lead.estimated_value)}</span></div> : null}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-[10px] text-[#7A746C]"><Clock size={10} />{daysInStage}d in stage</div>
-          <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1 rounded text-[#7A746C] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+          <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1 rounded text-[#7A746C] hover:text-[#B0614A]/50 opacity-0 group-hover:opacity-100 transition-all">
             {deleting === lead.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
           </button>
         </div>
@@ -160,7 +160,7 @@ function KanbanColumn({ status, leads, onSelect, onDrop, onDelete, deleting, onC
             <div key={lead.id}>
               <KanbanCard lead={lead} onSelect={onSelect} onDelete={onDelete} deleting={deleting} />
               {status.id === 'won' && (
-                <button onClick={() => onConvertToClient(lead)} className="mt-1 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 text-xs font-medium transition-colors">
+                <button onClick={() => onConvertToClient(lead)} className="mt-1 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#B07A45]/5 text-[#8E5E34] hover:bg-[#B07A45]/10 text-xs font-medium transition-colors">
                   <UserCheck size={12} /> Convert to Client
                 </button>
               )}
@@ -200,7 +200,7 @@ function ListView({ leads, onSelect, onDelete, deleting }: { leads: Lead[]; onSe
                   <td className="px-5 py-3.5 text-right"><ScoreBadge score={lead.score} /></td>
                   <td className="px-5 py-3.5 text-[#7A746C]">{formatDate(lead.created_at)}</td>
                   <td className="px-5 py-3.5 text-right">
-                    <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1.5 rounded-lg text-[#7A746C] hover:text-red-500 hover:bg-red-50">
+                    <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#B0614A]/50 hover:bg-[#B0614A]/5">
                       {deleting === lead.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                     </button>
                   </td>
@@ -317,15 +317,15 @@ export default function LeadsPage() {
     <div className="space-y-6 pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C]">Leads</h1><p className="text-sm text-[#7A746C] mt-1">Manage your sales pipeline</p></div>
-        <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#8E5E34] hover:bg-[#A67A4B] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> Add Lead</button>
+        <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#8E5E34] hover:bg-[#B07A45] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> Add Lead</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: 'Total Leads', value: String(stats.total), icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-          { label: 'New Leads', value: String(stats.newLeads), icon: Zap, color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-100' },
+          { label: 'Total Leads', value: String(stats.total), icon: Users, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
+          { label: 'New Leads', value: String(stats.newLeads), icon: Zap, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
           { label: 'Pipeline Value', value: formatCurrency(stats.pipelineValue), icon: Target, color: 'text-[#8E5E34]', bg: 'bg-[#8E5E34]/10', border: 'border-[#8E5E34]/20' },
-          { label: 'Won Value', value: formatCurrency(stats.wonValue), icon: Trophy, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+          { label: 'Won Value', value: formatCurrency(stats.wonValue), icon: Trophy, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className={`bg-[#EEE6DC] border ${stat.border} rounded-2xl p-4 shadow-sm`}>
             <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#7A746C]">{stat.label}</span><div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}><stat.icon size={18} className={stat.color} /></div></div>

@@ -29,11 +29,11 @@ function formatCurrency(n: number): string { return new Intl.NumberFormat('en-US
 function formatDate(d: string): string { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
 
 const statusConfig: Record<InvoiceStatus, { label: string; color: string; bg: string; border: string; icon: React.ElementType }> = {
-  draft: { label: 'Draft', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-200', icon: FileText },
-  sent: { label: 'Sent', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', icon: Send },
-  paid: { label: 'Paid', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', icon: CheckCircle2 },
-  overdue: { label: 'Overdue', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', icon: AlertTriangle },
-  cancelled: { label: 'Cancelled', color: 'text-gray-400', bg: 'bg-gray-50', border: 'border-gray-200', icon: X },
+  draft: { label: 'Draft', color: 'text-[#F4EFE8]0', bg: 'bg-[#F4EFE8]', border: 'border-[#E3D9CD]', icon: FileText },
+  sent: { label: 'Sent', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20', icon: Send },
+  paid: { label: 'Paid', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20', icon: CheckCircle2 },
+  overdue: { label: 'Overdue', color: 'text-[#8E5E34]', bg: 'bg-[#B0614A]/5', border: 'border-[#B0614A]/20', icon: AlertTriangle },
+  cancelled: { label: 'Cancelled', color: 'text-[#A39B90]', bg: 'bg-[#F4EFE8]', border: 'border-[#E3D9CD]', icon: X },
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -163,17 +163,17 @@ export default function InvoicesPage() {
   };
 
   const statCards = [
-    { label: 'Outstanding', value: formatCurrency(stats.outstanding), icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-    { label: 'Paid', value: formatCurrency(stats.paid), icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { label: 'Overdue', value: String(stats.overdueCount), icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
-    { label: 'All Invoices', value: String(stats.total), icon: Receipt, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    { label: 'Outstanding', value: formatCurrency(stats.outstanding), icon: Clock, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
+    { label: 'Paid', value: formatCurrency(stats.paid), icon: CheckCircle2, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
+    { label: 'Overdue', value: String(stats.overdueCount), icon: AlertTriangle, color: 'text-[#8E5E34]', bg: 'bg-[#B0614A]/5', border: 'border-[#B0614A]/10' },
+    { label: 'All Invoices', value: String(stats.total), icon: Receipt, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
   ];
 
   return (
     <div className="space-y-6 pb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div><h1 className="text-2xl font-bold text-[#1C1C1C]">Invoices</h1><p className="text-sm text-[#7A746C] mt-0.5">Manage invoices and track payments</p></div>
-        <button onClick={() => { setEditingInvoice(null); setShowForm(true); }} className="flex items-center gap-2 px-4 py-2.5 bg-[#8E5E34] hover:bg-[#A67A4B] text-white rounded-xl font-medium text-sm transition-colors"><Plus size={16} /> New Invoice</button>
+        <button onClick={() => { setEditingInvoice(null); setShowForm(true); }} className="flex items-center gap-2 px-4 py-2.5 bg-[#8E5E34] hover:bg-[#B07A45] text-white rounded-xl font-medium text-sm transition-colors"><Plus size={16} /> New Invoice</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -232,11 +232,11 @@ export default function InvoicesPage() {
                           <td className="px-5 py-3.5 text-[#7A746C]">{inv.due_date ? formatDate(inv.due_date) : 'N/A'}</td>
                           <td className="px-5 py-3.5 text-right">
                             <div className="flex items-center justify-end gap-1">
-                              {inv.status === 'draft' && <button onClick={() => handleStatusChange(inv.id, 'sent')} className="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50" title="Mark Sent"><Send size={14} /></button>}
-                              {(inv.status === 'sent' || inv.status === 'overdue') && <button onClick={() => handleStatusChange(inv.id, 'paid')} className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50" title="Record Payment"><CheckCircle2 size={14} /></button>}
+                              {inv.status === 'draft' && <button onClick={() => handleStatusChange(inv.id, 'sent')} className="p-1.5 rounded-lg text-[#B07A45]/50 hover:bg-[#B07A45]/5" title="Mark Sent"><Send size={14} /></button>}
+                              {(inv.status === 'sent' || inv.status === 'overdue') && <button onClick={() => handleStatusChange(inv.id, 'paid')} className="p-1.5 rounded-lg text-[#B07A45]/50 hover:bg-[#B07A45]/5" title="Record Payment"><CheckCircle2 size={14} /></button>}
                               <button onClick={() => handlePrint(inv)} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#8E5E34] hover:bg-[#8E5E34]/10" title="Print/PDF"><Printer size={14} /></button>
                               <button onClick={() => { setEditingInvoice(inv); setShowForm(true); }} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#8E5E34] hover:bg-[#8E5E34]/10"><Edit3 size={14} /></button>
-                              <button onClick={() => handleDelete(inv.id)} disabled={deleting === inv.id} className="p-1.5 rounded-lg text-[#7A746C] hover:text-red-500 hover:bg-red-50">
+                              <button onClick={() => handleDelete(inv.id)} disabled={deleting === inv.id} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#B0614A]/50 hover:bg-[#B0614A]/5">
                                 {deleting === inv.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                               </button>
                             </div>

@@ -261,12 +261,12 @@ export default function CommandPalette() {
         <div className="hidden sm:flex items-center gap-1 ml-1.5">
           <kbd className="min-w-[20px] h-5 px-1.5 flex items-center justify-center text-[10px] font-medium 
                         text-[#7A746C] bg-[#EEE6DC] border border-[#E3D9CD] rounded-md
-                        group-hover:bg-[#EDE7DF] group-hover:border-[#8E5E34]/30 transition-all">
+                        group-hover:bg-[#EEE6DC] group-hover:border-[#8E5E34]/30 transition-all">
             ⌘
           </kbd>
           <kbd className="min-w-[20px] h-5 px-1.5 flex items-center justify-center text-[10px] font-medium 
                         text-[#7A746C] bg-[#EEE6DC] border border-[#E3D9CD] rounded-md
-                        group-hover:bg-[#EDE7DF] group-hover:border-[#8E5E34]/30 transition-all">
+                        group-hover:bg-[#EEE6DC] group-hover:border-[#8E5E34]/30 transition-all">
             K
           </kbd>
         </div>
@@ -333,15 +333,15 @@ export default function CommandPalette() {
                       <Search size={20} className="text-[#7A746C]" />
                     </div>
                     <p className="text-sm text-[#7A746C]">No results found</p>
-                    <p className="text-xs text-[#A9A29A] mt-1">Try a different search term</p>
+                    <p className="text-xs text-[#A39B90] mt-1">Try a different search term</p>
                   </Command.Empty>
 
                   {/* Recent Section */}
                   {!search && recentItems.length > 0 && (
                     <Command.Group>
                       <div className="px-4 py-2 flex items-center gap-2">
-                        <Clock size={12} className="text-[#A9A29A]" />
-                        <span className="text-[11px] font-semibold text-[#A9A29A] uppercase tracking-wider">
+                        <Clock size={12} className="text-[#A39B90]" />
+                        <span className="text-[11px] font-semibold text-[#A39B90] uppercase tracking-wider">
                           Recent
                         </span>
                       </div>
@@ -369,7 +369,7 @@ export default function CommandPalette() {
                             <span className="text-sm font-medium text-[#1C1C1C] group-data-[selected=true]:text-[#8E5E34]">
                               {item.label}
                             </span>
-                            <span className="text-[11px] text-[#A9A29A] capitalize">
+                            <span className="text-[11px] text-[#A39B90] capitalize">
                               {item.type}
                             </span>
                           </div>
@@ -388,7 +388,7 @@ export default function CommandPalette() {
                   {commandGroups.map((group) => (
                     <Command.Group key={group.heading}>
                       <div className="px-4 py-2 flex items-center gap-2 mt-2">
-                        <span className="text-[11px] font-semibold text-[#A9A29A] uppercase tracking-wider">
+                        <span className="text-[11px] font-semibold text-[#A39B90] uppercase tracking-wider">
                           {group.heading}
                         </span>
                         <div className="flex-1 h-px bg-gradient-to-r from-[#E3D9CD] to-transparent" />
@@ -446,20 +446,20 @@ export default function CommandPalette() {
                 <div className="flex items-center justify-between px-4 py-3 border-t border-[#E3D9CD] 
                               bg-gradient-to-r from-[#EEE6DC]/50 to-transparent">
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#A9A29A]">
+                    <div className="flex items-center gap-1.5 text-[11px] text-[#A39B90]">
                       <kbd className="min-w-[18px] h-[18px] px-1 flex items-center justify-center 
                                     bg-[#EEE6DC] rounded text-[10px]">↑</kbd>
                       <kbd className="min-w-[18px] h-[18px] px-1 flex items-center justify-center 
                                     bg-[#EEE6DC] rounded text-[10px]">↓</kbd>
                       <span className="ml-0.5">Navigate</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#A9A29A]">
+                    <div className="flex items-center gap-1.5 text-[11px] text-[#A39B90]">
                       <kbd className="min-w-[18px] h-[18px] px-1 flex items-center justify-center 
                                     bg-[#EEE6DC] rounded text-[10px]">↵</kbd>
                       <span className="ml-0.5">Select</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[11px] text-[#A9A29A]">
+                  <div className="flex items-center gap-1.5 text-[11px] text-[#A39B90]">
                     <CommandIcon size={12} className="text-[#8E5E34]/60" />
                     <span>Command Palette</span>
                   </div>

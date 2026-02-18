@@ -51,10 +51,10 @@ const repos = [
 ];
 
 const languageColors: Record<string, string> = {
-  TypeScript: '#3178c6',
-  JavaScript: '#f7df1e',
-  Python: '#3776ab',
-  Swift: '#fa7343',
+  TypeScript: '#B07A45',
+  JavaScript: '#C89A6A',
+  Python: '#B07A45',
+  Swift: '#B07A45',
 };
 
 export default function GithubPage() {
@@ -87,7 +87,7 @@ export default function GithubPage() {
                     <ExternalLink size={16} />
                   </a>
                   {repo.isPrivate && (
-                    <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">Private</span>
+                    <span className="text-xs px-2 py-0.5 bg-[#B07A45]/20 text-[#C89A6A] rounded">Private</span>
                   )}
                 </div>
                 <p className="text-[var(--color-muted)] mt-1">{repo.description}</p>
@@ -114,7 +114,7 @@ export default function GithubPage() {
         className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-6"
       >
         <div className="flex items-center gap-3 text-[var(--color-muted)]">
-          <Info size={20} className="text-blue-400" />
+          <Info size={20} className="text-[#C89A6A]" />
           <p className="text-sm">
             GitHub API integration is planned. Once connected, this page will show real-time commits, pull requests, and deployment status.
           </p>

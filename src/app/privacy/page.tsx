@@ -28,7 +28,7 @@ export default function PrivacyPage() {
         <h2 className="text-xl font-bold mt-8 mb-3">1. Information We Collect</h2>
         <h3 className="text-lg font-semibold mt-4 mb-2">Personal Information</h3>
         <p>We may collect personally identifiable information that you voluntarily provide when you:</p>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>Fill out a contact form (name, email, company, message)</li>
           <li>Schedule a consultation through our booking system</li>
           <li>Subscribe to our newsletter</li>
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
 
         <h3 className="text-lg font-semibold mt-4 mb-2">Automatically Collected Information</h3>
         <p>When you visit our website, we may automatically collect:</p>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>Browser type and version</li>
           <li>Operating system</li>
           <li>Pages visited and time spent</li>
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
         </ul>
 
         <h2 className="text-xl font-bold mt-8 mb-3">2. How We Use Your Information</h2>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>To respond to your inquiries and provide requested services</li>
           <li>To send relevant communications about our services</li>
           <li>To improve our website and user experience</li>
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
 
         <h2 className="text-xl font-bold mt-8 mb-3">4. Third-Party Services</h2>
         <p>We may use the following third-party services:</p>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li><strong>Plausible Analytics</strong> — privacy-focused website analytics</li>
           <li><strong>Cal.com</strong> — appointment scheduling</li>
           <li><strong>Stripe</strong> — payment processing (for contracted services)</li>
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
 
         <h2 className="text-xl font-bold mt-8 mb-3">7. Your Rights</h2>
         <p>You have the right to:</p>
-        <ul className="list-disc pl-6 space-y-1 text-[#5C5650]">
+        <ul className="list-disc pl-6 space-y-1 text-[#4B4B4B]">
           <li>Access your personal data</li>
           <li>Request correction or deletion of your data</li>
           <li>Opt out of marketing communications</li>
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
 
         <h2 className="text-xl font-bold mt-8 mb-3">8. Contact Us</h2>
         <p>If you have questions about this Privacy Policy, contact us at:</p>
-        <ul className="list-none pl-0 space-y-1 text-[#5C5650]">
+        <ul className="list-none pl-0 space-y-1 text-[#4B4B4B]">
           <li>Email: hello@usevantix.com</li>
           <li>Phone: (908) 498-7753</li>
           <li>Website: <Link href="/contact" className="text-[#8E5E34] hover:underline">usevantix.com/contact</Link></li>

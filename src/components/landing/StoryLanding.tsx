@@ -17,8 +17,8 @@ const projects = [
     title: 'Just Four Kicks',
     subtitle: 'B2B Wholesale Platform',
     description: 'Full-stack e-commerce platform powering $5.8M in sneaker wholesale. Custom inventory management, tiered pricing, and automated fulfillment.',
-    color: 'from-orange-500/20 via-red-500/10 to-transparent',
-    accentColor: '#f97316',
+    color: 'from-[#B07A45]/20 via-[#B0614A]/50/10 to-transparent',
+    accentColor: '#B07A45',
     stats: [
       { label: 'Revenue', value: '$5.8M' },
       { label: 'Stores', value: '300+' },
@@ -31,8 +31,8 @@ const projects = [
     title: 'CardLedger',
     subtitle: 'Portfolio Tracker',
     description: 'The smartest portfolio tracker for card collectors. Real-time pricing, P&L tracking, and market insights across Pokemon, MTG, and more.',
-    color: 'from-blue-500/20 via-cyan-500/10 to-transparent',
-    accentColor: '#0ea5e9',
+    color: 'from-[#B07A45]/50/20 via-[#B07A45]/10 to-transparent',
+    accentColor: '#B07A45',
     stats: [
       { label: 'Cards Tracked', value: '250K+' },
       { label: 'TCGs', value: '16' },
@@ -45,8 +45,8 @@ const projects = [
     title: 'SecuredTampa',
     subtitle: 'E-Commerce Store',
     description: 'Custom sneaker and Pokemon card store with inventory management, barcode scanning, and automated pricing updates.',
-    color: 'from-purple-500/20 via-pink-500/10 to-transparent',
-    accentColor: '#a855f7',
+    color: 'from-[#B07A45]/50/20 via-[#B07A45]/10 to-transparent',
+    accentColor: '#B07A45',
     stats: [
       { label: 'Products', value: '1,000+' },
       { label: 'Sales', value: '$50K+' },
@@ -59,8 +59,8 @@ const projects = [
     title: 'AI Automation',
     subtitle: 'Custom Bots & Systems',
     description: 'Intelligent automation systems including trading bots, data scrapers, and AI-powered business tools.',
-    color: 'from-emerald-500/20 via-teal-500/10 to-transparent',
-    accentColor: '#10b981',
+    color: 'from-[#B07A45]/50/20 via-[#B07A45]/10 to-transparent',
+    accentColor: '#B07A45',
     stats: [
       { label: 'Automations', value: '50+' },
       { label: 'Hours Saved', value: '10K+' },
@@ -100,7 +100,7 @@ function HeroChapter() {
       />
       
       {/* Ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[150px]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#B07A45]/50/5 rounded-full blur-[150px]" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
         {/* Small label */}
@@ -108,7 +108,7 @@ function HeroChapter() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-emerald-400/80 text-sm tracking-[0.3em] uppercase mb-8"
+          className="text-[#C89A6A]/80 text-sm tracking-[0.3em] uppercase mb-8"
         >
           Digital Agency
         </motion.p>
@@ -122,7 +122,7 @@ function HeroChapter() {
         >
           <span className="text-white">We Build</span>
           <br />
-          <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#C89A6A] to-[#C89A6A] bg-clip-text text-transparent">
             Digital
           </span>
         </motion.h1>
@@ -319,7 +319,7 @@ function ContactChapter() {
   return (
     <section className="relative min-h-screen flex items-center justify-center py-20">
       {/* Ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#B07A45]/50/5 rounded-full blur-[120px]" />
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         {/* Label */}
@@ -327,7 +327,7 @@ function ContactChapter() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-emerald-400/80 text-sm tracking-[0.3em] uppercase mb-8"
+          className="text-[#C89A6A]/80 text-sm tracking-[0.3em] uppercase mb-8"
         >
           Let&apos;s Work Together
         </motion.p>
@@ -342,7 +342,7 @@ function ContactChapter() {
         >
           Ready to build
           <br />
-          <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#C89A6A] to-[#C89A6A] bg-clip-text text-transparent">
             something great?
           </span>
         </motion.h2>
@@ -369,7 +369,7 @@ function ContactChapter() {
         >
           <Link
             href="mailto:usevantix@gmail.com"
-            className="group px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-medium rounded-full transition-all flex items-center gap-2"
+            className="group px-8 py-4 bg-[#B07A45]/50 hover:bg-[#C89A6A] text-black font-medium rounded-full transition-all flex items-center gap-2"
           >
             Get in Touch
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
@@ -400,12 +400,12 @@ export function StoryLanding() {
   if (!mounted) return null;
 
   return (
-    <div className="bg-[#0a0a0a] text-white min-h-screen">
+    <div className="bg-[#1C1C1C] text-white min-h-screen">
       {/* Fixed navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="text-xl font-light tracking-wider">
-            <span className="text-emerald-400">V</span>ANTIX
+            <span className="text-[#C89A6A]">V</span>ANTIX
           </Link>
           
           <Link

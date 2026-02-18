@@ -133,11 +133,11 @@ export default function ROICalculatorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="min-h-screen bg-[#1C1C1C] text-white">
       {/* Hero */}
       <div className="relative pt-28 pb-12 px-4 sm:px-6 md:px-12 lg:px-24 max-w-4xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#B07A45]/50/10 border border-[#B07A45]/50/20 text-[#C89A6A] text-sm mb-6">
             <Calculator className="w-4 h-4" />
             AI ROI Calculator
           </div>
@@ -161,9 +161,9 @@ export default function ROICalculatorPage() {
                   <div
                     className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
                       i < step
-                        ? 'bg-emerald-500 text-black'
+                        ? 'bg-[#B07A45]/50 text-black'
                         : i === step
-                        ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
+                        ? 'bg-[#B07A45]/50/20 border border-[#B07A45]/50/40 text-[#C89A6A]'
                         : 'bg-[#EEE6DC]/5 text-white/30'
                     }`}
                   >
@@ -176,7 +176,7 @@ export default function ROICalculatorPage() {
           </div>
           <div className="h-1 rounded-full bg-[#EEE6DC]/5 overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
+              className="h-full bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45] rounded-full"
               animate={{ width: `${((step + 1) / 5) * 100}%` }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             />
@@ -207,7 +207,7 @@ export default function ROICalculatorPage() {
                         onClick={() => setIndustry(ind)}
                         className={`px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 border ${
                           industry === ind
-                            ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                            ? 'bg-[#B07A45]/50/20 border-[#B07A45]/50/40 text-[#C89A6A]'
                             : 'bg-[#EEE6DC]/[0.03] border-white/10 text-white/70 hover:bg-[#EEE6DC]/[0.06] hover:border-white/20'
                         }`}
                       >
@@ -223,7 +223,7 @@ export default function ROICalculatorPage() {
                   <h2 className="text-xl font-semibold mb-2">How many people are on your team?</h2>
                   <p className="text-white/40 text-sm mb-8">Include anyone who handles repetitive or manual tasks.</p>
                   <div className="text-center mb-6">
-                    <span className="text-5xl font-bold text-emerald-400">{teamSize}</span>
+                    <span className="text-5xl font-bold text-[#C89A6A]">{teamSize}</span>
                     <span className="text-white/40 ml-2">employees</span>
                   </div>
                   <input
@@ -232,7 +232,7 @@ export default function ROICalculatorPage() {
                     max={50}
                     value={teamSize}
                     onChange={(e) => setTeamSize(Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
+                    className="w-full accent-[#B07A45]/50 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
                   />
                   <div className="flex justify-between text-xs text-white/30 mt-2">
                     <span>1</span>
@@ -246,7 +246,7 @@ export default function ROICalculatorPage() {
                   <h2 className="text-xl font-semibold mb-2">How many hours per week does your team spend on manual tasks?</h2>
                   <p className="text-white/40 text-sm mb-8">Think data entry, scheduling, responding to inquiries, reporting.</p>
                   <div className="text-center mb-6">
-                    <span className="text-5xl font-bold text-emerald-400">{manualHours}</span>
+                    <span className="text-5xl font-bold text-[#C89A6A]">{manualHours}</span>
                     <span className="text-white/40 ml-2">hours/week</span>
                   </div>
                   <input
@@ -255,7 +255,7 @@ export default function ROICalculatorPage() {
                     max={80}
                     value={manualHours}
                     onChange={(e) => setManualHours(Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
+                    className="w-full accent-[#B07A45]/50 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
                   />
                   <div className="flex justify-between text-xs text-white/30 mt-2">
                     <span>5 hrs</span>
@@ -269,7 +269,7 @@ export default function ROICalculatorPage() {
                   <h2 className="text-xl font-semibold mb-2">What&apos;s the average hourly cost of your team?</h2>
                   <p className="text-white/40 text-sm mb-8">Include salary, benefits, and overhead if possible.</p>
                   <div className="text-center mb-6">
-                    <span className="text-5xl font-bold text-emerald-400">${hourlyCost}</span>
+                    <span className="text-5xl font-bold text-[#C89A6A]">${hourlyCost}</span>
                     <span className="text-white/40 ml-2">/hour</span>
                   </div>
                   <input
@@ -278,7 +278,7 @@ export default function ROICalculatorPage() {
                     max={150}
                     value={hourlyCost}
                     onChange={(e) => setHourlyCost(Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
+                    className="w-full accent-[#B07A45]/50 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
                   />
                   <div className="flex justify-between text-xs text-white/30 mt-2">
                     <span>$15</span>
@@ -292,7 +292,7 @@ export default function ROICalculatorPage() {
                   <h2 className="text-xl font-semibold mb-2">How many customer inquiries do you handle per day?</h2>
                   <p className="text-white/40 text-sm mb-8">Emails, calls, chat messages, support tickets, etc.</p>
                   <div className="text-center mb-6">
-                    <span className="text-5xl font-bold text-emerald-400">{inquiries}</span>
+                    <span className="text-5xl font-bold text-[#C89A6A]">{inquiries}</span>
                     <span className="text-white/40 ml-2">per day</span>
                   </div>
                   <input
@@ -301,7 +301,7 @@ export default function ROICalculatorPage() {
                     max={200}
                     value={inquiries}
                     onChange={(e) => setInquiries(Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
+                    className="w-full accent-[#B07A45]/50 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
                   />
                   <div className="flex justify-between text-xs text-white/30 mt-2">
                     <span>0</span>
@@ -324,7 +324,7 @@ export default function ROICalculatorPage() {
                   disabled={!canProceed}
                   className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                     canProceed
-                      ? 'bg-emerald-500 text-black hover:bg-emerald-400'
+                      ? 'bg-[#B07A45]/50 text-black hover:bg-[#C89A6A]'
                       : 'bg-[#EEE6DC]/10 text-white/30 cursor-not-allowed'
                   }`}
                 >
@@ -343,8 +343,8 @@ export default function ROICalculatorPage() {
               {/* Results */}
               <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-emerald-400" />
+                  <div className="w-10 h-10 rounded-xl bg-[#B07A45]/50/20 flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-[#C89A6A]" />
                   </div>
                   <div>
                     <h2 className="text-xl font-semibold">Your AI Savings Estimate</h2>
@@ -355,20 +355,20 @@ export default function ROICalculatorPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-xl p-5">
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Weekly Time Saved</p>
-                    <p className="text-2xl font-bold text-emerald-400">
+                    <p className="text-2xl font-bold text-[#C89A6A]">
                       <AnimatedNumber value={timeSavedWeekly} decimals={1} suffix=" hrs" />
                     </p>
                     <p className="text-white/30 text-xs mt-1">AI automates ~70% of repetitive tasks</p>
                   </div>
                   <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-xl p-5">
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Monthly Savings</p>
-                    <p className="text-2xl font-bold text-emerald-400">
+                    <p className="text-2xl font-bold text-[#C89A6A]">
                       <AnimatedNumber value={monthlySavings} prefix="$" />
                     </p>
                   </div>
-                  <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl p-5 sm:col-span-2">
+                  <div className="bg-gradient-to-br from-[#B07A45]/50/10 to-[#B07A45]/10 border border-[#B07A45]/50/20 rounded-xl p-5 sm:col-span-2">
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Projected Annual Savings</p>
-                    <p className="text-4xl font-bold text-emerald-400">
+                    <p className="text-4xl font-bold text-[#C89A6A]">
                       <AnimatedNumber value={annualSavings} prefix="$" />
                     </p>
                   </div>
@@ -381,7 +381,7 @@ export default function ROICalculatorPage() {
                   </div>
                   <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-xl p-5">
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">ROI</p>
-                    <p className="text-2xl font-bold text-emerald-400">
+                    <p className="text-2xl font-bold text-[#C89A6A]">
                       <AnimatedNumber value={roiPercent} suffix="%" />
                     </p>
                   </div>
@@ -407,7 +407,7 @@ export default function ROICalculatorPage() {
                   className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <Download className="w-5 h-5 text-emerald-400" />
+                    <Download className="w-5 h-5 text-[#C89A6A]" />
                     <h3 className="text-lg font-semibold">Get Your Detailed AI Savings Report</h3>
                   </div>
                   <p className="text-white/40 text-sm mb-6">
@@ -422,7 +422,7 @@ export default function ROICalculatorPage() {
                         placeholder="Your name"
                         value={leadName}
                         onChange={(e) => setLeadName(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/50/40 transition"
                       />
                     </div>
                     <div className="relative">
@@ -433,12 +433,12 @@ export default function ROICalculatorPage() {
                         placeholder="your@email.com"
                         value={leadEmail}
                         onChange={(e) => setLeadEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/50/40 transition"
                       />
                     </div>
                     <button
                       type="submit"
-                      className="w-full py-3 rounded-xl bg-emerald-500 text-black font-medium hover:bg-emerald-400 transition"
+                      className="w-full py-3 rounded-xl bg-[#B07A45]/50 text-black font-medium hover:bg-[#C89A6A] transition"
                     >
                       Send My Report
                     </button>
@@ -448,9 +448,9 @@ export default function ROICalculatorPage() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 sm:p-10 text-center mb-6"
+                  className="bg-[#B07A45]/50/10 border border-[#B07A45]/50/20 rounded-2xl p-6 sm:p-10 text-center mb-6"
                 >
-                  <Sparkles className="w-8 h-8 text-emerald-400 mx-auto mb-3" />
+                  <Sparkles className="w-8 h-8 text-[#C89A6A] mx-auto mb-3" />
                   <h3 className="text-lg font-semibold mb-2">Report on its way!</h3>
                   <p className="text-white/50 text-sm">Check your inbox for your personalized AI savings report.</p>
                 </motion.div>
@@ -465,7 +465,7 @@ export default function ROICalculatorPage() {
               >
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-semibold hover:opacity-90 transition text-lg"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45] text-black font-semibold hover:opacity-90 transition text-lg"
                 >
                   Book a Free Consultation to Start Saving
                   <ArrowRight className="w-5 h-5" />

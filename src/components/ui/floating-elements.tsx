@@ -95,8 +95,8 @@ export function FloatingStat({
     >
       <div className="flex items-center gap-3">
         {Icon && (
-          <div className="p-2 rounded-lg bg-emerald-500/20">
-            <Icon size={18} className="text-emerald-400" />
+          <div className="p-2 rounded-lg bg-[#B07A45]/50/20">
+            <Icon size={18} className="text-[#C89A6A]" />
           </div>
         )}
         <div>
@@ -118,7 +118,7 @@ export function HeroFloatingElements() {
         delay={0.5}
       >
         <span className="flex items-center gap-2">
-          <Zap size={14} className="text-emerald-400" />
+          <Zap size={14} className="text-[#C89A6A]" />
           Lightning Fast
         </span>
       </FloatingBadge>
@@ -128,7 +128,7 @@ export function HeroFloatingElements() {
         delay={0.7}
       >
         <span className="flex items-center gap-2">
-          <Globe size={14} className="text-teal-400" />
+          <Globe size={14} className="text-[#C89A6A]" />
           Global Reach
         </span>
       </FloatingBadge>
@@ -138,7 +138,7 @@ export function HeroFloatingElements() {
         delay={0.9}
       >
         <span className="flex items-center gap-2">
-          <Shield size={14} className="text-emerald-400" />
+          <Shield size={14} className="text-[#C89A6A]" />
           Enterprise Ready
         </span>
       </FloatingBadge>
@@ -148,7 +148,7 @@ export function HeroFloatingElements() {
         delay={1.1}
       >
         <span className="flex items-center gap-2">
-          <Sparkles size={14} className="text-yellow-400" />
+          <Sparkles size={14} className="text-[#C89A6A]" />
           AI Powered
         </span>
       </FloatingBadge>
@@ -172,7 +172,7 @@ export function HeroFloatingElements() {
 
       {/* Animated orbs */}
       <motion.div
-        className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-emerald-500/10 blur-[100px]"
+        className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#B07A45]/50/10 blur-[100px]"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.5, 0.3],
@@ -185,7 +185,7 @@ export function HeroFloatingElements() {
       />
 
       <motion.div
-        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-teal-500/10 blur-[120px]"
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-[#B07A45]/10 blur-[120px]"
         animate={{
           scale: [1.2, 1, 1.2],
           opacity: [0.2, 0.4, 0.2],
@@ -210,7 +210,7 @@ export function HeroFloatingElements() {
           ease: 'easeInOut',
         }}
       >
-        <Code2 size={32} className="text-emerald-500/30" />
+        <Code2 size={32} className="text-[#B07A45]/50/30" />
       </motion.div>
 
       <motion.div
@@ -225,7 +225,7 @@ export function HeroFloatingElements() {
           ease: 'easeInOut',
         }}
       >
-        <Sparkles size={28} className="text-teal-500/30" />
+        <Sparkles size={28} className="text-[#B07A45]/30" />
       </motion.div>
     </>
   );

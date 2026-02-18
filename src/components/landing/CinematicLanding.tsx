@@ -73,10 +73,10 @@ function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 mb-8"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#B07A45]/50/20 bg-[#B07A45]/50/5 mb-8"
         >
-          <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-          <span className="text-sm text-emerald-400/80 tracking-wider">DIGITAL AGENCY</span>
+          <span className="w-2 h-2 bg-[#C89A6A] rounded-full animate-pulse" />
+          <span className="text-sm text-[#C89A6A]/80 tracking-wider">DIGITAL AGENCY</span>
         </motion.div>
 
         {/* Main headline */}
@@ -94,7 +94,7 @@ function HeroSection() {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light tracking-tight mb-8"
           style={{
-            background: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%)',
+            background: 'linear-gradient(135deg, #B07A45 0%, #C89A6A 50%, #C89A6A 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
@@ -122,7 +122,7 @@ function HeroSection() {
         >
           <Link
             href="#projects"
-            className="group inline-flex items-center gap-3 px-8 py-4 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all"
+            className="group inline-flex items-center gap-3 px-8 py-4 bg-[#B07A45]/50/10 border border-[#B07A45]/50/30 rounded-full text-[#C89A6A] hover:bg-[#B07A45]/50/20 hover:border-[#B07A45]/50/50 transition-all"
           >
             View Our Work
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
@@ -139,7 +139,7 @@ function HeroSection() {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="flex flex-col items-center gap-2 text-emerald-400/40"
+            className="flex flex-col items-center gap-2 text-[#C89A6A]/40"
           >
             <span className="text-xs tracking-widest uppercase">Scroll</span>
             <ArrowDown size={16} />
@@ -206,7 +206,7 @@ function ProjectSection({ project, index }: { project: typeof projects[0]; index
                 border: '1px solid rgba(16,185,129,0.15)',
               }}
             >
-              <p className="text-emerald-400/60 text-xs tracking-[0.3em] uppercase mb-4">
+              <p className="text-[#C89A6A]/60 text-xs tracking-[0.3em] uppercase mb-4">
                 {project.year} PROJECT
               </p>
               <p className="text-white/80 text-base leading-relaxed mb-8">
@@ -214,11 +214,11 @@ function ProjectSection({ project, index }: { project: typeof projects[0]; index
               </p>
               
               {/* Stats */}
-              <div className="space-y-3 pt-6 border-t border-emerald-500/10">
+              <div className="space-y-3 pt-6 border-t border-[#B07A45]/50/10">
                 {Object.entries(project.stats).map(([key, value]) => (
                   <div key={key} className="flex justify-between text-sm">
                     <span className="text-white/40 capitalize">{key}</span>
-                    <span className="text-emerald-400 font-mono">{value}</span>
+                    <span className="text-[#C89A6A] font-mono">{value}</span>
                   </div>
                 ))}
               </div>
@@ -234,7 +234,7 @@ function ProjectSection({ project, index }: { project: typeof projects[0]; index
             className="lg:col-span-4 text-center"
           >
             {/* Number */}
-            <p className="text-emerald-400/40 text-sm font-mono mb-4">
+            <p className="text-[#C89A6A]/40 text-sm font-mono mb-4">
               0{index + 1}
             </p>
 
@@ -245,7 +245,7 @@ function ProjectSection({ project, index }: { project: typeof projects[0]; index
             <h3 
               className="text-4xl md:text-5xl lg:text-6xl font-light leading-none mb-6"
               style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
+                background: 'linear-gradient(135deg, #B07A45 0%, #C89A6A 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
@@ -260,14 +260,14 @@ function ProjectSection({ project, index }: { project: typeof projects[0]; index
 
             {/* Glow line */}
             <div className="relative h-[2px] w-24 mx-auto mb-8">
-              <div className="absolute inset-0 bg-emerald-500" />
-              <div className="absolute inset-0 blur-sm bg-emerald-400" />
+              <div className="absolute inset-0 bg-[#B07A45]/50" />
+              <div className="absolute inset-0 blur-sm bg-[#C89A6A]" />
             </div>
 
             {/* CTA */}
             <motion.button
               whileHover={{ scale: 1.02 }}
-              className="group px-6 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-sm tracking-wider hover:bg-emerald-500/20 transition-all inline-flex items-center gap-2"
+              className="group px-6 py-3 bg-[#B07A45]/50/10 border border-[#B07A45]/50/30 rounded-full text-[#C89A6A] text-sm tracking-wider hover:bg-[#B07A45]/50/20 transition-all inline-flex items-center gap-2"
             >
               VIEW PROJECT
               <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
@@ -319,7 +319,7 @@ function ContactSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-emerald-400/60 text-sm tracking-[0.3em] uppercase mb-6"
+          className="text-[#C89A6A]/60 text-sm tracking-[0.3em] uppercase mb-6"
         >
           Let&apos;s Work Together
         </motion.p>
@@ -340,7 +340,7 @@ function ContactSection() {
           transition={{ delay: 0.2 }}
           className="text-4xl md:text-5xl lg:text-6xl font-light mb-12"
           style={{
-            background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
+            background: 'linear-gradient(135deg, #B07A45 0%, #C89A6A 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
@@ -357,14 +357,14 @@ function ContactSection() {
         >
           <Link
             href="mailto:usevantix@gmail.com"
-            className="group px-8 py-4 bg-emerald-500 text-black font-medium rounded-full hover:bg-emerald-400 transition-all flex items-center gap-2"
+            className="group px-8 py-4 bg-[#B07A45]/50 text-black font-medium rounded-full hover:bg-[#C89A6A] transition-all flex items-center gap-2"
           >
             Get in Touch
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </Link>
           <Link
             href="tel:9084987753"
-            className="px-8 py-4 border border-emerald-500/30 text-emerald-400 rounded-full hover:bg-emerald-500/10 transition-all"
+            className="px-8 py-4 border border-[#B07A45]/50/30 text-[#C89A6A] rounded-full hover:bg-[#B07A45]/50/10 transition-all"
           >
             (908) 498-7753
           </Link>
@@ -392,7 +392,7 @@ export function CinematicLanding() {
     <div 
       className="min-h-screen"
       style={{
-        background: 'linear-gradient(180deg, #0a0a0a 0%, #0a0f0d 50%, #0a0a0a 100%)',
+        background: 'linear-gradient(180deg, #1C1C1C 0%, #1C1C1C 50%, #1C1C1C 100%)',
       }}
     >
       {/* Navigation */}
@@ -428,7 +428,7 @@ export function CinematicLanding() {
       <ContactSection />
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-emerald-500/10">
+      <footer className="py-8 px-6 border-t border-[#B07A45]/50/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-sm text-white/30">
           <p>© 2026 Vantix LLC</p>
           <p>New Jersey, USA</p>

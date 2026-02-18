@@ -91,7 +91,7 @@ export default function NotificationsPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      {!notif.read && <span className="w-2 h-2 rounded-full bg-[#10b981]" />}
+                      {!notif.read && <span className="w-2 h-2 rounded-full bg-[#B07A45]" />}
                       <span className="font-medium">{notif.title}</span>
                     </div>
                     <p className="text-sm text-[var(--color-muted)]">{notif.message}</p>

@@ -60,7 +60,7 @@ export function MagneticButton({
       >
         {glow && (
           <motion.div
-            className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 blur-xl"
+            className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B07A45]/50/20 to-[#B07A45]/20 blur-xl"
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -115,7 +115,7 @@ export function MagneticArrowButton({
         animate={{ x: position.x, y: position.y }}
         transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
         className={cn(
-          'group relative inline-flex items-center gap-2 text-base sm:text-lg font-medium text-white transition-colors hover:text-emerald-400 py-3 sm:py-0',
+          'group relative inline-flex items-center gap-2 text-base sm:text-lg font-medium text-white transition-colors hover:text-[#C89A6A] py-3 sm:py-0',
           className
         )}
       >
@@ -127,7 +127,7 @@ export function MagneticArrowButton({
           →
         </motion.span>
         <motion.div
-          className="absolute -bottom-1 left-0 h-px bg-emerald-500"
+          className="absolute -bottom-1 left-0 h-px bg-[#B07A45]/50"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: isHovered ? 1 : 0 }}
           style={{ originX: 0 }}

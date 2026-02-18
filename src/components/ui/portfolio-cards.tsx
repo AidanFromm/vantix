@@ -55,7 +55,7 @@ export function Portfolio3DCard({
     y.set(0);
   };
 
-  const gradientColors = item.color || 'from-emerald-500 to-teal-500';
+  const gradientColors = item.color || 'from-[#B07A45]/50 to-[#B07A45]';
 
   return (
     <motion.div
@@ -77,7 +77,7 @@ export function Portfolio3DCard({
           transformStyle: 'preserve-3d',
         }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 hover:border-emerald-500/30"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 hover:border-[#B07A45]/50/30"
       >
         {/* Image/Preview area */}
         <div className={cn(
@@ -129,7 +129,7 @@ export function Portfolio3DCard({
           style={{ translateZ: '40px' }}
           className="p-6"
         >
-          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#C89A6A] transition-colors">
             {item.title}
           </h3>
           <p className="text-white/60 text-sm leading-relaxed mb-4">
@@ -197,7 +197,7 @@ export function FeaturedCaseStudy({
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
         'relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/10 to-white/5',
-        'backdrop-blur-xl border border-white/10 hover:border-emerald-500/30 transition-colors',
+        'backdrop-blur-xl border border-white/10 hover:border-[#B07A45]/50/30 transition-colors',
         className
       )}
     >
@@ -206,7 +206,7 @@ export function FeaturedCaseStudy({
         <div className="relative h-64 md:h-auto overflow-hidden">
           <div className={cn(
             'absolute inset-0 bg-gradient-to-br',
-            item.color || 'from-emerald-500 to-teal-500'
+            item.color || 'from-[#B07A45]/50 to-[#B07A45]'
           )}>
             {item.image && (
               <motion.img
@@ -223,7 +223,7 @@ export function FeaturedCaseStudy({
 
         {/* Content side */}
         <div className="p-8 md:p-10 flex flex-col justify-center">
-          <span className="text-emerald-400 text-sm font-medium uppercase tracking-wider mb-2">
+          <span className="text-[#C89A6A] text-sm font-medium uppercase tracking-wider mb-2">
             {item.category}
           </span>
           <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
@@ -238,7 +238,7 @@ export function FeaturedCaseStudy({
             {item.tags.map((tag, i) => (
               <span
                 key={i}
-                className="px-3 py-1 text-sm rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                className="px-3 py-1 text-sm rounded-full bg-[#B07A45]/50/10 text-[#C89A6A] border border-[#B07A45]/50/20"
               >
                 {tag}
               </span>
@@ -249,7 +249,7 @@ export function FeaturedCaseStudy({
           <motion.a
             href={item.link || '#'}
             whileHover={{ x: 5 }}
-            className="inline-flex items-center gap-2 text-emerald-400 font-medium group"
+            className="inline-flex items-center gap-2 text-[#C89A6A] font-medium group"
           >
             View Case Study
             <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

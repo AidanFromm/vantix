@@ -57,7 +57,7 @@ export default function LoginPage() {
           <p className="text-[var(--color-muted)] mb-8">Sign in to your dashboard</p>
 
           {error && (
-            <div className="flex items-center gap-2 p-4 mb-6 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400">
+            <div className="flex items-center gap-2 p-4 mb-6 bg-[#B0614A]/50/10 border border-[#B0614A]/50/20 rounded-lg text-[#B0614A]">
               <AlertCircle size={20} />
               <span>{error}</span>
             </div>
@@ -104,7 +104,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#1C1C1C] hover:bg-[#7A5530] disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              className="w-full bg-[#1C1C1C] hover:bg-[#8E5E34] disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               {loading ? 'Signing in...' : 'Sign In'}
               {!loading && <ArrowRight size={20} />}

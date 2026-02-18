@@ -31,8 +31,8 @@ export default function CaseStudiesPage() {
           </Link>
           <Link
             href="/#booking"
-            className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-sm hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] transition-all"
-            style={{ background: 'linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878)' }}
+            className="px-5 py-2 text-sm font-semibold rounded-full text-[#8E5E34] shadow-sm hover:shadow-[6px_6px_14px_#E3D9CD,-6px_-6px_14px_#ffffff] transition-all"
+            style={{ background: 'linear-gradient(to right, #C89A6A, #C89A6A, #C89A6A, #C89A6A)' }}
           >
             Get Started
           </Link>
@@ -57,14 +57,14 @@ export default function CaseStudiesPage() {
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
             >
               <Link href={`/case-studies/${cs.slug}`} className="block group">
-                <div className="rounded-2xl p-8 bg-[#F4EFE8] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#c8c4be,-12px_-12px_28px_#ffffff] transition-shadow duration-300">
-                  <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-6">
+                <div className="rounded-2xl p-8 bg-[#F4EFE8] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#E3D9CD,-12px_-12px_28px_#ffffff] transition-shadow duration-300">
+                  <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-[inset_4px_4px_8px_#E3D9CD,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-6">
                     <cs.icon className="w-7 h-7 text-[#8E5E34]" />
                   </div>
                   <p className="text-xs font-semibold text-[#8E5E34] uppercase tracking-wider mb-2">{cs.industry}</p>
                   <h3 className="text-2xl font-bold mb-2">{cs.client}</h3>
                   <p className="text-[#7A746C] text-sm mb-4 leading-relaxed">{cs.description}</p>
-                  <div className="flex items-center gap-2 mb-4 p-3 rounded-xl bg-[#F4EFE8] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff]">
+                  <div className="flex items-center gap-2 mb-4 p-3 rounded-xl bg-[#F4EFE8] shadow-[inset_3px_3px_6px_#E3D9CD,inset_-3px_-3px_6px_#ffffff]">
                     <TrendingUp className="w-4 h-4 text-[#8E5E34] shrink-0" />
                     <span className="text-sm font-semibold">{cs.metric}</span>
                   </div>
@@ -73,7 +73,7 @@ export default function CaseStudiesPage() {
                       <span key={t} className="text-xs px-3 py-1 rounded-full border border-[#E3D9CD] text-[#7A746C]">{t}</span>
                     ))}
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#8E5E34] group-hover:text-[#9A7048] transition-colors">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#8E5E34] group-hover:text-[#B07A45] transition-colors">
                     Read Case Study <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </div>

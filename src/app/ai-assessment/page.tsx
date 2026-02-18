@@ -218,11 +218,11 @@ export default function AIAssessmentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="min-h-screen bg-[#1C1C1C] text-white">
       {/* Hero */}
       <div className="relative pt-28 pb-12 px-4 sm:px-6 md:px-12 lg:px-24 max-w-4xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#B07A45]/50/10 border border-[#B07A45]/50/20 text-[#C89A6A] text-sm mb-6">
             <ClipboardCheck className="w-4 h-4" />
             AI Readiness Assessment
           </div>
@@ -244,7 +244,7 @@ export default function AIAssessmentPage() {
           </div>
           <div className="h-1.5 rounded-full bg-[#EEE6DC]/5 overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
+              className="h-full bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45] rounded-full"
               animate={{ width: `${((currentQ + 1) / 10) * 100}%` }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             />
@@ -272,7 +272,7 @@ export default function AIAssessmentPage() {
                     onClick={() => handleSelectOption(opt.score, idx)}
                     className={`w-full text-left px-5 py-4 rounded-xl text-sm font-medium transition-all duration-200 border ${
                       selectedOption === idx
-                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                        ? 'bg-[#B07A45]/50/20 border-[#B07A45]/50/40 text-[#C89A6A]'
                         : 'bg-[#EEE6DC]/[0.03] border-white/10 text-white/70 hover:bg-[#EEE6DC]/[0.06] hover:border-white/20'
                     }`}
                   >
@@ -294,7 +294,7 @@ export default function AIAssessmentPage() {
                   disabled={selectedOption === null}
                   className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                     selectedOption !== null
-                      ? 'bg-emerald-500 text-black hover:bg-emerald-400'
+                      ? 'bg-[#B07A45]/50 text-black hover:bg-[#C89A6A]'
                       : 'bg-[#EEE6DC]/10 text-white/30 cursor-not-allowed'
                   }`}
                 >
@@ -312,11 +312,11 @@ export default function AIAssessmentPage() {
             >
               {/* Score */}
               <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                  <RatingIcon className="w-8 h-8 text-emerald-400" />
+                <div className="w-16 h-16 rounded-2xl bg-[#B07A45]/50/20 flex items-center justify-center mx-auto mb-4">
+                  <RatingIcon className="w-8 h-8 text-[#C89A6A]" />
                 </div>
                 <p className="text-white/40 text-sm uppercase tracking-wider mb-2">Your Score</p>
-                <p className="text-6xl font-bold text-emerald-400 mb-1">{totalScore}<span className="text-2xl text-white/30">/40</span></p>
+                <p className="text-6xl font-bold text-[#C89A6A] mb-1">{totalScore}<span className="text-2xl text-white/30">/40</span></p>
                 <h2 className="text-2xl font-bold mt-3">{rating.title}</h2>
                 <p className="text-white/50 mt-1">{rating.subtitle}</p>
               </div>
@@ -324,7 +324,7 @@ export default function AIAssessmentPage() {
               {/* Recommendations */}
               <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6">
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-emerald-400" />
+                  <Sparkles className="w-5 h-5 text-[#C89A6A]" />
                   Your Personalized Recommendations
                 </h3>
                 <ul className="space-y-3">
@@ -336,8 +336,8 @@ export default function AIAssessmentPage() {
                       transition={{ delay: 0.3 + i * 0.15 }}
                       className="flex items-start gap-3 text-white/70 text-sm"
                     >
-                      <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <ArrowRight className="w-3 h-3 text-emerald-400" />
+                      <div className="w-6 h-6 rounded-lg bg-[#B07A45]/50/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <ArrowRight className="w-3 h-3 text-[#C89A6A]" />
                       </div>
                       {rec}
                     </motion.li>
@@ -366,7 +366,7 @@ export default function AIAssessmentPage() {
                         placeholder="Your name"
                         value={leadName}
                         onChange={(e) => setLeadName(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/50/40 transition"
                       />
                     </div>
                     <div className="relative">
@@ -377,7 +377,7 @@ export default function AIAssessmentPage() {
                         placeholder="your@email.com"
                         value={leadEmail}
                         onChange={(e) => setLeadEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/50/40 transition"
                       />
                     </div>
                     <div className="relative">
@@ -388,12 +388,12 @@ export default function AIAssessmentPage() {
                         placeholder="Company name"
                         value={leadCompany}
                         onChange={(e) => setLeadCompany(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/50/40 transition"
                       />
                     </div>
                     <button
                       type="submit"
-                      className="w-full py-3 rounded-xl bg-emerald-500 text-black font-medium hover:bg-emerald-400 transition"
+                      className="w-full py-3 rounded-xl bg-[#B07A45]/50 text-black font-medium hover:bg-[#C89A6A] transition"
                     >
                       Send My Full Report
                     </button>
@@ -403,9 +403,9 @@ export default function AIAssessmentPage() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 sm:p-10 text-center mb-6"
+                  className="bg-[#B07A45]/50/10 border border-[#B07A45]/50/20 rounded-2xl p-6 sm:p-10 text-center mb-6"
                 >
-                  <Sparkles className="w-8 h-8 text-emerald-400 mx-auto mb-3" />
+                  <Sparkles className="w-8 h-8 text-[#C89A6A] mx-auto mb-3" />
                   <h3 className="text-lg font-semibold mb-2">Report on its way!</h3>
                   <p className="text-white/50 text-sm">Check your inbox for your custom AI readiness report.</p>
                 </motion.div>
@@ -420,7 +420,7 @@ export default function AIAssessmentPage() {
               >
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-semibold hover:opacity-90 transition text-lg"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45] text-black font-semibold hover:opacity-90 transition text-lg"
                 >
                   Get Your Custom AI Roadmap — Book a Free Call
                   <ArrowRight className="w-5 h-5" />

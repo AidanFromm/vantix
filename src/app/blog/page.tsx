@@ -63,7 +63,7 @@ export default function BlogPage() {
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group block rounded-2xl border border-[#E3D9CD] bg-[#F4EFE8] p-8 shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] hover:shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] transition-all duration-300"
+              className="group block rounded-2xl border border-[#E3D9CD] bg-[#F4EFE8] p-8 shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff] hover:shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff] transition-all duration-300"
             >
               {/* Category Tag */}
               <div className="flex items-center gap-2 mb-4">
@@ -108,7 +108,7 @@ export default function BlogPage() {
 
       {/* Newsletter Signup */}
       <section className="px-6 pb-32">
-        <div className="max-w-2xl mx-auto rounded-2xl border border-[#E3D9CD] bg-[#F4EFE8] p-10 shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] text-center">
+        <div className="max-w-2xl mx-auto rounded-2xl border border-[#E3D9CD] bg-[#F4EFE8] p-10 shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff] text-center">
           <Mail className="w-10 h-10 text-[#8E5E34] mx-auto mb-4" />
           <h3 className="text-2xl font-bold text-[#1C1C1C] mb-2">
             Get automation insights delivered
@@ -130,11 +130,11 @@ export default function BlogPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
               required
-              className="flex-1 px-5 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#1C1C1C] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#8E5E34]/30 text-sm"
+              className="flex-1 px-5 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#1C1C1C] shadow-[inset_3px_3px_6px_#E3D9CD,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#8E5E34]/30 text-sm"
             />
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl bg-[#8E5E34] text-white font-medium text-sm shadow-sm hover:bg-[#a67a4d] transition-colors"
+              className="px-6 py-3 rounded-xl bg-[#8E5E34] text-white font-medium text-sm shadow-sm hover:bg-[#B07A45] transition-colors"
             >
               Subscribe
             </button>

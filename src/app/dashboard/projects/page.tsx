@@ -27,25 +27,25 @@ function generateId(): string { return crypto?.randomUUID?.() || Math.random().t
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
   lead: { label: 'Lead', color: 'text-[#7A746C]', bg: 'bg-[#7A746C]/10', border: 'border-[#7A746C]/30' },
-  proposal: { label: 'Proposal', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
-  active: { label: 'Active', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-  'on-hold': { label: 'On Hold', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
-  review: { label: 'Review', color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200' },
-  complete: { label: 'Complete', color: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-200' },
-  archived: { label: 'Archived', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-200' },
+  proposal: { label: 'Proposal', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
+  active: { label: 'Active', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
+  'on-hold': { label: 'On Hold', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
+  review: { label: 'Review', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
+  complete: { label: 'Complete', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
+  archived: { label: 'Archived', color: 'text-[#F4EFE8]0', bg: 'bg-[#F4EFE8]', border: 'border-[#E3D9CD]' },
 };
 
 function formatCurrency(n: number) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n); }
 function daysUntil(d: string) { return Math.ceil((new Date(d).getTime() - Date.now()) / 86400000); }
 
 function computeHealth(project: Project): { label: string; color: string; icon: typeof CheckCircle2 } {
-  if (!project.deadline) return { label: 'On Track', color: 'text-emerald-600', icon: CheckCircle2 };
+  if (!project.deadline) return { label: 'On Track', color: 'text-[#8E5E34]', icon: CheckCircle2 };
   const days = daysUntil(project.deadline);
   const progress = project.progress || 0;
-  if (days < 0) return { label: 'Behind', color: 'text-red-600', icon: AlertTriangle };
-  if (days <= 7 && progress < 80) return { label: 'At Risk', color: 'text-amber-600', icon: AlertTriangle };
-  if (days <= 14 && progress < 50) return { label: 'At Risk', color: 'text-amber-600', icon: AlertTriangle };
-  return { label: 'On Track', color: 'text-emerald-600', icon: CheckCircle2 };
+  if (days < 0) return { label: 'Behind', color: 'text-[#8E5E34]', icon: AlertTriangle };
+  if (days <= 7 && progress < 80) return { label: 'At Risk', color: 'text-[#8E5E34]', icon: AlertTriangle };
+  if (days <= 14 && progress < 50) return { label: 'At Risk', color: 'text-[#8E5E34]', icon: AlertTriangle };
+  return { label: 'On Track', color: 'text-[#8E5E34]', icon: CheckCircle2 };
 }
 
 function ProjectModal({ project, clients, onClose, onSave }: { project?: Project | null; clients: Client[]; onClose: () => void; onSave: (data: Partial<Project>) => void }) {
@@ -171,15 +171,15 @@ export default function ProjectsPage() {
     <div className="space-y-6 pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C]">Projects</h1><p className="text-sm text-[#7A746C] mt-1">Track and manage all your projects</p></div>
-        <button onClick={() => { setEditingProject(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#8E5E34] hover:bg-[#A67A4B] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> New Project</button>
+        <button onClick={() => { setEditingProject(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#8E5E34] hover:bg-[#B07A45] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> New Project</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: 'Total Projects', value: String(stats.total), icon: Briefcase, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-          { label: 'Active', value: String(stats.active), icon: Zap, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+          { label: 'Total Projects', value: String(stats.total), icon: Briefcase, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
+          { label: 'Active', value: String(stats.active), icon: Zap, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
           { label: 'Total Budget', value: formatCurrency(stats.totalBudget), icon: DollarSign, color: 'text-[#8E5E34]', bg: 'bg-[#8E5E34]/10', border: 'border-[#8E5E34]/20' },
-          { label: 'Total Spent', value: formatCurrency(stats.totalSpent), icon: CheckCircle2, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+          { label: 'Total Spent', value: formatCurrency(stats.totalSpent), icon: CheckCircle2, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className={`bg-[#EEE6DC] border ${stat.border} rounded-2xl p-4 shadow-sm`}>
             <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#7A746C]">{stat.label}</span><div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}><stat.icon size={18} className={stat.color} /></div></div>
@@ -237,7 +237,7 @@ export default function ProjectsPage() {
                 <div className="mb-3">
                   <div className="flex justify-between text-xs text-[#7A746C] mb-1"><span>Progress</span><span className="text-[#1C1C1C] font-medium">{progress}%</span></div>
                   <div className="h-2.5 bg-[#EEE6DC] rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full transition-all duration-700 ${progress >= 80 ? 'bg-emerald-500' : progress >= 50 ? 'bg-blue-500' : 'bg-[#8E5E34]'}`} style={{ width: `${Math.min(progress, 100)}%` }} />
+                    <div className={`h-full rounded-full transition-all duration-700 ${progress >= 80 ? 'bg-[#B07A45]/50' : progress >= 50 ? 'bg-[#B07A45]/50' : 'bg-[#8E5E34]'}`} style={{ width: `${Math.min(progress, 100)}%` }} />
                   </div>
                 </div>
 
@@ -246,10 +246,10 @@ export default function ProjectsPage() {
                   <div className="mb-3 p-2.5 rounded-lg bg-[#F4EFE8] border border-[#E3D9CD]">
                     <div className="flex items-center justify-between text-xs mb-1.5">
                       <span className="text-[#7A746C]">Budget</span>
-                      <span className={`font-semibold ${overBudget ? 'text-red-600' : 'text-[#1C1C1C]'}`}>{formatCurrency(project.spent)} / {formatCurrency(project.budget)}</span>
+                      <span className={`font-semibold ${overBudget ? 'text-[#8E5E34]' : 'text-[#1C1C1C]'}`}>{formatCurrency(project.spent)} / {formatCurrency(project.budget)}</span>
                     </div>
                     <div className="h-1.5 bg-[#E3D9CD] rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full ${overBudget ? 'bg-red-500' : budgetPct > 80 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min(budgetPct, 100)}%` }} />
+                      <div className={`h-full rounded-full ${overBudget ? 'bg-[#B0614A]/50' : budgetPct > 80 ? 'bg-[#B07A45]' : 'bg-[#B07A45]/50'}`} style={{ width: `${Math.min(budgetPct, 100)}%` }} />
                     </div>
                   </div>
                 ) : null}
@@ -260,7 +260,7 @@ export default function ProjectsPage() {
                     <Flag size={12} className="text-[#7A746C]" />
                     <div className="flex gap-1">
                       {milestones.slice(0, 5).map((m, mi) => (
-                        <div key={mi} className={`w-3 h-3 rounded-full border ${m.done ? 'bg-emerald-500 border-emerald-400' : 'bg-[#EEE6DC] border-[#E3D9CD]'}`} title={m.name} />
+                        <div key={mi} className={`w-3 h-3 rounded-full border ${m.done ? 'bg-[#B07A45]/50 border-[#C89A6A]' : 'bg-[#EEE6DC] border-[#E3D9CD]'}`} title={m.name} />
                       ))}
                     </div>
                     <span className="text-[10px] text-[#7A746C]">{milestones.filter(m => m.done).length}/{milestones.length}</span>
@@ -272,12 +272,12 @@ export default function ProjectsPage() {
                   {project.client ? (
                     <Link href="/dashboard/clients" className="flex items-center gap-1 text-[#8E5E34] hover:underline"><Users size={12} />{project.client.name}</Link>
                   ) : <span className="text-[#7A746C]">No client</span>}
-                  {days !== null && <div className={`flex items-center gap-1 ${days < 0 ? 'text-red-500' : days <= 7 ? 'text-amber-500' : 'text-[#7A746C]'}`}><Clock size={12} />{days < 0 ? `${Math.abs(days)}d over` : `${days}d left`}</div>}
+                  {days !== null && <div className={`flex items-center gap-1 ${days < 0 ? 'text-[#B0614A]/50' : days <= 7 ? 'text-[#B07A45]' : 'text-[#7A746C]'}`}><Clock size={12} />{days < 0 ? `${Math.abs(days)}d over` : `${days}d left`}</div>}
                 </div>
 
                 <div className="flex items-center gap-2 pt-3 border-t border-[#E3D9CD]">
                   <button onClick={() => { setEditingProject(project); setShowModal(true); }} className="flex-1 text-center px-3 py-2 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-[#8E5E34] hover:bg-[#8E5E34]/10 text-xs font-medium transition-colors">Edit</button>
-                  <button onClick={() => handleDelete(project.id)} disabled={deleting === project.id} className="px-3 py-2 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-red-500 hover:bg-red-50 text-xs transition-colors">
+                  <button onClick={() => handleDelete(project.id)} disabled={deleting === project.id} className="px-3 py-2 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-[#B0614A]/50 hover:bg-[#B0614A]/5 text-xs transition-colors">
                     {deleting === project.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                   </button>
                 </div>

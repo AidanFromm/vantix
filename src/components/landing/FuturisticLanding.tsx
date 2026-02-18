@@ -376,13 +376,13 @@ function BeforeAfterSection() {
                   className="md:col-span-2 p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD]"
                 >
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
+                    <div className="w-3 h-3 rounded-full bg-[#E3D9CD]" />
                     <span className="text-[#7A746C] font-semibold text-sm uppercase tracking-wider">Without AI Automation</span>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-6">
                     {before.map((item, i) => (
                       <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#EEE6DC]">
-                        <X size={18} className="text-[#C5C3BE] shrink-0" />
+                        <X size={18} className="text-[#E3D9CD] shrink-0" />
                         <span className="text-[#7A746C] font-medium">{item}</span>
                       </div>
                     ))}
@@ -467,13 +467,13 @@ function ProblemSection() {
         >
           <motion.div variants={fadeLeft} className="relative p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD]">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
+              <div className="w-3 h-3 rounded-full bg-[#E3D9CD]" />
               <span className="text-[#7A746C] font-semibold text-sm uppercase tracking-wider">Before Vantix</span>
             </div>
             <ul className="space-y-4">
               {before.map((item, i) => (
                 <li key={i} className="flex items-start gap-3 text-[#7A746C] text-base leading-relaxed">
-                  <X size={16} className="text-[#C5C3BE] mt-1 shrink-0" />
+                  <X size={16} className="text-[#E3D9CD] mt-1 shrink-0" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -938,7 +938,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         className="w-full flex items-center justify-between p-6 text-left hover:bg-[#EEE6DC] transition-colors"
       >
         <span className="text-[#B07A45] font-medium pr-4">{q}</span>
-        <ChevronDown size={18} className={`text-[#C5C3BE] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown size={18} className={`text-[#E3D9CD] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence>
         {open && (
@@ -1125,7 +1125,7 @@ function BookingSection() {
                         <button key={d.toISOString()} disabled={past}
                           onClick={() => { setSelectedDate(d); setSelectedTime(null); }}
                           className={`flex-shrink-0 flex flex-col items-center justify-center min-w-[60px] h-[60px] rounded-xl text-xs font-medium transition-all
-                            ${active ? 'bg-[#8E5E34] text-white shadow-md' : past ? 'bg-[#EEE6DC] text-[#D0C8BD] cursor-not-allowed' : 'bg-[#EEE6DC] text-[#B07A45] hover:bg-[#E3D9CD] cursor-pointer'}`}>
+                            ${active ? 'bg-[#8E5E34] text-white shadow-md' : past ? 'bg-[#EEE6DC] text-[#E3D9CD] cursor-not-allowed' : 'bg-[#EEE6DC] text-[#B07A45] hover:bg-[#E3D9CD] cursor-pointer'}`}>
                           <span className="text-[10px] uppercase">{dayNames[d.getDay()]}</span>
                           <span className="text-lg font-bold leading-tight">{d.getDate()}</span>
                         </button>
@@ -1241,19 +1241,19 @@ function ContactForm() {
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-[#B07A45] mb-1.5">Name *</label>
-          <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all" />
+          <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#E3D9CD] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all" />
         </div>
         <div>
           <label className="block text-sm font-medium text-[#B07A45] mb-1.5">Email *</label>
-          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all" />
+          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#E3D9CD] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#B07A45] mb-1.5">Phone <span className="text-[#C5C3BE]">(optional)</span></label>
-          <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all" />
+          <label className="block text-sm font-medium text-[#B07A45] mb-1.5">Phone <span className="text-[#E3D9CD]">(optional)</span></label>
+          <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#E3D9CD] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all" />
         </div>
         <div>
           <label className="block text-sm font-medium text-[#B07A45] mb-1.5">What&apos;s eating your time?</label>
-          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all resize-none" />
+          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#E3D9CD] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all resize-none" />
         </div>
         <button
           type="submit"
@@ -1263,7 +1263,7 @@ function ContactForm() {
           {status === 'sending' ? 'Sending...' : 'Start Automating This Week'}
           <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
         </button>
-        {status === 'error' && <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>}
+        {status === 'error' && <p className="text-[#B0614A]/50 text-sm text-center">Something went wrong. Please try again.</p>}
       </div>
     </form>
   );

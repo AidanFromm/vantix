@@ -10,11 +10,11 @@ import { getClients, createClient, updateClient, deleteClient } from '@/lib/supa
 import type { Client, ClientStatus } from '@/lib/types';
 
 const STATUS_CONFIG: Record<ClientStatus, { label: string; dot: string; color: string; bg: string; border: string }> = {
-  lead: { label: 'Lead', dot: 'bg-blue-500', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
-  prospect: { label: 'Prospect', dot: 'bg-amber-500', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
-  active: { label: 'Active', dot: 'bg-emerald-500', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-  inactive: { label: 'Inactive', dot: 'bg-gray-400', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-200' },
-  churned: { label: 'Churned', dot: 'bg-red-500', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' },
+  lead: { label: 'Lead', dot: 'bg-[#B07A45]/50', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
+  prospect: { label: 'Prospect', dot: 'bg-[#B07A45]', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
+  active: { label: 'Active', dot: 'bg-[#B07A45]/50', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
+  inactive: { label: 'Inactive', dot: 'bg-[#A39B90]', color: 'text-[#F4EFE8]0', bg: 'bg-[#F4EFE8]', border: 'border-[#E3D9CD]' },
+  churned: { label: 'Churned', dot: 'bg-[#B0614A]/50', color: 'text-[#8E5E34]', bg: 'bg-[#B0614A]/5', border: 'border-[#B0614A]/20' },
 };
 
 const PIPELINE: ClientStatus[] = ['lead', 'prospect', 'active', 'inactive', 'churned'];
@@ -133,15 +133,15 @@ export default function ClientsPage() {
     <div className="space-y-6 pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C]">Clients</h1><p className="text-sm text-[#7A746C] mt-1">Manage your client relationships</p></div>
-        <button onClick={() => { setEditingClient(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#8E5E34] hover:bg-[#A67A4B] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> Add Client</button>
+        <button onClick={() => { setEditingClient(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#8E5E34] hover:bg-[#B07A45] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> Add Client</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: 'Total Clients', value: String(stats.total), icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-          { label: 'Active', value: String(stats.active), icon: Zap, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+          { label: 'Total Clients', value: String(stats.total), icon: Users, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
+          { label: 'Active', value: String(stats.active), icon: Zap, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
           { label: 'Contract Value', value: formatCurrency(stats.totalValue), icon: DollarSign, color: 'text-[#8E5E34]', bg: 'bg-[#8E5E34]/10', border: 'border-[#8E5E34]/20' },
-          { label: 'Lifetime Revenue', value: formatCurrency(stats.lifetimeValue), icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+          { label: 'Lifetime Revenue', value: formatCurrency(stats.lifetimeValue), icon: TrendingUp, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className={`bg-[#EEE6DC] border ${stat.border} rounded-2xl p-4 shadow-sm`}>
             <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#7A746C]">{stat.label}</span><stat.icon size={18} className={stat.color} /></div>
@@ -186,10 +186,10 @@ export default function ClientsPage() {
               </div>
               {(client.tags?.length ?? 0) > 0 && <div className="flex flex-wrap gap-1.5 mb-3">{client.tags!.slice(0, 3).map(tag => <span key={tag} className="px-2 py-0.5 rounded-md bg-[#EEE6DC] text-[10px] text-[#7A746C]">{tag}</span>)}</div>}
               <div className="flex items-center gap-2 pt-3 border-t border-[#E3D9CD]">
-                {client.contact_email && <a href={`mailto:${client.contact_email}`} onClick={e => e.stopPropagation()} className="w-8 h-8 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors"><Mail size={14} /></a>}
-                {client.contact_phone && <a href={`tel:${client.contact_phone}`} onClick={e => e.stopPropagation()} className="w-8 h-8 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-emerald-600 hover:bg-emerald-50 flex items-center justify-center transition-colors"><Phone size={14} /></a>}
+                {client.contact_email && <a href={`mailto:${client.contact_email}`} onClick={e => e.stopPropagation()} className="w-8 h-8 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-[#8E5E34] hover:bg-[#B07A45]/5 flex items-center justify-center transition-colors"><Mail size={14} /></a>}
+                {client.contact_phone && <a href={`tel:${client.contact_phone}`} onClick={e => e.stopPropagation()} className="w-8 h-8 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-[#8E5E34] hover:bg-[#B07A45]/5 flex items-center justify-center transition-colors"><Phone size={14} /></a>}
                 <button onClick={() => { setEditingClient(client); setShowModal(true); }} className="w-8 h-8 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-[#8E5E34] hover:bg-[#8E5E34]/10 flex items-center justify-center transition-colors ml-auto"><Edit3 size={14} /></button>
-                <button onClick={() => handleDelete(client.id)} disabled={deleting === client.id} className="w-8 h-8 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors">
+                <button onClick={() => handleDelete(client.id)} disabled={deleting === client.id} className="w-8 h-8 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-[#B0614A]/50 hover:bg-[#B0614A]/5 flex items-center justify-center transition-colors">
                   {deleting === client.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                 </button>
               </div>

@@ -27,24 +27,24 @@ function generateId(): string { return crypto?.randomUUID?.() || Math.random().t
 
 const COLUMNS: { key: Column; label: string; icon: typeof Clock; color: string; bg: string }[] = [
   { key: 'todo', label: 'To Do', icon: CircleDot, color: 'text-[#7A746C]', bg: 'bg-[#7A746C]/10' },
-  { key: 'in_progress', label: 'In Progress', icon: Zap, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { key: 'review', label: 'Review', icon: Eye, color: 'text-amber-600', bg: 'bg-amber-50' },
-  { key: 'done', label: 'Done', icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { key: 'in_progress', label: 'In Progress', icon: Zap, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
+  { key: 'review', label: 'Review', icon: Eye, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
+  { key: 'done', label: 'Done', icon: CheckCircle2, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
 ];
 
 const PRIORITY_CFG: Record<Priority, { color: string; bg: string }> = {
   low: { color: 'text-[#7A746C]', bg: 'bg-[#EEE6DC]' },
-  medium: { color: 'text-blue-600', bg: 'bg-blue-50' },
-  high: { color: 'text-amber-600', bg: 'bg-amber-50' },
-  urgent: { color: 'text-red-600', bg: 'bg-red-50' },
+  medium: { color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
+  high: { color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
+  urgent: { color: 'text-[#8E5E34]', bg: 'bg-[#B0614A]/5' },
 };
 
 function getDueDateColor(due_date?: string): string {
   if (!due_date) return 'text-[#7A746C]';
   const d = new Date(due_date); const now = new Date();
   now.setHours(0, 0, 0, 0); d.setHours(0, 0, 0, 0);
-  if (d < now) return 'text-red-500';
-  if (d.getTime() === now.getTime()) return 'text-amber-500';
+  if (d < now) return 'text-[#B0614A]/50';
+  if (d.getTime() === now.getTime()) return 'text-[#B07A45]';
   return 'text-[#7A746C]';
 }
 
@@ -147,7 +147,7 @@ export default function TasksPage() {
           <p className="text-[#7A746C] mt-1 text-sm">Manage your team&apos;s tasks</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2 text-sm text-[#7A746C]"><span>{filteredTasks.length} total</span><span>|</span><span className="text-emerald-600">{filteredTasks.filter(t => t.column === 'done').length} done</span></div>
+          <div className="flex items-center gap-2 text-sm text-[#7A746C]"><span>{filteredTasks.length} total</span><span>|</span><span className="text-[#8E5E34]">{filteredTasks.filter(t => t.column === 'done').length} done</span></div>
           <div className="flex bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-1">
             <button onClick={() => setViewMode('kanban')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${viewMode === 'kanban' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'text-[#7A746C]'}`}><LayoutGrid size={13} /> Kanban</button>
             <button onClick={() => setViewMode('list')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${viewMode === 'list' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'text-[#7A746C]'}`}><List size={13} /> List</button>
@@ -156,7 +156,7 @@ export default function TasksPage() {
             <option value="all">All Projects</option>
             {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
-          <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-5 py-2.5 bg-[#8E5E34] hover:bg-[#A67A4B] text-white rounded-xl font-medium transition-colors text-sm"><Plus className="w-4 h-4" /> New Task</button>
+          <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-5 py-2.5 bg-[#8E5E34] hover:bg-[#B07A45] text-white rounded-xl font-medium transition-colors text-sm"><Plus className="w-4 h-4" /> New Task</button>
         </div>
       </motion.div>
 
@@ -209,7 +209,7 @@ export default function TasksPage() {
                               <p className="text-sm font-medium text-[#1C1C1C] leading-snug flex-1 mr-2">{task.title}</p>
                               <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button onClick={() => startEdit(task)} className="p-1 text-[#7A746C] hover:text-[#8E5E34] rounded"><Tag className="w-3 h-3" /></button>
-                                <button onClick={() => handleDelete(task.id)} className="p-1 text-[#7A746C] hover:text-red-500 rounded">
+                                <button onClick={() => handleDelete(task.id)} className="p-1 text-[#7A746C] hover:text-[#B0614A]/50 rounded">
                                   {deleting === task.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
                                 </button>
                               </div>
@@ -264,7 +264,7 @@ export default function TasksPage() {
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <button onClick={() => startEdit(task)} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#8E5E34]"><Tag size={14} /></button>
-                        <button onClick={() => handleDelete(task.id)} className="p-1.5 rounded-lg text-[#7A746C] hover:text-red-500">
+                        <button onClick={() => handleDelete(task.id)} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#B0614A]/50">
                           {deleting === task.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                         </button>
                       </div>
@@ -296,7 +296,7 @@ export default function TasksPage() {
               </div>
               <div className="flex justify-end gap-3 mt-8">
                 <button onClick={resetForm} className="px-5 py-2.5 text-[#7A746C] hover:text-[#1C1C1C]">Cancel</button>
-                <button onClick={handleSubmit} disabled={!form.title} className="px-6 py-2.5 bg-[#8E5E34] hover:bg-[#A67A4B] disabled:opacity-40 text-white rounded-xl font-medium transition-colors">{editId ? 'Update' : 'Create'}</button>
+                <button onClick={handleSubmit} disabled={!form.title} className="px-6 py-2.5 bg-[#8E5E34] hover:bg-[#B07A45] disabled:opacity-40 text-white rounded-xl font-medium transition-colors">{editId ? 'Update' : 'Create'}</button>
               </div>
             </motion.div>
           </motion.div>

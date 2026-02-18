@@ -24,7 +24,7 @@ interface ParticlesProps {
 export function Particles({
   className,
   quantity = 50,
-  color = '#10b981',
+  color = '#B07A45',
   speed = 0.5,
   size = 2,
   interactive = true,
@@ -175,11 +175,11 @@ export function GridBackground({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'absolute inset-0 bg-[linear-gradient(to_right,#1a1a1a_1px,transparent_1px),linear-gradient(to_bottom,#1a1a1a_1px,transparent_1px)] bg-[size:4rem_4rem]',
+        'absolute inset-0 bg-[linear-gradient(to_right,#1C1C1C_1px,transparent_1px),linear-gradient(to_bottom,#1C1C1C_1px,transparent_1px)] bg-[size:4rem_4rem]',
         className
       )}
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C] via-transparent to-[#1C1C1C]" />
     </div>
   );
 }

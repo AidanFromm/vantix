@@ -28,9 +28,9 @@ export default function CallsPage() {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'incoming': return <PhoneIncoming size={16} className="text-green-400" />;
-      case 'outgoing': return <PhoneOutgoing size={16} className="text-blue-400" />;
-      case 'missed': return <PhoneMissed size={16} className="text-red-400" />;
+      case 'incoming': return <PhoneIncoming size={16} className="text-[#C89A6A]" />;
+      case 'outgoing': return <PhoneOutgoing size={16} className="text-[#C89A6A]" />;
+      case 'missed': return <PhoneMissed size={16} className="text-[#B0614A]" />;
       default: return <Phone size={16} />;
     }
   };
@@ -55,9 +55,9 @@ export default function CallsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Total Calls', value: stats.total, icon: Phone, color: 'text-white' },
-          { label: 'Incoming', value: stats.incoming, icon: PhoneIncoming, color: 'text-green-400' },
-          { label: 'Outgoing', value: stats.outgoing, icon: PhoneOutgoing, color: 'text-blue-400' },
-          { label: 'Missed', value: stats.missed, icon: PhoneMissed, color: 'text-red-400' },
+          { label: 'Incoming', value: stats.incoming, icon: PhoneIncoming, color: 'text-[#C89A6A]' },
+          { label: 'Outgoing', value: stats.outgoing, icon: PhoneOutgoing, color: 'text-[#C89A6A]' },
+          { label: 'Missed', value: stats.missed, icon: PhoneMissed, color: 'text-[#B0614A]' },
         ].map(stat => (
           <div key={stat.label} className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
@@ -77,7 +77,7 @@ export default function CallsPage() {
             onClick={() => setFilter(f)}
             className={`px-4 py-2 rounded-lg text-sm transition-colors ${
               filter === f
-                ? 'bg-[#10b981] text-white'
+                ? 'bg-[#B07A45] text-white'
                 : 'bg-[var(--color-card)] text-[var(--color-muted)] hover:text-white border border-[var(--color-border)]'
             }`}
           >

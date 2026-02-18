@@ -135,7 +135,7 @@ export default function ReportsPage() {
       const cat = e.category || 'Other';
       cats[cat] = (cats[cat] || 0) + (e.amount || 0);
     });
-    const colors = ['#8E5E34', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899'];
+    const colors = ['#8E5E34', '#B07A45', '#B07A45', '#B07A45', '#B07A45', '#8E5E34', '#B07A45'];
     return Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([label, value], i) => ({ label, value, color: colors[i % colors.length] }));
   }, [expenses, rangeStart]);
 
@@ -174,10 +174,10 @@ export default function ReportsPage() {
   );
 
   const metrics = [
-    { label: 'Total Revenue', value: formatCurrency(totalRevenue), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100', trend: totalRevenue > 0 },
-    { label: 'Total Expenses', value: formatCurrency(totalExpenses), icon: TrendingUp, color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-100', trend: false },
-    { label: 'Net Profit', value: formatCurrency(netProfit), icon: BarChart3, color: netProfit >= 0 ? 'text-[#8E5E34]' : 'text-red-500', bg: 'bg-[#8E5E34]/10', border: 'border-[#8E5E34]/20', trend: netProfit >= 0 },
-    { label: 'Conversion Rate', value: `${leadConversion.rate}%`, icon: Target, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100', trend: leadConversion.rate > 20 },
+    { label: 'Total Revenue', value: formatCurrency(totalRevenue), icon: DollarSign, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10', trend: totalRevenue > 0 },
+    { label: 'Total Expenses', value: formatCurrency(totalExpenses), icon: TrendingUp, color: 'text-[#B0614A]/50', bg: 'bg-[#B0614A]/5', border: 'border-[#B0614A]/10', trend: false },
+    { label: 'Net Profit', value: formatCurrency(netProfit), icon: BarChart3, color: netProfit >= 0 ? 'text-[#8E5E34]' : 'text-[#B0614A]/50', bg: 'bg-[#8E5E34]/10', border: 'border-[#8E5E34]/20', trend: netProfit >= 0 },
+    { label: 'Conversion Rate', value: `${leadConversion.rate}%`, icon: Target, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10', trend: leadConversion.rate > 20 },
   ];
 
   return (
@@ -215,7 +215,7 @@ export default function ReportsPage() {
             </div>
             <div className="flex items-end gap-2">
               <span className="text-2xl font-bold text-[#1C1C1C]">{m.value}</span>
-              {m.trend ? <ArrowUpRight size={16} className="text-emerald-500 mb-1" /> : <ArrowDownRight size={16} className="text-red-400 mb-1" />}
+              {m.trend ? <ArrowUpRight size={16} className="text-[#B07A45]/50 mb-1" /> : <ArrowDownRight size={16} className="text-[#B0614A] mb-1" />}
             </div>
           </motion.div>
         ))}
@@ -241,7 +241,7 @@ export default function ReportsPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
           className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl overflow-hidden shadow-sm">
           <div className="px-4 py-3 border-b border-[#E3D9CD] flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-purple-50"><DollarSign size={14} className="text-purple-600" /></div>
+            <div className="p-1.5 rounded-lg bg-[#B07A45]/5"><DollarSign size={14} className="text-[#8E5E34]" /></div>
             <h3 className="text-sm font-semibold text-[#1C1C1C]">Expense Breakdown</h3>
           </div>
           <div className="p-4">
@@ -259,7 +259,7 @@ export default function ReportsPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
           className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl overflow-hidden shadow-sm">
           <div className="px-4 py-3 border-b border-[#E3D9CD] flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-blue-50"><Briefcase size={16} className="text-blue-600" /></div>
+            <div className="p-2 rounded-xl bg-[#B07A45]/5"><Briefcase size={16} className="text-[#8E5E34]" /></div>
             <h3 className="text-sm font-semibold text-[#1C1C1C]">Project Profitability</h3>
           </div>
           <div className="p-5">
@@ -271,7 +271,7 @@ export default function ReportsPage() {
                       <p className="text-sm font-medium text-[#1C1C1C] truncate">{p.name}</p>
                       <p className="text-xs text-[#7A746C]">Budget: {formatCurrency(p.budget)} | Spent: {formatCurrency(p.spent)}</p>
                     </div>
-                    <div className={`text-sm font-bold ${p.profit >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                    <div className={`text-sm font-bold ${p.profit >= 0 ? 'text-[#8E5E34]' : 'text-[#B0614A]/50'}`}>
                       {p.profit >= 0 ? '+' : ''}{formatCurrency(p.profit)}
                     </div>
                   </div>
@@ -286,15 +286,15 @@ export default function ReportsPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
           className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl overflow-hidden shadow-sm">
           <div className="px-4 py-3 border-b border-[#E3D9CD] flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-emerald-50"><Users size={16} className="text-emerald-600" /></div>
+            <div className="p-2 rounded-xl bg-[#B07A45]/5"><Users size={16} className="text-[#8E5E34]" /></div>
             <h3 className="text-sm font-semibold text-[#1C1C1C]">Lead Conversion</h3>
           </div>
           <div className="p-5">
             <div className="grid grid-cols-2 gap-4 mb-6">
               {[
-                { label: 'Total Leads', value: leadConversion.total, color: 'text-blue-600' },
-                { label: 'Won', value: leadConversion.won, color: 'text-emerald-600' },
-                { label: 'Lost', value: leadConversion.lost, color: 'text-red-500' },
+                { label: 'Total Leads', value: leadConversion.total, color: 'text-[#8E5E34]' },
+                { label: 'Won', value: leadConversion.won, color: 'text-[#8E5E34]' },
+                { label: 'Lost', value: leadConversion.lost, color: 'text-[#B0614A]/50' },
                 { label: 'Active', value: leadConversion.active, color: 'text-[#8E5E34]' },
               ].map(s => (
                 <div key={s.label} className="p-3 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-center">
@@ -306,9 +306,9 @@ export default function ReportsPage() {
             {/* Conversion funnel visual */}
             <div className="space-y-2">
               {[
-                { label: 'Won', pct: leadConversion.total ? (leadConversion.won / leadConversion.total) * 100 : 0, color: '#10B981' },
+                { label: 'Won', pct: leadConversion.total ? (leadConversion.won / leadConversion.total) * 100 : 0, color: '#B07A45' },
                 { label: 'Active', pct: leadConversion.total ? (leadConversion.active / leadConversion.total) * 100 : 0, color: '#8E5E34' },
-                { label: 'Lost', pct: leadConversion.total ? (leadConversion.lost / leadConversion.total) * 100 : 0, color: '#EF4444' },
+                { label: 'Lost', pct: leadConversion.total ? (leadConversion.lost / leadConversion.total) * 100 : 0, color: '#8E5E34' },
               ].map(s => (
                 <div key={s.label} className="flex items-center gap-3">
                   <span className="text-xs text-[#7A746C] w-12 text-right">{s.label}</span>

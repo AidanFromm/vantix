@@ -35,9 +35,9 @@ export default function HeroSection() {
 
   return (
     <section ref={ref} className="relative min-h-screen flex flex-col justify-center overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#0d1117] to-[#0a0a0a]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1C1C1C] via-[#1C1C1C] to-[#1C1C1C]" />
       <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 30% 20%, rgba(16,185,129,0.15) 0%, transparent 50%)' }} />
-      <div className="hidden md:block"><Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="#10b981" /></div>
+      <div className="hidden md:block"><Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="#B07A45" /></div>
 
       <motion.div style={isMobile ? {} : { opacity, y }} className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 lg:px-24 w-full">
         <Reveal>

@@ -14,7 +14,7 @@ const fadeUp = {
 };
 
 const woodButtonStyle = {
-  background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878, #E6C78C)`,
+  background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #C89A6A, #C89A6A, #C89A6A, #C89A6A, #C89A6A)`,
   border: '1px solid rgba(139,90,43,0.2)',
 };
 
@@ -39,7 +39,7 @@ export default function SecuredTampaPage() {
           </Link>
           <Link
             href="/#booking"
-            className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-sm hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
+            className="px-5 py-2 text-sm font-semibold rounded-full text-[#8E5E34] shadow-sm hover:shadow-[inset_3px_3px_6px_#B07A45,inset_-3px_-3px_6px_#D8C2A8] transition-all"
             style={woodButtonStyle}
           >
             Get Results Like This
@@ -64,7 +64,7 @@ export default function SecuredTampaPage() {
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((s) => (
-            <div key={s.label} className="rounded-2xl p-6 text-center bg-[#EEE6DC] border border-[#E3D9CD] shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
+            <div key={s.label} className="rounded-2xl p-6 text-center bg-[#EEE6DC] border border-[#E3D9CD] shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff]">
               <s.icon className="w-5 h-5 text-[#8E5E34] mx-auto mb-2" />
               <p className="text-3xl font-bold text-[#8E5E34]">{s.value}</p>
               <p className="text-sm text-[#7A746C] mt-1">{s.label}</p>
@@ -76,9 +76,9 @@ export default function SecuredTampaPage() {
       {/* The Problem */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]">
           <h2 className="text-2xl font-bold mb-4">The Problem: Dead in the Water</h2>
-          <div className="space-y-4 text-[#5C5650] leading-relaxed">
+          <div className="space-y-4 text-[#4B4B4B] leading-relaxed">
             <p>Dave runs SecuredTampa — a growing sneaker, collectibles, and Pokémon card business in Tampa, FL. Business was booming. Then Shopify terminated his account.</p>
             <p>Overnight, he lost his entire online storefront. No e-commerce. No checkout. No shipping automation. He was left running a growing business through Instagram DMs and a disorganized Lightspeed POS system that couldn&apos;t keep up.</p>
             <p><strong className="text-[#1C1C1C]">The clock was ticking.</strong> Every day without a platform meant lost sales, frustrated customers, and competitors gaining ground. He needed a complete solution — fast.</p>
@@ -89,9 +89,9 @@ export default function SecuredTampaPage() {
       {/* The Discovery */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]">
           <h2 className="text-2xl font-bold mb-4">The Discovery: Not a Shopify Replacement — Something Better</h2>
-          <div className="space-y-4 text-[#5C5650] leading-relaxed">
+          <div className="space-y-4 text-[#4B4B4B] leading-relaxed">
             <p>During our initial audit, we realized Dave didn&apos;t just need another e-commerce platform. He needed a unified system that connected his online store, in-store POS, inventory management, shipping, and customer communications — all in one place.</p>
             <p>No off-the-shelf solution could do this. Shopify couldn&apos;t. BigCommerce couldn&apos;t. Dave needed something custom — and he needed it yesterday.</p>
           </div>
@@ -101,10 +101,10 @@ export default function SecuredTampaPage() {
       {/* The Solution */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]">
           <h2 className="text-2xl font-bold mb-2">The Solution: 122 Pages in 3 Weeks</h2>
           <p className="text-[#8E5E34] text-sm font-medium mb-6">Built from scratch. Deployed in production. Running 24/7.</p>
-          <p className="text-[#5C5650] leading-relaxed mb-6">
+          <p className="text-[#4B4B4B] leading-relaxed mb-6">
             We designed and built a complete custom e-commerce platform with integrated inventory management, POS connectivity, automated shipping, and transactional emails — from the first line of code to production deployment in just 3 weeks.
           </p>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -120,7 +120,7 @@ export default function SecuredTampaPage() {
             ].map((item) => (
               <div key={item.text} className="flex items-start gap-3 p-3 rounded-xl hover:bg-[#F4EFE8] transition-colors">
                 <item.icon className="w-5 h-5 text-[#8E5E34] mt-0.5 shrink-0" />
-                <span className="text-sm text-[#5C5650]">{item.text}</span>
+                <span className="text-sm text-[#4B4B4B]">{item.text}</span>
               </div>
             ))}
           </div>
@@ -144,7 +144,7 @@ export default function SecuredTampaPage() {
       {/* Results */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#8E5E34]/20 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#8E5E34]/20 shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]">
           <h2 className="text-2xl font-bold mb-6">The Results: Back Online and Better Than Ever</h2>
           <ul className="space-y-3 mb-8">
             {[
@@ -156,7 +156,7 @@ export default function SecuredTampaPage() {
               'Barcode scanning system for fast inventory intake and instant product lookup',
               '99.9% uptime since launch — zero critical outages',
             ].map((r) => (
-              <li key={r} className="flex items-start gap-3 text-[#5C5650]">
+              <li key={r} className="flex items-start gap-3 text-[#4B4B4B]">
                 <CheckCircle2 className="w-5 h-5 text-[#8E5E34] mt-0.5 shrink-0" />
                 <span>{r}</span>
               </li>
@@ -168,7 +168,7 @@ export default function SecuredTampaPage() {
       {/* Testimonial */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] text-center">
+          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff] text-center">
           <MessageSquare className="w-8 h-8 text-[#8E5E34]/30 mx-auto mb-4" />
           <blockquote className="text-xl md:text-2xl text-[#1C1C1C] font-medium leading-relaxed mb-6 max-w-2xl mx-auto">
             &ldquo;Shopify shut us down and I thought it was over. Vantix built something better than I ever had — in 3 weeks. The POS integration alone saves me hours every day. I own the whole thing now, no platform can take it away.&rdquo;
@@ -181,7 +181,7 @@ export default function SecuredTampaPage() {
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-12 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-12 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]">
           <h2 className="text-3xl font-bold mb-4">Ready for Results Like This?</h2>
           <p className="text-[#7A746C] mb-8 max-w-lg mx-auto">
             Whether you need a custom platform, AI automation, or a complete digital transformation — we deliver in weeks, not months. Let&apos;s talk about your project.
@@ -189,14 +189,14 @@ export default function SecuredTampaPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/#booking"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#8E5E34] font-semibold rounded-full shadow-[6px_6px_14px_#E3D9CD,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#B07A45,inset_-3px_-3px_6px_#D8C2A8] transition-all"
               style={woodButtonStyle}
             >
               Book Your Free AI Audit <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <a
               href="tel:+19084987753"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#E3D9CD] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#8E5E34]/20 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#E3D9CD] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#E3D9CD,-6px_-6px_14px_#ffffff] hover:border-[#8E5E34]/20 transition-all"
             >
               <Phone className="w-4 h-4" /> (908) 498-7753
             </a>

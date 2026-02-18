@@ -45,7 +45,7 @@ export default function SettingsResetButton() {
               </p>
               <button
                 onClick={() => setConfirming(true)}
-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors text-sm font-medium"
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-[#B0614A] hover:bg-[#B0614A]/50/10 transition-colors text-sm font-medium"
               >
                 Reset Dashboard Data
               </button>
@@ -58,7 +58,7 @@ export default function SettingsResetButton() {
               <div className="flex gap-2">
                 <button
                   onClick={handleReset}
-                  className="flex-1 px-3 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-colors"
+                  className="flex-1 px-3 py-2 rounded-lg bg-[#B0614A]/50 hover:bg-[#8E5E34] text-white text-sm font-medium transition-colors"
                 >
                   Yes, Reset
                 </button>

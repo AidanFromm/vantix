@@ -89,7 +89,7 @@ export function TestimonialCarousel({
         onTouchEnd={handleTouchEnd}
       >
         {/* Quote icon */}
-        <Quote className="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 sm:w-12 sm:h-12 text-emerald-500/20" />
+        <Quote className="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 sm:w-12 sm:h-12 text-[#B07A45]/50/20" />
         
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
@@ -114,7 +114,7 @@ export function TestimonialCarousel({
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-emerald-400 text-emerald-400" />
+                  <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-[#C89A6A] text-[#C89A6A]" />
                 </motion.div>
               ))}
             </div>
@@ -130,10 +130,10 @@ export function TestimonialCarousel({
                 <img
                   src={testimonials[current].avatar}
                   alt={testimonials[current].name}
-                  className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-emerald-500/30"
+                  className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#B07A45]/50/30"
                 />
               ) : (
-                <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-base sm:text-lg md:text-xl font-bold text-white flex-shrink-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-[#B07A45]/50 to-[#B07A45] flex items-center justify-center text-base sm:text-lg md:text-xl font-bold text-white flex-shrink-0">
                   {testimonials[current].name.charAt(0)}
                 </div>
               )}
@@ -184,7 +184,7 @@ export function TestimonialCarousel({
             className={cn(
               'h-1.5 sm:h-2 rounded-full transition-all duration-300',
               i === current
-                ? 'w-6 sm:w-8 bg-emerald-500'
+                ? 'w-6 sm:w-8 bg-[#B07A45]/50'
                 : 'w-1.5 sm:w-2 bg-[#EEE6DC]/30 hover:bg-[#EEE6DC]/50'
             )}
             aria-label={`Go to testimonial ${i + 1}`}
@@ -213,16 +213,16 @@ export function TestimonialGrid({
           viewport={{ once: true }}
           transition={{ delay: i * 0.1 }}
           whileHover={{ y: -5, scale: 1.02 }}
-          className="group relative p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 hover:border-emerald-500/30 transition-colors"
+          className="group relative p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 hover:border-[#B07A45]/50/30 transition-colors"
         >
           {/* Glow effect on hover */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/0 to-teal-500/0 group-hover:from-emerald-500/5 group-hover:to-teal-500/5 transition-all duration-500" />
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#B07A45]/50/0 to-[#B07A45]/0 group-hover:from-[#B07A45]/50/5 group-hover:to-[#B07A45]/5 transition-all duration-500" />
           
           <div className="relative z-10">
             {/* Stars */}
             <div className="flex gap-1 mb-4">
               {[...Array(5)].map((_, j) => (
-                <Star key={j} className="w-4 h-4 fill-emerald-400 text-emerald-400" />
+                <Star key={j} className="w-4 h-4 fill-[#C89A6A] text-[#C89A6A]" />
               ))}
             </div>
 
@@ -233,7 +233,7 @@ export function TestimonialGrid({
 
             {/* Author */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center font-bold text-white">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#B07A45]/50 to-[#B07A45] flex items-center justify-center font-bold text-white">
                 {testimonial.name.charAt(0)}
               </div>
               <div>

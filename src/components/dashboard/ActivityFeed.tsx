@@ -47,15 +47,15 @@ const iconMap: Record<ActivityType, React.ElementType> = {
 };
 
 const colorMap: Record<ActivityType, string> = {
-  client: 'bg-[#7BA3C4]/10 text-[#7BA3C4] border-[#7BA3C4]/20',
-  email: 'bg-[#9B8ABF]/10 text-[#9B8ABF] border-[#9B8ABF]/20',
-  payment: 'bg-[#8DB580]/10 text-[#8DB580] border-[#8DB580]/20',
-  document: 'bg-[#D4A843]/10 text-[#D4A843] border-[#D4A843]/20',
-  task: 'bg-[#8DB580]/10 text-[#6B9A5E] border-[#8DB580]/20',
-  alert: 'bg-[#C4735B]/10 text-[#C4735B] border-[#C4735B]/20',
-  meeting: 'bg-[#7BA3C4]/10 text-[#6890B0] border-[#7BA3C4]/20',
-  message: 'bg-[#C48A9B]/10 text-[#C48A9B] border-[#C48A9B]/20',
-  call: 'bg-[#D4A843]/10 text-[#B8923A] border-[#D4A843]/20',
+  client: 'bg-[#7A746C]/10 text-[#7A746C] border-[#7A746C]/20',
+  email: 'bg-[#7A746C]/10 text-[#7A746C] border-[#7A746C]/20',
+  payment: 'bg-[#B07A45]/10 text-[#B07A45] border-[#B07A45]/20',
+  document: 'bg-[#C89A6A]/10 text-[#C89A6A] border-[#C89A6A]/20',
+  task: 'bg-[#B07A45]/10 text-[#B07A45] border-[#B07A45]/20',
+  alert: 'bg-[#B07A45]/10 text-[#B07A45] border-[#B07A45]/20',
+  meeting: 'bg-[#7A746C]/10 text-[#7A746C] border-[#7A746C]/20',
+  message: 'bg-[#7A746C]/10 text-[#7A746C] border-[#7A746C]/20',
+  call: 'bg-[#C89A6A]/10 text-[#B07A45] border-[#C89A6A]/20',
   lead: 'bg-[#8E5E34]/10 text-[#8E5E34] border-[#8E5E34]/20',
 };
 
@@ -112,10 +112,10 @@ function ActivityItem({ activity, index }: { activity: Activity; index: number }
         )}
         <div className="flex items-center gap-2 mt-1">
           {activity.user && (
-            <span className="text-xs text-[#A9A29A]">{activity.user}</span>
+            <span className="text-xs text-[#A39B90]">{activity.user}</span>
           )}
-          <span className="text-xs text-[#A9A29A]">&middot;</span>
-          <span className="text-xs text-[#A9A29A]">{getRelativeTime(activity.timestamp)}</span>
+          <span className="text-xs text-[#A39B90]">&middot;</span>
+          <span className="text-xs text-[#A39B90]">{getRelativeTime(activity.timestamp)}</span>
         </div>
       </div>
     </motion.div>
@@ -146,7 +146,7 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
 
   if (activities.length === 0) {
     return (
-      <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] p-6 ${className}`}>
+      <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff] p-6 ${className}`}>
         <div className="text-center py-8">
           <div className="w-12 h-12 rounded-full bg-[#EEE6DC] flex items-center justify-center mx-auto mb-3">
             <AlertCircle size={20} className="text-[#7A746C]" />
@@ -158,7 +158,7 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
   }
 
   return (
-    <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] overflow-hidden ${className}`}>
+    <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff] overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-5 py-4 border-b border-[#E3D9CD]">
         <div className="flex items-center justify-between">
@@ -198,7 +198,7 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
 
       {/* View All Link */}
       <div className="px-5 py-3 border-t border-[#E3D9CD] bg-[#F4EFE8]/50">
-        <button className="text-sm text-[#8E5E34] hover:text-[#9A7348] transition-colors font-medium">
+        <button className="text-sm text-[#8E5E34] hover:text-[#B07A45] transition-colors font-medium">
           View all activity →
         </button>
       </div>

@@ -17,7 +17,7 @@ interface GradientTextProps {
 export function GradientText({
   children,
   className,
-  colors = ['#10b981', '#14b8a6', '#06b6d4', '#0ea5e9'],
+  colors = ['#B07A45', '#B07A45', '#B07A45', '#B07A45'],
   animate = true,
   animationDuration = 3,
   shimmer = false,
@@ -95,7 +95,7 @@ export function EmeraldGradient({
 }: Omit<GradientTextProps, 'colors'>) {
   return (
     <GradientText
-      colors={['#10b981', '#34d399', '#6ee7b7', '#34d399']}
+      colors={['#B07A45', '#C89A6A', '#C89A6A', '#C89A6A']}
       className={className}
       {...props}
     >
@@ -111,7 +111,7 @@ export function PurpleGradient({
 }: Omit<GradientTextProps, 'colors'>) {
   return (
     <GradientText
-      colors={['#8b5cf6', '#a78bfa', '#c4b5fd', '#a78bfa']}
+      colors={['#B07A45', '#C89A6A', '#C89A6A', '#C89A6A']}
       className={className}
       {...props}
     >
@@ -127,7 +127,7 @@ export function SunsetGradient({
 }: Omit<GradientTextProps, 'colors'>) {
   return (
     <GradientText
-      colors={['#f97316', '#fb923c', '#fbbf24', '#fb923c']}
+      colors={['#B07A45', '#C89A6A', '#C89A6A', '#C89A6A']}
       className={className}
       {...props}
     >
@@ -143,7 +143,7 @@ export function RainbowGradient({
 }: Omit<GradientTextProps, 'colors'>) {
   return (
     <GradientText
-      colors={['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ef4444']}
+      colors={['#B0614A', '#B07A45', '#B07A45', '#B07A45', '#B07A45', '#B07A45', '#B0614A']}
       animationDuration={5}
       className={className}
       {...props}
@@ -187,7 +187,7 @@ export function ShimmerText({
 export function TypedGradientText({
   text,
   className,
-  colors = ['#10b981', '#14b8a6', '#06b6d4'],
+  colors = ['#B07A45', '#B07A45', '#B07A45'],
   typingSpeed = 50,
 }: {
   text: string;
@@ -238,7 +238,7 @@ export function TypedGradientText({
 export function GlowingText({
   children,
   className,
-  glowColor = '#10b981',
+  glowColor = '#B07A45',
   intensity = 'medium',
 }: {
   children: React.ReactNode;

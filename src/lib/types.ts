@@ -231,21 +231,21 @@ export interface DashboardStats {
 
 // Lead Pipeline Stage Config
 export const LEAD_STAGES: { status: LeadStatus; label: string; color: string }[] = [
-  { status: 'new', label: 'New', color: 'bg-blue-500' },
-  { status: 'contacted', label: 'Contacted', color: 'bg-purple-500' },
-  { status: 'qualified', label: 'Qualified', color: 'bg-amber-500' },
-  { status: 'proposal', label: 'Proposal', color: 'bg-orange-500' },
-  { status: 'won', label: 'Won', color: 'bg-emerald-500' },
-  { status: 'lost', label: 'Lost', color: 'bg-red-500' },
+  { status: 'new', label: 'New', color: 'bg-[#B07A45]/50' },
+  { status: 'contacted', label: 'Contacted', color: 'bg-[#B07A45]/50' },
+  { status: 'qualified', label: 'Qualified', color: 'bg-[#B07A45]' },
+  { status: 'proposal', label: 'Proposal', color: 'bg-[#B07A45]' },
+  { status: 'won', label: 'Won', color: 'bg-[#B07A45]/50' },
+  { status: 'lost', label: 'Lost', color: 'bg-[#B0614A]/50' },
 ];
 
 // Project Pipeline Stage Config
 export const PROJECT_STAGES: { status: ProjectStatus; label: string; color: string }[] = [
-  { status: 'lead', label: 'Lead', color: 'bg-blue-500' },
-  { status: 'proposal', label: 'Proposal', color: 'bg-purple-500' },
-  { status: 'active', label: 'Active', color: 'bg-emerald-500' },
-  { status: 'review', label: 'Review', color: 'bg-amber-500' },
-  { status: 'complete', label: 'Complete', color: 'bg-teal-500' },
+  { status: 'lead', label: 'Lead', color: 'bg-[#B07A45]/50' },
+  { status: 'proposal', label: 'Proposal', color: 'bg-[#B07A45]/50' },
+  { status: 'active', label: 'Active', color: 'bg-[#B07A45]/50' },
+  { status: 'review', label: 'Review', color: 'bg-[#B07A45]' },
+  { status: 'complete', label: 'Complete', color: 'bg-[#B07A45]' },
 ];
 
 // Assignee Config (for bot filters)

@@ -29,7 +29,7 @@ export async function GET() {
             width: 160,
             height: 160,
             borderRadius: 40,
-            background: 'linear-gradient(135deg, #8E5E34, #9A7048)',
+            background: 'linear-gradient(135deg, #8E5E34, #B07A45)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -87,7 +87,7 @@ export async function GET() {
             left: 0,
             right: 0,
             height: 6,
-            background: 'linear-gradient(90deg, #8E5E34, #D4A76A, #8E5E34)',
+            background: 'linear-gradient(90deg, #8E5E34, #C89A6A, #8E5E34)',
           }}
         />
       </div>

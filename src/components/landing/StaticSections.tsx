@@ -69,7 +69,7 @@ export function Problem() {
     <section className="py-20 md:py-32 px-6 md:px-12 lg:px-24 border-b border-[var(--color-border)]">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 lg:gap-24">
         <div>
-          <Reveal><p className="text-red-400/80 text-sm font-medium tracking-wider uppercase mb-4">The Problem</p></Reveal>
+          <Reveal><p className="text-[#B0614A]/80 text-sm font-medium tracking-wider uppercase mb-4">The Problem</p></Reveal>
           <Reveal delay={0.1}>
             <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6 md:mb-8">
               Your business deserves better than duct-taped solutions.
@@ -78,7 +78,7 @@ export function Problem() {
           <Reveal delay={0.2}>
             <ul className="space-y-4 text-[var(--color-muted)]">
               {problems.map((p, i) => (
-                <li key={i} className="flex items-start gap-3"><span className="text-red-400 mt-1 flex-shrink-0">x</span>{p}</li>
+                <li key={i} className="flex items-start gap-3"><span className="text-[#B0614A] mt-1 flex-shrink-0">x</span>{p}</li>
               ))}
             </ul>
           </Reveal>

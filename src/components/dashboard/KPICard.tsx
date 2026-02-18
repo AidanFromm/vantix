@@ -105,8 +105,8 @@ function TrendIndicator({ value, label }: { value: number; label?: string }) {
   const isNeutral = value === 0;
   
   const Icon = isNeutral ? Minus : isPositive ? TrendingUp : TrendingDown;
-  const color = isNeutral ? 'text-[#7A746C]' : isPositive ? 'text-[#8DB580]' : 'text-[#C4735B]';
-  const bgColor = isNeutral ? 'bg-[#7A746C]/10' : isPositive ? 'bg-[#8DB580]/10' : 'bg-[#C4735B]/10';
+  const color = isNeutral ? 'text-[#7A746C]' : isPositive ? 'text-[#B07A45]' : 'text-[#B07A45]';
+  const bgColor = isNeutral ? 'bg-[#7A746C]/10' : isPositive ? 'bg-[#B07A45]/10' : 'bg-[#B07A45]/10';
 
   return (
     <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full ${bgColor}`}>
@@ -158,9 +158,9 @@ export default function KPICard({
         group relative overflow-hidden
         bg-[#EEE6DC]
         border border-[#E3D9CD] rounded-2xl
-        shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]
+        shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff]
         p-5 transition-all duration-300
-        hover:shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]
+        hover:shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]
         hover:scale-[1.01]
         ${className}
       `}
@@ -181,7 +181,7 @@ export default function KPICard({
           </div>
           
           {sparklineData && sparklineData.length > 0 && (
-            <Sparkline data={sparklineData} color={trend && trend < 0 ? '#C4735B' : '#8E5E34'} />
+            <Sparkline data={sparklineData} color={trend && trend < 0 ? '#B07A45' : '#8E5E34'} />
           )}
         </div>
 

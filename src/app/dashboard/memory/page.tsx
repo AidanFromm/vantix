@@ -75,11 +75,11 @@ const defaultMemories: Memory[] = [
 ];
 
 const typeColors: Record<string, string> = {
-  decision: 'bg-blue-500/20 text-blue-400',
-  learning: 'bg-green-500/20 text-green-400',
-  context: 'bg-purple-500/20 text-purple-400',
-  note: 'bg-yellow-500/20 text-yellow-400',
-  milestone: 'bg-emerald-500/20 text-emerald-400',
+  decision: 'bg-[#B07A45]/50/20 text-[#C89A6A]',
+  learning: 'bg-[#B07A45]/50/20 text-[#C89A6A]',
+  context: 'bg-[#B07A45]/50/20 text-[#C89A6A]',
+  note: 'bg-[#B07A45]/20 text-[#C89A6A]',
+  milestone: 'bg-[#B07A45]/50/20 text-[#C89A6A]',
 };
 
 function loadMemories(): Memory[] {
@@ -260,7 +260,7 @@ export default function MemoryPage() {
               </div>
               <button
                 onClick={() => deleteMemory(memory.id)}
-                className="p-1 opacity-0 group-hover:opacity-100 text-[var(--color-muted)] hover:text-red-400 transition-all"
+                className="p-1 opacity-0 group-hover:opacity-100 text-[var(--color-muted)] hover:text-[#B0614A] transition-all"
               >
                 <X size={14} />
               </button>

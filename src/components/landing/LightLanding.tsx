@@ -17,8 +17,8 @@ const projects = [
     subtitle: 'B2B Wholesale Platform',
     story: 'We built the infrastructure behind a $5.8M sneaker wholesale operation. Custom inventory management, tiered pricing for 300+ stores, and automated fulfillment that scales.',
     description: 'Full-stack e-commerce platform with React, Node.js, and Supabase.',
-    gradient: 'from-orange-500/10 via-red-500/5 to-transparent',
-    accentColor: '#f97316',
+    gradient: 'from-[#B07A45]/10 via-[#B0614A]/50/5 to-transparent',
+    accentColor: '#B07A45',
     stats: [
       { label: 'Revenue', value: '$5.8M' },
       { label: 'Active Stores', value: '300+' },
@@ -33,8 +33,8 @@ const projects = [
     subtitle: 'Portfolio Tracker',
     story: 'The smartest portfolio tracker for card collectors. We built real-time pricing across 16 TCGs, P&L tracking, and AI-powered market insights.',
     description: 'React + TypeScript PWA with Pokemon TCG API and custom pricing engine.',
-    gradient: 'from-blue-500/10 via-cyan-500/5 to-transparent',
-    accentColor: '#0ea5e9',
+    gradient: 'from-[#B07A45]/50/10 via-[#B07A45]/5 to-transparent',
+    accentColor: '#B07A45',
     stats: [
       { label: 'Cards Tracked', value: '250K+' },
       { label: 'TCG Games', value: '16' },
@@ -49,8 +49,8 @@ const projects = [
     subtitle: 'E-Commerce Store',
     story: 'A custom sneaker and Pokemon store with inventory management, barcode scanning, and automated pricing. Built to handle high-volume sales.',
     description: 'Next.js storefront with Supabase backend and Stripe integration.',
-    gradient: 'from-purple-500/10 via-pink-500/5 to-transparent',
-    accentColor: '#a855f7',
+    gradient: 'from-[#B07A45]/50/10 via-[#B07A45]/5 to-transparent',
+    accentColor: '#B07A45',
     stats: [
       { label: 'Products', value: '1,000+' },
       { label: 'Monthly Sales', value: '$50K+' },
@@ -65,8 +65,8 @@ const projects = [
     subtitle: 'Automation & Bots',
     story: 'Custom AI-powered automation systems. Trading bots, data scrapers, workflow automation—tools that work 24/7 so you don\'t have to.',
     description: 'Python + Node.js automation with OpenAI, websockets, and cloud deployment.',
-    gradient: 'from-emerald-500/10 via-teal-500/5 to-transparent',
-    accentColor: '#10b981',
+    gradient: 'from-[#B07A45]/50/10 via-[#B07A45]/5 to-transparent',
+    accentColor: '#B07A45',
     stats: [
       { label: 'Automations', value: '50+' },
       { label: 'Hours Saved', value: '10K+' },
@@ -99,24 +99,24 @@ function LightNav() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300 ${
-        scrolled ? 'bg-[#EEE6DC]/80 backdrop-blur-lg border-b border-gray-100' : ''
+        scrolled ? 'bg-[#EEE6DC]/80 backdrop-blur-lg border-b border-[#EEE6DC]' : ''
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="text-xl font-medium tracking-wide text-gray-900">
-          <span className="text-emerald-500">V</span>ANTIX
+        <Link href="/" className="text-xl font-medium tracking-wide text-[#1C1C1C]">
+          <span className="text-[#B07A45]/50">V</span>ANTIX
         </Link>
         
         <div className="flex items-center gap-6">
-          <Link href="#work" className="text-sm text-gray-500 hover:text-gray-900 transition-colors hidden sm:block">
+          <Link href="#work" className="text-sm text-[#F4EFE8]0 hover:text-[#1C1C1C] transition-colors hidden sm:block">
             Work
           </Link>
-          <Link href="#services" className="text-sm text-gray-500 hover:text-gray-900 transition-colors hidden sm:block">
+          <Link href="#services" className="text-sm text-[#F4EFE8]0 hover:text-[#1C1C1C] transition-colors hidden sm:block">
             Services
           </Link>
           <Link
             href="#contact"
-            className="text-sm px-4 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors"
+            className="text-sm px-4 py-2 bg-[#1C1C1C] text-white rounded-full hover:bg-[#1C1C1C] transition-colors"
           >
             Contact
           </Link>
@@ -150,7 +150,7 @@ function LightHero() {
       <div 
         className="absolute inset-0 opacity-[0.4]"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #e5e7eb 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, #E3D9CD 1px, transparent 0)`,
           backgroundSize: '40px 40px'
         }}
       />
@@ -162,7 +162,7 @@ function LightHero() {
           opacity: [0.3, 0.5, 0.3],
         }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-emerald-200/40 via-cyan-200/30 to-transparent rounded-full blur-[100px]"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#B07A45]/20/40 via-[#E3D9CD]/30 to-transparent rounded-full blur-[100px]"
       />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
@@ -171,10 +171,10 @@ function LightHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-full mb-8"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#B07A45]/5 border border-[#B07A45]/20 rounded-full mb-8"
         >
-          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-          <span className="text-sm text-emerald-700 font-medium">Digital Agency • New Jersey</span>
+          <span className="w-2 h-2 bg-[#B07A45]/50 rounded-full animate-pulse" />
+          <span className="text-sm text-[#8E5E34] font-medium">Digital Agency • New Jersey</span>
         </motion.div>
 
         {/* Main headline */}
@@ -182,11 +182,11 @@ function LightHero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-gray-900 mb-6"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-[#1C1C1C] mb-6"
         >
           We Build
           <br />
-          <span className="font-normal bg-gradient-to-r from-emerald-600 to-cyan-600 bg-clip-text text-transparent">
+          <span className="font-normal bg-gradient-to-r from-[#8E5E34] to-[#8E5E34] bg-clip-text text-transparent">
             Digital
           </span>
         </motion.h1>
@@ -196,11 +196,11 @@ function LightHero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-lg md:text-xl text-gray-500 font-light max-w-xl mx-auto mb-12"
+          className="text-lg md:text-xl text-[#F4EFE8]0 font-light max-w-xl mx-auto mb-12"
         >
           Websites. Apps. Automation.
           <br />
-          <span className="text-gray-900">Solutions that actually work.</span>
+          <span className="text-[#1C1C1C]">Solutions that actually work.</span>
         </motion.p>
 
         {/* CTAs */}
@@ -212,14 +212,14 @@ function LightHero() {
         >
           <Link
             href="#work"
-            className="group px-8 py-4 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 transition-all flex items-center gap-2"
+            className="group px-8 py-4 bg-[#1C1C1C] text-white font-medium rounded-full hover:bg-[#1C1C1C] transition-all flex items-center gap-2"
           >
             See Our Work
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </Link>
           <Link
             href="#contact"
-            className="px-8 py-4 border border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 rounded-full transition-all"
+            className="px-8 py-4 border border-[#E3D9CD] text-[#1C1C1C] hover:border-[#A39B90] hover:bg-[#F4EFE8] rounded-full transition-all"
           >
             Get in Touch
           </Link>
@@ -235,7 +235,7 @@ function LightHero() {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="flex flex-col items-center gap-2 text-gray-400"
+            className="flex flex-col items-center gap-2 text-[#A39B90]"
           >
             <span className="text-xs tracking-widest uppercase">Scroll</span>
             <ArrowDown size={16} />
@@ -307,11 +307,11 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
                 {project.number}
               </span>
               <div className="h-px w-12" style={{ backgroundColor: project.accentColor + '40' }} />
-              <span className="text-sm text-gray-400">{project.year}</span>
+              <span className="text-sm text-[#A39B90]">{project.year}</span>
             </div>
 
             {/* Title */}
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-2">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-[#1C1C1C] mb-2">
               {project.title}
             </h2>
             
@@ -324,12 +324,12 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
             </p>
 
             {/* Story */}
-            <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-4 max-w-lg">
+            <p className="text-[#4B4B4B] text-base md:text-lg leading-relaxed mb-4 max-w-lg">
               {project.story}
             </p>
 
             {/* Tech description */}
-            <p className="text-gray-400 text-sm mb-8">
+            <p className="text-[#A39B90] text-sm mb-8">
               {project.description}
             </p>
 
@@ -343,7 +343,7 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
                   >
                     {stat.value}
                   </p>
-                  <p className="text-sm text-gray-400">{stat.label}</p>
+                  <p className="text-sm text-[#A39B90]">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -351,7 +351,7 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
             {/* CTA */}
             <motion.button
               whileHover={{ x: 5 }}
-              className="group flex items-center gap-2 text-sm font-medium text-gray-900"
+              className="group flex items-center gap-2 text-sm font-medium text-[#1C1C1C]"
             >
               View Case Study
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
@@ -368,15 +368,15 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
           >
             {/* Device mockup container */}
             <div 
-              className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-gray-50 to-white border border-gray-200 shadow-2xl shadow-gray-200/50"
+              className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-[#F4EFE8] to-white border border-[#E3D9CD] shadow-2xl shadow-[#E3D9CD]/50"
             >
               {/* Browser chrome */}
-              <div className="absolute top-0 left-0 right-0 h-10 bg-gray-100 border-b border-gray-200 flex items-center px-4 gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-400" />
-                <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                <div className="w-3 h-3 rounded-full bg-green-400" />
+              <div className="absolute top-0 left-0 right-0 h-10 bg-[#EEE6DC] border-b border-[#E3D9CD] flex items-center px-4 gap-2">
+                <div className="w-3 h-3 rounded-full bg-[#B0614A]" />
+                <div className="w-3 h-3 rounded-full bg-[#C89A6A]" />
+                <div className="w-3 h-3 rounded-full bg-[#C89A6A]" />
                 <div className="flex-1 mx-4">
-                  <div className="h-5 bg-[#EEE6DC] rounded border border-gray-200 max-w-xs mx-auto" />
+                  <div className="h-5 bg-[#EEE6DC] rounded border border-[#E3D9CD] max-w-xs mx-auto" />
                 </div>
               </div>
               
@@ -389,8 +389,8 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
                   >
                     <ExternalLink size={28} style={{ color: project.accentColor }} />
                   </div>
-                  <p className="text-gray-400 text-sm">Live Preview</p>
-                  <p className="text-gray-300 text-xs mt-1">Coming Soon</p>
+                  <p className="text-[#A39B90] text-sm">Live Preview</p>
+                  <p className="text-[#E3D9CD] text-xs mt-1">Coming Soon</p>
                 </div>
               </div>
 
@@ -420,8 +420,8 @@ function ServicesSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <p className="text-emerald-600 text-sm font-medium tracking-wide uppercase mb-4">What We Do</p>
-          <h2 className="text-4xl md:text-5xl font-light text-gray-900">
+          <p className="text-[#8E5E34] text-sm font-medium tracking-wide uppercase mb-4">What We Do</p>
+          <h2 className="text-4xl md:text-5xl font-light text-[#1C1C1C]">
             Full-Stack <span className="font-normal">Digital Services</span>
           </h2>
         </motion.div>
@@ -434,13 +434,13 @@ function ServicesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group p-8 bg-[#EEE6DC] rounded-2xl border border-gray-100 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50 transition-all cursor-pointer"
+              className="group p-8 bg-[#EEE6DC] rounded-2xl border border-[#EEE6DC] hover:border-[#B07A45]/20 hover:shadow-lg hover:shadow-[#B07A45]/5 transition-all cursor-pointer"
             >
-              <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-100 transition-colors">
-                <service.icon size={24} className="text-emerald-600" />
+              <div className="w-12 h-12 bg-[#B07A45]/5 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#B07A45]/10 transition-colors">
+                <service.icon size={24} className="text-[#8E5E34]" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">{service.title}</h3>
-              <p className="text-gray-500 text-sm">{service.description}</p>
+              <h3 className="text-lg font-medium text-[#1C1C1C] mb-2">{service.title}</h3>
+              <p className="text-[#F4EFE8]0 text-sm">{service.description}</p>
             </motion.div>
           ))}
         </div>
@@ -461,15 +461,15 @@ function ContactSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <p className="text-emerald-600 text-sm font-medium tracking-wide uppercase mb-4">Let&apos;s Work Together</p>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-6">
+          <p className="text-[#8E5E34] text-sm font-medium tracking-wide uppercase mb-4">Let&apos;s Work Together</p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-[#1C1C1C] mb-6">
             Ready to build
             <br />
-            <span className="font-normal bg-gradient-to-r from-emerald-600 to-cyan-600 bg-clip-text text-transparent">
+            <span className="font-normal bg-gradient-to-r from-[#8E5E34] to-[#8E5E34] bg-clip-text text-transparent">
               something great?
             </span>
           </h2>
-          <p className="text-gray-500 text-lg mb-12 max-w-xl mx-auto">
+          <p className="text-[#F4EFE8]0 text-lg mb-12 max-w-xl mx-auto">
             We&apos;re always looking for ambitious projects.
             Tell us about yours.
           </p>
@@ -477,7 +477,7 @@ function ContactSection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="mailto:usevantix@gmail.com"
-              className="group flex items-center gap-3 px-8 py-4 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 transition-all"
+              className="group flex items-center gap-3 px-8 py-4 bg-[#1C1C1C] text-white font-medium rounded-full hover:bg-[#1C1C1C] transition-all"
             >
               <Mail size={18} />
               usevantix@gmail.com
@@ -485,7 +485,7 @@ function ContactSection() {
             </Link>
             <Link
               href="tel:9084987753"
-              className="flex items-center gap-3 px-8 py-4 border border-gray-300 text-gray-700 hover:border-gray-400 rounded-full transition-all"
+              className="flex items-center gap-3 px-8 py-4 border border-[#E3D9CD] text-[#1C1C1C] hover:border-[#A39B90] rounded-full transition-all"
             >
               <Phone size={18} />
               (908) 498-7753
@@ -502,8 +502,8 @@ function ContactSection() {
 // ============================================
 function Footer() {
   return (
-    <footer className="py-8 px-6 bg-[#F4EFE8] border-t border-gray-100">
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+    <footer className="py-8 px-6 bg-[#F4EFE8] border-t border-[#EEE6DC]">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#A39B90]">
         <p>© 2026 Vantix LLC. All rights reserved.</p>
         <p>New Jersey, USA</p>
       </div>
@@ -524,7 +524,7 @@ export function LightLanding() {
   if (!mounted) return null;
 
   return (
-    <div className="bg-[#EEE6DC] text-gray-900 min-h-screen">
+    <div className="bg-[#EEE6DC] text-[#1C1C1C] min-h-screen">
       <LightNav />
       <LightHero />
       

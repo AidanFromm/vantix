@@ -27,7 +27,7 @@ export function ConsultantLanding() {
   if (!mounted) return null;
 
   return (
-    <div className="bg-[#F4EFE8] text-gray-900 min-h-screen overflow-x-hidden">
+    <div className="bg-[#F4EFE8] text-[#1C1C1C] min-h-screen overflow-x-hidden">
       <Navigation />
       <HeroSection />
       <LogoBar />
@@ -61,43 +61,43 @@ function Navigation() {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       scrolled 
-        ? 'bg-[#EEE6DC]/95 backdrop-blur-xl shadow-sm border-b border-gray-100' 
+        ? 'bg-[#EEE6DC]/95 backdrop-blur-xl shadow-sm border-b border-[#EEE6DC]' 
         : 'bg-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/40 transition-shadow">
+            <div className="relative w-10 h-10 bg-gradient-to-br from-[#B07A45]/50 to-[#8E5E34] rounded-xl flex items-center justify-center shadow-lg shadow-[#B07A45]/50/20 group-hover:shadow-[#B07A45]/50/40 transition-shadow">
               <span className="text-white font-bold text-lg">V</span>
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#C89A6A] rounded-full border-2 border-white" />
             </div>
             <div className="hidden sm:block">
-              <span className="font-semibold text-gray-900 tracking-tight text-lg">VANTIX</span>
-              <span className="block text-[10px] text-gray-400 tracking-widest uppercase -mt-0.5">AI Consulting</span>
+              <span className="font-semibold text-[#1C1C1C] tracking-tight text-lg">VANTIX</span>
+              <span className="block text-[10px] text-[#A39B90] tracking-widest uppercase -mt-0.5">AI Consulting</span>
             </div>
           </Link>
           
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-8">
-            <Link href="#services" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">Services</Link>
-            <Link href="#results" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">Results</Link>
-            <Link href="#process" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">Process</Link>
-            <Link href="#faq" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">FAQ</Link>
+            <Link href="#services" className="text-sm text-[#F4EFE8]0 hover:text-[#1C1C1C] transition-colors">Services</Link>
+            <Link href="#results" className="text-sm text-[#F4EFE8]0 hover:text-[#1C1C1C] transition-colors">Results</Link>
+            <Link href="#process" className="text-sm text-[#F4EFE8]0 hover:text-[#1C1C1C] transition-colors">Process</Link>
+            <Link href="#faq" className="text-sm text-[#F4EFE8]0 hover:text-[#1C1C1C] transition-colors">FAQ</Link>
           </div>
 
           {/* CTA */}
           <div className="flex items-center gap-3">
             <Link
               href="tel:9084987753"
-              className="hidden sm:flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+              className="hidden sm:flex items-center gap-2 text-sm text-[#4B4B4B] hover:text-[#1C1C1C]"
             >
               <Phone size={14} />
               (908) 498-7753
             </Link>
             <Link
               href="#contact"
-              className="px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-all shadow-lg shadow-gray-900/10"
+              className="px-5 py-2.5 bg-[#1C1C1C] text-white text-sm font-medium rounded-full hover:bg-[#1C1C1C] transition-all shadow-lg shadow-[#1C1C1C]/10"
             >
               Free Consultation
             </Link>
@@ -127,13 +127,13 @@ function HeroSection() {
       className="relative min-h-[100vh] flex items-center pt-24 pb-16 overflow-hidden"
     >
       {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-emerald-50/30 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#B07A45]/5/30 via-transparent to-transparent" />
       
       {/* Grid pattern */}
       <div 
         className="absolute inset-0 opacity-[0.4]"
         style={{
-          backgroundImage: `linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(to right, #E3D9CD 1px, transparent 1px), linear-gradient(to bottom, #E3D9CD 1px, transparent 1px)`,
           backgroundSize: '60px 60px',
         }}
       />
@@ -142,12 +142,12 @@ function HeroSection() {
       <motion.div
         animate={{ y: [0, -30, 0], rotate: [0, 3, 0] }}
         transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-40 right-[10%] w-80 h-80 bg-gradient-to-br from-emerald-200/30 to-cyan-100/20 rounded-[60px] blur-xl"
+        className="absolute top-40 right-[10%] w-80 h-80 bg-gradient-to-br from-[#B07A45]/20/30 to-[#EEE6DC]/20 rounded-[60px] blur-xl"
       />
       <motion.div
         animate={{ y: [0, 20, 0], rotate: [0, -3, 0] }}
         transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-20 left-[5%] w-60 h-60 bg-gradient-to-br from-emerald-300/20 to-transparent rounded-full blur-xl"
+        className="absolute bottom-20 left-[5%] w-60 h-60 bg-gradient-to-br from-[#C89A6A]/20 to-transparent rounded-full blur-xl"
       />
 
       <motion.div style={{ y, opacity }} className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
@@ -157,14 +157,14 @@ function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="inline-flex items-center gap-3 px-4 py-2 bg-[#EEE6DC] rounded-full shadow-md border border-gray-100 mb-8"
+            className="inline-flex items-center gap-3 px-4 py-2 bg-[#EEE6DC] rounded-full shadow-md border border-[#EEE6DC] mb-8"
           >
             <div className="flex -space-x-2">
-              <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold border-2 border-white">K</div>
-              <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold border-2 border-white">A</div>
+              <div className="w-6 h-6 rounded-full bg-[#B07A45]/50 flex items-center justify-center text-white text-xs font-bold border-2 border-white">K</div>
+              <div className="w-6 h-6 rounded-full bg-[#B07A45]/50 flex items-center justify-center text-white text-xs font-bold border-2 border-white">A</div>
             </div>
-            <span className="text-sm text-gray-600">
-              Trusted by founders doing <span className="font-semibold text-gray-900">$10M+ in revenue</span>
+            <span className="text-sm text-[#4B4B4B]">
+              Trusted by founders doing <span className="font-semibold text-[#1C1C1C]">$10M+ in revenue</span>
             </span>
           </motion.div>
 
@@ -173,11 +173,11 @@ function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.05] text-gray-900 mb-6 tracking-tight"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.05] text-[#1C1C1C] mb-6 tracking-tight"
           >
             AI consultants
             <br />
-            who <span className="text-emerald-500">actually build</span>
+            who <span className="text-[#B07A45]/50">actually build</span>
           </motion.h1>
 
           {/* Subheadline - Value proposition */}
@@ -185,11 +185,11 @@ function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-lg md:text-xl text-gray-500 max-w-2xl mb-10 leading-relaxed"
+            className="text-lg md:text-xl text-[#F4EFE8]0 max-w-2xl mb-10 leading-relaxed"
           >
             Most consultants hand you a strategy deck and disappear.
             <br className="hidden md:block" />
-            <span className="text-gray-900 font-medium">We consult, build, and manage</span>—so your AI actually works.
+            <span className="text-[#1C1C1C] font-medium">We consult, build, and manage</span>—so your AI actually works.
           </motion.p>
 
           {/* Social proof line */}
@@ -197,9 +197,9 @@ function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex items-center gap-2 text-sm text-gray-500 mb-8"
+            className="flex items-center gap-2 text-sm text-[#F4EFE8]0 mb-8"
           >
-            <Bot size={16} className="text-emerald-500" />
+            <Bot size={16} className="text-[#B07A45]/50" />
             <span>We run AI systems for our own businesses—not just our clients&apos;.</span>
           </motion.div>
 
@@ -212,7 +212,7 @@ function HeroSection() {
           >
             <Link
               href="#contact"
-              className="group px-8 py-4 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 transition-all flex items-center gap-3 shadow-xl shadow-gray-900/10"
+              className="group px-8 py-4 bg-[#1C1C1C] text-white font-medium rounded-full hover:bg-[#1C1C1C] transition-all flex items-center gap-3 shadow-xl shadow-[#1C1C1C]/10"
             >
               <Calendar size={18} />
               Book a Free Discovery Call
@@ -220,7 +220,7 @@ function HeroSection() {
             </Link>
             <Link
               href="#results"
-              className="px-8 py-4 bg-[#EEE6DC] text-gray-700 font-medium rounded-full hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-2"
+              className="px-8 py-4 bg-[#EEE6DC] text-[#1C1C1C] font-medium rounded-full hover:bg-[#F4EFE8] transition-all border border-[#E3D9CD] flex items-center gap-2"
             >
               <Play size={16} />
               See Our Work
@@ -232,19 +232,19 @@ function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="grid grid-cols-3 gap-8 mt-16 pt-8 border-t border-gray-200 max-w-lg"
+            className="grid grid-cols-3 gap-8 mt-16 pt-8 border-t border-[#E3D9CD] max-w-lg"
           >
             <div>
-              <p className="text-2xl md:text-3xl font-bold text-gray-900">50+</p>
-              <p className="text-xs text-gray-500 mt-1">Projects Shipped</p>
+              <p className="text-2xl md:text-3xl font-bold text-[#1C1C1C]">50+</p>
+              <p className="text-xs text-[#F4EFE8]0 mt-1">Projects Shipped</p>
             </div>
             <div>
-              <p className="text-2xl md:text-3xl font-bold text-gray-900">3-5</p>
-              <p className="text-xs text-gray-500 mt-1">Weeks to Launch</p>
+              <p className="text-2xl md:text-3xl font-bold text-[#1C1C1C]">3-5</p>
+              <p className="text-xs text-[#F4EFE8]0 mt-1">Weeks to Launch</p>
             </div>
             <div>
-              <p className="text-2xl md:text-3xl font-bold text-gray-900">100%</p>
-              <p className="text-xs text-gray-500 mt-1">Satisfaction Rate</p>
+              <p className="text-2xl md:text-3xl font-bold text-[#1C1C1C]">100%</p>
+              <p className="text-xs text-[#F4EFE8]0 mt-1">Satisfaction Rate</p>
             </div>
           </motion.div>
         </div>
@@ -260,7 +260,7 @@ function HeroSection() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="flex flex-col items-center gap-2 text-gray-300"
+          className="flex flex-col items-center gap-2 text-[#E3D9CD]"
         >
           <ArrowDown size={20} />
         </motion.div>
@@ -274,9 +274,9 @@ function HeroSection() {
 // ============================================
 function LogoBar() {
   return (
-    <section className="py-12 bg-[#EEE6DC] border-y border-gray-100">
+    <section className="py-12 bg-[#EEE6DC] border-y border-[#EEE6DC]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <p className="text-center text-sm text-gray-400 mb-8 tracking-wide uppercase">Trusted by growing businesses</p>
+        <p className="text-center text-sm text-[#A39B90] mb-8 tracking-wide uppercase">Trusted by growing businesses</p>
         <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
           {/* Real client logos - text placeholder style */}
           {[
@@ -292,8 +292,8 @@ function LogoBar() {
               transition={{ delay: i * 0.1 }}
               className="flex flex-col items-center"
             >
-              <span className="text-xl font-semibold text-gray-800 tracking-tight">{client.name}</span>
-              <span className="text-xs text-gray-400">{client.subtitle}</span>
+              <span className="text-xl font-semibold text-[#1C1C1C] tracking-tight">{client.name}</span>
+              <span className="text-xs text-[#A39B90]">{client.subtitle}</span>
             </motion.div>
           ))}
         </div>
@@ -317,13 +317,13 @@ function ProblemSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-red-500 font-medium text-sm tracking-wide uppercase mb-4">The Problem</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900 leading-tight mb-6">
+            <p className="text-[#B0614A]/50 font-medium text-sm tracking-wide uppercase mb-4">The Problem</p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-[#1C1C1C] leading-tight mb-6">
               80% of AI projects fail.
               <br />
-              <span className="text-gray-400">Here&apos;s why.</span>
+              <span className="text-[#A39B90]">Here&apos;s why.</span>
             </h2>
-            <p className="text-gray-500 text-lg leading-relaxed mb-8">
+            <p className="text-[#F4EFE8]0 text-lg leading-relaxed mb-8">
               You&apos;ve seen the demos. ChatGPT, automation, AI agents—the potential is real. But when 
               you try to implement it? Consultants hand you a 100-page strategy doc. Developers build 
               something that breaks. And you&apos;re left with expensive tools gathering dust.
@@ -336,10 +336,10 @@ function ProblemSection() {
                 'No one to manage it after launch',
               ].map((problem, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center mt-0.5 flex-shrink-0">
-                    <span className="text-red-500 text-xs">✕</span>
+                  <div className="w-5 h-5 rounded-full bg-[#B0614A]/10 flex items-center justify-center mt-0.5 flex-shrink-0">
+                    <span className="text-[#B0614A]/50 text-xs">✕</span>
                   </div>
-                  <p className="text-gray-600">{problem}</p>
+                  <p className="text-[#4B4B4B]">{problem}</p>
                 </div>
               ))}
             </div>
@@ -352,7 +352,7 @@ function ProblemSection() {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-3xl p-8 lg:p-12">
+            <div className="bg-gradient-to-br from-[#B0614A]/5 to-[#B07A45]/5 rounded-3xl p-8 lg:p-12">
               <div className="space-y-4">
                 {/* Failed project cards */}
                 {[
@@ -360,12 +360,12 @@ function ProblemSection() {
                   { title: 'Automation System', status: 'Failed', reason: '"Broke after 2 weeks"' },
                   { title: 'Data Pipeline', status: 'Over Budget', reason: '"3x original estimate"' },
                 ].map((item, i) => (
-                  <div key={i} className="bg-[#EEE6DC]/80 backdrop-blur rounded-xl p-4 border border-red-100">
+                  <div key={i} className="bg-[#EEE6DC]/80 backdrop-blur rounded-xl p-4 border border-[#B0614A]/10">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-gray-900">{item.title}</span>
-                      <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">{item.status}</span>
+                      <span className="font-medium text-[#1C1C1C]">{item.title}</span>
+                      <span className="text-xs font-medium text-[#8E5E34] bg-[#B0614A]/10 px-2 py-1 rounded-full">{item.status}</span>
                     </div>
-                    <p className="text-sm text-gray-500 italic">{item.reason}</p>
+                    <p className="text-sm text-[#F4EFE8]0 italic">{item.reason}</p>
                   </div>
                 ))}
               </div>
@@ -382,7 +382,7 @@ function ProblemSection() {
 // ============================================
 function SolutionSection() {
   return (
-    <section className="py-24 lg:py-32 bg-gray-900 text-white">
+    <section className="py-24 lg:py-32 bg-[#1C1C1C] text-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - Visual */}
@@ -392,7 +392,7 @@ function SolutionSection() {
             viewport={{ once: true }}
             className="relative order-2 lg:order-1"
           >
-            <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 rounded-3xl p-8 lg:p-12 border border-emerald-700/30">
+            <div className="bg-gradient-to-br from-[#8E5E34]/50 to-[#8E5E34]/30 rounded-3xl p-8 lg:p-12 border border-[#8E5E34]/30">
               <div className="space-y-4">
                 {/* Success project cards */}
                 {[
@@ -400,12 +400,12 @@ function SolutionSection() {
                   { title: 'Trading Bot', result: '24/7 automated', status: 'Running 14 months' },
                   { title: 'CardLedger App', result: '250K+ cards tracked', status: 'Live on web' },
                 ].map((item, i) => (
-                  <div key={i} className="bg-[#EEE6DC]/10 backdrop-blur rounded-xl p-4 border border-emerald-500/20">
+                  <div key={i} className="bg-[#EEE6DC]/10 backdrop-blur rounded-xl p-4 border border-[#B07A45]/50/20">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium text-white">{item.title}</span>
-                      <span className="text-xs font-medium text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-full">{item.status}</span>
+                      <span className="text-xs font-medium text-[#C89A6A] bg-[#B07A45]/50/20 px-2 py-1 rounded-full">{item.status}</span>
                     </div>
-                    <p className="text-sm text-emerald-200">{item.result}</p>
+                    <p className="text-sm text-[#B07A45]/20">{item.result}</p>
                   </div>
                 ))}
               </div>
@@ -419,13 +419,13 @@ function SolutionSection() {
             viewport={{ once: true }}
             className="order-1 lg:order-2"
           >
-            <p className="text-emerald-400 font-medium text-sm tracking-wide uppercase mb-4">The Solution</p>
+            <p className="text-[#C89A6A] font-medium text-sm tracking-wide uppercase mb-4">The Solution</p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-white leading-tight mb-6">
               Strategy. Build. Manage.
               <br />
-              <span className="text-emerald-400">One partner.</span>
+              <span className="text-[#C89A6A]">One partner.</span>
             </h2>
-            <p className="text-gray-300 text-lg leading-relaxed mb-8">
+            <p className="text-[#E3D9CD] text-lg leading-relaxed mb-8">
               We don&apos;t just consult—we execute. And we don&apos;t just build—we stick around to make 
               sure it keeps working. Full-stack AI implementation from people who run AI systems 
               for their own businesses, not just PowerPoint presentations.
@@ -438,10 +438,10 @@ function SolutionSection() {
                 'One team from idea to scale',
               ].map((benefit, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
-                    <Check size={12} className="text-emerald-400" />
+                  <div className="w-5 h-5 rounded-full bg-[#B07A45]/50/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                    <Check size={12} className="text-[#C89A6A]" />
                   </div>
-                  <p className="text-gray-200">{benefit}</p>
+                  <p className="text-[#E3D9CD]">{benefit}</p>
                 </div>
               ))}
             </div>
@@ -523,11 +523,11 @@ function ServiceTiers() {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">How We Work</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900 mb-6">
+          <p className="text-[#B07A45]/50 font-medium text-sm tracking-wide uppercase mb-4">How We Work</p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-[#1C1C1C] mb-6">
             Three ways to work with us
           </h2>
-          <p className="text-gray-500 text-lg">
+          <p className="text-[#F4EFE8]0 text-lg">
             Start with strategy. Scale to full partnership. Always know exactly what you&apos;re getting.
           </p>
         </motion.div>
@@ -543,14 +543,14 @@ function ServiceTiers() {
               transition={{ delay: i * 0.1 }}
               className={`relative rounded-2xl p-8 ${
                 tier.popular 
-                  ? 'bg-gray-900 text-white ring-2 ring-emerald-500' 
-                  : 'bg-gray-50 border border-gray-200'
+                  ? 'bg-[#1C1C1C] text-white ring-2 ring-[#B07A45]/50' 
+                  : 'bg-[#F4EFE8] border border-[#E3D9CD]'
               }`}
             >
               {/* Popular badge */}
               {tier.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="px-4 py-1 bg-emerald-500 text-white text-xs font-medium rounded-full">
+                  <span className="px-4 py-1 bg-[#B07A45]/50 text-white text-xs font-medium rounded-full">
                     Most Popular
                   </span>
                 </div>
@@ -558,31 +558,31 @@ function ServiceTiers() {
 
               {/* Icon */}
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${
-                tier.popular ? 'bg-emerald-500' : 'bg-[#EEE6DC] shadow-sm border border-gray-200'
+                tier.popular ? 'bg-[#B07A45]/50' : 'bg-[#EEE6DC] shadow-sm border border-[#E3D9CD]'
               }`}>
-                <tier.icon size={24} className={tier.popular ? 'text-white' : 'text-emerald-500'} />
+                <tier.icon size={24} className={tier.popular ? 'text-white' : 'text-[#B07A45]/50'} />
               </div>
 
               {/* Header */}
-              <h3 className={`text-2xl font-semibold mb-1 ${tier.popular ? 'text-white' : 'text-gray-900'}`}>
+              <h3 className={`text-2xl font-semibold mb-1 ${tier.popular ? 'text-white' : 'text-[#1C1C1C]'}`}>
                 {tier.name}
               </h3>
-              <p className={`text-sm mb-4 ${tier.popular ? 'text-emerald-300' : 'text-emerald-600'}`}>
+              <p className={`text-sm mb-4 ${tier.popular ? 'text-[#C89A6A]' : 'text-[#8E5E34]'}`}>
                 {tier.tagline}
               </p>
 
               {/* Price */}
               <div className="mb-4">
-                <span className={`text-3xl font-bold ${tier.popular ? 'text-white' : 'text-gray-900'}`}>
+                <span className={`text-3xl font-bold ${tier.popular ? 'text-white' : 'text-[#1C1C1C]'}`}>
                   {tier.price}
                 </span>
-                <span className={`text-sm ml-2 ${tier.popular ? 'text-gray-400' : 'text-gray-500'}`}>
+                <span className={`text-sm ml-2 ${tier.popular ? 'text-[#A39B90]' : 'text-[#F4EFE8]0'}`}>
                   {tier.duration}
                 </span>
               </div>
 
               {/* Description */}
-              <p className={`text-sm mb-6 ${tier.popular ? 'text-gray-300' : 'text-gray-500'}`}>
+              <p className={`text-sm mb-6 ${tier.popular ? 'text-[#E3D9CD]' : 'text-[#F4EFE8]0'}`}>
                 {tier.description}
               </p>
 
@@ -591,9 +591,9 @@ function ServiceTiers() {
                 {tier.features.map((feature, j) => (
                   <li key={j} className="flex items-start gap-3">
                     <Check size={16} className={`mt-0.5 flex-shrink-0 ${
-                      tier.popular ? 'text-emerald-400' : 'text-emerald-500'
+                      tier.popular ? 'text-[#C89A6A]' : 'text-[#B07A45]/50'
                     }`} />
-                    <span className={`text-sm ${tier.popular ? 'text-gray-200' : 'text-gray-600'}`}>
+                    <span className={`text-sm ${tier.popular ? 'text-[#E3D9CD]' : 'text-[#4B4B4B]'}`}>
                       {feature}
                     </span>
                   </li>
@@ -605,8 +605,8 @@ function ServiceTiers() {
                 href="#contact"
                 className={`block w-full py-3 px-6 rounded-full text-center font-medium transition-all ${
                   tier.popular
-                    ? 'bg-emerald-500 text-white hover:bg-emerald-400'
-                    : 'bg-gray-900 text-white hover:bg-gray-800'
+                    ? 'bg-[#B07A45]/50 text-white hover:bg-[#C89A6A]'
+                    : 'bg-[#1C1C1C] text-white hover:bg-[#1C1C1C]'
                 }`}
               >
                 {tier.cta}
@@ -620,9 +620,9 @@ function ServiceTiers() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center text-gray-500 text-sm mt-12"
+          className="text-center text-[#F4EFE8]0 text-sm mt-12"
         >
-          Need something custom? <Link href="#contact" className="text-emerald-600 hover:underline">Let&apos;s talk</Link> about your specific requirements.
+          Need something custom? <Link href="#contact" className="text-[#8E5E34] hover:underline">Let&apos;s talk</Link> about your specific requirements.
         </motion.p>
       </div>
     </section>
@@ -664,13 +664,13 @@ function ProofSection() {
           viewport={{ once: true }}
           className="max-w-3xl mb-16"
         >
-          <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">Proof</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900 mb-6">
+          <p className="text-[#B07A45]/50 font-medium text-sm tracking-wide uppercase mb-4">Proof</p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-[#1C1C1C] mb-6">
             We don&apos;t just build.
             <br />
-            <span className="text-emerald-500">We ship results.</span>
+            <span className="text-[#B07A45]/50">We ship results.</span>
           </h2>
-          <p className="text-gray-500 text-lg">
+          <p className="text-[#F4EFE8]0 text-lg">
             Real projects. Real businesses. Real revenue.
           </p>
         </motion.div>
@@ -684,14 +684,14 @@ function ProofSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-[#EEE6DC] rounded-2xl p-8 border border-gray-100 hover:border-emerald-200 hover:shadow-lg transition-all group"
+              className="bg-[#EEE6DC] rounded-2xl p-8 border border-[#EEE6DC] hover:border-[#B07A45]/20 hover:shadow-lg transition-all group"
             >
               <div className="mb-6">
-                <p className="text-4xl lg:text-5xl font-bold text-emerald-500 mb-1">{result.metric}</p>
-                <p className="text-sm text-gray-500">{result.label}</p>
+                <p className="text-4xl lg:text-5xl font-bold text-[#B07A45]/50 mb-1">{result.metric}</p>
+                <p className="text-sm text-[#F4EFE8]0">{result.label}</p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{result.project}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{result.description}</p>
+              <h3 className="text-xl font-semibold text-[#1C1C1C] mb-2">{result.project}</h3>
+              <p className="text-[#F4EFE8]0 text-sm leading-relaxed">{result.description}</p>
             </motion.div>
           ))}
         </div>
@@ -738,13 +738,13 @@ function DifferentiatorSection() {
             viewport={{ once: true }}
             className="lg:sticky lg:top-32"
           >
-            <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">Why Vantix</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900 mb-6">
+            <p className="text-[#B07A45]/50 font-medium text-sm tracking-wide uppercase mb-4">Why Vantix</p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-[#1C1C1C] mb-6">
               Not your typical
               <br />
-              <span className="text-gray-400">consulting firm.</span>
+              <span className="text-[#A39B90]">consulting firm.</span>
             </h2>
-            <p className="text-gray-500 text-lg leading-relaxed">
+            <p className="text-[#F4EFE8]0 text-lg leading-relaxed">
               Big consulting firms charge $50K for a strategy deck. Agencies build things that break. 
               Freelancers disappear. We&apos;re different—and that&apos;s the point.
             </p>
@@ -759,13 +759,13 @@ function DifferentiatorSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-6 bg-gray-50 rounded-xl"
+                className="p-6 bg-[#F4EFE8] rounded-xl"
               >
-                <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
-                  <diff.icon size={20} className="text-emerald-600" />
+                <div className="w-10 h-10 bg-[#B07A45]/10 rounded-lg flex items-center justify-center mb-4">
+                  <diff.icon size={20} className="text-[#8E5E34]" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{diff.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{diff.description}</p>
+                <h3 className="text-lg font-semibold text-[#1C1C1C] mb-2">{diff.title}</h3>
+                <p className="text-[#F4EFE8]0 text-sm leading-relaxed">{diff.description}</p>
               </motion.div>
             ))}
           </div>
@@ -807,7 +807,7 @@ function ProcessSection() {
   ];
 
   return (
-    <section id="process" className="py-24 lg:py-32 bg-gray-900 text-white">
+    <section id="process" className="py-24 lg:py-32 bg-[#1C1C1C] text-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
         <motion.div
@@ -816,11 +816,11 @@ function ProcessSection() {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <p className="text-emerald-400 font-medium text-sm tracking-wide uppercase mb-4">Process</p>
+          <p className="text-[#C89A6A] font-medium text-sm tracking-wide uppercase mb-4">Process</p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-white mb-6">
             Idea to launch in weeks.
             <br />
-            <span className="text-emerald-400">Not months.</span>
+            <span className="text-[#C89A6A]">Not months.</span>
           </h2>
         </motion.div>
 
@@ -837,15 +837,15 @@ function ProcessSection() {
             >
               {/* Connector */}
               {i < steps.length - 1 && (
-                <div className="hidden md:block absolute top-6 left-full w-full h-px bg-gradient-to-r from-emerald-500/50 to-transparent" />
+                <div className="hidden md:block absolute top-6 left-full w-full h-px bg-gradient-to-r from-[#B07A45]/50/50 to-transparent" />
               )}
               
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl font-bold text-emerald-500">{step.num}</span>
-                <span className="text-xs font-medium text-gray-500 bg-[#EEE6DC]/10 px-2 py-1 rounded">{step.duration}</span>
+                <span className="text-3xl font-bold text-[#B07A45]/50">{step.num}</span>
+                <span className="text-xs font-medium text-[#F4EFE8]0 bg-[#EEE6DC]/10 px-2 py-1 rounded">{step.duration}</span>
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{step.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{step.description}</p>
+              <p className="text-[#A39B90] text-sm leading-relaxed">{step.description}</p>
             </motion.div>
           ))}
         </div>
@@ -880,7 +880,7 @@ function TestimonialsSection() {
   ];
 
   return (
-    <section className="py-24 lg:py-32 bg-emerald-50/50">
+    <section className="py-24 lg:py-32 bg-[#B07A45]/5/50">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
         <motion.div
@@ -889,8 +889,8 @@ function TestimonialsSection() {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <p className="text-emerald-600 font-medium text-sm tracking-wide uppercase mb-4">Testimonials</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900">
+          <p className="text-[#8E5E34] font-medium text-sm tracking-wide uppercase mb-4">Testimonials</p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-[#1C1C1C]">
             Don&apos;t take our word for it
           </h2>
         </motion.div>
@@ -909,20 +909,20 @@ function TestimonialsSection() {
               {/* Stars */}
               <div className="flex gap-1 mb-6">
                 {[...Array(5)].map((_, j) => (
-                  <Star key={j} size={16} className="fill-yellow-400 text-yellow-400" />
+                  <Star key={j} size={16} className="fill-[#C89A6A] text-[#C89A6A]" />
                 ))}
               </div>
 
               {/* Quote */}
-              <p className="text-gray-700 leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
+              <p className="text-[#1C1C1C] leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
 
               {/* Author */}
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-900">{t.name}</p>
-                  <p className="text-sm text-gray-500">{t.title}</p>
+                  <p className="font-semibold text-[#1C1C1C]">{t.name}</p>
+                  <p className="text-sm text-[#F4EFE8]0">{t.title}</p>
                 </div>
-                <span className="text-xs font-medium text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">
+                <span className="text-xs font-medium text-[#8E5E34] bg-[#B07A45]/10 px-3 py-1 rounded-full">
                   {t.metric}
                 </span>
               </div>
@@ -977,8 +977,8 @@ function FAQSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <p className="text-emerald-500 font-medium text-sm tracking-wide uppercase mb-4">FAQ</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-900">
+          <p className="text-[#B07A45]/50 font-medium text-sm tracking-wide uppercase mb-4">FAQ</p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-[#1C1C1C]">
             Questions? Answers.
           </h2>
         </motion.div>
@@ -992,16 +992,16 @@ function FAQSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className="bg-gray-50 rounded-xl overflow-hidden"
+              className="bg-[#F4EFE8] rounded-xl overflow-hidden"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full p-5 flex items-center justify-between text-left hover:bg-gray-100 transition-colors"
+                className="w-full p-5 flex items-center justify-between text-left hover:bg-[#EEE6DC] transition-colors"
               >
-                <span className="font-medium text-gray-900 pr-4">{faq.question}</span>
+                <span className="font-medium text-[#1C1C1C] pr-4">{faq.question}</span>
                 <ChevronDown 
                   size={20} 
-                  className={`text-gray-400 flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-180' : ''}`} 
+                  className={`text-[#A39B90] flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-180' : ''}`} 
                 />
               </button>
               <AnimatePresence>
@@ -1013,7 +1013,7 @@ function FAQSection() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <p className="px-5 pb-5 text-gray-600 leading-relaxed">{faq.answer}</p>
+                    <p className="px-5 pb-5 text-[#4B4B4B] leading-relaxed">{faq.answer}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -1030,7 +1030,7 @@ function FAQSection() {
 // ============================================
 function FinalCTA() {
   return (
-    <section id="contact" className="py-24 lg:py-32 bg-gray-900 text-white">
+    <section id="contact" className="py-24 lg:py-32 bg-[#1C1C1C] text-white">
       <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -1038,18 +1038,18 @@ function FinalCTA() {
           viewport={{ once: true }}
         >
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 rounded-full mb-8">
-            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            <span className="text-sm text-emerald-300">Limited spots available this month</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#B07A45]/50/20 rounded-full mb-8">
+            <span className="w-2 h-2 bg-[#C89A6A] rounded-full animate-pulse" />
+            <span className="text-sm text-[#C89A6A]">Limited spots available this month</span>
           </div>
 
           {/* Headline */}
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium mb-6">
             Ready to make AI
             <br />
-            <span className="text-emerald-400">actually work?</span>
+            <span className="text-[#C89A6A]">actually work?</span>
           </h2>
-          <p className="text-gray-400 text-lg mb-10 max-w-xl mx-auto">
+          <p className="text-[#A39B90] text-lg mb-10 max-w-xl mx-auto">
             Book a free 30-minute discovery call. We&apos;ll analyze your business, 
             identify AI opportunities, and map out next steps—no commitment required.
           </p>
@@ -1058,7 +1058,7 @@ function FinalCTA() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link
               href="mailto:usevantix@gmail.com?subject=Discovery%20Call%20Request"
-              className="group px-8 py-4 bg-emerald-500 text-white font-medium rounded-full hover:bg-emerald-400 transition-all flex items-center gap-3 shadow-lg shadow-emerald-500/25"
+              className="group px-8 py-4 bg-[#B07A45]/50 text-white font-medium rounded-full hover:bg-[#C89A6A] transition-all flex items-center gap-3 shadow-lg shadow-[#B07A45]/50/25"
             >
               <Calendar size={18} />
               Book Your Free Call
@@ -1074,17 +1074,17 @@ function FinalCTA() {
           </div>
 
           {/* Trust line */}
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[#F4EFE8]0">
             <div className="flex items-center gap-2">
-              <Check size={16} className="text-emerald-400" />
+              <Check size={16} className="text-[#C89A6A]" />
               <span>Free consultation</span>
             </div>
             <div className="flex items-center gap-2">
-              <Check size={16} className="text-emerald-400" />
+              <Check size={16} className="text-[#C89A6A]" />
               <span>No commitment</span>
             </div>
             <div className="flex items-center gap-2">
-              <Check size={16} className="text-emerald-400" />
+              <Check size={16} className="text-[#C89A6A]" />
               <span>Response within 24 hours</span>
             </div>
           </div>
@@ -1099,22 +1099,22 @@ function FinalCTA() {
 // ============================================
 function Footer() {
   return (
-    <footer className="py-12 px-6 lg:px-12 bg-gray-950 border-t border-white/5">
+    <footer className="py-12 px-6 lg:px-12 bg-[#1C1C1C] border-t border-white/5">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#B07A45]/50 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">V</span>
             </div>
             <div>
               <span className="font-semibold text-white">VANTIX</span>
-              <span className="block text-xs text-gray-500">AI Consulting</span>
+              <span className="block text-xs text-[#F4EFE8]0">AI Consulting</span>
             </div>
           </div>
 
           {/* Contact */}
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[#A39B90]">
             <a href="mailto:usevantix@gmail.com" className="flex items-center gap-2 hover:text-white transition-colors">
               <Mail size={14} />
               usevantix@gmail.com
@@ -1126,7 +1126,7 @@ function Footer() {
           </div>
 
           {/* Copyright */}
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[#F4EFE8]0">
             © 2026 Vantix LLC • New Jersey, USA
           </p>
         </div>

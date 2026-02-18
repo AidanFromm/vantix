@@ -18,7 +18,7 @@ export function GlowCard({
   children,
   className,
   containerClassName,
-  glowColor = 'from-emerald-500 via-teal-500 to-cyan-500',
+  glowColor = 'from-[#B07A45]/50 via-[#B07A45] to-[#B07A45]',
   glowIntensity = 'medium',
   borderRadius = '1.5rem',
   showSpotlight = true,
@@ -148,10 +148,10 @@ export function SimpleGlowCard({
   glowColor?: 'emerald' | 'purple' | 'blue' | 'orange';
 }) {
   const colorMap = {
-    emerald: 'hover:shadow-emerald-500/20 hover:border-emerald-500/30',
-    purple: 'hover:shadow-purple-500/20 hover:border-purple-500/30',
-    blue: 'hover:shadow-blue-500/20 hover:border-blue-500/30',
-    orange: 'hover:shadow-orange-500/20 hover:border-orange-500/30',
+    emerald: 'hover:shadow-[#B07A45]/50/20 hover:border-[#B07A45]/50/30',
+    purple: 'hover:shadow-[#B07A45]/50/20 hover:border-[#B07A45]/50/30',
+    blue: 'hover:shadow-[#B07A45]/50/20 hover:border-[#B07A45]/50/30',
+    orange: 'hover:shadow-[#B07A45]/20 hover:border-[#B07A45]/30',
   };
 
   return (
@@ -216,13 +216,13 @@ export function HolographicCard({
         style={{
           background: `linear-gradient(
             var(--border-angle, 0deg),
-            #ff0080,
-            #7928ca,
-            #0070f3,
-            #38bdf8,
-            #10b981,
-            #facc15,
-            #ff0080
+            #B07A45,
+            #8E5E34,
+            #B07A45,
+            #C89A6A,
+            #B07A45,
+            #C89A6A,
+            #B07A45
           )`,
           animation: 'borderRotate 4s linear infinite',
         }}

@@ -117,7 +117,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
           {/* Collapse button - desktop only */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg bg-[#EEE6DC] hover:bg-[#EDE7DF] text-[#7A746C] hover:text-[#1C1C1C] transition-all"
+            className="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg bg-[#EEE6DC] hover:bg-[#EEE6DC] text-[#7A746C] hover:text-[#1C1C1C] transition-all"
           >
             {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
@@ -141,7 +141,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
                 {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
               </span>
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#8DB580] rounded-full border-2 border-white" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#B07A45] rounded-full border-2 border-white" />
           </div>
           <AnimatePresence>
             {!isCollapsed && (
@@ -232,7 +232,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       <div className="p-3 border-t border-[#E3D9CD]">
         <button
           onClick={onLogout}
-          className={`flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-[#7A746C] hover:text-[#C4735B] hover:bg-[#C4735B]/10 transition-all ${
+          className={`flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-[#7A746C] hover:text-[#B07A45] hover:bg-[#B07A45]/10 transition-all ${
             isCollapsed ? 'justify-center' : ''
           }`}
         >

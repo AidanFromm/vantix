@@ -13,9 +13,9 @@ const bots = [
     description: 'Primary AI assistant for development, automation, and project management.',
     capabilities: ['Full-stack Development', 'Code Review', 'Automation', 'Memory System', 'Voice Transcription', 'File Management'],
     channels: ['Telegram', 'CLI'],
-    color: 'from-emerald-500 to-teal-500',
-    borderColor: 'border-emerald-500/30',
-    bgColor: 'bg-emerald-500/10',
+    color: 'from-[#B07A45]/50 to-[#B07A45]',
+    borderColor: 'border-[#B07A45]/50/30',
+    bgColor: 'bg-[#B07A45]/50/10',
   },
   {
     id: 'botskii',
@@ -26,16 +26,16 @@ const bots = [
     description: 'Secondary AI assistant specializing in research, analysis, and collaborative development.',
     capabilities: ['Research', 'Competitive Analysis', 'Coding', 'GitHub Collaboration', 'Documentation', 'Bug Fixing'],
     channels: ['Telegram', 'CLI'],
-    color: 'from-blue-500 to-indigo-500',
-    borderColor: 'border-blue-500/30',
-    bgColor: 'bg-blue-500/10',
+    color: 'from-[#B07A45]/50 to-[#B07A45]',
+    borderColor: 'border-[#B07A45]/50/30',
+    bgColor: 'bg-[#B07A45]/50/10',
   },
 ];
 
 const statusColors = {
-  online: 'bg-green-500',
-  offline: 'bg-gray-500',
-  busy: 'bg-yellow-500',
+  online: 'bg-[#B07A45]/50',
+  offline: 'bg-[#F4EFE8]0',
+  busy: 'bg-[#B07A45]',
 };
 
 export default function BotsPage() {

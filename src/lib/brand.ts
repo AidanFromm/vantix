@@ -4,12 +4,12 @@ export const brand = {
   description: 'We build the systems that let you focus on what matters. Websites. Apps. Inventory. All connected. All automated.',
   
   colors: {
-    primary: '#10b981', // Green-teal
-    primaryLight: '#34d399',
-    background: '#0a0a0a',
+    primary: '#B07A45', // Green-teal
+    primaryLight: '#C89A6A',
+    background: '#1C1C1C',
     text: '#F4EFE8',
-    muted: '#666666',
-    border: '#1a1a1a',
+    muted: '#7A746C',
+    border: '#1C1C1C',
   },
   
   services: [

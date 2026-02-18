@@ -88,7 +88,7 @@ export default function InboxPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-[#10b981]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-[#B07A45]" />
       </div>
     );
   }
@@ -116,7 +116,7 @@ export default function InboxPage() {
             onClick={() => setFilter(f.key)}
             className={`px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 ${
               filter === f.key
-                ? 'bg-[#10b981] text-white'
+                ? 'bg-[#B07A45] text-white'
                 : 'bg-[var(--color-card)] text-[var(--color-muted)] hover:text-white border border-[var(--color-border)]'
             }`}
           >
@@ -159,7 +159,7 @@ export default function InboxPage() {
                   >
                     <Star
                       size={16}
-                      className={msg.starred ? 'text-yellow-400 fill-yellow-400' : 'text-[var(--color-muted)]'}
+                      className={msg.starred ? 'text-[#C89A6A] fill-[#C89A6A]' : 'text-[var(--color-muted)]'}
                     />
                   </button>
                   <div className="flex-1 min-w-0">
@@ -169,12 +169,12 @@ export default function InboxPage() {
                           {msg.from}
                         </span>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          msg.type === 'contact' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'
+                          msg.type === 'contact' ? 'bg-[#B07A45]/50/20 text-[#C89A6A]' : 'bg-[#B07A45]/50/20 text-[#C89A6A]'
                         }`}>
                           {msg.type === 'contact' ? 'Contact' : 'Audit'}
                         </span>
                         {!msg.read && (
-                          <span className="w-2 h-2 rounded-full bg-[#10b981]" />
+                          <span className="w-2 h-2 rounded-full bg-[#B07A45]" />
                         )}
                       </div>
                       <span className="text-xs text-[var(--color-muted)]">
@@ -187,7 +187,7 @@ export default function InboxPage() {
                       <a
                         href={`mailto:${msg.email}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-xs text-[#10b981] hover:underline mt-1 inline-block"
+                        className="text-xs text-[#B07A45] hover:underline mt-1 inline-block"
                       >
                         {msg.email}
                       </a>

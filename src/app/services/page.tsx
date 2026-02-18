@@ -14,7 +14,7 @@ const fadeUp = {
 };
 
 const woodButtonStyle = {
-  background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878, #E6C78C)`,
+  background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #C89A6A, #C89A6A, #C89A6A, #C89A6A, #C89A6A)`,
   border: '1px solid rgba(139,90,43,0.2)',
 };
 
@@ -84,7 +84,7 @@ export default function ServicesPage() {
           </Link>
           <Link
             href="/#booking"
-            className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-sm hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
+            className="px-5 py-2 text-sm font-semibold rounded-full text-[#8E5E34] shadow-sm hover:shadow-[inset_3px_3px_6px_#B07A45,inset_-3px_-3px_6px_#D8C2A8] transition-all"
             style={woodButtonStyle}
           >
             Book Your Free Audit
@@ -125,9 +125,9 @@ export default function ServicesPage() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
-              className="rounded-2xl p-8 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#c8c4be,-12px_-12px_28px_#ffffff] hover:border-[#8E5E34]/20 transition-all duration-300"
+              className="rounded-2xl p-8 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#E3D9CD,-12px_-12px_28px_#ffffff] hover:border-[#8E5E34]/20 transition-all duration-300"
             >
-              <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-6">
+              <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-[inset_4px_4px_8px_#E3D9CD,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-6">
                 <s.icon className="w-7 h-7 text-[#8E5E34]" />
               </div>
               <h3 className="text-2xl font-bold mb-2">{s.title}</h3>
@@ -135,13 +135,13 @@ export default function ServicesPage() {
               <p className="text-[#7A746C] mb-6 leading-relaxed">{s.description}</p>
               <ul className="space-y-2.5 mb-6">
                 {s.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#5C5650]">
+                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#4B4B4B]">
                     <CheckCircle2 className="w-4 h-4 text-[#8E5E34] mt-0.5 shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
-              <Link href="/#booking" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#8E5E34] hover:text-[#9A7048] transition-colors">
+              <Link href="/#booking" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#8E5E34] hover:text-[#B07A45] transition-colors">
                 Get Started <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -154,7 +154,7 @@ export default function ServicesPage() {
         <motion.div
           initial="hidden" whileInView="visible" viewport={{ once: true }}
           variants={fadeUp}
-          className="rounded-2xl p-12 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]"
+          className="rounded-2xl p-12 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]"
         >
           <Calendar className="w-10 h-10 text-[#8E5E34] mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-4">Not Sure Where to Start?</h2>
@@ -164,14 +164,14 @@ export default function ServicesPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/#booking"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#8E5E34] font-semibold rounded-full shadow-[6px_6px_14px_#E3D9CD,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#B07A45,inset_-3px_-3px_6px_#D8C2A8] transition-all"
               style={woodButtonStyle}
             >
               Book Your Free Audit <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <a
               href="tel:+19084987753"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#E3D9CD] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#8E5E34]/20 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#E3D9CD] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#E3D9CD,-6px_-6px_14px_#ffffff] hover:border-[#8E5E34]/20 transition-all"
             >
               <Phone className="w-4 h-4" /> (908) 498-7753
             </a>
