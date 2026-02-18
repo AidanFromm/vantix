@@ -296,14 +296,14 @@ export default function ChatWidget() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full text-[#5C4033] shadow-[8px_8px_18px_#c8c4be,-8px_-8px_18px_#ffffff] transition-colors"
+            className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg hover:shadow-xl transition-all"
             style={{
-              background: `repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,90,43,0.05) 2px, rgba(139,90,43,0.05) 4px), linear-gradient(135deg, #E8CFA0 0%, #D4B07C 30%, #C9A06E 50%, #DDB98A 70%, #E8CFA0 100%)`,
+              backgroundColor: '#4A2112',
             }}
             aria-label="Open chat"
           >
             <MessageCircle className="h-6 w-6" />
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C4956A] opacity-20" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4A2112] opacity-20" />
           </motion.button>
         )}
       </AnimatePresence>
