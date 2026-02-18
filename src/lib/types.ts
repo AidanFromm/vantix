@@ -217,6 +217,80 @@ export interface TeamMember {
   created_at: string;
 }
 
+// Tasks
+export type TaskStatus = 'todo' | 'in_progress' | 'done' | 'blocked';
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
+
+export interface Task {
+  id: string;
+  project_id?: string;
+  assigned_to?: string;
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  due_date?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Invoice Items
+export interface InvoiceItem {
+  id: string;
+  invoice_id: string;
+  description: string;
+  quantity: number;
+  rate: number;
+  amount: number;
+}
+
+// Payments
+export interface Payment {
+  id: string;
+  invoice_id: string;
+  amount: number;
+  method?: string;
+  date: string;
+  notes?: string;
+  created_at: string;
+}
+
+// Media
+export interface MediaItem {
+  id: string;
+  name: string;
+  url: string;
+  type?: string;
+  size?: number;
+  tags?: string[];
+  client_id?: string;
+  project_id?: string;
+  created_at: string;
+}
+
+// Email Templates
+export interface EmailTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+  category?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Notifications
+export type NotificationType = 'info' | 'success' | 'warning' | 'error';
+
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  read: boolean;
+  created_at: string;
+}
+
 // Dashboard Stats
 export interface DashboardStats {
   totalRevenue: number;
