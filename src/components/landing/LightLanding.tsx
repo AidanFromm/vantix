@@ -144,7 +144,7 @@ function LightHero() {
     <motion.section
       ref={ref}
       style={{ opacity, y, scale }}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#fafafa]"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#F0DFD1]"
     >
       {/* Subtle grid */}
       <div 
@@ -412,7 +412,7 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
 // ============================================
 function ServicesSection() {
   return (
-    <section id="services" className="py-32 bg-[#fafafa]">
+    <section id="services" className="py-32 bg-[#F0DFD1]">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -502,7 +502,7 @@ function ContactSection() {
 // ============================================
 function Footer() {
   return (
-    <footer className="py-8 px-6 bg-[#fafafa] border-t border-gray-100">
+    <footer className="py-8 px-6 bg-[#F0DFD1] border-t border-gray-100">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
         <p>© 2026 Vantix LLC. All rights reserved.</p>
         <p>New Jersey, USA</p>

@@ -74,20 +74,20 @@ function RevenueChart({ invoices }: { invoices: InvoiceData[] }) {
     <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#8B6D47" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#8B6D47" stopOpacity="0.02" />
+          <stop offset="0%" stopColor="#6B3A1F" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#6B3A1F" stopOpacity="0.02" />
         </linearGradient>
       </defs>
       {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
-        <line key={i} x1={padding} x2={chartW - padding} y1={10 + usableH * (1 - pct)} y2={10 + usableH * (1 - pct)} stroke="#EDE8E1" strokeWidth="0.5" />
+        <line key={i} x1={padding} x2={chartW - padding} y1={10 + usableH * (1 - pct)} y2={10 + usableH * (1 - pct)} stroke="#E0CCBA" strokeWidth="0.5" />
       ))}
       <path d={areaD} fill="url(#revGrad)" />
-      <path d={pathD} fill="none" stroke="#8B6D47" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={pathD} fill="none" stroke="#6B3A1F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       {points.map((p, i) => (
         <g key={i}>
-          <circle cx={p.x} cy={p.y} r="4" fill="white" stroke="#8B6D47" strokeWidth="2" />
-          <text x={p.x} y={chartH - 6} textAnchor="middle" className="fill-[#A39484]" fontSize="10">{monthData[i].label}</text>
-          {monthData[i].value > 0 && <text x={p.x} y={p.y - 10} textAnchor="middle" className="fill-[#3D2E1C]" fontSize="9" fontWeight="600">${(monthData[i].value / 1000).toFixed(1)}k</text>}
+          <circle cx={p.x} cy={p.y} r="4" fill="white" stroke="#6B3A1F" strokeWidth="2" />
+          <text x={p.x} y={chartH - 6} textAnchor="middle" className="fill-[#8B6B56]" fontSize="10">{monthData[i].label}</text>
+          {monthData[i].value > 0 && <text x={p.x} y={p.y - 10} textAnchor="middle" className="fill-[#4A2112]" fontSize="9" fontWeight="600">${(monthData[i].value / 1000).toFixed(1)}k</text>}
         </g>
       ))}
     </svg>
@@ -106,8 +106,8 @@ function LeadFunnel({ leads }: { leads: LeadData[] }) {
     <div className="space-y-2">
       {counts.filter(c => c.count > 0 || ['new', 'won', 'lost'].includes(c.stage)).map(({ stage, count }) => (
         <div key={stage} className="flex items-center gap-3">
-          <span className="text-xs text-[#A39484] w-20 text-right">{stageLabels[stage]}</span>
-          <div className="flex-1 h-6 bg-[#F5F1EC] rounded-lg overflow-hidden">
+          <span className="text-xs text-[#8B6B56] w-20 text-right">{stageLabels[stage]}</span>
+          <div className="flex-1 h-6 bg-[#E8D5C4] rounded-lg overflow-hidden">
             <div className="h-full rounded-lg transition-all duration-500 flex items-center px-2" style={{ width: `${Math.max((count / maxCount) * 100, count > 0 ? 12 : 0)}%`, backgroundColor: stageColors[stage] }}>
               {count > 0 && <span className="text-[10px] font-bold text-white">{count}</span>}
             </div>
@@ -121,9 +121,9 @@ function LeadFunnel({ leads }: { leads: LeadData[] }) {
 function LoadingSkeleton() {
   return (
     <div className="space-y-8 animate-pulse">
-      <div className="h-8 w-64 bg-[#EDE8E1] rounded-lg" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-36 bg-[#EDE8E1]/50 rounded-2xl" />)}</div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6"><div className="lg:col-span-2 h-80 bg-[#EDE8E1]/50 rounded-2xl" /><div className="h-80 bg-[#EDE8E1]/50 rounded-2xl" /></div>
+      <div className="h-8 w-64 bg-[#E0CCBA] rounded-lg" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-36 bg-[#E0CCBA]/50 rounded-2xl" />)}</div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6"><div className="lg:col-span-2 h-80 bg-[#E0CCBA]/50 rounded-2xl" /><div className="h-80 bg-[#E0CCBA]/50 rounded-2xl" /></div>
     </div>
   );
 }
@@ -220,7 +220,7 @@ export default function DashboardPage() {
   };
 
   const getActivityIcon = (type: string) => {
-    switch (type) { case 'payment': return { icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' }; case 'project': return { icon: Briefcase, color: 'text-purple-600', bg: 'bg-purple-50' }; case 'lead': return { icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' }; default: return { icon: Activity, color: 'text-[#A39484]', bg: 'bg-[#F5F1EC]' }; }
+    switch (type) { case 'payment': return { icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' }; case 'project': return { icon: Briefcase, color: 'text-purple-600', bg: 'bg-purple-50' }; case 'lead': return { icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' }; default: return { icon: Activity, color: 'text-[#8B6B56]', bg: 'bg-[#E8D5C4]' }; }
   };
 
   const outstandingInvoices = useMemo(() => {
@@ -260,7 +260,7 @@ export default function DashboardPage() {
   const kpiData = [
     { title: 'This Month', value: revenueStats.thisMonth, prefix: '$', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
     { title: 'Last Month', value: revenueStats.lastMonth, prefix: '$', icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { title: 'YTD Revenue', value: revenueStats.ytd, prefix: '$', icon: BarChart3, color: 'text-[#8B6D47]', bg: 'bg-[#8B6D47]/10', border: 'border-[#8B6D47]/20' },
+    { title: 'YTD Revenue', value: revenueStats.ytd, prefix: '$', icon: BarChart3, color: 'text-[#6B3A1F]', bg: 'bg-[#6B3A1F]/10', border: 'border-[#6B3A1F]/20' },
     { title: 'Pipeline', value: totalPipeline, prefix: '$', icon: Target, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
   ];
 
@@ -269,12 +269,12 @@ export default function DashboardPage() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-[#3D2E1C]">{greeting}, <span className="text-[#8B6D47]">Commander</span></h1>
-          <p className="text-[#A39484] mt-1">Here&apos;s your business at a glance</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-[#4A2112]">{greeting}, <span className="text-[#6B3A1F]">Commander</span></h1>
+          <p className="text-[#8B6B56] mt-1">Here&apos;s your business at a glance</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={loadData} className="p-2 rounded-lg hover:bg-[#F5F1EC] text-[#A39484] hover:text-[#3D2E1C] transition-colors"><RefreshCw size={16} /></button>
-          <div className="flex items-center gap-2 text-sm text-[#A39484]"><Clock size={14} /><span>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span></div>
+          <button onClick={loadData} className="p-2 rounded-lg hover:bg-[#E8D5C4] text-[#8B6B56] hover:text-[#4A2112] transition-colors"><RefreshCw size={16} /></button>
+          <div className="flex items-center gap-2 text-sm text-[#8B6B56]"><Clock size={14} /><span>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span></div>
         </div>
       </motion.div>
 
@@ -284,10 +284,10 @@ export default function DashboardPage() {
           <motion.div key={data.title} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
             className={`bg-white border ${data.border} rounded-2xl p-5 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff] hover:shadow-lg transition-all`}>
             <div className="flex items-start justify-between mb-4">
-              <span className="text-sm font-medium text-[#A39484] uppercase tracking-wide">{data.title}</span>
+              <span className="text-sm font-medium text-[#8B6B56] uppercase tracking-wide">{data.title}</span>
               <div className={`p-2.5 rounded-xl ${data.bg}`}><data.icon size={18} className={data.color} /></div>
             </div>
-            <h3 className="text-3xl lg:text-4xl font-bold text-[#3D2E1C] tracking-tight"><AnimatedNumber value={data.value} prefix={data.prefix} /></h3>
+            <h3 className="text-3xl lg:text-4xl font-bold text-[#4A2112] tracking-tight"><AnimatedNumber value={data.value} prefix={data.prefix} /></h3>
           </motion.div>
         ))}
       </div>
@@ -296,22 +296,22 @@ export default function DashboardPage() {
       {bookings.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
           {bookings.map(booking => (
-            <div key={booking.id} className="bg-[#8B6D47]/10 border border-[#8B6D47]/30 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+            <div key={booking.id} className="bg-[#6B3A1F]/10 border border-[#6B3A1F]/30 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="flex items-center gap-3 flex-1">
-                <div className="p-3 rounded-xl bg-[#8B6D47]/20">
-                  <Bell size={20} className="text-[#8B6D47]" />
+                <div className="p-3 rounded-xl bg-[#6B3A1F]/20">
+                  <Bell size={20} className="text-[#6B3A1F]" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#3D2E1C]">New Consultation Booked</p>
-                  <p className="text-sm text-[#A39484]">
-                    <span className="font-medium text-[#3D2E1C]">{booking.name}</span> — {booking.email}
+                  <p className="text-sm font-semibold text-[#4A2112]">New Consultation Booked</p>
+                  <p className="text-sm text-[#8B6B56]">
+                    <span className="font-medium text-[#4A2112]">{booking.name}</span> — {booking.email}
                     {booking.phone && <> — {booking.phone}</>}
                   </p>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-[#A39484]">
+                  <div className="flex items-center gap-3 mt-1 text-xs text-[#8B6B56]">
                     <span className="flex items-center gap-1"><Calendar size={12} /> {booking.date}</span>
                     <span className="flex items-center gap-1"><Clock size={12} /> {booking.time}</span>
                   </div>
-                  {booking.notes && <p className="text-xs text-[#A39484] mt-1 italic">&quot;{booking.notes}&quot;</p>}
+                  {booking.notes && <p className="text-xs text-[#8B6B56] mt-1 italic">&quot;{booking.notes}&quot;</p>}
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:flex-shrink-0">
@@ -320,10 +320,10 @@ export default function DashboardPage() {
                     <Phone size={14} /> Call
                   </a>
                 )}
-                <a href={`mailto:${booking.email}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#EDE8E1] text-sm font-medium text-[#3D2E1C] hover:bg-[#F5F1EC] transition-all">
+                <a href={`mailto:${booking.email}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#E0CCBA] text-sm font-medium text-[#4A2112] hover:bg-[#E8D5C4] transition-all">
                   Email
                 </a>
-                <button onClick={() => dismissBooking(booking.id)} className="p-2 rounded-lg hover:bg-[#EDE8E1] text-[#A39484] hover:text-[#3D2E1C] transition-colors">
+                <button onClick={() => dismissBooking(booking.id)} className="p-2 rounded-lg hover:bg-[#E0CCBA] text-[#8B6B56] hover:text-[#4A2112] transition-colors">
                   <X size={16} />
                 </button>
               </div>
@@ -335,36 +335,36 @@ export default function DashboardPage() {
       {/* Accounts Receivable */}
       {outstandingInvoices.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
-          className="bg-white border border-[#EDE8E1] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#EDE8E1] flex items-center justify-between">
+          className="bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+          <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-red-50"><DollarSign size={18} className="text-red-500" /></div>
               <div>
-                <h3 className="text-sm font-semibold text-[#3D2E1C]">Outstanding Payments</h3>
-                <p className="text-xs text-[#A39484]">{outstandingInvoices.length} unpaid invoice{outstandingInvoices.length !== 1 ? 's' : ''}</p>
+                <h3 className="text-sm font-semibold text-[#4A2112]">Outstanding Payments</h3>
+                <p className="text-xs text-[#8B6B56]">{outstandingInvoices.length} unpaid invoice{outstandingInvoices.length !== 1 ? 's' : ''}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-[#3D2E1C]">${totalOutstanding.toLocaleString()}</p>
-              <p className="text-xs text-[#A39484]">total outstanding</p>
+              <p className="text-2xl font-bold text-[#4A2112]">${totalOutstanding.toLocaleString()}</p>
+              <p className="text-xs text-[#8B6B56]">total outstanding</p>
             </div>
           </div>
-          <div className="divide-y divide-[#EDE8E1]">
+          <div className="divide-y divide-[#E0CCBA]">
             {outstandingInvoices.map(inv => {
               const dueDate = inv.due_date ? new Date(inv.due_date) : null;
               const now = new Date();
               const daysOverdue = dueDate ? Math.floor((now.getTime() - dueDate.getTime()) / 86400000) : 0;
               const isOverdue = daysOverdue > 0;
               return (
-                <div key={inv.id} className="px-6 py-3 flex items-center gap-4 hover:bg-[#F5F1EC] transition-colors">
+                <div key={inv.id} className="px-6 py-3 flex items-center gap-4 hover:bg-[#E8D5C4] transition-colors">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#3D2E1C]">{getClientName(inv.client_id)}</p>
-                    <p className="text-xs text-[#A39484]">{inv.invoice_number || inv.id}</p>
+                    <p className="text-sm font-medium text-[#4A2112]">{getClientName(inv.client_id)}</p>
+                    <p className="text-xs text-[#8B6B56]">{inv.invoice_number || inv.id}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-[#3D2E1C]">${(inv.total || inv.amount || 0).toLocaleString()}</p>
+                    <p className="text-sm font-semibold text-[#4A2112]">${(inv.total || inv.amount || 0).toLocaleString()}</p>
                     {dueDate && (
-                      <p className={`text-xs ${isOverdue ? 'text-red-500 font-medium' : 'text-[#A39484]'}`}>
+                      <p className={`text-xs ${isOverdue ? 'text-red-500 font-medium' : 'text-[#8B6B56]'}`}>
                         {isOverdue ? `${daysOverdue}d overdue` : `Due ${dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
                       </p>
                     )}
@@ -382,18 +382,18 @@ export default function DashboardPage() {
 
       {/* Revenue Chart + Lead Funnel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="lg:col-span-2 bg-white border border-[#EDE8E1] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#EDE8E1] flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-[#8B6D47]/10"><TrendingUp size={18} className="text-[#8B6D47]" /></div>
-            <div><h3 className="text-sm font-semibold text-[#3D2E1C]">Revenue (Last 6 Months)</h3><p className="text-xs text-[#A39484]">Paid invoices over time</p></div>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="lg:col-span-2 bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+          <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-[#6B3A1F]/10"><TrendingUp size={18} className="text-[#6B3A1F]" /></div>
+            <div><h3 className="text-sm font-semibold text-[#4A2112]">Revenue (Last 6 Months)</h3><p className="text-xs text-[#8B6B56]">Paid invoices over time</p></div>
           </div>
           <div className="p-6"><RevenueChart invoices={invoices} /></div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white border border-[#EDE8E1] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#EDE8E1] flex items-center gap-3">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+          <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center gap-3">
             <div className="p-2 rounded-xl bg-purple-50"><Target size={18} className="text-purple-600" /></div>
-            <div><h3 className="text-sm font-semibold text-[#3D2E1C]">Lead Funnel</h3><p className="text-xs text-[#A39484]">{leads.length} total leads</p></div>
+            <div><h3 className="text-sm font-semibold text-[#4A2112]">Lead Funnel</h3><p className="text-xs text-[#8B6B56]">{leads.length} total leads</p></div>
           </div>
           <div className="p-5"><LeadFunnel leads={leads} /></div>
         </motion.div>
@@ -402,41 +402,41 @@ export default function DashboardPage() {
       {/* Active Projects + Pipeline */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Project Status */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white border border-[#EDE8E1] rounded-2xl p-5 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white border border-[#E0CCBA] rounded-2xl p-5 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 rounded-xl bg-[#8B6D47]/10"><Briefcase size={18} className="text-[#8B6D47]" /></div>
-            <h3 className="text-sm font-semibold text-[#3D2E1C]">Active Projects</h3>
+            <div className="p-2 rounded-xl bg-[#6B3A1F]/10"><Briefcase size={18} className="text-[#6B3A1F]" /></div>
+            <h3 className="text-sm font-semibold text-[#4A2112]">Active Projects</h3>
           </div>
-          <div className="text-4xl font-bold text-[#3D2E1C] mb-4">{activeProjectStats.total}</div>
+          <div className="text-4xl font-bold text-[#4A2112] mb-4">{activeProjectStats.total}</div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> On Track</span><span className="font-semibold text-[#3D2E1C]">{activeProjectStats.onTrack}</span></div>
-            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-amber-500" /> At Risk</span><span className="font-semibold text-[#3D2E1C]">{activeProjectStats.atRisk}</span></div>
-            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-red-500" /> Behind</span><span className="font-semibold text-[#3D2E1C]">{activeProjectStats.behind}</span></div>
+            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> On Track</span><span className="font-semibold text-[#4A2112]">{activeProjectStats.onTrack}</span></div>
+            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-amber-500" /> At Risk</span><span className="font-semibold text-[#4A2112]">{activeProjectStats.atRisk}</span></div>
+            <div className="flex items-center justify-between text-sm"><span className="flex items-center gap-2"><AlertTriangle size={14} className="text-red-500" /> Behind</span><span className="font-semibold text-[#4A2112]">{activeProjectStats.behind}</span></div>
           </div>
         </motion.div>
 
         {/* Upcoming Tasks */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="bg-white border border-[#EDE8E1] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#EDE8E1] flex items-center justify-between">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+          <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-blue-50"><Clock size={18} className="text-blue-600" /></div>
-              <h3 className="text-sm font-semibold text-[#3D2E1C]">Upcoming Tasks</h3>
+              <h3 className="text-sm font-semibold text-[#4A2112]">Upcoming Tasks</h3>
             </div>
-            <Link href="/dashboard/tasks" className="text-xs text-[#8B6D47] hover:underline flex items-center gap-1">View all <ArrowRight size={12} /></Link>
+            <Link href="/dashboard/tasks" className="text-xs text-[#6B3A1F] hover:underline flex items-center gap-1">View all <ArrowRight size={12} /></Link>
           </div>
           <div className="p-4 space-y-2">
             {upcomingTasks.length === 0 ? (
-              <p className="text-sm text-[#A39484] text-center py-6">No upcoming tasks</p>
+              <p className="text-sm text-[#8B6B56] text-center py-6">No upcoming tasks</p>
             ) : upcomingTasks.map(t => {
               const due = new Date(t.due_date!);
               const now = new Date();
               const isOverdue = due < now;
               const isToday = due.toDateString() === now.toDateString();
               return (
-                <div key={t.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#F5F1EC] transition-colors">
-                  <div className={`w-2 h-2 rounded-full ${isOverdue ? 'bg-red-500' : isToday ? 'bg-amber-500' : 'bg-[#8B6D47]'}`} />
-                  <div className="flex-1 min-w-0"><p className="text-sm text-[#3D2E1C] truncate">{t.title}</p></div>
-                  <span className={`text-xs ${isOverdue ? 'text-red-500' : isToday ? 'text-amber-500' : 'text-[#A39484]'}`}>{due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                <div key={t.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#E8D5C4] transition-colors">
+                  <div className={`w-2 h-2 rounded-full ${isOverdue ? 'bg-red-500' : isToday ? 'bg-amber-500' : 'bg-[#6B3A1F]'}`} />
+                  <div className="flex-1 min-w-0"><p className="text-sm text-[#4A2112] truncate">{t.title}</p></div>
+                  <span className={`text-xs ${isOverdue ? 'text-red-500' : isToday ? 'text-amber-500' : 'text-[#8B6B56]'}`}>{due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                 </div>
               );
             })}
@@ -444,21 +444,21 @@ export default function DashboardPage() {
         </motion.div>
 
         {/* Recent Activity */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="bg-white border border-[#EDE8E1] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#EDE8E1] flex items-center gap-3">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+          <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center gap-3">
             <div className="p-2 rounded-xl bg-blue-50"><Activity size={18} className="text-blue-600" /></div>
-            <h3 className="text-sm font-semibold text-[#3D2E1C]">Recent Activity</h3>
+            <h3 className="text-sm font-semibold text-[#4A2112]">Recent Activity</h3>
           </div>
           <div className="p-4 space-y-1 max-h-[260px] overflow-y-auto">
             {recentActivities.length === 0 ? (
-              <p className="text-sm text-[#A39484] text-center py-6">No activity yet</p>
+              <p className="text-sm text-[#8B6B56] text-center py-6">No activity yet</p>
             ) : recentActivities.map(a => {
               const { icon: Icon, color, bg } = getActivityIcon(a.type);
               return (
-                <div key={a.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#F5F1EC] transition-colors">
+                <div key={a.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#E8D5C4] transition-colors">
                   <div className={`p-1.5 rounded-lg ${bg}`}><Icon size={12} className={color} /></div>
-                  <div className="flex-1 min-w-0"><p className="text-xs text-[#3D2E1C] truncate">{a.title}</p></div>
-                  <span className="text-[10px] text-[#A39484]">{getRelativeTime(a.created_at)}</span>
+                  <div className="flex-1 min-w-0"><p className="text-xs text-[#4A2112] truncate">{a.title}</p></div>
+                  <span className="text-[10px] text-[#8B6B56]">{getRelativeTime(a.created_at)}</span>
                 </div>
               );
             })}
@@ -467,21 +467,21 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="bg-white border border-[#EDE8E1] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-        <div className="px-6 py-4 border-b border-[#EDE8E1] flex items-center gap-3">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+        <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center gap-3">
           <div className="p-2 rounded-xl bg-purple-50"><Plus size={18} className="text-purple-600" /></div>
-          <h3 className="text-sm font-semibold text-[#3D2E1C]">Quick Actions</h3>
+          <h3 className="text-sm font-semibold text-[#4A2112]">Quick Actions</h3>
         </div>
         <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: 'New Lead', icon: UserPlus, href: '/dashboard/leads', color: 'text-blue-600', bg: 'bg-blue-50' },
-            { label: 'New Project', icon: Briefcase, href: '/dashboard/projects', color: 'text-[#8B6D47]', bg: 'bg-[#8B6D47]/10' },
+            { label: 'New Project', icon: Briefcase, href: '/dashboard/projects', color: 'text-[#6B3A1F]', bg: 'bg-[#6B3A1F]/10' },
             { label: 'New Invoice', icon: FileText, href: '/dashboard/invoices', color: 'text-purple-600', bg: 'bg-purple-50' },
-            { label: 'View Reports', icon: BarChart3, href: '/dashboard/reports', color: 'text-[#8B6D47]', bg: 'bg-[#8B6D47]/10' },
+            { label: 'View Reports', icon: BarChart3, href: '/dashboard/reports', color: 'text-[#6B3A1F]', bg: 'bg-[#6B3A1F]/10' },
           ].map((action) => (
-            <Link key={action.label} href={action.href} className="group flex items-center gap-3 p-3 rounded-xl bg-[#FBF9F6] hover:bg-[#F5F1EC] border border-[#EDE8E1] hover:border-[#8B6D47]/20 transition-all">
+            <Link key={action.label} href={action.href} className="group flex items-center gap-3 p-3 rounded-xl bg-[#F0DFD1] hover:bg-[#E8D5C4] border border-[#E0CCBA] hover:border-[#6B3A1F]/20 transition-all">
               <div className={`p-2 rounded-lg ${action.bg}`}><action.icon size={14} className={action.color} /></div>
-              <span className="text-sm text-[#A39484] group-hover:text-[#3D2E1C] transition-colors">{action.label}</span>
+              <span className="text-sm text-[#8B6B56] group-hover:text-[#4A2112] transition-colors">{action.label}</span>
             </Link>
           ))}
         </div>

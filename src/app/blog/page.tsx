@@ -23,14 +23,14 @@ export default function BlogPage() {
       : blogPosts.filter((post) => post.category === activeCategory);
 
   return (
-    <main className="min-h-screen bg-[#FAFAFA]">
+    <main className="min-h-screen bg-[#F0DFD1]">
       {/* Hero */}
       <section className="pt-32 pb-16 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-[#2D2A26] mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#4A2112] mb-4">
             Insights & Guides
           </h1>
-          <p className="text-lg text-[#2D2A26]/60 max-w-2xl mx-auto">
+          <p className="text-lg text-[#4A2112]/60 max-w-2xl mx-auto">
             Practical strategies for automating your business with AI. No hype,
             no jargon — just actionable advice backed by real numbers.
           </p>
@@ -46,8 +46,8 @@ export default function BlogPage() {
               onClick={() => setActiveCategory(cat)}
               className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                 activeCategory === cat
-                  ? "bg-[#B8895A] text-white shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]"
-                  : "bg-[#FAFAFA] text-[#2D2A26]/70 border border-[#E8E2DA] shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff] hover:text-[#B8895A]"
+                  ? "bg-[#6B3A1F] text-white shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]"
+                  : "bg-[#F0DFD1] text-[#4A2112]/70 border border-[#E0CCBA] shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff] hover:text-[#6B3A1F]"
               }`}
             >
               {cat}
@@ -63,29 +63,29 @@ export default function BlogPage() {
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group block rounded-2xl border border-[#E8E2DA] bg-[#FAFAFA] p-8 shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] hover:shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] transition-all duration-300"
+              className="group block rounded-2xl border border-[#E0CCBA] bg-[#F0DFD1] p-8 shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] hover:shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] transition-all duration-300"
             >
               {/* Category Tag */}
               <div className="flex items-center gap-2 mb-4">
-                <Tag className="w-3.5 h-3.5 text-[#B8895A]" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#B8895A]">
+                <Tag className="w-3.5 h-3.5 text-[#6B3A1F]" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#6B3A1F]">
                   {post.category}
                 </span>
               </div>
 
               {/* Title */}
-              <h2 className="text-xl font-bold text-[#2D2A26] mb-3 group-hover:text-[#B8895A] transition-colors">
+              <h2 className="text-xl font-bold text-[#4A2112] mb-3 group-hover:text-[#6B3A1F] transition-colors">
                 {post.title}
               </h2>
 
               {/* Excerpt */}
-              <p className="text-[#2D2A26]/60 text-sm leading-relaxed mb-6 line-clamp-3">
+              <p className="text-[#4A2112]/60 text-sm leading-relaxed mb-6 line-clamp-3">
                 {post.excerpt}
               </p>
 
               {/* Meta */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 text-xs text-[#2D2A26]/40">
+                <div className="flex items-center gap-4 text-xs text-[#4A2112]/40">
                   <span className="flex items-center gap-1.5">
                     <Calendar className="w-3.5 h-3.5" />
                     {new Date(post.date).toLocaleDateString("en-US", {
@@ -99,7 +99,7 @@ export default function BlogPage() {
                     {post.readTime}
                   </span>
                 </div>
-                <ArrowRight className="w-5 h-5 text-[#B8895A] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+                <ArrowRight className="w-5 h-5 text-[#6B3A1F] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
               </div>
             </Link>
           ))}
@@ -108,12 +108,12 @@ export default function BlogPage() {
 
       {/* Newsletter Signup */}
       <section className="px-6 pb-32">
-        <div className="max-w-2xl mx-auto rounded-2xl border border-[#E8E2DA] bg-[#FAFAFA] p-10 shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] text-center">
-          <Mail className="w-10 h-10 text-[#B8895A] mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-[#2D2A26] mb-2">
+        <div className="max-w-2xl mx-auto rounded-2xl border border-[#E0CCBA] bg-[#F0DFD1] p-10 shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] text-center">
+          <Mail className="w-10 h-10 text-[#6B3A1F] mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-[#4A2112] mb-2">
             Get automation insights delivered
           </h3>
-          <p className="text-[#2D2A26]/60 mb-6">
+          <p className="text-[#4A2112]/60 mb-6">
             One email per week. Practical AI strategies for growing businesses.
             No spam, unsubscribe anytime.
           </p>
@@ -130,11 +130,11 @@ export default function BlogPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
               required
-              className="flex-1 px-5 py-3 rounded-xl border border-[#E8E2DA] bg-[#FAFAFA] text-[#2D2A26] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#B8895A]/30 text-sm"
+              className="flex-1 px-5 py-3 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#6B3A1F]/30 text-sm"
             />
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl bg-[#B8895A] text-white font-medium text-sm shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff] hover:bg-[#a67a4d] transition-colors"
+              className="px-6 py-3 rounded-xl bg-[#6B3A1F] text-white font-medium text-sm shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff] hover:bg-[#a67a4d] transition-colors"
             >
               Subscribe
             </button>

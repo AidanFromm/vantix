@@ -24,7 +24,7 @@ function generateId(): string { return crypto?.randomUUID?.() || Math.random().t
 
 const EVENT_TYPES = ['consultation', 'meeting', 'deadline', 'follow-up'] as const;
 const EVENT_COLORS: Record<string, string> = {
-  consultation: '#B8895A', meeting: '#7B9E6B', deadline: '#C75B5B', 'follow-up': '#6B8EB8',
+  consultation: '#6B3A1F', meeting: '#7B9E6B', deadline: '#C75B5B', 'follow-up': '#6B8EB8',
   subscription: '#8B5CF6', task: '#3B82F6', invoice: '#F97316',
 };
 
@@ -159,29 +159,29 @@ export default function CalendarPage() {
   const weekDays = viewMode === 'week' ? getWeekDays() : [];
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] p-4 md:p-8">
+    <div className="min-h-screen bg-[#F0DFD1] p-4 md:p-8">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#E8CFA0] to-[#C9A06E] shadow-[3px_3px_8px_#c8c4be,-3px_-3px_8px_#ffffff]">
             <CalendarIcon size={22} className="text-[#5C4033]" />
           </div>
-          <div><h1 className="text-2xl font-bold text-[#2D2A26]">Calendar</h1><p className="text-sm text-[#8C857C]">Schedule and manage events</p></div>
+          <div><h1 className="text-2xl font-bold text-[#4A2112]">Calendar</h1><p className="text-sm text-[#8B6B56]">Schedule and manage events</p></div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex rounded-xl overflow-hidden border border-[#E8E2DA]">
+          <div className="flex rounded-xl overflow-hidden border border-[#E0CCBA]">
             {(['month', 'week'] as ViewMode[]).map(mode => (
-              <button key={mode} onClick={() => setViewMode(mode)} className={`px-4 py-2 text-sm font-medium transition-all ${viewMode === mode ? 'bg-[#B8895A] text-white' : 'bg-white text-[#2D2A26] hover:bg-[#F5F0EB]'}`}>{mode.charAt(0).toUpperCase() + mode.slice(1)}</button>
+              <button key={mode} onClick={() => setViewMode(mode)} className={`px-4 py-2 text-sm font-medium transition-all ${viewMode === mode ? 'bg-[#6B3A1F] text-white' : 'bg-white text-[#4A2112] hover:bg-[#E8D5C4]'}`}>{mode.charAt(0).toUpperCase() + mode.slice(1)}</button>
             ))}
           </div>
-          <button onClick={goToToday} className="px-4 py-2 bg-white border border-[#E8E2DA] rounded-xl text-sm text-[#2D2A26] hover:bg-[#F5F0EB]">Today</button>
-          <button onClick={() => openCreateForDate(selectedDate)} className="px-5 py-2.5 bg-[#B8895A] text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-[#A67A4B]"><Plus size={16} /> New Event</button>
+          <button onClick={goToToday} className="px-4 py-2 bg-white border border-[#E0CCBA] rounded-xl text-sm text-[#4A2112] hover:bg-[#E8D5C4]">Today</button>
+          <button onClick={() => openCreateForDate(selectedDate)} className="px-5 py-2.5 bg-[#6B3A1F] text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-[#A67A4B]"><Plus size={16} /> New Event</button>
         </div>
       </motion.div>
 
       {/* Legend */}
       <div className="flex flex-wrap gap-4 mb-4">
         {[{ label: 'Meeting', color: EVENT_COLORS.meeting }, { label: 'Task', color: EVENT_COLORS.task }, { label: 'Subscription', color: EVENT_COLORS.subscription }, { label: 'Invoice', color: EVENT_COLORS.invoice }, { label: 'Deadline', color: EVENT_COLORS.deadline }].map(l => (
-          <div key={l.label} className="flex items-center gap-1.5 text-xs text-[#8C857C]">
+          <div key={l.label} className="flex items-center gap-1.5 text-xs text-[#8B6B56]">
             <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: l.color }} />{l.label}
           </div>
         ))}
@@ -190,15 +190,15 @@ export default function CalendarPage() {
       <div className="flex flex-col lg:flex-row gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex-1">
           <div className="bg-white rounded-2xl overflow-hidden shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E2DA]">
-              <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-[#F5F0EB] text-[#8C857C]"><ChevronLeft size={20} /></button>
-              <h2 className="text-lg font-bold text-[#2D2A26]">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
-              <button onClick={nextMonth} className="p-2 rounded-xl hover:bg-[#F5F0EB] text-[#8C857C]"><ChevronRight size={20} /></button>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E0CCBA]">
+              <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-[#E8D5C4] text-[#8B6B56]"><ChevronLeft size={20} /></button>
+              <h2 className="text-lg font-bold text-[#4A2112]">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
+              <button onClick={nextMonth} className="p-2 rounded-xl hover:bg-[#E8D5C4] text-[#8B6B56]"><ChevronRight size={20} /></button>
             </div>
 
             {viewMode === 'month' ? (
               <div className="p-3 md:p-4">
-                <div className="grid grid-cols-7 mb-2">{DAY_NAMES.map(d => <div key={d} className="text-center text-xs font-semibold text-[#8C857C] py-2">{d}</div>)}</div>
+                <div className="grid grid-cols-7 mb-2">{DAY_NAMES.map(d => <div key={d} className="text-center text-xs font-semibold text-[#8B6B56] py-2">{d}</div>)}</div>
                 <div className="grid grid-cols-7 gap-1">
                   {calendarCells.map((cell, i) => {
                     const isToday = cell.dateStr === todayStr;
@@ -206,12 +206,12 @@ export default function CalendarPage() {
                     const dayEvents = eventsByDate[cell.dateStr] || [];
                     return (
                       <button key={i} onClick={() => setSelectedDate(cell.dateStr)} onDoubleClick={() => openCreateForDate(cell.dateStr)}
-                        className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm transition-all ${!cell.isCurrentMonth ? 'text-[#E8E2DA]' : isSelected ? 'bg-[#B8895A]/10 text-[#2D2A26] font-bold' : 'text-[#2D2A26] hover:bg-[#F5F0EB]'} ${isToday ? 'ring-2 ring-[#B8895A] ring-offset-1' : ''}`}>
+                        className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm transition-all ${!cell.isCurrentMonth ? 'text-[#E0CCBA]' : isSelected ? 'bg-[#6B3A1F]/10 text-[#4A2112] font-bold' : 'text-[#4A2112] hover:bg-[#E8D5C4]'} ${isToday ? 'ring-2 ring-[#6B3A1F] ring-offset-1' : ''}`}>
                         <span className="text-xs md:text-sm">{cell.day}</span>
                         {dayEvents.length > 0 && (
                           <div className="flex gap-0.5 mt-0.5">
-                            {dayEvents.slice(0, 3).map((ev, j) => <div key={j} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: EVENT_COLORS[ev.type] || '#B8895A' }} />)}
-                            {dayEvents.length > 3 && <span className="text-[8px] text-[#8C857C]">+</span>}
+                            {dayEvents.slice(0, 3).map((ev, j) => <div key={j} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: EVENT_COLORS[ev.type] || '#6B3A1F' }} />)}
+                            {dayEvents.length > 3 && <span className="text-[8px] text-[#8B6B56]">+</span>}
                           </div>
                         )}
                       </button>
@@ -229,13 +229,13 @@ export default function CalendarPage() {
                     return (
                       <div key={wd.dateStr} className="flex flex-col">
                         <button onClick={() => setSelectedDate(wd.dateStr)} onDoubleClick={() => openCreateForDate(wd.dateStr)}
-                          className={`flex flex-col items-center p-2 rounded-xl transition-all ${isSelected ? 'bg-[#B8895A]/10' : 'hover:bg-[#F5F0EB]'} ${isToday ? 'ring-2 ring-[#B8895A]' : ''}`}>
-                          <span className="text-xs text-[#8C857C] font-medium">{wd.dayName}</span>
-                          <span className="text-lg font-bold text-[#2D2A26]">{wd.day}</span>
+                          className={`flex flex-col items-center p-2 rounded-xl transition-all ${isSelected ? 'bg-[#6B3A1F]/10' : 'hover:bg-[#E8D5C4]'} ${isToday ? 'ring-2 ring-[#6B3A1F]' : ''}`}>
+                          <span className="text-xs text-[#8B6B56] font-medium">{wd.dayName}</span>
+                          <span className="text-lg font-bold text-[#4A2112]">{wd.day}</span>
                         </button>
                         <div className="mt-2 space-y-1 min-h-[80px]">
                           {dayEvents.map(ev => (
-                            <button key={ev.id} onClick={() => openEdit(ev)} className="w-full text-left px-2 py-1.5 rounded-lg text-xs font-medium truncate hover:opacity-80" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#B8895A') + '18', color: EVENT_COLORS[ev.type] || '#B8895A', borderLeft: `3px solid ${EVENT_COLORS[ev.type] || '#B8895A'}` }}>
+                            <button key={ev.id} onClick={() => openEdit(ev)} className="w-full text-left px-2 py-1.5 rounded-lg text-xs font-medium truncate hover:opacity-80" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#6B3A1F') + '18', color: EVENT_COLORS[ev.type] || '#6B3A1F', borderLeft: `3px solid ${EVENT_COLORS[ev.type] || '#6B3A1F'}` }}>
                               <div className="truncate">{ev.title}</div>
                               {ev.start_time !== '00:00' && <div className="text-[10px] opacity-70">{fmtTime(ev.start_time)}</div>}
                             </button>
@@ -253,36 +253,36 @@ export default function CalendarPage() {
         {/* Sidebar */}
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="lg:w-80 xl:w-96">
           <div className="bg-white rounded-2xl overflow-hidden shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
-            <div className="px-5 py-4 border-b border-[#E8E2DA] flex items-center justify-between">
+            <div className="px-5 py-4 border-b border-[#E0CCBA] flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-[#2D2A26]">{new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h3>
-                <p className="text-xs text-[#8C857C]">{selectedDayEvents.length} event{selectedDayEvents.length !== 1 ? 's' : ''}</p>
+                <h3 className="font-bold text-[#4A2112]">{new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h3>
+                <p className="text-xs text-[#8B6B56]">{selectedDayEvents.length} event{selectedDayEvents.length !== 1 ? 's' : ''}</p>
               </div>
-              <button onClick={() => openCreateForDate(selectedDate)} className="p-2 rounded-xl bg-[#B8895A]/10 text-[#B8895A] hover:bg-[#B8895A]/20"><Plus size={18} /></button>
+              <button onClick={() => openCreateForDate(selectedDate)} className="p-2 rounded-xl bg-[#6B3A1F]/10 text-[#6B3A1F] hover:bg-[#6B3A1F]/20"><Plus size={18} /></button>
             </div>
             <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
               {loading ? (
-                <div className="flex items-center justify-center py-12"><div className="w-6 h-6 border-2 border-[#B8895A]/30 border-t-[#B8895A] rounded-full animate-spin" /></div>
+                <div className="flex items-center justify-center py-12"><div className="w-6 h-6 border-2 border-[#6B3A1F]/30 border-t-[#6B3A1F] rounded-full animate-spin" /></div>
               ) : selectedDayEvents.length === 0 ? (
-                <div className="text-center py-12"><CalendarIcon size={36} className="mx-auto text-[#E8E2DA] mb-3" /><p className="text-sm text-[#8C857C]">No events scheduled</p></div>
+                <div className="text-center py-12"><CalendarIcon size={36} className="mx-auto text-[#E0CCBA] mb-3" /><p className="text-sm text-[#8B6B56]">No events scheduled</p></div>
               ) : selectedDayEvents.map((ev, i) => {
                 const clientName = clients.find(c => c.id === ev.client_id)?.name;
                 return (
                   <motion.div key={ev.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                    className="p-4 rounded-xl border border-[#E8E2DA] hover:border-[#B8895A]/20 transition-all group cursor-pointer" onClick={() => openEdit(ev)}
-                    style={{ borderLeft: `4px solid ${EVENT_COLORS[ev.type] || '#B8895A'}` }}>
+                    className="p-4 rounded-xl border border-[#E0CCBA] hover:border-[#6B3A1F]/20 transition-all group cursor-pointer" onClick={() => openEdit(ev)}
+                    style={{ borderLeft: `4px solid ${EVENT_COLORS[ev.type] || '#6B3A1F'}` }}>
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-[#2D2A26] text-sm truncate">{ev.title}</h4>
-                        {ev.start_time !== '00:00' && <div className="flex items-center gap-1 mt-1 text-xs text-[#8C857C]"><Clock size={12} />{fmtTime(ev.start_time)} - {fmtTime(ev.end_time)}</div>}
-                        {clientName && <div className="flex items-center gap-1 mt-1 text-xs text-[#8C857C]"><User size={12} />{clientName}</div>}
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-full text-[10px] font-semibold" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#B8895A') + '18', color: EVENT_COLORS[ev.type] || '#B8895A' }}><Tag size={10} />{ev.type}</span>
-                        {ev.notes && <p className="mt-2 text-xs text-[#8C857C] line-clamp-2">{ev.notes}</p>}
+                        <h4 className="font-semibold text-[#4A2112] text-sm truncate">{ev.title}</h4>
+                        {ev.start_time !== '00:00' && <div className="flex items-center gap-1 mt-1 text-xs text-[#8B6B56]"><Clock size={12} />{fmtTime(ev.start_time)} - {fmtTime(ev.end_time)}</div>}
+                        {clientName && <div className="flex items-center gap-1 mt-1 text-xs text-[#8B6B56]"><User size={12} />{clientName}</div>}
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-full text-[10px] font-semibold" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#6B3A1F') + '18', color: EVENT_COLORS[ev.type] || '#6B3A1F' }}><Tag size={10} />{ev.type}</span>
+                        {ev.notes && <p className="mt-2 text-xs text-[#8B6B56] line-clamp-2">{ev.notes}</p>}
                       </div>
                       {!ev.source && (
                         <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={e => { e.stopPropagation(); openEdit(ev); }} className="p-1.5 rounded-lg hover:bg-[#F5F0EB] text-[#8C857C] hover:text-[#B8895A]"><Edit3 size={14} /></button>
-                          <button onClick={e => { e.stopPropagation(); handleDelete(ev.id); }} className="p-1.5 rounded-lg hover:bg-red-50 text-[#8C857C] hover:text-red-500"><Trash2 size={14} /></button>
+                          <button onClick={e => { e.stopPropagation(); openEdit(ev); }} className="p-1.5 rounded-lg hover:bg-[#E8D5C4] text-[#8B6B56] hover:text-[#6B3A1F]"><Edit3 size={14} /></button>
+                          <button onClick={e => { e.stopPropagation(); handleDelete(ev.id); }} className="p-1.5 rounded-lg hover:bg-red-50 text-[#8B6B56] hover:text-red-500"><Trash2 size={14} /></button>
                         </div>
                       )}
                     </div>
@@ -297,18 +297,18 @@ export default function CalendarPage() {
       {/* Detail modal for auto-generated events */}
       <AnimatePresence>
         {detailEvent && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#2D2A26]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setDetailEvent(null)}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#4A2112]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setDetailEvent(null)}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-[#2D2A26]">Event Details</h2>
-                <button onClick={() => setDetailEvent(null)} className="p-2 rounded-lg hover:bg-[#F5F0EB] text-[#8C857C]"><X size={18} /></button>
+                <h2 className="text-lg font-bold text-[#4A2112]">Event Details</h2>
+                <button onClick={() => setDetailEvent(null)} className="p-2 rounded-lg hover:bg-[#E8D5C4] text-[#8B6B56]"><X size={18} /></button>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full" style={{ backgroundColor: EVENT_COLORS[detailEvent.type] || '#B8895A' }} /><h3 className="font-semibold text-[#2D2A26]">{detailEvent.title}</h3></div>
-                <p className="text-sm text-[#8C857C]">Date: {detailEvent.date}</p>
-                <p className="text-sm text-[#8C857C]">Type: {detailEvent.type}</p>
-                {detailEvent.notes && <p className="text-sm text-[#8C857C]">{detailEvent.notes}</p>}
-                <p className="text-xs text-[#B8895A]">Auto-generated from {detailEvent.source}</p>
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full" style={{ backgroundColor: EVENT_COLORS[detailEvent.type] || '#6B3A1F' }} /><h3 className="font-semibold text-[#4A2112]">{detailEvent.title}</h3></div>
+                <p className="text-sm text-[#8B6B56]">Date: {detailEvent.date}</p>
+                <p className="text-sm text-[#8B6B56]">Type: {detailEvent.type}</p>
+                {detailEvent.notes && <p className="text-sm text-[#8B6B56]">{detailEvent.notes}</p>}
+                <p className="text-xs text-[#6B3A1F]">Auto-generated from {detailEvent.source}</p>
               </div>
             </motion.div>
           </motion.div>
@@ -318,7 +318,7 @@ export default function CalendarPage() {
       {/* Event Form Modal */}
       <AnimatePresence>
         {modalOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#2D2A26]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => { setModalOpen(false); setEditingEvent(null); }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#4A2112]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => { setModalOpen(false); setEditingEvent(null); }}>
             <EventFormInner editEvent={editingEvent} initialDate={selectedDate} clients={clients} onSave={handleSave} onClose={() => { setModalOpen(false); setEditingEvent(null); }} />
           </motion.div>
         )}
@@ -337,29 +337,29 @@ function EventFormInner({ editEvent, initialDate, clients, onSave, onClose }: { 
   const [notes, setNotes] = useState(editEvent?.notes || '');
 
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (!title.trim()) return; onSave({ ...(editEvent ? { id: editEvent.id } : {}), title: title.trim(), date, start_time: startTime, end_time: endTime, client_id: clientId || null, type: eventType as CalendarEvent['type'], notes: notes.trim() }); };
-  const inputCls = 'w-full px-3 py-2.5 rounded-xl border border-[#E8E2DA] bg-[#FAFAFA] text-[#2D2A26] focus:outline-none focus:border-[#B8895A]/50 text-sm';
+  const inputCls = 'w-full px-3 py-2.5 rounded-xl border border-[#E0CCBA] bg-[#F0DFD1] text-[#4A2112] focus:outline-none focus:border-[#6B3A1F]/50 text-sm';
 
   return (
     <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-white rounded-2xl w-full max-w-lg shadow-xl" onClick={e => e.stopPropagation()}>
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E2DA]">
-        <h2 className="text-lg font-bold text-[#2D2A26]">{editEvent ? 'Edit Event' : 'New Event'}</h2>
-        <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#F5F0EB] text-[#8C857C]"><X size={20} /></button>
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[#E0CCBA]">
+        <h2 className="text-lg font-bold text-[#4A2112]">{editEvent ? 'Edit Event' : 'New Event'}</h2>
+        <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#E8D5C4] text-[#8B6B56]"><X size={20} /></button>
       </div>
       <form onSubmit={handleSubmit} className="p-6 space-y-4">
-        <div><label className="block text-sm font-medium text-[#2D2A26] mb-1">Title</label><input type="text" value={title} onChange={e => setTitle(e.target.value)} required className={inputCls} /></div>
+        <div><label className="block text-sm font-medium text-[#4A2112] mb-1">Title</label><input type="text" value={title} onChange={e => setTitle(e.target.value)} required className={inputCls} /></div>
         <div className="grid grid-cols-3 gap-3">
-          <div><label className="block text-sm font-medium text-[#2D2A26] mb-1">Date</label><input type="date" value={date} onChange={e => setDate(e.target.value)} className={inputCls} /></div>
-          <div><label className="block text-sm font-medium text-[#2D2A26] mb-1">Start</label><input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className={inputCls} /></div>
-          <div><label className="block text-sm font-medium text-[#2D2A26] mb-1">End</label><input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className={inputCls} /></div>
+          <div><label className="block text-sm font-medium text-[#4A2112] mb-1">Date</label><input type="date" value={date} onChange={e => setDate(e.target.value)} className={inputCls} /></div>
+          <div><label className="block text-sm font-medium text-[#4A2112] mb-1">Start</label><input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className={inputCls} /></div>
+          <div><label className="block text-sm font-medium text-[#4A2112] mb-1">End</label><input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className={inputCls} /></div>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div><label className="block text-sm font-medium text-[#2D2A26] mb-1">Type</label><select value={eventType} onChange={e => setEventType(e.target.value)} className={inputCls}>{EVENT_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}</select></div>
-          <div><label className="block text-sm font-medium text-[#2D2A26] mb-1">Client</label><select value={clientId} onChange={e => setClientId(e.target.value)} className={inputCls}><option value="">No client</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
+          <div><label className="block text-sm font-medium text-[#4A2112] mb-1">Type</label><select value={eventType} onChange={e => setEventType(e.target.value)} className={inputCls}>{EVENT_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}</select></div>
+          <div><label className="block text-sm font-medium text-[#4A2112] mb-1">Client</label><select value={clientId} onChange={e => setClientId(e.target.value)} className={inputCls}><option value="">No client</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
         </div>
-        <div><label className="block text-sm font-medium text-[#2D2A26] mb-1">Notes</label><textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} className={inputCls + ' resize-none'} /></div>
+        <div><label className="block text-sm font-medium text-[#4A2112] mb-1">Notes</label><textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} className={inputCls + ' resize-none'} /></div>
         <div className="flex justify-end gap-3 pt-2">
-          <button type="button" onClick={onClose} className="px-5 py-2.5 bg-white border border-[#E8E2DA] rounded-xl text-sm text-[#2D2A26]">Cancel</button>
-          <button type="submit" className="px-5 py-2.5 bg-[#B8895A] text-white rounded-xl text-sm font-medium flex items-center gap-2"><Check size={16} />{editEvent ? 'Update' : 'Create'}</button>
+          <button type="button" onClick={onClose} className="px-5 py-2.5 bg-white border border-[#E0CCBA] rounded-xl text-sm text-[#4A2112]">Cancel</button>
+          <button type="submit" className="px-5 py-2.5 bg-[#6B3A1F] text-white rounded-xl text-sm font-medium flex items-center gap-2"><Check size={16} />{editEvent ? 'Update' : 'Create'}</button>
         </div>
       </form>
     </motion.div>

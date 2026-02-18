@@ -316,31 +316,31 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
-            className="fixed bottom-6 right-6 z-50 flex flex-col overflow-hidden rounded-3xl border border-[#E8E5E0] bg-[#FAFAFA] shadow-[10px_10px_24px_#c8c4be,-10px_-10px_24px_#ffffff]
+            className="fixed bottom-6 right-6 z-50 flex flex-col overflow-hidden rounded-3xl border border-[#E0CCBA] bg-[#F0DFD1] shadow-[10px_10px_24px_#c8c4be,-10px_-10px_24px_#ffffff]
               w-[calc(100vw-3rem)] max-w-[400px] h-[500px]
               sm:w-[400px]
               max-sm:bottom-0 max-sm:right-0 max-sm:w-full max-sm:h-full max-sm:rounded-none max-sm:border-0"
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#E8E5E0] bg-white px-4 py-3">
+            <div className="flex items-center justify-between border-b border-[#E0CCBA] bg-white px-4 py-3">
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleReset}
-                  className="text-[#C5C3BE] hover:text-[#2D2A26] transition-colors"
+                  className="text-[#C5C3BE] hover:text-[#4A2112] transition-colors"
                   aria-label="Reset chat"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-[#B8895A]" />
-                  <span className="text-sm font-medium text-[#2D2A26]">
+                  <div className="h-2 w-2 rounded-full bg-[#6B3A1F]" />
+                  <span className="text-sm font-medium text-[#4A2112]">
                     Vantix AI
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="text-[#C5C3BE] hover:text-[#2D2A26] transition-colors"
+                className="text-[#C5C3BE] hover:text-[#4A2112] transition-colors"
                 aria-label="Close chat"
               >
                 <X className="h-5 w-5" />
@@ -357,7 +357,7 @@ export default function ChatWidget() {
                   <div
                     className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                       msg.role === "bot"
-                        ? "bg-white text-[#2D2A26] shadow-[3px_3px_6px_#d1cdc7,-3px_-3px_6px_#ffffff]"
+                        ? "bg-white text-[#4A2112] shadow-[3px_3px_6px_#d1cdc7,-3px_-3px_6px_#ffffff]"
                         : "ml-auto text-[#5C4033]"
                     }`}
                     style={
@@ -374,7 +374,7 @@ export default function ChatWidget() {
                         href={msg.linkHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-2 flex items-center gap-1.5 text-[#B8895A] underline underline-offset-2 hover:text-[#96704A]"
+                        className="mt-2 flex items-center gap-1.5 text-[#6B3A1F] underline underline-offset-2 hover:text-[#96704A]"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                         {msg.linkLabel || "Open link"}
@@ -388,7 +388,7 @@ export default function ChatWidget() {
                         <button
                           key={qr}
                           onClick={() => handleQuickReply(qr)}
-                          className="rounded-full border border-[#E8E5E0] bg-white px-3 py-1.5 text-xs text-[#8C857C] hover:border-[#B8895A] hover:text-[#B8895A] transition-colors shadow-[2px_2px_4px_#d1cdc7,-2px_-2px_4px_#ffffff]"
+                          className="rounded-full border border-[#E0CCBA] bg-white px-3 py-1.5 text-xs text-[#8B6B56] hover:border-[#6B3A1F] hover:text-[#6B3A1F] transition-colors shadow-[2px_2px_4px_#d1cdc7,-2px_-2px_4px_#ffffff]"
                         >
                           {qr}
                         </button>
@@ -401,7 +401,7 @@ export default function ChatWidget() {
               {/* Typing indicator */}
               {typing && (
                 <div className="flex items-center gap-1.5 px-3.5 py-2.5">
-                  <Loader2 className="h-4 w-4 animate-spin text-[#B8895A]" />
+                  <Loader2 className="h-4 w-4 animate-spin text-[#6B3A1F]" />
                   <span className="text-xs text-[#C5C3BE]">
                     Vantix AI is typing...
                   </span>
@@ -415,14 +415,14 @@ export default function ChatWidget() {
                 e.preventDefault();
                 handleSend();
               }}
-              className="flex items-center gap-2 border-t border-[#E8E5E0] bg-white px-4 py-3"
+              className="flex items-center gap-2 border-t border-[#E0CCBA] bg-white px-4 py-3"
             >
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 rounded-full bg-[#FAFAFA] px-4 py-2 text-sm text-[#2D2A26] placeholder-[#C5C3BE] outline-none focus:ring-1 focus:ring-[#B8895A]/50 shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]"
+                className="flex-1 rounded-full bg-[#F0DFD1] px-4 py-2 text-sm text-[#4A2112] placeholder-[#C5C3BE] outline-none focus:ring-1 focus:ring-[#6B3A1F]/50 shadow-[inset_2px_2px_4px_#d1cdc7,inset_-2px_-2px_4px_#ffffff]"
               />
               <button
                 type="submit"

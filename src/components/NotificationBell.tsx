@@ -25,7 +25,7 @@ const typeIcons: Record<NotificationType, React.ElementType> = {
 };
 
 const typeColors: Record<NotificationType, string> = {
-  new_lead: 'text-[#B8895A]',
+  new_lead: 'text-[#6B3A1F]',
   invoice_overdue: 'text-[#C4735B]',
   project_deadline: 'text-[#D4A843]',
   client_replied: 'text-[#7BA3C4]',
@@ -91,7 +91,7 @@ export default function NotificationBell() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-lg text-[#8C857C] hover:text-[#2D2A26] hover:bg-[#F5F0EB] transition-colors"
+        className="relative p-2 rounded-lg text-[#8B6B56] hover:text-[#4A2112] hover:bg-[#E8D5C4] transition-colors"
         aria-label="Notifications"
       >
         <Bell size={20} />
@@ -101,7 +101,7 @@ export default function NotificationBell() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[#B8895A] text-white text-[10px] font-bold px-1"
+              className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[#6B3A1F] text-white text-[10px] font-bold px-1"
             >
               {unread > 99 ? '99+' : unread}
             </motion.span>
@@ -116,23 +116,23 @@ export default function NotificationBell() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-12 w-[380px] max-w-[calc(100vw-2rem)] bg-white border border-[#E8E2DA] rounded-2xl shadow-[8px_8px_24px_#d1cdc7,-8px_-8px_24px_#ffffff] z-50 overflow-hidden"
+            className="absolute right-0 top-12 w-[380px] max-w-[calc(100vw-2rem)] bg-white border border-[#E0CCBA] rounded-2xl shadow-[8px_8px_24px_#d1cdc7,-8px_-8px_24px_#ffffff] z-50 overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E8E2DA]">
-              <h3 className="font-semibold text-sm text-[#2D2A26]">Notifications</h3>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E0CCBA]">
+              <h3 className="font-semibold text-sm text-[#4A2112]">Notifications</h3>
               <div className="flex items-center gap-1">
                 {unread > 0 && (
-                  <button onClick={handleMarkAllRead} className="p-1.5 rounded-md text-[#8C857C] hover:text-[#2D2A26] hover:bg-[#F5F0EB] transition-colors" title="Mark all read">
+                  <button onClick={handleMarkAllRead} className="p-1.5 rounded-md text-[#8B6B56] hover:text-[#4A2112] hover:bg-[#E8D5C4] transition-colors" title="Mark all read">
                     <CheckCheck size={16} />
                   </button>
                 )}
                 {notifications.length > 0 && (
-                  <button onClick={handleClearAll} className="p-1.5 rounded-md text-[#8C857C] hover:text-[#C4735B] hover:bg-[#C4735B]/10 transition-colors" title="Clear all">
+                  <button onClick={handleClearAll} className="p-1.5 rounded-md text-[#8B6B56] hover:text-[#C4735B] hover:bg-[#C4735B]/10 transition-colors" title="Clear all">
                     <Trash2 size={16} />
                   </button>
                 )}
-                <button onClick={() => setOpen(false)} className="p-1.5 rounded-md text-[#8C857C] hover:text-[#2D2A26] hover:bg-[#F5F0EB] transition-colors">
+                <button onClick={() => setOpen(false)} className="p-1.5 rounded-md text-[#8B6B56] hover:text-[#4A2112] hover:bg-[#E8D5C4] transition-colors">
                   <X size={16} />
                 </button>
               </div>
@@ -141,7 +141,7 @@ export default function NotificationBell() {
             {/* List */}
             <div className="max-h-[400px] overflow-y-auto">
               {recent.length === 0 ? (
-                <div className="py-12 text-center text-[#8C857C] text-sm">No notifications</div>
+                <div className="py-12 text-center text-[#8B6B56] text-sm">No notifications</div>
               ) : (
                 recent.map((n) => {
                   const Icon = typeIcons[n.type];
@@ -149,17 +149,17 @@ export default function NotificationBell() {
                     <button
                       key={n.id}
                       onClick={() => handleMarkRead(n.id)}
-                      className={`w-full text-left flex gap-3 px-4 py-3 hover:bg-[#F5F0EB] transition-colors border-b border-[#E8E2DA] last:border-b-0 ${!n.read ? 'bg-[#B8895A]/[0.04]' : ''}`}
+                      className={`w-full text-left flex gap-3 px-4 py-3 hover:bg-[#E8D5C4] transition-colors border-b border-[#E0CCBA] last:border-b-0 ${!n.read ? 'bg-[#6B3A1F]/[0.04]' : ''}`}
                     >
                       <div className={`mt-0.5 ${typeColors[n.type]}`}>
                         <Icon size={18} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className={`text-sm font-medium truncate ${!n.read ? 'text-[#2D2A26]' : 'text-[#8C857C]'}`}>{n.title}</span>
-                          {!n.read && <span className="w-2 h-2 rounded-full bg-[#B8895A] flex-shrink-0" />}
+                          <span className={`text-sm font-medium truncate ${!n.read ? 'text-[#4A2112]' : 'text-[#8B6B56]'}`}>{n.title}</span>
+                          {!n.read && <span className="w-2 h-2 rounded-full bg-[#6B3A1F] flex-shrink-0" />}
                         </div>
-                        <p className="text-xs text-[#8C857C] mt-0.5 line-clamp-2">{n.description}</p>
+                        <p className="text-xs text-[#8B6B56] mt-0.5 line-clamp-2">{n.description}</p>
                         <p className="text-[10px] text-[#A9A29A] mt-1">{timeAgo(n.timestamp)}</p>
                       </div>
                     </button>
@@ -173,7 +173,7 @@ export default function NotificationBell() {
               <Link
                 href="/dashboard/notifications"
                 onClick={() => setOpen(false)}
-                className="block text-center py-2.5 text-xs text-[#B8895A] hover:bg-[#F5F0EB] transition-colors border-t border-[#E8E2DA] font-medium"
+                className="block text-center py-2.5 text-xs text-[#6B3A1F] hover:bg-[#E8D5C4] transition-colors border-t border-[#E0CCBA] font-medium"
               >
                 View all notifications
               </Link>

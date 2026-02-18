@@ -2,11 +2,11 @@
 
 :root {
   --color-bg: #FAF9F6;
-  --color-text: #2D2A26;
-  --color-muted: #8C857C;
-  --color-accent: #B8895A;
+  --color-text: #4A2112;
+  --color-muted: #8B6B56;
+  --color-accent: #6B3A1F;
   --color-accent-light: #C4956A;
-  --color-border: #E8E5E0;
+  --color-border: #E0CCBA;
   --color-card: #FFFFFF;
   --color-surface: #F5F3EF;
   --color-sage: #C5C3BE;
@@ -349,13 +349,13 @@ textarea {
    ======================================== */
 
 .dashboard-scope {
-  --dash-bg: #FAFAFA;
+  --dash-bg: #F0DFD1;
   --dash-card: #FFFFFF;
-  --dash-text: #2D2A26;
-  --dash-muted: #8C857C;
-  --dash-accent: #B8895A;
-  --dash-border: #E8E2DA;
-  --dash-surface: #F5F0EB;
+  --dash-text: #4A2112;
+  --dash-muted: #8B6B56;
+  --dash-accent: #6B3A1F;
+  --dash-border: #E0CCBA;
+  --dash-surface: #E8D5C4;
   --dash-shadow: 6px 6px 16px #d1cdc7, -6px -6px 16px #ffffff;
 }
 

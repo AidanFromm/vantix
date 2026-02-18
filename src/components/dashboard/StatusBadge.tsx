@@ -34,9 +34,9 @@ const statusConfig: Record<StatusType, { dot: string; bg: string; text: string }
     text: 'text-[#6890B0]',
   },
   neutral: {
-    dot: 'bg-[#8C857C]',
-    bg: 'bg-[#8C857C]/10 border-[#8C857C]/20',
-    text: 'text-[#8C857C]',
+    dot: 'bg-[#8B6B56]',
+    bg: 'bg-[#8B6B56]/10 border-[#8B6B56]/20',
+    text: 'text-[#8B6B56]',
   },
 };
 

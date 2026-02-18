@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#2D2A26]">
-      <nav className="sticky top-0 z-50 bg-[#FAFAFA]/90 backdrop-blur-md border-b border-[#E8E2DA]">
+    <div className="min-h-screen bg-[#F0DFD1] text-[#4A2112]">
+      <nav className="sticky top-0 z-50 bg-[#F0DFD1]/90 backdrop-blur-md border-b border-[#E0CCBA]">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
             <ArrowLeft className="w-4 h-4" /> Vantix
@@ -21,7 +21,7 @@ export default function TermsPage() {
 
       <article className="max-w-4xl mx-auto px-6 py-16 prose prose-neutral prose-sm max-w-none">
         <h1 className="text-3xl font-bold mb-2">Terms of Service</h1>
-        <p className="text-sm text-[#8C857C] mb-8">Last updated: February 17, 2026</p>
+        <p className="text-sm text-[#8B6B56] mb-8">Last updated: February 17, 2026</p>
 
         <p>These Terms of Service (&quot;Terms&quot;) govern your use of the Vantix website (usevantix.com) and any consulting, development, or automation services provided by Vantix (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;).</p>
 
@@ -88,16 +88,16 @@ export default function TermsPage() {
         <ul className="list-none pl-0 space-y-1 text-[#5C5650]">
           <li>Email: hello@usevantix.com</li>
           <li>Phone: (908) 498-7753</li>
-          <li>Website: <Link href="/contact" className="text-[#B8895A] hover:underline">usevantix.com/contact</Link></li>
+          <li>Website: <Link href="/contact" className="text-[#6B3A1F] hover:underline">usevantix.com/contact</Link></li>
         </ul>
       </article>
 
-      <footer className="border-t border-[#E8E2DA] py-8 text-center text-sm text-[#8C857C]">
+      <footer className="border-t border-[#E0CCBA] py-8 text-center text-sm text-[#8B6B56]">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#2D2A26] transition-colors">Privacy</Link>
-            <Link href="/contact" className="hover:text-[#2D2A26] transition-colors">Contact</Link>
+            <Link href="/privacy" className="hover:text-[#4A2112] transition-colors">Privacy</Link>
+            <Link href="/contact" className="hover:text-[#4A2112] transition-colors">Contact</Link>
           </div>
         </div>
       </footer>

@@ -7,7 +7,7 @@ export const brand = {
     primary: '#10b981', // Green-teal
     primaryLight: '#34d399',
     background: '#0a0a0a',
-    text: '#fafafa',
+    text: '#F0DFD1',
     muted: '#666666',
     border: '#1a1a1a',
   },
