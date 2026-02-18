@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Mail, Search, Plus, X, Send, Filter, ChevronDown, ChevronUp, RefreshCw, CheckCircle2, XCircle, Clock, AlertTriangle, FileText, BarChart3, ArrowUpRight } from 'lucide-react'
-import supabase from '@/lib/supabase-client'
+import { supabase } from '@/lib/supabase-client'
 
 // Types
 interface EmailRecord {
