@@ -36,6 +36,13 @@ body {
   overflow-x: hidden;
 }
 
+/* Bronze button texture */
+.bronze-btn {
+  background-image: url('/btn-texture.png');
+  background-size: cover;
+  background-position: center;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

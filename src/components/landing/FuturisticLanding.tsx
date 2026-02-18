@@ -44,7 +44,7 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const bronzeButtonClass = "bg-gradient-to-b from-[#C89A6A] to-[#B07A45] hover:from-[#B07A45] hover:to-[#8E5E34] text-white font-semibold rounded-full px-8 py-4 shadow-md hover:shadow-lg transition-all duration-200";
+const bronzeButtonClass = "bronze-btn text-white font-semibold rounded-full px-8 py-4 shadow-md hover:shadow-lg hover:brightness-110 transition-all duration-200";
 
 function useAnimateInView(threshold = 0.15) {
   const ref = useRef(null);
