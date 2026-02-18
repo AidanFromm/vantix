@@ -145,7 +145,7 @@ function Navigation() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#9B6C3C] flex items-center justify-center text-white font-extrabold text-sm">V</div>
+          <img src="/logo-v.png" alt="Vantix" className="w-8 h-8 rounded-lg object-cover" />
           <span className="text-2xl font-extrabold text-[#9B6C3C] tracking-tight">vantix<span className="text-[#B07A45]">.</span></span>
         </a>
         <div className="hidden md:flex items-center gap-8">
