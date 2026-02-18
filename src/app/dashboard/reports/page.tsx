@@ -22,7 +22,7 @@ function BarChartSVG({ data, color = '#6B3A1F' }: { data: { label: string; value
   const max = Math.max(...data.map(d => d.value), 1);
   const barW = 36;
   const gap = 12;
-  const chartH = 180;
+  const chartH = 120;
   const chartW = data.length * (barW + gap) + gap;
 
   return (
@@ -224,31 +224,31 @@ export default function ReportsPage() {
       {/* Revenue by Month + Expense Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-          className="lg:col-span-2 bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-[#6B3A1F]/10"><BarChart3 size={16} className="text-[#6B3A1F]" /></div>
+          className="lg:col-span-2 bg-white border border-[#E0CCBA] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[#E0CCBA] flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-[#6B3A1F]/10"><BarChart3 size={14} className="text-[#6B3A1F]" /></div>
             <h3 className="text-sm font-semibold text-[#4A2112]">Revenue by Month</h3>
           </div>
-          <div className="p-6">
+          <div className="p-4">
             {revenueByMonth.some(m => m.value > 0) ? (
               <BarChartSVG data={revenueByMonth} />
             ) : (
-              <div className="text-center py-12 text-sm text-[#8B6B56]">No revenue data for this period</div>
+              <div className="text-center py-6 text-sm text-[#8B6B56]">No revenue data for this period</div>
             )}
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          className="bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-purple-50"><DollarSign size={16} className="text-purple-600" /></div>
+          className="bg-white border border-[#E0CCBA] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[#E0CCBA] flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-purple-50"><DollarSign size={14} className="text-purple-600" /></div>
             <h3 className="text-sm font-semibold text-[#4A2112]">Expense Breakdown</h3>
           </div>
-          <div className="p-5">
+          <div className="p-4">
             {expenseBreakdown.length > 0 ? (
               <HorizontalBars data={expenseBreakdown} />
             ) : (
-              <div className="text-center py-12 text-sm text-[#8B6B56]">No expense data</div>
+              <div className="text-center py-6 text-sm text-[#8B6B56]">No expense data</div>
             )}
           </div>
         </motion.div>
@@ -257,8 +257,8 @@ export default function ReportsPage() {
       {/* Project Profitability + Lead Conversion */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-          className="bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center gap-3">
+          className="bg-white border border-[#E0CCBA] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[#E0CCBA] flex items-center gap-3">
             <div className="p-2 rounded-xl bg-blue-50"><Briefcase size={16} className="text-blue-600" /></div>
             <h3 className="text-sm font-semibold text-[#4A2112]">Project Profitability</h3>
           </div>
@@ -278,14 +278,14 @@ export default function ReportsPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 text-sm text-[#8B6B56]">No project data with budgets</div>
+              <div className="text-center py-6 text-sm text-[#8B6B56]">No project data with budgets</div>
             )}
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-          className="bg-white border border-[#E0CCBA] rounded-2xl overflow-hidden shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-          <div className="px-6 py-4 border-b border-[#E0CCBA] flex items-center gap-3">
+          className="bg-white border border-[#E0CCBA] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[#E0CCBA] flex items-center gap-3">
             <div className="p-2 rounded-xl bg-emerald-50"><Users size={16} className="text-emerald-600" /></div>
             <h3 className="text-sm font-semibold text-[#4A2112]">Lead Conversion</h3>
           </div>
