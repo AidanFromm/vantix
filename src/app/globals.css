@@ -1,15 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #FAF9F6;
-  --color-text: #4A2112;
-  --color-muted: #8B6B56;
-  --color-accent: #6B3A1F;
-  --color-accent-light: #C4956A;
-  --color-border: #E0CCBA;
+  --color-bg: #F5EDE4;
+  --color-text: #2C1810;
+  --color-muted: #9C8575;
+  --color-accent: #8B5E3C;
+  --color-accent-light: #8B5E3C;
+  --color-accent-hover: #5A3628;
+  --color-border: #E8D8CA;
   --color-card: #FFFFFF;
-  --color-surface: #F5F3EF;
-  --color-sage: #C5C3BE;
+  --color-surface: #EDE3D8;
+  --color-sage: #9C8575;
+  --color-primary: #6B4332;
+  --color-hover-bg: #EDE3D8;
 }
 
 * {
@@ -349,12 +352,12 @@ textarea {
    ======================================== */
 
 .dashboard-scope {
-  --dash-bg: #F0DFD1;
+  --dash-bg: #F5EDE4;
   --dash-card: #FFFFFF;
-  --dash-text: #4A2112;
-  --dash-muted: #8B6B56;
-  --dash-accent: #6B3A1F;
-  --dash-border: #E0CCBA;
+  --dash-text: #2C1810;
+  --dash-muted: #9C8575;
+  --dash-accent: #8B5E3C;
+  --dash-border: #E8D8CA;
   --dash-surface: #E8D5C4;
   --dash-shadow: 6px 6px 16px #d1cdc7, -6px -6px 16px #ffffff;
 }

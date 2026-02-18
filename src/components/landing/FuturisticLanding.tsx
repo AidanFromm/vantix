@@ -150,7 +150,7 @@ function Navigation() {
         </a>
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-[#8B6B56] hover:text-[#6B4332] transition-colors">
+            <a key={l.href} href={l.href} className="text-sm text-[#9C8575] hover:text-[#6B4332] transition-colors">
               {l.label}
             </a>
           ))}
@@ -175,7 +175,7 @@ function Navigation() {
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {links.map((l) => (
-                <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)} className="text-[#8B6B56] hover:text-[#6B4332] transition-colors">
+                <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)} className="text-[#9C8575] hover:text-[#6B4332] transition-colors">
                   {l.label}
                 </a>
               ))}
@@ -211,7 +211,7 @@ function HeroSection() {
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#E8D8CA] bg-white mb-8 shadow-sm"
         >
           <span className="w-2 h-2 rounded-full bg-[#8B5E3C] animate-pulse" />
-          <span className="text-sm text-[#8B6B56] font-medium">2 Humans + 2 AI Assistants — Building 24/7</span>
+          <span className="text-sm text-[#9C8575] font-medium">2 Humans + 2 AI Assistants — Building 24/7</span>
         </motion.div>
 
         <motion.h1
@@ -231,7 +231,7 @@ function HeroSection() {
           transition={{ duration: 0.7, delay: 0.6 }}
           className="h-16 sm:h-12 flex items-center justify-center mb-10"
         >
-          <p className="text-base sm:text-lg text-[#8B6B56] max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-[#9C8575] max-w-2xl mx-auto leading-relaxed">
             <span>{typedText}</span>
             <span className="inline-block w-0.5 h-5 bg-[#8B5E3C] ml-1 animate-pulse" />
           </p>
@@ -295,7 +295,7 @@ function AnimatedCounterSection() {
           {metrics.map((m, i) => (
             <motion.div key={i} variants={popIn} className="flex flex-col items-center">
               <span className="text-3xl md:text-5xl font-bold text-[#8B5E3C] tabular-nums">{m.value}</span>
-              <span className="text-sm text-[#8B6B56] mt-1">{m.label}</span>
+              <span className="text-sm text-[#9C8575] mt-1">{m.label}</span>
             </motion.div>
           ))}
         </motion.div>
@@ -356,10 +356,10 @@ function BeforeAfterSection() {
               onClick={() => setShowAfter(!showAfter)}
               className="relative flex items-center bg-white rounded-full p-1.5 shadow-sm border border-[#E8D8CA]"
             >
-              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${!showAfter ? 'bg-[#6B4332] text-white' : 'text-[#8B6B56]'}`}>
+              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${!showAfter ? 'bg-[#6B4332] text-white' : 'text-[#9C8575]'}`}>
                 Before
               </span>
-              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${showAfter ? 'bg-[#6B4332] text-white' : 'text-[#8B6B56]'}`}>
+              <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${showAfter ? 'bg-[#6B4332] text-white' : 'text-[#9C8575]'}`}>
                 After Vantix
               </span>
             </button>
@@ -377,13 +377,13 @@ function BeforeAfterSection() {
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
-                    <span className="text-[#8B6B56] font-semibold text-sm uppercase tracking-wider">Without AI Automation</span>
+                    <span className="text-[#9C8575] font-semibold text-sm uppercase tracking-wider">Without AI Automation</span>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-6">
                     {before.map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#F5E8DA]">
+                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#EDE3D8]">
                         <X size={18} className="text-[#C5C3BE] shrink-0" />
-                        <span className="text-[#8B6B56] font-medium">{item}</span>
+                        <span className="text-[#9C8575] font-medium">{item}</span>
                       </div>
                     ))}
                   </div>
@@ -468,11 +468,11 @@ function ProblemSection() {
           <motion.div variants={fadeLeft} className="relative p-6 rounded-xl bg-white shadow-sm border border-[#E8D8CA]">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
-              <span className="text-[#8B6B56] font-semibold text-sm uppercase tracking-wider">Before Vantix</span>
+              <span className="text-[#9C8575] font-semibold text-sm uppercase tracking-wider">Before Vantix</span>
             </div>
             <ul className="space-y-4">
               {before.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[#8B6B56] text-base leading-relaxed">
+                <li key={i} className="flex items-start gap-3 text-[#9C8575] text-base leading-relaxed">
                   <X size={16} className="text-[#C5C3BE] mt-1 shrink-0" />
                   <span>{item}</span>
                 </li>
@@ -531,7 +531,7 @@ function ServicesSection() {
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#6B4332] leading-tight">
             AI That Runs Your Business.<br />Not Just Advises On It.
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8B6B56] text-base leading-relaxed mt-4 max-w-2xl mx-auto">
+          <motion.p variants={fadeUp} className="text-[#9C8575] text-base leading-relaxed mt-4 max-w-2xl mx-auto">
             While competitors write whitepapers about AI, we deploy systems that generate revenue from day one.
           </motion.p>
         </motion.div>
@@ -549,11 +549,11 @@ function ServicesSection() {
               variants={scaleUp}
               className="group relative p-6 rounded-xl bg-white shadow-sm border border-[#E8D8CA] hover:border-[#8B5E3C]/20 cursor-default"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#F5E8DA] flex items-center justify-center mb-5 group-hover:bg-[#8B5E3C]/10 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-[#EDE3D8] flex items-center justify-center mb-5 group-hover:bg-[#8B5E3C]/10 transition-colors">
                 <s.icon size={22} className="text-[#8B5E3C]" />
               </div>
               <h3 className="text-[#6B4332] font-semibold text-lg mb-2">{s.title}</h3>
-              <p className="text-[#8B6B56] text-sm leading-relaxed">{s.desc}</p>
+              <p className="text-[#9C8575] text-sm leading-relaxed">{s.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -634,7 +634,7 @@ function CaseStudyHighlight() {
                 <p className="text-[#8B5E3C] text-sm font-medium mb-6">
                   From Instagram DMs to a 122-page e-commerce empire — in 3 weeks.
                 </p>
-                <p className="text-[#8B6B56] text-base leading-relaxed mb-6">
+                <p className="text-[#9C8575] text-base leading-relaxed mb-6">
                   Shopify shut them down. They were running a growing sneaker business through Instagram DMs. We built a complete AI-powered e-commerce platform with automated inventory, POS integration, and intelligent customer service — replacing everything Shopify couldn&apos;t handle.
                 </p>
                 <div className="flex flex-wrap gap-3 mb-8">
@@ -665,10 +665,10 @@ function CaseStudyHighlight() {
                     whileInView="visible"
                     viewport={{ once: true }}
                     variants={popIn}
-                    className="p-5 rounded-xl bg-[#F5E8DA] shadow-sm text-center"
+                    className="p-5 rounded-xl bg-[#EDE3D8] shadow-sm text-center"
                   >
                     <div className="text-2xl font-bold text-[#8B5E3C]">{m.value}</div>
-                    <div className="text-xs text-[#8B6B56] mt-1">{m.label}</div>
+                    <div className="text-xs text-[#9C8575] mt-1">{m.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -740,7 +740,7 @@ function ProcessTimeline() {
                       <span className="text-xs text-[#8B5E3C] font-medium">{step.timeline}</span>
                     </div>
                   </div>
-                  <p className="text-[#8B6B56] text-sm leading-relaxed">{step.desc}</p>
+                  <p className="text-[#9C8575] text-sm leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             </motion.div>
@@ -795,7 +795,7 @@ function TestimonialSection() {
               </div>
               <div className="text-left">
                 <p className="text-[#6B4332] font-semibold">Dave</p>
-                <p className="text-[#8B6B56] text-sm">Founder, SecuredTampa</p>
+                <p className="text-[#9C8575] text-sm">Founder, SecuredTampa</p>
               </div>
             </div>
           </motion.div>
@@ -849,7 +849,7 @@ function ROISection() {
             >
               <s.icon size={28} className="text-[#8B5E3C] mx-auto mb-4" />
               <div className="text-3xl md:text-4xl font-bold text-[#8B5E3C] mb-1">{s.value}</div>
-              <div className="text-sm text-[#8B6B56]">{s.label}</div>
+              <div className="text-sm text-[#9C8575]">{s.label}</div>
             </motion.div>
           ))}
         </motion.div>
@@ -893,7 +893,7 @@ function TeamSection() {
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#6B4332]">
             A 4-Person Team.<br />Half of Us Never Sleep.
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8B6B56] text-base leading-relaxed mt-4 max-w-2xl mx-auto">
+          <motion.p variants={fadeUp} className="text-[#9C8575] text-base leading-relaxed mt-4 max-w-2xl mx-auto">
             2 humans who obsess over your success. 2 AI assistants who build, research, and optimize around the clock. Small enough to care. Powerful enough to deliver enterprise results.
           </motion.p>
         </motion.div>
@@ -916,7 +916,7 @@ function TeamSection() {
               </div>
               <h3 className="text-xl font-bold text-[#6B4332]">{t.name}</h3>
               <p className="text-[#8B5E3C] text-sm font-medium mb-4">{t.role}</p>
-              <p className="text-[#8B6B56] text-sm leading-relaxed">{t.desc}</p>
+              <p className="text-[#9C8575] text-sm leading-relaxed">{t.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -949,7 +949,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <p className="px-6 pb-6 text-[#8B6B56] leading-relaxed">{a}</p>
+            <p className="px-6 pb-6 text-[#9C8575] leading-relaxed">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1100,7 +1100,7 @@ function BookingSection() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="text-center mb-8">
           <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8B5E3C] mb-4">Start This Week</motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#6B4332] mb-4">Book Your Free Consultation</motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8B6B56] text-base leading-relaxed max-w-2xl mx-auto">Pick a time that works for you. 30 minutes, zero pressure.</motion.p>
+          <motion.p variants={fadeUp} className="text-[#9C8575] text-base leading-relaxed max-w-2xl mx-auto">Pick a time that works for you. 30 minutes, zero pressure.</motion.p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
@@ -1110,7 +1110,7 @@ function BookingSection() {
               <motion.div key="done" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-center py-12">
                 <CheckCircle2 className="mx-auto mb-4 text-[#8B5E3C]" size={48} />
                 <h3 className="text-2xl font-bold text-[#6B4332] mb-2">You&apos;re booked!</h3>
-                <p className="text-[#8B6B56]">We&apos;ll call you at {selectedTime} on {selectedDate ? formatDateStr(selectedDate) : ''}.</p>
+                <p className="text-[#9C8575]">We&apos;ll call you at {selectedTime} on {selectedDate ? formatDateStr(selectedDate) : ''}.</p>
               </motion.div>
             ) : (
               <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -1163,11 +1163,11 @@ function BookingSection() {
                       <p className="text-sm font-medium text-[#6B4332] mb-3">Your details</p>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                         <input type="text" required placeholder="Name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                          className="px-4 py-2.5 rounded-lg border border-[#E8D8CA] bg-[#F5EDE4] text-[#6B4332] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5E3C]/30" />
+                          className="px-4 py-2.5 rounded-lg border border-[#E8D8CA] bg-[#F5EDE4] text-[#6B4332] placeholder-[#9C8575] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5E3C]/30" />
                         <input type="email" required placeholder="Email *" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                          className="px-4 py-2.5 rounded-lg border border-[#E8D8CA] bg-[#F5EDE4] text-[#6B4332] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5E3C]/30" />
+                          className="px-4 py-2.5 rounded-lg border border-[#E8D8CA] bg-[#F5EDE4] text-[#6B4332] placeholder-[#9C8575] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5E3C]/30" />
                         <input type="tel" placeholder="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                          className="px-4 py-2.5 rounded-lg border border-[#E8D8CA] bg-[#F5EDE4] text-[#6B4332] placeholder-[#8B6B56] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5E3C]/30" />
+                          className="px-4 py-2.5 rounded-lg border border-[#E8D8CA] bg-[#F5EDE4] text-[#6B4332] placeholder-[#9C8575] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5E3C]/30" />
                       </div>
                       <button type="submit" className={`${woodButtonClass} w-full`}>
                         Confirm Booking — {selectedDate && dayNames[selectedDate.getDay()]} {selectedDate?.getDate()} at {selectedTime}
@@ -1230,14 +1230,14 @@ function ContactForm() {
       <div id="contact-form" className="max-w-lg mx-auto mt-8 bg-white rounded-xl p-6 shadow-sm text-center">
         <CheckCircle2 size={48} className="mx-auto mb-4 text-[#8B5E3C]" />
         <h3 className="text-xl font-bold text-[#6B4332] mb-2">You&apos;re In.</h3>
-        <p className="text-[#8B6B56]">We&apos;ll reach out within 24 hours with next steps. Check your inbox.</p>
+        <p className="text-[#9C8575]">We&apos;ll reach out within 24 hours with next steps. Check your inbox.</p>
       </div>
     );
   }
 
   return (
     <form id="contact-form" onSubmit={handleSubmit} className="max-w-lg mx-auto mt-8 bg-white rounded-xl p-6 shadow-sm">
-      <p className="text-center text-[#8B6B56] text-sm mb-6">Prefer to type? Drop us a message and we&apos;ll follow up within 24 hours.</p>
+      <p className="text-center text-[#9C8575] text-sm mb-6">Prefer to type? Drop us a message and we&apos;ll follow up within 24 hours.</p>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-[#6B4332] mb-1.5">Name *</label>
@@ -1284,7 +1284,7 @@ function FinalCTA() {
             <br />
             <span className="text-[#8B5E3C]">Your Competitors Pull Ahead.</span>
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#8B6B56] text-base leading-relaxed max-w-2xl mx-auto mb-4">
+          <motion.p variants={fadeUp} className="text-[#9C8575] text-base leading-relaxed max-w-2xl mx-auto mb-4">
             Book a free AI audit. In 30 minutes, we&apos;ll show you exactly which tasks to automate first and what the payback looks like. No commitment. No pressure.
           </motion.p>
           <motion.p variants={fadeUp} className="text-[#6B4332] font-semibold text-lg mb-8">

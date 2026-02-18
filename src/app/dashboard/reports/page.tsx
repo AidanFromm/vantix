@@ -18,7 +18,7 @@ function lsGet<T>(key: string, fallback: T[] = []): T[] {
 
 function formatCurrency(n: number): string { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n); }
 
-function BarChartSVG({ data, color = '#6B3A1F' }: { data: { label: string; value: number }[]; color?: string }) {
+function BarChartSVG({ data, color = '#8B5E3C' }: { data: { label: string; value: number }[]; color?: string }) {
   const max = Math.max(...data.map(d => d.value), 1);
   const barW = 36;
   const gap = 12;
@@ -28,7 +28,7 @@ function BarChartSVG({ data, color = '#6B3A1F' }: { data: { label: string; value
   return (
     <svg viewBox={`0 0 ${chartW} ${chartH + 30}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
       {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
-        <line key={i} x1={0} x2={chartW} y1={chartH * (1 - pct)} y2={chartH * (1 - pct)} stroke="#E0CCBA" strokeWidth="0.5" />
+        <line key={i} x1={0} x2={chartW} y1={chartH * (1 - pct)} y2={chartH * (1 - pct)} stroke="#E8D8CA" strokeWidth="0.5" />
       ))}
       {data.map((d, i) => {
         const h = (d.value / max) * (chartH - 10);
@@ -38,11 +38,11 @@ function BarChartSVG({ data, color = '#6B3A1F' }: { data: { label: string; value
             <rect x={x} y={chartH - h} width={barW} height={h} rx={4} fill={color} fillOpacity={0.75} />
             <rect x={x} y={chartH - h} width={barW} height={h} rx={4} fill={color} fillOpacity={0.15} />
             {d.value > 0 && (
-              <text x={x + barW / 2} y={chartH - h - 6} textAnchor="middle" className="fill-[#4A2112]" fontSize="9" fontWeight="600">
+              <text x={x + barW / 2} y={chartH - h - 6} textAnchor="middle" className="fill-[#2C1810]" fontSize="9" fontWeight="600">
                 ${(d.value / 1000).toFixed(d.value >= 1000 ? 1 : 0)}{d.value >= 1000 ? 'k' : ''}
               </text>
             )}
-            <text x={x + barW / 2} y={chartH + 16} textAnchor="middle" className="fill-[#8B6B56]" fontSize="10">{d.label}</text>
+            <text x={x + barW / 2} y={chartH + 16} textAnchor="middle" className="fill-[#9C8575]" fontSize="10">{d.label}</text>
           </g>
         );
       })}
@@ -57,8 +57,8 @@ function HorizontalBars({ data, maxWidth = 300 }: { data: { label: string; value
       {data.map((d, i) => (
         <div key={i}>
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-[#8B6B56]">{d.label}</span>
-            <span className="text-xs font-semibold text-[#4A2112]">{formatCurrency(d.value)}</span>
+            <span className="text-xs text-[#9C8575]">{d.label}</span>
+            <span className="text-xs font-semibold text-[#2C1810]">{formatCurrency(d.value)}</span>
           </div>
           <div className="h-5 bg-[#E8D5C4] rounded-lg overflow-hidden">
             <motion.div
@@ -135,7 +135,7 @@ export default function ReportsPage() {
       const cat = e.category || 'Other';
       cats[cat] = (cats[cat] || 0) + (e.amount || 0);
     });
-    const colors = ['#6B3A1F', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899'];
+    const colors = ['#8B5E3C', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899'];
     return Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([label, value], i) => ({ label, value, color: colors[i % colors.length] }));
   }, [expenses, rangeStart]);
 
@@ -168,15 +168,15 @@ export default function ReportsPage() {
 
   if (loading) return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-8 w-48 bg-[#E0CCBA] rounded-lg" />
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-28 bg-[#E0CCBA]/50 rounded-2xl" />)}</div>
+      <div className="h-8 w-48 bg-[#E8D8CA] rounded-lg" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-28 bg-[#E8D8CA]/50 rounded-2xl" />)}</div>
     </div>
   );
 
   const metrics = [
     { label: 'Total Revenue', value: formatCurrency(totalRevenue), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100', trend: totalRevenue > 0 },
     { label: 'Total Expenses', value: formatCurrency(totalExpenses), icon: TrendingUp, color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-100', trend: false },
-    { label: 'Net Profit', value: formatCurrency(netProfit), icon: BarChart3, color: netProfit >= 0 ? 'text-[#6B3A1F]' : 'text-red-500', bg: 'bg-[#6B3A1F]/10', border: 'border-[#6B3A1F]/20', trend: netProfit >= 0 },
+    { label: 'Net Profit', value: formatCurrency(netProfit), icon: BarChart3, color: netProfit >= 0 ? 'text-[#8B5E3C]' : 'text-red-500', bg: 'bg-[#8B5E3C]/10', border: 'border-[#8B5E3C]/20', trend: netProfit >= 0 },
     { label: 'Conversion Rate', value: `${leadConversion.rate}%`, icon: Target, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100', trend: leadConversion.rate > 20 },
   ];
 
@@ -185,18 +185,18 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#6B3A1F]/10"><BarChart3 size={22} className="text-[#6B3A1F]" /></div>
+          <div className="p-2.5 rounded-xl bg-[#8B5E3C]/10"><BarChart3 size={22} className="text-[#8B5E3C]" /></div>
           <div>
-            <h1 className="text-2xl font-bold text-[#4A2112]">Reports</h1>
-            <p className="text-sm text-[#8B6B56]">Analytics and business insights</p>
+            <h1 className="text-2xl font-bold text-[#2C1810]">Reports</h1>
+            <p className="text-sm text-[#9C8575]">Analytics and business insights</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Filter size={14} className="text-[#8B6B56]" />
-          <div className="flex bg-white border border-[#E0CCBA] rounded-xl p-1">
+          <Filter size={14} className="text-[#9C8575]" />
+          <div className="flex bg-white border border-[#E8D8CA] rounded-xl p-1">
             {(['ytd', '3m', '6m', '12m'] as const).map(r => (
               <button key={r} onClick={() => setDateRange(r)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${dateRange === r ? 'bg-[#6B3A1F]/10 text-[#6B3A1F]' : 'text-[#8B6B56] hover:text-[#4A2112]'}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${dateRange === r ? 'bg-[#8B5E3C]/10 text-[#8B5E3C]' : 'text-[#9C8575] hover:text-[#2C1810]'}`}>
                 {r === 'ytd' ? 'YTD' : r.toUpperCase()}
               </button>
             ))}
@@ -210,11 +210,11 @@ export default function ReportsPage() {
           <motion.div key={m.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
             className={`bg-white border ${m.border} rounded-2xl p-5 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]`}>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-[#8B6B56] uppercase tracking-wide">{m.label}</span>
+              <span className="text-xs text-[#9C8575] uppercase tracking-wide">{m.label}</span>
               <div className={`p-2 rounded-xl ${m.bg}`}><m.icon size={16} className={m.color} /></div>
             </div>
             <div className="flex items-end gap-2">
-              <span className="text-2xl font-bold text-[#4A2112]">{m.value}</span>
+              <span className="text-2xl font-bold text-[#2C1810]">{m.value}</span>
               {m.trend ? <ArrowUpRight size={16} className="text-emerald-500 mb-1" /> : <ArrowDownRight size={16} className="text-red-400 mb-1" />}
             </div>
           </motion.div>
@@ -224,31 +224,31 @@ export default function ReportsPage() {
       {/* Revenue by Month + Expense Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-          className="lg:col-span-2 bg-white border border-[#E0CCBA] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[#E0CCBA] flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-[#6B3A1F]/10"><BarChart3 size={14} className="text-[#6B3A1F]" /></div>
-            <h3 className="text-sm font-semibold text-[#4A2112]">Revenue by Month</h3>
+          className="lg:col-span-2 bg-white border border-[#E8D8CA] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[#E8D8CA] flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-[#8B5E3C]/10"><BarChart3 size={14} className="text-[#8B5E3C]" /></div>
+            <h3 className="text-sm font-semibold text-[#2C1810]">Revenue by Month</h3>
           </div>
           <div className="p-4">
             {revenueByMonth.some(m => m.value > 0) ? (
               <BarChartSVG data={revenueByMonth} />
             ) : (
-              <div className="text-center py-6 text-sm text-[#8B6B56]">No revenue data for this period</div>
+              <div className="text-center py-6 text-sm text-[#9C8575]">No revenue data for this period</div>
             )}
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          className="bg-white border border-[#E0CCBA] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[#E0CCBA] flex items-center gap-2">
+          className="bg-white border border-[#E8D8CA] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[#E8D8CA] flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-purple-50"><DollarSign size={14} className="text-purple-600" /></div>
-            <h3 className="text-sm font-semibold text-[#4A2112]">Expense Breakdown</h3>
+            <h3 className="text-sm font-semibold text-[#2C1810]">Expense Breakdown</h3>
           </div>
           <div className="p-4">
             {expenseBreakdown.length > 0 ? (
               <HorizontalBars data={expenseBreakdown} />
             ) : (
-              <div className="text-center py-6 text-sm text-[#8B6B56]">No expense data</div>
+              <div className="text-center py-6 text-sm text-[#9C8575]">No expense data</div>
             )}
           </div>
         </motion.div>
@@ -257,19 +257,19 @@ export default function ReportsPage() {
       {/* Project Profitability + Lead Conversion */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-          className="bg-white border border-[#E0CCBA] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[#E0CCBA] flex items-center gap-3">
+          className="bg-white border border-[#E8D8CA] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[#E8D8CA] flex items-center gap-3">
             <div className="p-2 rounded-xl bg-blue-50"><Briefcase size={16} className="text-blue-600" /></div>
-            <h3 className="text-sm font-semibold text-[#4A2112]">Project Profitability</h3>
+            <h3 className="text-sm font-semibold text-[#2C1810]">Project Profitability</h3>
           </div>
           <div className="p-5">
             {projectProfit.length > 0 ? (
               <div className="space-y-3">
                 {projectProfit.map((p, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-[#F0DFD1] border border-[#E0CCBA]">
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-[#F5EDE4] border border-[#E8D8CA]">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[#4A2112] truncate">{p.name}</p>
-                      <p className="text-xs text-[#8B6B56]">Budget: {formatCurrency(p.budget)} | Spent: {formatCurrency(p.spent)}</p>
+                      <p className="text-sm font-medium text-[#2C1810] truncate">{p.name}</p>
+                      <p className="text-xs text-[#9C8575]">Budget: {formatCurrency(p.budget)} | Spent: {formatCurrency(p.spent)}</p>
                     </div>
                     <div className={`text-sm font-bold ${p.profit >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
                       {p.profit >= 0 ? '+' : ''}{formatCurrency(p.profit)}
@@ -278,16 +278,16 @@ export default function ReportsPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-6 text-sm text-[#8B6B56]">No project data with budgets</div>
+              <div className="text-center py-6 text-sm text-[#9C8575]">No project data with budgets</div>
             )}
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-          className="bg-white border border-[#E0CCBA] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[#E0CCBA] flex items-center gap-3">
+          className="bg-white border border-[#E8D8CA] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-[#E8D8CA] flex items-center gap-3">
             <div className="p-2 rounded-xl bg-emerald-50"><Users size={16} className="text-emerald-600" /></div>
-            <h3 className="text-sm font-semibold text-[#4A2112]">Lead Conversion</h3>
+            <h3 className="text-sm font-semibold text-[#2C1810]">Lead Conversion</h3>
           </div>
           <div className="p-5">
             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -295,10 +295,10 @@ export default function ReportsPage() {
                 { label: 'Total Leads', value: leadConversion.total, color: 'text-blue-600' },
                 { label: 'Won', value: leadConversion.won, color: 'text-emerald-600' },
                 { label: 'Lost', value: leadConversion.lost, color: 'text-red-500' },
-                { label: 'Active', value: leadConversion.active, color: 'text-[#6B3A1F]' },
+                { label: 'Active', value: leadConversion.active, color: 'text-[#8B5E3C]' },
               ].map(s => (
-                <div key={s.label} className="p-3 rounded-xl bg-[#F0DFD1] border border-[#E0CCBA] text-center">
-                  <p className="text-xs text-[#8B6B56]">{s.label}</p>
+                <div key={s.label} className="p-3 rounded-xl bg-[#F5EDE4] border border-[#E8D8CA] text-center">
+                  <p className="text-xs text-[#9C8575]">{s.label}</p>
                   <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
                 </div>
               ))}
@@ -307,11 +307,11 @@ export default function ReportsPage() {
             <div className="space-y-2">
               {[
                 { label: 'Won', pct: leadConversion.total ? (leadConversion.won / leadConversion.total) * 100 : 0, color: '#10B981' },
-                { label: 'Active', pct: leadConversion.total ? (leadConversion.active / leadConversion.total) * 100 : 0, color: '#6B3A1F' },
+                { label: 'Active', pct: leadConversion.total ? (leadConversion.active / leadConversion.total) * 100 : 0, color: '#8B5E3C' },
                 { label: 'Lost', pct: leadConversion.total ? (leadConversion.lost / leadConversion.total) * 100 : 0, color: '#EF4444' },
               ].map(s => (
                 <div key={s.label} className="flex items-center gap-3">
-                  <span className="text-xs text-[#8B6B56] w-12 text-right">{s.label}</span>
+                  <span className="text-xs text-[#9C8575] w-12 text-right">{s.label}</span>
                   <div className="flex-1 h-5 bg-[#E8D5C4] rounded-lg overflow-hidden">
                     <motion.div initial={{ width: 0 }} animate={{ width: `${Math.max(s.pct, s.pct > 0 ? 8 : 0)}%` }} transition={{ duration: 0.6 }}
                       className="h-full rounded-lg flex items-center px-2" style={{ backgroundColor: s.color }}>
@@ -321,9 +321,9 @@ export default function ReportsPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-4 p-3 rounded-xl bg-[#6B3A1F]/5 border border-[#6B3A1F]/20 text-center">
-              <p className="text-xs text-[#8B6B56]">Avg Deal Size</p>
-              <p className="text-lg font-bold text-[#6B3A1F]">{formatCurrency(avgDealSize)}</p>
+            <div className="mt-4 p-3 rounded-xl bg-[#8B5E3C]/5 border border-[#8B5E3C]/20 text-center">
+              <p className="text-xs text-[#9C8575]">Avg Deal Size</p>
+              <p className="text-lg font-bold text-[#8B5E3C]">{formatCurrency(avgDealSize)}</p>
             </div>
           </div>
         </motion.div>

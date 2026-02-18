@@ -31,10 +31,10 @@ const team = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#F0DFD1] text-[#2C1810] scroll-smooth">
-      <nav className="sticky top-0 z-50 bg-[#F0DFD1]/90 backdrop-blur-md border-b border-[#E0CCBA]">
+    <div className="min-h-screen bg-[#F5EDE4] text-[#2C1810] scroll-smooth">
+      <nav className="sticky top-0 z-50 bg-[#F5EDE4]/90 backdrop-blur-md border-b border-[#E8D8CA]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#6B3A1F] transition-colors">
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#8B5E3C] transition-colors">
             <ArrowLeft className="w-4 h-4" /> Vantix
           </Link>
           <Link
@@ -49,13 +49,13 @@ export default function AboutPage() {
 
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-        <motion.p initial="hidden" animate="visible" variants={fadeUp} className="text-[#6B3A1F] text-sm font-semibold uppercase tracking-widest mb-4">
+        <motion.p initial="hidden" animate="visible" variants={fadeUp} className="text-[#8B5E3C] text-sm font-semibold uppercase tracking-widest mb-4">
           About Vantix
         </motion.p>
         <motion.h1 initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.05 } } }} className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
           A 4-Person Team.<br />Half of Us Never Sleep.
         </motion.h1>
-        <motion.p initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.1 } } }} className="text-lg text-[#8B6B56] max-w-2xl mx-auto">
+        <motion.p initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.1 } } }} className="text-lg text-[#9C8575] max-w-2xl mx-auto">
           2 humans who obsess over your success. 2 AI assistants who build around the clock. Small enough to care. Powerful enough to deliver enterprise results.
         </motion.p>
       </section>
@@ -63,7 +63,7 @@ export default function AboutPage() {
       {/* Origin Story */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-white border border-[#E0CCBA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#E8D8CA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
           <h2 className="text-2xl font-bold mb-4">Why We Exist</h2>
           <div className="space-y-4 text-[#5C5650] leading-relaxed">
             <p>We started Vantix because we watched business after business get sold overpriced AI "consulting" that never actually shipped anything. Decks without deployments. Strategies without systems. Six-figure invoices for PowerPoints.</p>
@@ -82,28 +82,28 @@ export default function AboutPage() {
           {team.map((m, i) => (
             <motion.div key={m.name} initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
-              className="rounded-2xl p-8 bg-white border border-[#E0CCBA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] hover:border-[#6B3A1F]/20 transition-all">
-              <div className="w-14 h-14 rounded-xl bg-[#F0DFD1] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-5">
-                <m.icon className="w-7 h-7 text-[#6B3A1F]" />
+              className="rounded-2xl p-8 bg-white border border-[#E8D8CA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] hover:border-[#8B5E3C]/20 transition-all">
+              <div className="w-14 h-14 rounded-xl bg-[#F5EDE4] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-5">
+                <m.icon className="w-7 h-7 text-[#8B5E3C]" />
               </div>
               <h3 className="text-xl font-bold">{m.name}</h3>
-              <p className="text-sm text-[#6B3A1F] font-medium mb-3">{m.role}</p>
-              <p className="text-[#8B6B56] text-sm leading-relaxed">{m.description}</p>
+              <p className="text-sm text-[#8B5E3C] font-medium mb-3">{m.role}</p>
+              <p className="text-[#9C8575] text-sm leading-relaxed">{m.description}</p>
             </motion.div>
           ))}
         </div>
 
         {/* AI Team */}
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-white border border-[#6B3A1F]/20 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#8B5E3C]/20 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left">
-              <div className="w-14 h-14 rounded-xl bg-[#F0DFD1] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-5 mx-auto md:mx-0">
-                <Bot className="w-7 h-7 text-[#6B3A1F]" />
+              <div className="w-14 h-14 rounded-xl bg-[#F5EDE4] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-5 mx-auto md:mx-0">
+                <Bot className="w-7 h-7 text-[#8B5E3C]" />
               </div>
               <h3 className="text-xl font-bold mb-2">The AI Team Members</h3>
-              <p className="text-[#6B3A1F] text-sm font-medium mb-4">The Half That Never Sleeps</p>
-              <p className="text-[#8B6B56] leading-relaxed">
+              <p className="text-[#8B5E3C] text-sm font-medium mb-4">The Half That Never Sleeps</p>
+              <p className="text-[#9C8575] leading-relaxed">
                 This isn&apos;t a gimmick. Our 2 AI assistants are full team members. They research technologies, generate and review code, run tests, draft documentation, and optimize systems — 24 hours a day, 7 days a week, 365 days a year.
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function AboutPage() {
                 { icon: Lightbulb, text: 'Continuous optimization of deployed systems' },
               ].map((item) => (
                 <div key={item.text} className="flex items-start gap-3">
-                  <item.icon className="w-5 h-5 text-[#6B3A1F] mt-0.5 shrink-0" />
+                  <item.icon className="w-5 h-5 text-[#8B5E3C] mt-0.5 shrink-0" />
                   <span className="text-sm text-[#5C5650]">{item.text}</span>
                 </div>
               ))}
@@ -133,10 +133,10 @@ export default function AboutPage() {
           {values.map((v, i) => (
             <motion.div key={v.title} initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.08 } } }}
-              className="rounded-2xl p-6 bg-white border border-[#E0CCBA] shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] hover:border-[#6B3A1F]/20 transition-all">
-              <v.icon className="w-6 h-6 text-[#6B3A1F] mb-3" />
+              className="rounded-2xl p-6 bg-white border border-[#E8D8CA] shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] hover:border-[#8B5E3C]/20 transition-all">
+              <v.icon className="w-6 h-6 text-[#8B5E3C] mb-3" />
               <h3 className="font-bold mb-1">{v.title}</h3>
-              <p className="text-sm text-[#8B6B56] leading-relaxed">{v.description}</p>
+              <p className="text-sm text-[#9C8575] leading-relaxed">{v.description}</p>
             </motion.div>
           ))}
         </div>
@@ -145,9 +145,9 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-12 bg-white border border-[#E0CCBA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-12 bg-white border border-[#E8D8CA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
           <h2 className="text-3xl font-bold mb-4">Ready to See What 4 of Us Can Do?</h2>
-          <p className="text-[#8B6B56] mb-8 max-w-lg mx-auto">
+          <p className="text-[#9C8575] mb-8 max-w-lg mx-auto">
             We take on 3 new clients per month. If you&apos;re serious about automating your business, let&apos;s talk before the spots fill.
           </p>
           <Link
@@ -160,7 +160,7 @@ export default function AboutPage() {
         </motion.div>
       </section>
 
-      <footer className="border-t border-[#E0CCBA] py-8 text-center text-sm text-[#8B6B56]">
+      <footer className="border-t border-[#E8D8CA] py-8 text-center text-sm text-[#9C8575]">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">

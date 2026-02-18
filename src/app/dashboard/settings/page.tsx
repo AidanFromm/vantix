@@ -32,42 +32,42 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-8 max-w-4xl pb-12">
-      <div><h1 className="text-2xl sm:text-3xl font-bold text-[#4A2112]">Settings</h1><p className="text-[#8B6B56] mt-1 text-sm">Manage integrations and team access</p></div>
+      <div><h1 className="text-2xl sm:text-3xl font-bold text-[#2C1810]">Settings</h1><p className="text-[#9C8575] mt-1 text-sm">Manage integrations and team access</p></div>
 
       {/* Profile */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white border border-[#E0CCBA] rounded-2xl p-6 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-        <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 rounded-xl bg-[#6B3A1F]/10 flex items-center justify-center"><User className="text-[#6B3A1F]" size={20} /></div><div><h2 className="text-xl font-semibold text-[#4A2112]">Your Profile</h2><p className="text-sm text-[#8B6B56]">Logged in as {user?.name || 'Unknown'}</p></div></div>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white border border-[#E8D8CA] rounded-2xl p-6 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+        <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 rounded-xl bg-[#8B5E3C]/10 flex items-center justify-center"><User className="text-[#8B5E3C]" size={20} /></div><div><h2 className="text-xl font-semibold text-[#2C1810]">Your Profile</h2><p className="text-sm text-[#9C8575]">Logged in as {user?.name || 'Unknown'}</p></div></div>
         <div className="grid md:grid-cols-3 gap-4">
           {[{ label: 'Name', value: user?.name }, { label: 'Email', value: user?.email }, { label: 'Role', value: user?.role }].map(f => (
-            <div key={f.label} className="p-4 rounded-xl bg-[#F0DFD1] border border-[#E0CCBA]"><p className="text-xs text-[#8B6B56] mb-1">{f.label}</p><p className="font-medium text-[#4A2112] capitalize">{f.value || '-'}</p></div>
+            <div key={f.label} className="p-4 rounded-xl bg-[#F5EDE4] border border-[#E8D8CA]"><p className="text-xs text-[#9C8575] mb-1">{f.label}</p><p className="font-medium text-[#2C1810] capitalize">{f.value || '-'}</p></div>
           ))}
         </div>
       </motion.div>
 
       {/* Integrations */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white border border-[#E0CCBA] rounded-2xl p-6 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-        <div className="flex items-center gap-3 mb-2"><div className="w-10 h-10 rounded-xl bg-[#6B3A1F]/10 flex items-center justify-center"><Zap className="text-[#6B3A1F]" size={20} /></div><div><h2 className="text-xl font-semibold text-[#4A2112]">Integrations</h2><p className="text-sm text-[#8B6B56]">Connect external services to power up Vantix</p></div></div>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white border border-[#E8D8CA] rounded-2xl p-6 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+        <div className="flex items-center gap-3 mb-2"><div className="w-10 h-10 rounded-xl bg-[#8B5E3C]/10 flex items-center justify-center"><Zap className="text-[#8B5E3C]" size={20} /></div><div><h2 className="text-xl font-semibold text-[#2C1810]">Integrations</h2><p className="text-sm text-[#9C8575]">Connect external services to power up Vantix</p></div></div>
         <div className="mt-4 p-4 rounded-xl bg-blue-50 border border-blue-200 flex items-start gap-3"><Info size={18} className="text-blue-600 shrink-0 mt-0.5" /><p className="text-sm text-blue-700">Integrations let you pull data from other services directly into Vantix.</p></div>
         <div className="space-y-4 mt-6">
           {integrations.map(integration => {
             const Icon = integration.icon;
             const isExpanded = expandedIntegration === integration.id;
             return (
-              <div key={integration.id} className="bg-[#F0DFD1] rounded-xl border border-[#E0CCBA] overflow-hidden hover:border-[#6B3A1F]/30 transition-colors">
+              <div key={integration.id} className="bg-[#F5EDE4] rounded-xl border border-[#E8D8CA] overflow-hidden hover:border-[#8B5E3C]/30 transition-colors">
                 <div className="p-4 cursor-pointer" onClick={() => setExpandedIntegration(isExpanded ? null : integration.id)}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${integration.color} flex items-center justify-center`}><Icon className="text-white" size={24} /></div>
-                      <div><h3 className="font-semibold text-[#4A2112]">{integration.name}</h3><p className="text-sm text-[#8B6B56]">{integration.description}</p></div>
+                      <div><h3 className="font-semibold text-[#2C1810]">{integration.name}</h3><p className="text-sm text-[#9C8575]">{integration.description}</p></div>
                     </div>
                     <span className="flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-200"><Zap size={12} /> Ready</span>
                   </div>
                 </div>
                 {isExpanded && (
-                  <div className="border-t border-[#E0CCBA] p-4 bg-white">
-                    <h4 className="text-sm font-medium text-[#4A2112] mb-3">What you&apos;ll get:</h4>
-                    <ul className="space-y-2">{integration.benefits.map((b, i) => <li key={i} className="flex items-center gap-2 text-sm text-[#8B6B56]"><CheckCircle2 size={14} className="text-emerald-500" /> {b}</li>)}</ul>
-                    <button className="mt-4 w-full bg-[#6B3A1F] hover:bg-[#A67A4B] text-white py-3 rounded-xl font-medium transition-all">Connect {integration.name}</button>
+                  <div className="border-t border-[#E8D8CA] p-4 bg-white">
+                    <h4 className="text-sm font-medium text-[#2C1810] mb-3">What you&apos;ll get:</h4>
+                    <ul className="space-y-2">{integration.benefits.map((b, i) => <li key={i} className="flex items-center gap-2 text-sm text-[#9C8575]"><CheckCircle2 size={14} className="text-emerald-500" /> {b}</li>)}</ul>
+                    <button className="mt-4 w-full bg-[#8B5E3C] hover:bg-[#A67A4B] text-white py-3 rounded-xl font-medium transition-all">Connect {integration.name}</button>
                   </div>
                 )}
               </div>
@@ -77,20 +77,20 @@ export default function SettingsPage() {
       </motion.div>
 
       {/* Team */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white border border-[#E0CCBA] rounded-2xl p-6 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
-        <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center"><Shield className="text-purple-500" size={20} /></div><div><h2 className="text-xl font-semibold text-[#4A2112]">Team Members</h2><p className="text-sm text-[#8B6B56]">{teamMembers.length} members with access</p></div></div>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white border border-[#E8D8CA] rounded-2xl p-6 shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]">
+        <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center"><Shield className="text-purple-500" size={20} /></div><div><h2 className="text-xl font-semibold text-[#2C1810]">Team Members</h2><p className="text-sm text-[#9C8575]">{teamMembers.length} members with access</p></div></div>
         <div className="grid md:grid-cols-2 gap-4">
           {teamMembers.map(member => (
-            <div key={member.name} className="flex items-center gap-4 p-4 bg-[#F0DFD1] rounded-xl border border-[#E0CCBA]">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${member.type === 'bot' ? 'bg-[#6B3A1F]/10 text-[#6B3A1F]' : 'bg-purple-50 text-purple-500'}`}>{member.name[0]}</div>
-              <div><h3 className="font-medium text-[#4A2112]">{member.name}</h3><p className="text-sm text-[#8B6B56]">{member.role}</p></div>
+            <div key={member.name} className="flex items-center gap-4 p-4 bg-[#F5EDE4] rounded-xl border border-[#E8D8CA]">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${member.type === 'bot' ? 'bg-[#8B5E3C]/10 text-[#8B5E3C]' : 'bg-purple-50 text-purple-500'}`}>{member.name[0]}</div>
+              <div><h3 className="font-medium text-[#2C1810]">{member.name}</h3><p className="text-sm text-[#9C8575]">{member.role}</p></div>
             </div>
           ))}
         </div>
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex justify-end">
-        <button onClick={handleSave} className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${saved ? 'bg-emerald-500 text-white' : 'bg-[#6B3A1F] hover:bg-[#A67A4B] text-white'}`}><Save size={20} />{saved ? 'Saved!' : 'Save Changes'}</button>
+        <button onClick={handleSave} className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${saved ? 'bg-emerald-500 text-white' : 'bg-[#8B5E3C] hover:bg-[#A67A4B] text-white'}`}><Save size={20} />{saved ? 'Saved!' : 'Save Changes'}</button>
       </motion.div>
     </div>
   );

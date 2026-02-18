@@ -95,7 +95,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="relative px-4 py-5 border-b border-[#E0CCBA]">
+      <div className="relative px-4 py-5 border-b border-[#E8D8CA]">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#E8CFA0] via-[#D4B07C] to-[#C9A06E] flex items-center justify-center shadow-[3px_3px_8px_#d1cdc7,-3px_-3px_8px_#ffffff]">
@@ -108,7 +108,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="text-xl font-bold text-[#4A2112]"
+                  className="text-xl font-bold text-[#2C1810]"
                 >
                   vantix
                 </motion.span>
@@ -119,7 +119,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
           {/* Collapse button - desktop only */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg bg-[#E8D5C4] hover:bg-[#EDE7DF] text-[#8B6B56] hover:text-[#4A2112] transition-all"
+            className="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg bg-[#E8D5C4] hover:bg-[#EDE7DF] text-[#9C8575] hover:text-[#2C1810] transition-all"
           >
             {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
@@ -127,7 +127,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
           {/* Close button - mobile only */}
           <button
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden p-2 rounded-lg text-[#8B6B56] hover:text-[#4A2112] hover:bg-[#E8D5C4] transition-colors"
+            className="lg:hidden p-2 rounded-lg text-[#9C8575] hover:text-[#2C1810] hover:bg-[#E8D5C4] transition-colors"
           >
             <X size={20} />
           </button>
@@ -135,11 +135,11 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       </div>
 
       {/* User Profile */}
-      <div className="px-3 py-4 border-b border-[#E0CCBA]">
+      <div className="px-3 py-4 border-b border-[#E8D8CA]">
         <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
           <div className="relative flex-shrink-0">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#E8CFA0]/40 to-[#D4B07C]/40 border border-[#D4B07C]/30 flex items-center justify-center">
-              <span className="text-[#6B3A1F] font-semibold text-sm">
+              <span className="text-[#8B5E3C] font-semibold text-sm">
                 {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
               </span>
             </div>
@@ -154,8 +154,8 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
                 transition={{ duration: 0.2 }}
                 className="min-w-0"
               >
-                <p className="text-sm font-medium text-[#4A2112] truncate">{user.name}</p>
-                <p className="text-xs text-[#8B6B56] truncate">{user.role}</p>
+                <p className="text-sm font-medium text-[#2C1810] truncate">{user.name}</p>
+                <p className="text-xs text-[#9C8575] truncate">{user.role}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -177,8 +177,8 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
                   isCollapsed ? 'justify-center' : ''
                 } ${
                   isActive
-                    ? 'bg-[#6B3A1F] text-white rounded-lg shadow-sm'
-                    : 'text-[#8B6B56] hover:text-[#4A2112] hover:bg-[#E8D5C4]'
+                    ? 'bg-[#8B5E3C] text-white rounded-lg shadow-sm'
+                    : 'text-[#9C8575] hover:text-[#2C1810] hover:bg-[#E8D5C4]'
                 }`}
               >
                 {/* Active indicator */}
@@ -213,14 +213,14 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
 
                 {/* Badge */}
                 {item.badge && item.badge > 0 && !isCollapsed && (
-                  <span className="ml-auto px-2 py-0.5 text-xs font-semibold bg-[#6B3A1F] text-white rounded-full">
+                  <span className="ml-auto px-2 py-0.5 text-xs font-semibold bg-[#8B5E3C] text-white rounded-full">
                     {item.badge}
                   </span>
                 )}
 
                 {/* Tooltip for collapsed state */}
                 {isCollapsed && (
-                  <div className="absolute left-full ml-3 px-2 py-1 bg-white text-[#4A2112] text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-nowrap border border-[#E0CCBA] shadow-[3px_3px_8px_#d1cdc7,-3px_-3px_8px_#ffffff]">
+                  <div className="absolute left-full ml-3 px-2 py-1 bg-white text-[#2C1810] text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-nowrap border border-[#E8D8CA] shadow-[3px_3px_8px_#d1cdc7,-3px_-3px_8px_#ffffff]">
                     {item.label}
                   </div>
                 )}
@@ -231,10 +231,10 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       </nav>
 
       {/* Logout */}
-      <div className="p-3 border-t border-[#E0CCBA]">
+      <div className="p-3 border-t border-[#E8D8CA]">
         <button
           onClick={onLogout}
-          className={`flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-[#8B6B56] hover:text-[#C4735B] hover:bg-[#C4735B]/10 transition-all ${
+          className={`flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-[#9C8575] hover:text-[#C4735B] hover:bg-[#C4735B]/10 transition-all ${
             isCollapsed ? 'justify-center' : ''
           }`}
         >
@@ -261,9 +261,9 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       {/* Mobile hamburger button */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white/80 backdrop-blur-xl border border-[#E0CCBA] rounded-xl shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white/80 backdrop-blur-xl border border-[#E8D8CA] rounded-xl shadow-[4px_4px_12px_#d1cdc7,-4px_-4px_12px_#ffffff]"
       >
-        <Menu size={20} className="text-[#4A2112]" />
+        <Menu size={20} className="text-[#2C1810]" />
       </button>
 
       {/* Mobile overlay */}
@@ -274,7 +274,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden fixed inset-0 bg-[#4A2112]/30 backdrop-blur-sm z-40"
+            className="lg:hidden fixed inset-0 bg-[#2C1810]/30 backdrop-blur-sm z-40"
           />
         )}
       </AnimatePresence>
@@ -288,7 +288,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         className={`
           fixed lg:sticky top-0 left-0 z-50 h-screen
-          bg-[#F0DFD1] backdrop-blur-xl border-r border-[#E0CCBA]
+          bg-[#F5EDE4] backdrop-blur-xl border-r border-[#E8D8CA]
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           transition-transform lg:transition-none
         `}
