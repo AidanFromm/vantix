@@ -1095,48 +1095,181 @@ function FAQSection() {
 }
 
 // ============================================
-// BOOKING SECTION (Cal.com)
 // ============================================
+// BOOKING SECTION (Custom Calendar)
+// ============================================
+const TIME_SLOTS = [
+  '9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM',
+  '1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM',
+];
+
+function getWeekdays(weeks: number): Date[] {
+  const days: Date[] = [];
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  for (let i = 0; days.length < weeks * 5; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    const dow = d.getDay();
+    if (dow !== 0 && dow !== 6) days.push(d);
+  }
+  return days;
+}
+
+function isSameDay(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function isPastOrToday(d: Date) {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return d <= today;
+}
+
+function formatDateStr(d: Date) {
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function toISO(d: Date, timeStr: string) {
+  const [time, ampm] = timeStr.split(' ');
+  const [hStr, mStr] = time.split(':');
+  let h = parseInt(hStr);
+  if (ampm === 'PM' && h !== 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, parseInt(mStr));
+  return dt.toISOString();
+}
+
 function BookingSection() {
-  const { ref, inView } = useAnimateInView();
+  const { ref } = useAnimateInView();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: '', email: '', phone: '', notes: '' });
+  const [submitted, setSubmitted] = useState(false);
+  const weekdays = getWeekdays(3);
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.email.trim() || !selectedDate || !selectedTime) return;
+    const booking = {
+      id: 'booking-' + Date.now(),
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      date: formatDateStr(selectedDate),
+      time: selectedTime,
+      notes: form.notes,
+      created_at: new Date().toISOString(),
+      dismissed: false,
+    };
+    try {
+      const existing = JSON.parse(localStorage.getItem('vantix_bookings') || '[]');
+      existing.push(booking);
+      localStorage.setItem('vantix_bookings', JSON.stringify(existing));
+    } catch { /* noop */ }
+    fetch('/api/bookings/webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        triggerEvent: 'BOOKING_CREATED',
+        payload: {
+          attendees: [{ name: form.name, email: form.email, phone: form.phone }],
+          startTime: toISO(selectedDate, selectedTime),
+          responses: { notes: form.notes },
+        },
+      }),
+    }).catch(() => {});
+    setSubmitted(true);
+  };
+
+  // step: 0=date, 1=time, 2=form, 3=done
+  const step = submitted ? 3 : selectedTime ? 2 : selectedDate ? 1 : 0;
 
   return (
     <section id="booking" className="py-24 lg:py-32 relative">
       <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-          className="text-center mb-12"
-        >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8B6D47] mb-4">
-            Start This Week
-          </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#3D2E1C] mb-4">
-            Book Your Free AI Audit
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#A39484] text-base leading-relaxed max-w-2xl mx-auto">
-            30 minutes. Zero pressure. We&apos;ll map every AI opportunity in your business and show you exactly what the ROI looks like. Pick a time below.
-          </motion.p>
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="text-center mb-12">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8B6D47] mb-4">Start This Week</motion.p>
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#3D2E1C] mb-4">Book Your Free AI Audit</motion.h2>
+          <motion.p variants={fadeUp} className="text-[#A39484] text-base leading-relaxed max-w-2xl mx-auto">30 minutes. Zero pressure. Pick a time below.</motion.p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="rounded-xl bg-white shadow-sm border border-[#EDE8E1] overflow-hidden"
-          style={{ minHeight: '660px' }}
-        >
-          <iframe
-            src="https://cal.com/vantix/ai-consultation"
-            width="100%"
-            height="660"
-            frameBorder="0"
-            title="Schedule a consultation"
-            className="w-full"
-          />
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
+          className="rounded-xl bg-white shadow-sm border border-[#EDE8E1] overflow-hidden p-6 sm:p-8">
+          <AnimatePresence mode="wait">
+            {step === 3 ? (
+              <motion.div key="done" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-center py-12">
+                <CheckCircle2 className="mx-auto mb-4 text-[#8B6D47]" size={48} />
+                <h3 className="text-2xl font-bold text-[#3D2E1C] mb-2">You&apos;re booked!</h3>
+                <p className="text-[#A39484]">We&apos;ll reach out within 24 hours to confirm.</p>
+              </motion.div>
+            ) : (
+              <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                {/* Date pills */}
+                <div className="mb-6">
+                  <p className="text-sm font-medium text-[#3D2E1C] mb-3">Select a date</p>
+                  <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin' }}>
+                    {weekdays.map((d) => {
+                      const past = isPastOrToday(d);
+                      const active = selectedDate && isSameDay(d, selectedDate);
+                      return (
+                        <button key={d.toISOString()} disabled={past}
+                          onClick={() => { setSelectedDate(d); setSelectedTime(null); }}
+                          className={`flex-shrink-0 flex flex-col items-center justify-center w-14 h-16 rounded-xl text-xs font-medium transition-all
+                            ${active ? 'bg-[#8B6D47] text-white shadow-md' : past ? 'bg-[#F5F1EC] text-[#D0C8BD] cursor-not-allowed' : 'bg-[#F5F1EC] text-[#3D2E1C] hover:bg-[#EDE8E1] cursor-pointer'}`}>
+                          <span className="text-[10px] uppercase">{dayNames[d.getDay()]}</span>
+                          <span className="text-lg font-bold leading-tight">{d.getDate()}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Time slots */}
+                <AnimatePresence mode="wait">
+                  {step >= 1 && (
+                    <motion.div key="times" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-6 overflow-hidden">
+                      <p className="text-sm font-medium text-[#3D2E1C] mb-3">Select a time</p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {TIME_SLOTS.map((t) => {
+                          const active = selectedTime === t;
+                          return (
+                            <button key={t} onClick={() => setSelectedTime(t)}
+                              className={`py-2.5 rounded-lg text-sm font-medium transition-all
+                                ${active ? 'bg-[#8B6D47] text-white shadow-md' : 'bg-[#F5F1EC] text-[#3D2E1C] hover:bg-[#EDE8E1]'}`}>
+                              {t}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Form */}
+                <AnimatePresence mode="wait">
+                  {step >= 2 && (
+                    <motion.form key="form" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                      onSubmit={handleSubmit} className="space-y-3 overflow-hidden">
+                      <p className="text-sm font-medium text-[#3D2E1C] mb-1">Your details</p>
+                      <input type="text" required placeholder="Name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#EDE8E1] bg-[#FBF9F6] text-[#3D2E1C] placeholder-[#A39484] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B6D47]/30" />
+                      <input type="email" required placeholder="Email *" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#EDE8E1] bg-[#FBF9F6] text-[#3D2E1C] placeholder-[#A39484] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B6D47]/30" />
+                      <input type="tel" placeholder="Phone (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#EDE8E1] bg-[#FBF9F6] text-[#3D2E1C] placeholder-[#A39484] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B6D47]/30" />
+                      <textarea placeholder="What's your biggest challenge?" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2}
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#EDE8E1] bg-[#FBF9F6] text-[#3D2E1C] placeholder-[#A39484] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B6D47]/30 resize-none" />
+                      <button type="submit" className={`${woodButtonClass} w-full`} {...woodButtonProps()}>
+                        Confirm Booking — {selectedDate && dayNames[selectedDate.getDay()]} {selectedDate?.getDate()} at {selectedTime}
+                      </button>
+                    </motion.form>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </section>
