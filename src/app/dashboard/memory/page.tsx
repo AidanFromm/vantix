@@ -160,7 +160,7 @@ export default function MemoryPage() {
           >
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">New Memory</h3>
-              <button onClick={() => setShowAddForm(false)} className="p-1 hover:bg-white/5 rounded-lg">
+              <button onClick={() => setShowAddForm(false)} className="p-1 hover:bg-[#EEE6DC]/5 rounded-lg">
                 <X size={18} />
               </button>
             </div>
@@ -268,7 +268,7 @@ export default function MemoryPage() {
             <p className="text-white mb-4">{memory.content}</p>
             <div className="flex flex-wrap gap-2">
               {memory.tags.map((tag) => (
-                <span key={tag} className="text-xs px-2 py-1 bg-white/5 border border-[var(--color-border)] rounded flex items-center gap-1">
+                <span key={tag} className="text-xs px-2 py-1 bg-[#EEE6DC]/5 border border-[var(--color-border)] rounded flex items-center gap-1">
                   <Tag size={10} />
                   {tag}
                 </span>

@@ -109,7 +109,7 @@ export default function NotepadPage() {
                 className={`p-4 rounded-lg cursor-pointer transition-colors ${
                   activeNote?.id === note.id
                     ? 'bg-[var(--color-accent)]/20 border border-[var(--color-accent)]'
-                    : 'hover:bg-white/5 border border-transparent'
+                    : 'hover:bg-[#EEE6DC]/5 border border-transparent'
                 }`}
               >
                 <div className="flex items-start gap-3">

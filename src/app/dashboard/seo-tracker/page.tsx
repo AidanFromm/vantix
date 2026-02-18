@@ -108,7 +108,7 @@ export default function SEOTrackerPage() {
                 </div>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {site.keywords.map(kw => (
-                    <span key={kw} className="text-[10px] px-2 py-0.5 bg-white/5 text-[var(--color-muted)] rounded-full">
+                    <span key={kw} className="text-[10px] px-2 py-0.5 bg-[#EEE6DC]/5 text-[var(--color-muted)] rounded-full">
                       {kw}
                     </span>
                   ))}
@@ -116,7 +116,7 @@ export default function SEOTrackerPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-[var(--color-muted)]">Last: {site.lastChecked}</span>
-                <button className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
+                <button className="p-1.5 hover:bg-[#EEE6DC]/10 rounded-lg transition-colors">
                   <RefreshCw size={14} className="text-[var(--color-muted)]" />
                 </button>
               </div>

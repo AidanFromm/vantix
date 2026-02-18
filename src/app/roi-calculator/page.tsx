@@ -164,7 +164,7 @@ export default function ROICalculatorPage() {
                         ? 'bg-emerald-500 text-black'
                         : i === step
                         ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
-                        : 'bg-white/5 text-white/30'
+                        : 'bg-[#EEE6DC]/5 text-white/30'
                     }`}
                   >
                     {i < step ? <Check className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
@@ -174,7 +174,7 @@ export default function ROICalculatorPage() {
               );
             })}
           </div>
-          <div className="h-1 rounded-full bg-white/5 overflow-hidden">
+          <div className="h-1 rounded-full bg-[#EEE6DC]/5 overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
               animate={{ width: `${((step + 1) / 5) * 100}%` }}
@@ -194,7 +194,7 @@ export default function ROICalculatorPage() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -40 }}
               transition={{ duration: 0.3 }}
-              className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10"
+              className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10"
             >
               {step === 0 && (
                 <div>
@@ -208,7 +208,7 @@ export default function ROICalculatorPage() {
                         className={`px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 border ${
                           industry === ind
                             ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                            : 'bg-white/[0.03] border-white/10 text-white/70 hover:bg-white/[0.06] hover:border-white/20'
+                            : 'bg-[#EEE6DC]/[0.03] border-white/10 text-white/70 hover:bg-[#EEE6DC]/[0.06] hover:border-white/20'
                         }`}
                       >
                         {ind}
@@ -232,7 +232,7 @@ export default function ROICalculatorPage() {
                     max={50}
                     value={teamSize}
                     onChange={(e) => setTeamSize(Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-white/10 cursor-pointer"
+                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
                   />
                   <div className="flex justify-between text-xs text-white/30 mt-2">
                     <span>1</span>
@@ -255,7 +255,7 @@ export default function ROICalculatorPage() {
                     max={80}
                     value={manualHours}
                     onChange={(e) => setManualHours(Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-white/10 cursor-pointer"
+                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
                   />
                   <div className="flex justify-between text-xs text-white/30 mt-2">
                     <span>5 hrs</span>
@@ -278,7 +278,7 @@ export default function ROICalculatorPage() {
                     max={150}
                     value={hourlyCost}
                     onChange={(e) => setHourlyCost(Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-white/10 cursor-pointer"
+                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
                   />
                   <div className="flex justify-between text-xs text-white/30 mt-2">
                     <span>$15</span>
@@ -301,7 +301,7 @@ export default function ROICalculatorPage() {
                     max={200}
                     value={inquiries}
                     onChange={(e) => setInquiries(Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-white/10 cursor-pointer"
+                    className="w-full accent-emerald-500 h-2 rounded-full appearance-none bg-[#EEE6DC]/10 cursor-pointer"
                   />
                   <div className="flex justify-between text-xs text-white/30 mt-2">
                     <span>0</span>
@@ -325,7 +325,7 @@ export default function ROICalculatorPage() {
                   className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                     canProceed
                       ? 'bg-emerald-500 text-black hover:bg-emerald-400'
-                      : 'bg-white/10 text-white/30 cursor-not-allowed'
+                      : 'bg-[#EEE6DC]/10 text-white/30 cursor-not-allowed'
                   }`}
                 >
                   {step === 4 ? 'Calculate My Savings' : 'Next'}
@@ -341,7 +341,7 @@ export default function ROICalculatorPage() {
               transition={{ duration: 0.5 }}
             >
               {/* Results */}
-              <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6">
+              <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
                     <TrendingUp className="w-5 h-5 text-emerald-400" />
@@ -353,14 +353,14 @@ export default function ROICalculatorPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                  <div className="bg-white/[0.03] border border-white/10 rounded-xl p-5">
+                  <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-xl p-5">
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Weekly Time Saved</p>
                     <p className="text-2xl font-bold text-emerald-400">
                       <AnimatedNumber value={timeSavedWeekly} decimals={1} suffix=" hrs" />
                     </p>
                     <p className="text-white/30 text-xs mt-1">AI automates ~70% of repetitive tasks</p>
                   </div>
-                  <div className="bg-white/[0.03] border border-white/10 rounded-xl p-5">
+                  <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-xl p-5">
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Monthly Savings</p>
                     <p className="text-2xl font-bold text-emerald-400">
                       <AnimatedNumber value={monthlySavings} prefix="$" />
@@ -372,20 +372,20 @@ export default function ROICalculatorPage() {
                       <AnimatedNumber value={annualSavings} prefix="$" />
                     </p>
                   </div>
-                  <div className="bg-white/[0.03] border border-white/10 rounded-xl p-5">
+                  <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-xl p-5">
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Estimated AI Investment</p>
                     <p className="text-2xl font-bold text-white">
                       <AnimatedNumber value={aiInvestment} prefix="$" />
                     </p>
                     <p className="text-white/30 text-xs mt-1">Based on team size</p>
                   </div>
-                  <div className="bg-white/[0.03] border border-white/10 rounded-xl p-5">
+                  <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-xl p-5">
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">ROI</p>
                     <p className="text-2xl font-bold text-emerald-400">
                       <AnimatedNumber value={roiPercent} suffix="%" />
                     </p>
                   </div>
-                  <div className="bg-white/[0.03] border border-white/10 rounded-xl p-5 sm:col-span-2">
+                  <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-xl p-5 sm:col-span-2">
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Payback Period</p>
                     <p className="text-2xl font-bold text-white">
                       <AnimatedNumber value={paybackMonths} decimals={1} suffix=" months" />
@@ -404,7 +404,7 @@ export default function ROICalculatorPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6"
+                  className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6"
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <Download className="w-5 h-5 text-emerald-400" />
@@ -422,7 +422,7 @@ export default function ROICalculatorPage() {
                         placeholder="Your name"
                         value={leadName}
                         onChange={(e) => setLeadName(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
                       />
                     </div>
                     <div className="relative">
@@ -433,7 +433,7 @@ export default function ROICalculatorPage() {
                         placeholder="your@email.com"
                         value={leadEmail}
                         onChange={(e) => setLeadEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
                       />
                     </div>
                     <button

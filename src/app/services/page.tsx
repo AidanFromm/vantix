@@ -75,11 +75,11 @@ const services = [
 
 export default function ServicesPage() {
   return (
-    <div className="min-h-screen bg-[#F5EFE7] text-[#1E1E1E] scroll-smooth">
+    <div className="min-h-screen bg-[#F4EFE8] text-[#1C1C1C] scroll-smooth">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-[#F5EFE7]/90 backdrop-blur-md border-b border-[#D8CFC4]">
+      <nav className="sticky top-0 z-50 bg-[#F4EFE8]/90 backdrop-blur-md border-b border-[#E3D9CD]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#9B6C3C] transition-colors">
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#8E5E34] transition-colors">
             <ArrowLeft className="w-4 h-4" /> Vantix
           </Link>
           <Link
@@ -96,7 +96,7 @@ export default function ServicesPage() {
       <section className="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
         <motion.p
           initial="hidden" animate="visible" variants={fadeUp}
-          className="text-[#9B6C3C] text-sm font-semibold uppercase tracking-widest mb-4"
+          className="text-[#8E5E34] text-sm font-semibold uppercase tracking-widest mb-4"
         >
           What We Deploy
         </motion.p>
@@ -125,23 +125,23 @@ export default function ServicesPage() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
-              className="rounded-2xl p-8 bg-white border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#c8c4be,-12px_-12px_28px_#ffffff] hover:border-[#9B6C3C]/20 transition-all duration-300"
+              className="rounded-2xl p-8 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] hover:shadow-[12px_12px_28px_#c8c4be,-12px_-12px_28px_#ffffff] hover:border-[#8E5E34]/20 transition-all duration-300"
             >
-              <div className="w-14 h-14 rounded-xl bg-[#F5EFE7] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-6">
-                <s.icon className="w-7 h-7 text-[#9B6C3C]" />
+              <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-[inset_4px_4px_8px_#d1cdc7,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-6">
+                <s.icon className="w-7 h-7 text-[#8E5E34]" />
               </div>
               <h3 className="text-2xl font-bold mb-2">{s.title}</h3>
-              <p className="text-[#9B6C3C] text-sm font-semibold mb-4">{s.price}</p>
+              <p className="text-[#8E5E34] text-sm font-semibold mb-4">{s.price}</p>
               <p className="text-[#7A746C] mb-6 leading-relaxed">{s.description}</p>
               <ul className="space-y-2.5 mb-6">
                 {s.features.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm text-[#5C5650]">
-                    <CheckCircle2 className="w-4 h-4 text-[#9B6C3C] mt-0.5 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#8E5E34] mt-0.5 shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
-              <Link href="/#booking" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#9B6C3C] hover:text-[#9A7048] transition-colors">
+              <Link href="/#booking" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#8E5E34] hover:text-[#9A7048] transition-colors">
                 Get Started <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -154,9 +154,9 @@ export default function ServicesPage() {
         <motion.div
           initial="hidden" whileInView="visible" viewport={{ once: true }}
           variants={fadeUp}
-          className="rounded-2xl p-12 bg-white border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]"
+          className="rounded-2xl p-12 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]"
         >
-          <Calendar className="w-10 h-10 text-[#9B6C3C] mx-auto mb-4" />
+          <Calendar className="w-10 h-10 text-[#8E5E34] mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-4">Not Sure Where to Start?</h2>
           <p className="text-[#7A746C] mb-8 max-w-lg mx-auto">
             Book a free AI audit. We&apos;ll map every automation opportunity in your business and show you the projected ROI — before you spend a dollar.
@@ -171,7 +171,7 @@ export default function ServicesPage() {
             </Link>
             <a
               href="tel:+19084987753"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#D8CFC4] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#9B6C3C]/20 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#E3D9CD] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#8E5E34]/20 transition-all"
             >
               <Phone className="w-4 h-4" /> (908) 498-7753
             </a>
@@ -180,12 +180,12 @@ export default function ServicesPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#D8CFC4] py-8 text-center text-sm text-[#7A746C]">
+      <footer className="border-t border-[#E3D9CD] py-8 text-center text-sm text-[#7A746C]">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#1E1E1E] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#1E1E1E] transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-[#1C1C1C] transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-[#1C1C1C] transition-colors">Terms</Link>
           </div>
         </div>
       </footer>

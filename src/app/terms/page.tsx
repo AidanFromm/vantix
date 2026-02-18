@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-[#F5EFE7] text-[#1E1E1E]">
-      <nav className="sticky top-0 z-50 bg-[#F5EFE7]/90 backdrop-blur-md border-b border-[#D8CFC4]">
+    <div className="min-h-screen bg-[#F4EFE8] text-[#1C1C1C]">
+      <nav className="sticky top-0 z-50 bg-[#F4EFE8]/90 backdrop-blur-md border-b border-[#E3D9CD]">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
             <ArrowLeft className="w-4 h-4" /> Vantix
@@ -88,16 +88,16 @@ export default function TermsPage() {
         <ul className="list-none pl-0 space-y-1 text-[#5C5650]">
           <li>Email: hello@usevantix.com</li>
           <li>Phone: (908) 498-7753</li>
-          <li>Website: <Link href="/contact" className="text-[#9B6C3C] hover:underline">usevantix.com/contact</Link></li>
+          <li>Website: <Link href="/contact" className="text-[#8E5E34] hover:underline">usevantix.com/contact</Link></li>
         </ul>
       </article>
 
-      <footer className="border-t border-[#D8CFC4] py-8 text-center text-sm text-[#7A746C]">
+      <footer className="border-t border-[#E3D9CD] py-8 text-center text-sm text-[#7A746C]">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#1E1E1E] transition-colors">Privacy</Link>
-            <Link href="/contact" className="hover:text-[#1E1E1E] transition-colors">Contact</Link>
+            <Link href="/privacy" className="hover:text-[#1C1C1C] transition-colors">Privacy</Link>
+            <Link href="/contact" className="hover:text-[#1C1C1C] transition-colors">Contact</Link>
           </div>
         </div>
       </footer>

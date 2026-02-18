@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #F5EFE7;
-  --color-text: #1E1E1E;
+  --color-bg: #F4EFE8;
+  --color-text: #1C1C1C;
   --color-muted: #7A746C;
-  --color-accent: #9B6C3C;
-  --color-accent-light: #9B6C3C;
-  --color-accent-hover: #9B6C3C;
-  --color-border: #D8CFC4;
+  --color-accent: #8E5E34;
+  --color-accent-light: #8E5E34;
+  --color-accent-hover: #8E5E34;
+  --color-border: #E3D9CD;
   --color-card: #FFFFFF;
-  --color-surface: #EFE6DA;
+  --color-surface: #EEE6DC;
   --color-sage: #7A746C;
   --color-primary: #B07A45;
-  --color-hover-bg: #EFE6DA;
+  --color-hover-bg: #EEE6DC;
 }
 
 * {
@@ -351,13 +351,13 @@ textarea {
    ======================================== */
 
 .dashboard-scope {
-  --dash-bg: #F5EFE7;
+  --dash-bg: #F4EFE8;
   --dash-card: #FFFFFF;
-  --dash-text: #1E1E1E;
+  --dash-text: #1C1C1C;
   --dash-muted: #7A746C;
-  --dash-accent: #9B6C3C;
-  --dash-border: #D8CFC4;
-  --dash-surface: #EFE6DA;
+  --dash-accent: #8E5E34;
+  --dash-border: #E3D9CD;
+  --dash-surface: #EEE6DC;
   --dash-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
 }
 
@@ -387,7 +387,7 @@ textarea {
 }
 
 .dashboard-scope .wood-btn:hover {
-  background: #9B6C3C;
+  background: #8E5E34;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 

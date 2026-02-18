@@ -213,13 +213,13 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
                   <div className="bg-gradient-to-br from-gray-900 to-gray-800 h-28 sm:h-36 md:h-48 rounded-b-xl overflow-hidden relative">
                     {/* Placeholder content representing the site */}
                     <div className="absolute inset-0 p-4">
-                      <div className="h-3 w-24 bg-white/20 rounded mb-3" />
-                      <div className="h-2 w-full bg-white/10 rounded mb-2" />
-                      <div className="h-2 w-3/4 bg-white/10 rounded mb-4" />
+                      <div className="h-3 w-24 bg-[#EEE6DC]/20 rounded mb-3" />
+                      <div className="h-2 w-full bg-[#EEE6DC]/10 rounded mb-2" />
+                      <div className="h-2 w-3/4 bg-[#EEE6DC]/10 rounded mb-4" />
                       <div className="grid grid-cols-3 gap-2">
-                        <div className="h-16 bg-white/5 rounded" />
-                        <div className="h-16 bg-white/5 rounded" />
-                        <div className="h-16 bg-white/5 rounded" />
+                        <div className="h-16 bg-[#EEE6DC]/5 rounded" />
+                        <div className="h-16 bg-[#EEE6DC]/5 rounded" />
+                        <div className="h-16 bg-[#EEE6DC]/5 rounded" />
                       </div>
                     </div>
                     
@@ -259,12 +259,12 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
               className={cn(
                 'absolute top-5 right-5',
                 'w-10 h-10 rounded-full',
-                'bg-white/10 backdrop-blur-xl',
+                'bg-[#EEE6DC]/10 backdrop-blur-xl',
                 'flex items-center justify-center',
                 'border border-white/20',
                 'opacity-0 group-hover:opacity-100',
                 'transition-all duration-300',
-                'hover:bg-white/20'
+                'hover:bg-[#EEE6DC]/20'
               )}
             >
               <ExternalLink size={18} className="text-white" />
@@ -335,9 +335,9 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
                   transition={{ delay: index * 0.15 + i * 0.05 + 0.5 }}
                   className={cn(
                     'px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium rounded-md sm:rounded-lg',
-                    'bg-white/[0.04] text-white/70',
+                    'bg-[#EEE6DC]/[0.04] text-white/70',
                     'border border-white/[0.06]',
-                    'hover:bg-white/[0.08] hover:border-white/[0.12]',
+                    'hover:bg-[#EEE6DC]/[0.08] hover:border-white/[0.12]',
                     'transition-all duration-200'
                   )}
                 >
@@ -470,16 +470,16 @@ function FeaturedProjectCard({ project }: { project: Project }) {
                         <div className="flex justify-between items-center mb-4">
                           <div className="h-4 w-28 bg-emerald-500/30 rounded" />
                           <div className="flex gap-2">
-                            <div className="h-3 w-16 bg-white/10 rounded" />
-                            <div className="h-3 w-16 bg-white/10 rounded" />
+                            <div className="h-3 w-16 bg-[#EEE6DC]/10 rounded" />
+                            <div className="h-3 w-16 bg-[#EEE6DC]/10 rounded" />
                           </div>
                         </div>
                         <div className="grid grid-cols-4 gap-2 mb-3">
                           {[...Array(4)].map((_, i) => (
-                            <div key={i} className="h-12 bg-white/5 rounded-lg" />
+                            <div key={i} className="h-12 bg-[#EEE6DC]/5 rounded-lg" />
                           ))}
                         </div>
-                        <div className="h-20 bg-white/5 rounded-lg" />
+                        <div className="h-20 bg-[#EEE6DC]/5 rounded-lg" />
                       </div>
                       
                       {/* Shine effect */}

@@ -123,7 +123,7 @@ export default function InboxPage() {
             {f.label}
             {f.count > 0 && (
               <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                filter === f.key ? 'bg-white/20' : 'bg-white/10'
+                filter === f.key ? 'bg-[#EEE6DC]/20' : 'bg-[#EEE6DC]/10'
               }`}>
                 {f.count}
               </span>
@@ -144,8 +144,8 @@ export default function InboxPage() {
             {filteredMessages.map(msg => (
               <div
                 key={msg.id}
-                className={`p-4 hover:bg-white/5 transition-colors cursor-pointer ${
-                  !msg.read ? 'bg-white/[0.02]' : ''
+                className={`p-4 hover:bg-[#EEE6DC]/5 transition-colors cursor-pointer ${
+                  !msg.read ? 'bg-[#EEE6DC]/[0.02]' : ''
                 }`}
                 onClick={() => updateMessage(msg.id, { read: true })}
               >

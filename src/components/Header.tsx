@@ -88,7 +88,7 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-white/70 hover:text-white hover:bg-white/5 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-white/70 hover:text-white hover:bg-[#EEE6DC]/5 transition-all"
           >
             <LayoutDashboard size={16} />
             Dashboard
@@ -109,7 +109,7 @@ export default function Header() {
         <motion.button
           onClick={() => setMobileOpen(!mobileOpen)}
           whileTap={{ scale: 0.9 }}
-          className="md:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white"
+          className="md:hidden w-10 h-10 rounded-xl bg-[#EEE6DC]/5 border border-white/10 flex items-center justify-center text-white"
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -138,7 +138,7 @@ export default function Header() {
                     <a
                       href="#contact"
                       onClick={(e) => { setMobileOpen(false); handleContactClick(e); }}
-                      className="text-lg text-white/80 hover:text-emerald-400 transition-colors py-3 px-4 rounded-xl hover:bg-white/5 block cursor-pointer"
+                      className="text-lg text-white/80 hover:text-emerald-400 transition-colors py-3 px-4 rounded-xl hover:bg-[#EEE6DC]/5 block cursor-pointer"
                     >
                       {link.label}
                     </a>
@@ -146,7 +146,7 @@ export default function Header() {
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="text-lg text-white/80 hover:text-emerald-400 transition-colors py-3 px-4 rounded-xl hover:bg-white/5 block"
+                      className="text-lg text-white/80 hover:text-emerald-400 transition-colors py-3 px-4 rounded-xl hover:bg-[#EEE6DC]/5 block"
                     >
                       {link.label}
                     </Link>
@@ -163,7 +163,7 @@ export default function Header() {
                 <Link
                   href="/dashboard"
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-center gap-2 border border-white/10 text-white px-5 py-3.5 rounded-xl text-base bg-white/5"
+                  className="flex items-center justify-center gap-2 border border-white/10 text-white px-5 py-3.5 rounded-xl text-base bg-[#EEE6DC]/5"
                 >
                   <LayoutDashboard size={18} />
                   Dashboard

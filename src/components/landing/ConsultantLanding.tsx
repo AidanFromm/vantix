@@ -27,7 +27,7 @@ export function ConsultantLanding() {
   if (!mounted) return null;
 
   return (
-    <div className="bg-[#F5EFE7] text-gray-900 min-h-screen overflow-x-hidden">
+    <div className="bg-[#F4EFE8] text-gray-900 min-h-screen overflow-x-hidden">
       <Navigation />
       <HeroSection />
       <LogoBar />
@@ -61,7 +61,7 @@ function Navigation() {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       scrolled 
-        ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-gray-100' 
+        ? 'bg-[#EEE6DC]/95 backdrop-blur-xl shadow-sm border-b border-gray-100' 
         : 'bg-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4">
@@ -157,7 +157,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="inline-flex items-center gap-3 px-4 py-2 bg-white rounded-full shadow-md border border-gray-100 mb-8"
+            className="inline-flex items-center gap-3 px-4 py-2 bg-[#EEE6DC] rounded-full shadow-md border border-gray-100 mb-8"
           >
             <div className="flex -space-x-2">
               <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold border-2 border-white">K</div>
@@ -220,7 +220,7 @@ function HeroSection() {
             </Link>
             <Link
               href="#results"
-              className="px-8 py-4 bg-white text-gray-700 font-medium rounded-full hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-2"
+              className="px-8 py-4 bg-[#EEE6DC] text-gray-700 font-medium rounded-full hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-2"
             >
               <Play size={16} />
               See Our Work
@@ -274,7 +274,7 @@ function HeroSection() {
 // ============================================
 function LogoBar() {
   return (
-    <section className="py-12 bg-white border-y border-gray-100">
+    <section className="py-12 bg-[#EEE6DC] border-y border-gray-100">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <p className="text-center text-sm text-gray-400 mb-8 tracking-wide uppercase">Trusted by growing businesses</p>
         <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
@@ -308,7 +308,7 @@ function LogoBar() {
 // ============================================
 function ProblemSection() {
   return (
-    <section className="py-24 lg:py-32 bg-[#F5EFE7]">
+    <section className="py-24 lg:py-32 bg-[#F4EFE8]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - The problem */}
@@ -360,7 +360,7 @@ function ProblemSection() {
                   { title: 'Automation System', status: 'Failed', reason: '"Broke after 2 weeks"' },
                   { title: 'Data Pipeline', status: 'Over Budget', reason: '"3x original estimate"' },
                 ].map((item, i) => (
-                  <div key={i} className="bg-white/80 backdrop-blur rounded-xl p-4 border border-red-100">
+                  <div key={i} className="bg-[#EEE6DC]/80 backdrop-blur rounded-xl p-4 border border-red-100">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium text-gray-900">{item.title}</span>
                       <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">{item.status}</span>
@@ -400,7 +400,7 @@ function SolutionSection() {
                   { title: 'Trading Bot', result: '24/7 automated', status: 'Running 14 months' },
                   { title: 'CardLedger App', result: '250K+ cards tracked', status: 'Live on web' },
                 ].map((item, i) => (
-                  <div key={i} className="bg-white/10 backdrop-blur rounded-xl p-4 border border-emerald-500/20">
+                  <div key={i} className="bg-[#EEE6DC]/10 backdrop-blur rounded-xl p-4 border border-emerald-500/20">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium text-white">{item.title}</span>
                       <span className="text-xs font-medium text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-full">{item.status}</span>
@@ -514,7 +514,7 @@ function ServiceTiers() {
   ];
 
   return (
-    <section id="services" className="py-24 lg:py-32 bg-white">
+    <section id="services" className="py-24 lg:py-32 bg-[#EEE6DC]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
         <motion.div
@@ -558,7 +558,7 @@ function ServiceTiers() {
 
               {/* Icon */}
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${
-                tier.popular ? 'bg-emerald-500' : 'bg-white shadow-sm border border-gray-200'
+                tier.popular ? 'bg-emerald-500' : 'bg-[#EEE6DC] shadow-sm border border-gray-200'
               }`}>
                 <tier.icon size={24} className={tier.popular ? 'text-white' : 'text-emerald-500'} />
               </div>
@@ -655,7 +655,7 @@ function ProofSection() {
   ];
 
   return (
-    <section id="results" className="py-24 lg:py-32 bg-[#F5EFE7]">
+    <section id="results" className="py-24 lg:py-32 bg-[#F4EFE8]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
         <motion.div
@@ -684,7 +684,7 @@ function ProofSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white rounded-2xl p-8 border border-gray-100 hover:border-emerald-200 hover:shadow-lg transition-all group"
+              className="bg-[#EEE6DC] rounded-2xl p-8 border border-gray-100 hover:border-emerald-200 hover:shadow-lg transition-all group"
             >
               <div className="mb-6">
                 <p className="text-4xl lg:text-5xl font-bold text-emerald-500 mb-1">{result.metric}</p>
@@ -728,7 +728,7 @@ function DifferentiatorSection() {
   ];
 
   return (
-    <section className="py-24 lg:py-32 bg-white">
+    <section className="py-24 lg:py-32 bg-[#EEE6DC]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left - Header */}
@@ -842,7 +842,7 @@ function ProcessSection() {
               
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-3xl font-bold text-emerald-500">{step.num}</span>
-                <span className="text-xs font-medium text-gray-500 bg-white/10 px-2 py-1 rounded">{step.duration}</span>
+                <span className="text-xs font-medium text-gray-500 bg-[#EEE6DC]/10 px-2 py-1 rounded">{step.duration}</span>
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{step.title}</h3>
               <p className="text-gray-400 text-sm leading-relaxed">{step.description}</p>
@@ -904,7 +904,7 @@ function TestimonialsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white p-8 rounded-2xl shadow-sm"
+              className="bg-[#EEE6DC] p-8 rounded-2xl shadow-sm"
             >
               {/* Stars */}
               <div className="flex gap-1 mb-6">
@@ -968,7 +968,7 @@ function FAQSection() {
   ];
 
   return (
-    <section id="faq" className="py-24 lg:py-32 bg-white">
+    <section id="faq" className="py-24 lg:py-32 bg-[#EEE6DC]">
       <div className="max-w-3xl mx-auto px-6 lg:px-12">
         {/* Header */}
         <motion.div
@@ -1066,7 +1066,7 @@ function FinalCTA() {
             </Link>
             <Link
               href="tel:9084987753"
-              className="px-8 py-4 bg-white/10 text-white font-medium rounded-full hover:bg-white/20 transition-all flex items-center gap-2"
+              className="px-8 py-4 bg-[#EEE6DC]/10 text-white font-medium rounded-full hover:bg-[#EEE6DC]/20 transition-all flex items-center gap-2"
             >
               <Phone size={18} />
               (908) 498-7753

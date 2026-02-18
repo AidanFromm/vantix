@@ -117,7 +117,7 @@ export function Portfolio3DCard({
               target="_blank"
               rel="noopener noreferrer"
               style={{ translateZ: '60px' }}
-              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/20"
+              className="absolute top-4 right-4 p-2 rounded-full bg-[#EEE6DC]/10 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#EEE6DC]/20"
             >
               <ExternalLink size={18} />
             </motion.a>
@@ -141,7 +141,7 @@ export function Portfolio3DCard({
             {item.tags.map((tag, i) => (
               <span
                 key={i}
-                className="px-2 py-1 text-xs rounded-md bg-white/5 text-white/60 border border-white/10"
+                className="px-2 py-1 text-xs rounded-md bg-[#EEE6DC]/5 text-white/60 border border-white/10"
               >
                 {tag}
               </span>

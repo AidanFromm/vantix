@@ -93,7 +93,7 @@ export default function RevenuePage() {
         </div>
         <div className="divide-y divide-[var(--color-border)]">
           {transactions.map(tx => (
-            <div key={tx.id} className="p-4 hover:bg-white/5 transition-colors flex items-center justify-between">
+            <div key={tx.id} className="p-4 hover:bg-[#EEE6DC]/5 transition-colors flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${tx.type === 'income' ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
                   {tx.type === 'income' ? (

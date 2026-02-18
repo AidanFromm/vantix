@@ -56,7 +56,7 @@ const colorMap: Record<ActivityType, string> = {
   meeting: 'bg-[#7BA3C4]/10 text-[#6890B0] border-[#7BA3C4]/20',
   message: 'bg-[#C48A9B]/10 text-[#C48A9B] border-[#C48A9B]/20',
   call: 'bg-[#D4A843]/10 text-[#B8923A] border-[#D4A843]/20',
-  lead: 'bg-[#9B6C3C]/10 text-[#9B6C3C] border-[#9B6C3C]/20',
+  lead: 'bg-[#8E5E34]/10 text-[#8E5E34] border-[#8E5E34]/20',
 };
 
 function getRelativeTime(date: Date): string {
@@ -95,7 +95,7 @@ function ActivityItem({ activity, index }: { activity: Activity; index: number }
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
-      className="group flex gap-3 py-3 px-2 rounded-xl hover:bg-[#EFE6DA] transition-colors cursor-pointer"
+      className="group flex gap-3 py-3 px-2 rounded-xl hover:bg-[#EEE6DC] transition-colors cursor-pointer"
     >
       {/* Icon */}
       <div className={`flex-shrink-0 w-9 h-9 rounded-xl border ${colors} flex items-center justify-center`}>
@@ -104,7 +104,7 @@ function ActivityItem({ activity, index }: { activity: Activity; index: number }
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-[#1E1E1E] truncate group-hover:text-[#9B6C3C] transition-colors">
+        <p className="text-sm font-medium text-[#1C1C1C] truncate group-hover:text-[#8E5E34] transition-colors">
           {activity.title}
         </p>
         {activity.description && (
@@ -146,9 +146,9 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
 
   if (activities.length === 0) {
     return (
-      <div className={`bg-white border border-[#D8CFC4] rounded-2xl shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] p-6 ${className}`}>
+      <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] p-6 ${className}`}>
         <div className="text-center py-8">
-          <div className="w-12 h-12 rounded-full bg-[#EFE6DA] flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 rounded-full bg-[#EEE6DC] flex items-center justify-center mx-auto mb-3">
             <AlertCircle size={20} className="text-[#7A746C]" />
           </div>
           <p className="text-sm text-[#7A746C]">No recent activity</p>
@@ -158,12 +158,12 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
   }
 
   return (
-    <div className={`bg-white border border-[#D8CFC4] rounded-2xl shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] overflow-hidden ${className}`}>
+    <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-5 py-4 border-b border-[#D8CFC4]">
+      <div className="px-5 py-4 border-b border-[#E3D9CD]">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-[#1E1E1E]">Recent Activity</h3>
-          <span className="text-xs text-[#7A746C] bg-[#EFE6DA] px-2 py-1 rounded-full">
+          <h3 className="text-sm font-semibold text-[#1C1C1C]">Recent Activity</h3>
+          <span className="text-xs text-[#7A746C] bg-[#EEE6DC] px-2 py-1 rounded-full">
             {activities.length} total
           </span>
         </div>
@@ -175,7 +175,7 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
           {groupedActivities.map((group, groupIndex) => (
             <div key={group.label}>
               {/* Day Header */}
-              <div className="sticky top-0 z-10 px-5 py-2 bg-[#F5EFE7]/90 backdrop-blur-md border-b border-[#D8CFC4]">
+              <div className="sticky top-0 z-10 px-5 py-2 bg-[#F4EFE8]/90 backdrop-blur-md border-b border-[#E3D9CD]">
                 <span className="text-xs font-medium text-[#7A746C] uppercase tracking-wider">
                   {group.label}
                 </span>
@@ -197,8 +197,8 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
       </div>
 
       {/* View All Link */}
-      <div className="px-5 py-3 border-t border-[#D8CFC4] bg-[#F5EFE7]/50">
-        <button className="text-sm text-[#9B6C3C] hover:text-[#9A7348] transition-colors font-medium">
+      <div className="px-5 py-3 border-t border-[#E3D9CD] bg-[#F4EFE8]/50">
+        <button className="text-sm text-[#8E5E34] hover:text-[#9A7348] transition-colors font-medium">
           View all activity →
         </button>
       </div>

@@ -107,7 +107,7 @@ export default function PortfolioPage() {
             <motion.div
               key={m.label}
               initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i}
-              className="relative p-6 rounded-2xl bg-white/[0.02] border border-neutral-800 text-center group hover:border-emerald-500/30 transition-colors"
+              className="relative p-6 rounded-2xl bg-[#EEE6DC]/[0.02] border border-neutral-800 text-center group hover:border-emerald-500/30 transition-colors"
             >
               <m.icon size={20} className="mx-auto mb-3 text-emerald-400 opacity-60" />
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">{m.value}</div>
@@ -271,7 +271,7 @@ export default function PortfolioPage() {
               <motion.div
                 key={f.title}
                 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i % 6}
-                className="p-5 rounded-xl bg-white/[0.02] border border-neutral-800 hover:border-emerald-500/20 transition-colors group"
+                className="p-5 rounded-xl bg-[#EEE6DC]/[0.02] border border-neutral-800 hover:border-emerald-500/20 transition-colors group"
               >
                 <f.icon size={20} className="text-emerald-400 mb-3 opacity-70 group-hover:opacity-100 transition-opacity" />
                 <h3 className="font-semibold mb-1.5">{f.title}</h3>
@@ -317,7 +317,7 @@ export default function PortfolioPage() {
             <motion.div
               key={item.label}
               initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i}
-              className="p-6 rounded-2xl bg-white/[0.02] border border-neutral-800 text-center"
+              className="p-6 rounded-2xl bg-[#EEE6DC]/[0.02] border border-neutral-800 text-center"
             >
               <p className="text-sm text-neutral-500 mb-2">{item.label}</p>
               <p className="text-3xl font-bold text-emerald-400 mb-1">{item.value}</p>

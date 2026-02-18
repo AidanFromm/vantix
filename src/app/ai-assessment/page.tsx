@@ -242,7 +242,7 @@ export default function AIAssessmentPage() {
             <span>Question {currentQ + 1} of 10</span>
             <span>{Math.round(((currentQ + 1) / 10) * 100)}%</span>
           </div>
-          <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+          <div className="h-1.5 rounded-full bg-[#EEE6DC]/5 overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
               animate={{ width: `${((currentQ + 1) / 10) * 100}%` }}
@@ -262,7 +262,7 @@ export default function AIAssessmentPage() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -40 }}
               transition={{ duration: 0.3 }}
-              className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10"
+              className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10"
             >
               <h2 className="text-xl font-semibold mb-6">{questions[currentQ].question}</h2>
               <div className="space-y-3">
@@ -273,7 +273,7 @@ export default function AIAssessmentPage() {
                     className={`w-full text-left px-5 py-4 rounded-xl text-sm font-medium transition-all duration-200 border ${
                       selectedOption === idx
                         ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                        : 'bg-white/[0.03] border-white/10 text-white/70 hover:bg-white/[0.06] hover:border-white/20'
+                        : 'bg-[#EEE6DC]/[0.03] border-white/10 text-white/70 hover:bg-[#EEE6DC]/[0.06] hover:border-white/20'
                     }`}
                   >
                     {opt.label}
@@ -295,7 +295,7 @@ export default function AIAssessmentPage() {
                   className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                     selectedOption !== null
                       ? 'bg-emerald-500 text-black hover:bg-emerald-400'
-                      : 'bg-white/10 text-white/30 cursor-not-allowed'
+                      : 'bg-[#EEE6DC]/10 text-white/30 cursor-not-allowed'
                   }`}
                 >
                   {currentQ === 9 ? 'See My Results' : 'Next'}
@@ -311,7 +311,7 @@ export default function AIAssessmentPage() {
               transition={{ duration: 0.5 }}
             >
               {/* Score */}
-              <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6 text-center">
+              <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6 text-center">
                 <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
                   <RatingIcon className="w-8 h-8 text-emerald-400" />
                 </div>
@@ -322,7 +322,7 @@ export default function AIAssessmentPage() {
               </div>
 
               {/* Recommendations */}
-              <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6">
+              <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6">
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-emerald-400" />
                   Your Personalized Recommendations
@@ -351,7 +351,7 @@ export default function AIAssessmentPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6"
+                  className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6"
                 >
                   <h3 className="text-lg font-semibold mb-2">Get Your Full AI Readiness Report</h3>
                   <p className="text-white/40 text-sm mb-6">
@@ -366,7 +366,7 @@ export default function AIAssessmentPage() {
                         placeholder="Your name"
                         value={leadName}
                         onChange={(e) => setLeadName(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
                       />
                     </div>
                     <div className="relative">
@@ -377,7 +377,7 @@ export default function AIAssessmentPage() {
                         placeholder="your@email.com"
                         value={leadEmail}
                         onChange={(e) => setLeadEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
                       />
                     </div>
                     <div className="relative">
@@ -388,7 +388,7 @@ export default function AIAssessmentPage() {
                         placeholder="Company name"
                         value={leadCompany}
                         onChange={(e) => setLeadCompany(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/40 transition"
                       />
                     </div>
                     <button

@@ -152,14 +152,14 @@ export function TestimonialCarousel({
         <div className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 hidden sm:flex gap-2">
           <button
             onClick={prev}
-            className="p-2 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-colors border border-white/10"
+            className="p-2 sm:p-3 rounded-full bg-[#EEE6DC]/10 hover:bg-[#EEE6DC]/20 active:bg-[#EEE6DC]/30 transition-colors border border-white/10"
             aria-label="Previous testimonial"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </button>
           <button
             onClick={next}
-            className="p-2 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-colors border border-white/10"
+            className="p-2 sm:p-3 rounded-full bg-[#EEE6DC]/10 hover:bg-[#EEE6DC]/20 active:bg-[#EEE6DC]/30 transition-colors border border-white/10"
             aria-label="Next testimonial"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
@@ -185,7 +185,7 @@ export function TestimonialCarousel({
               'h-1.5 sm:h-2 rounded-full transition-all duration-300',
               i === current
                 ? 'w-6 sm:w-8 bg-emerald-500'
-                : 'w-1.5 sm:w-2 bg-white/30 hover:bg-white/50'
+                : 'w-1.5 sm:w-2 bg-[#EEE6DC]/30 hover:bg-[#EEE6DC]/50'
             )}
             aria-label={`Go to testimonial ${i + 1}`}
           />

@@ -67,7 +67,7 @@ export default function PipelinePage() {
             <div className={`border-t-2 ${getStageColor(stage)} bg-[var(--color-card)] rounded-xl p-3`}>
               <h3 className="font-medium capitalize mb-3 flex items-center justify-between">
                 {stage}
-                <span className="text-xs text-[var(--color-muted)] bg-white/10 px-2 py-0.5 rounded-full">
+                <span className="text-xs text-[var(--color-muted)] bg-[#EEE6DC]/10 px-2 py-0.5 rounded-full">
                   {items.filter(item => item.stage === stage).length}
                 </span>
               </h3>
@@ -79,7 +79,7 @@ export default function PipelinePage() {
                   >
                     <div className="flex items-start justify-between mb-1">
                       <p className="font-medium text-sm">{item.title}</p>
-                      <button className="p-1 hover:bg-white/10 rounded">
+                      <button className="p-1 hover:bg-[#EEE6DC]/10 rounded">
                         <MoreHorizontal size={14} className="text-[var(--color-muted)]" />
                       </button>
                     </div>

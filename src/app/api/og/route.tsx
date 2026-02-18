@@ -12,7 +12,7 @@ export async function GET() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#F5EFE7',
+          backgroundColor: '#F4EFE8',
           backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(184, 137, 90, 0.12) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(184, 137, 90, 0.08) 0%, transparent 50%)',
         }}
       >
@@ -29,7 +29,7 @@ export async function GET() {
             width: 160,
             height: 160,
             borderRadius: 40,
-            background: 'linear-gradient(135deg, #9B6C3C, #9A7048)',
+            background: 'linear-gradient(135deg, #8E5E34, #9A7048)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -51,7 +51,7 @@ export async function GET() {
             style={{
               fontSize: 80,
               fontWeight: 800,
-              color: '#1E1E1E',
+              color: '#1C1C1C',
               letterSpacing: 4,
             }}
           >
@@ -61,7 +61,7 @@ export async function GET() {
             style={{
               fontSize: 26,
               fontWeight: 600,
-              color: '#9B6C3C',
+              color: '#8E5E34',
               letterSpacing: 3,
               marginTop: 8,
             }}
@@ -87,7 +87,7 @@ export async function GET() {
             left: 0,
             right: 0,
             height: 6,
-            background: 'linear-gradient(90deg, #9B6C3C, #D4A76A, #9B6C3C)',
+            background: 'linear-gradient(90deg, #8E5E34, #D4A76A, #8E5E34)',
           }}
         />
       </div>

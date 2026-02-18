@@ -36,10 +36,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F5EFE7]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F4EFE8]">
         <div className="relative">
-          <div className="w-12 h-12 rounded-full border-2 border-[#9B6C3C]/30 border-t-[#9B6C3C] animate-spin" />
-          <div className="absolute inset-0 w-12 h-12 rounded-full bg-[#9B6C3C]/10 blur-xl" />
+          <div className="w-12 h-12 rounded-full border-2 border-[#8E5E34]/30 border-t-[#8E5E34] animate-spin" />
+          <div className="absolute inset-0 w-12 h-12 rounded-full bg-[#8E5E34]/10 blur-xl" />
         </div>
       </div>
     );
@@ -47,14 +47,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex bg-[#F5EFE7] dashboard-scope">
+      <div className="min-h-screen flex bg-[#F4EFE8] dashboard-scope">
         {/* Sidebar */}
         <Sidebar user={user} onLogout={handleLogout} />
 
         {/* Main Content */}
         <main className="flex-1 min-h-screen">
           {/* Top Bar */}
-          <header className="sticky top-0 z-40 px-4 lg:px-8 py-4 bg-[#F5EFE7]/80 backdrop-blur-xl border-b border-[#D8CFC4]">
+          <header className="sticky top-0 z-40 px-4 lg:px-8 py-4 bg-[#F4EFE8]/80 backdrop-blur-xl border-b border-[#E3D9CD]">
             <div className="flex items-center justify-between">
               {/* Left side - spacer for mobile hamburger */}
               <div className="w-12 lg:w-0" />

@@ -86,7 +86,7 @@ export default function NotificationsPage() {
             {notifications.map(notif => (
               <div
                 key={notif.id}
-                className={`p-4 hover:bg-white/5 transition-colors ${!notif.read ? 'bg-white/[0.02]' : ''}`}
+                className={`p-4 hover:bg-[#EEE6DC]/5 transition-colors ${!notif.read ? 'bg-[#EEE6DC]/[0.02]' : ''}`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
@@ -103,7 +103,7 @@ export default function NotificationsPage() {
                     {!notif.read && (
                       <button
                         onClick={() => markRead(notif.id)}
-                        className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                        className="p-1.5 rounded-lg hover:bg-[#EEE6DC]/10 transition-colors"
                         title="Mark as read"
                       >
                         <Check size={14} className="text-[var(--color-muted)]" />
@@ -111,7 +111,7 @@ export default function NotificationsPage() {
                     )}
                     <button
                       onClick={() => deleteNotification(notif.id)}
-                      className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-[#EEE6DC]/10 transition-colors"
                       title="Delete"
                     >
                       <Trash2 size={14} className="text-[var(--color-muted)]" />

@@ -44,7 +44,7 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const bronzeButtonClass = "bg-[#B07A45] hover:bg-[#9B6C3C] text-white font-semibold rounded-xl px-8 py-4 shadow-sm hover:shadow transition-all";
+const bronzeButtonClass = "bg-[#B07A45] hover:bg-[#8E5E34] text-white font-semibold rounded-xl px-8 py-4 shadow-sm hover:shadow transition-all";
 
 function useAnimateInView(threshold = 0.15) {
   const ref = useRef(null);
@@ -141,12 +141,12 @@ function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-50 bg-[#F5EFE7]/95 backdrop-blur-sm border-b border-[#D8CFC4]"
+      className="fixed top-0 left-0 right-0 z-50 bg-[#F4EFE8]/95 backdrop-blur-sm border-b border-[#E3D9CD]"
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2.5">
           <img src="/logo-nav.png" alt="Vantix" className="w-9 h-9 object-contain" />
-          <span className="text-2xl font-extrabold text-[#B07A45] tracking-tight">vantix<span className="text-[#9B6C3C]">.</span></span>
+          <span className="text-2xl font-extrabold text-[#B07A45] tracking-tight">vantix<span className="text-[#8E5E34]">.</span></span>
         </a>
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
@@ -171,7 +171,7 @@ function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#F5EFE7]/95 backdrop-blur-sm border-b border-[#D8CFC4] overflow-hidden"
+            className="md:hidden bg-[#F4EFE8]/95 backdrop-blur-sm border-b border-[#E3D9CD] overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {links.map((l) => (
@@ -202,15 +202,15 @@ function HeroSection() {
   ]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#F5EFE7]">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#F4EFE8]">
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center pt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#D8CFC4] bg-white mb-8 shadow-sm"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#E3D9CD] bg-[#EEE6DC] mb-8 shadow-sm"
         >
-          <span className="w-2 h-2 rounded-full bg-[#9B6C3C] animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-[#8E5E34] animate-pulse" />
           <span className="text-sm text-[#7A746C] font-medium">2 Humans + 2 AI Assistants — Building 24/7</span>
         </motion.div>
 
@@ -222,7 +222,7 @@ function HeroSection() {
         >
           Your Competitors Are
           <br />
-          Automating. <span className="text-[#9B6C3C]">Are You?</span>
+          Automating. <span className="text-[#8E5E34]">Are You?</span>
         </motion.h1>
 
         <motion.div
@@ -233,7 +233,7 @@ function HeroSection() {
         >
           <p className="text-base sm:text-lg text-[#7A746C] max-w-2xl mx-auto leading-relaxed">
             <span>{typedText}</span>
-            <span className="inline-block w-0.5 h-5 bg-[#9B6C3C] ml-1 animate-pulse" />
+            <span className="inline-block w-0.5 h-5 bg-[#8E5E34] ml-1 animate-pulse" />
           </p>
         </motion.div>
 
@@ -256,7 +256,7 @@ function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.8 }}
-          className="text-sm text-[#9B6C3C]/70 mt-8 font-medium"
+          className="text-sm text-[#8E5E34]/70 mt-8 font-medium"
         >
           122-page platform built in 3 weeks · $50K+ in projects delivered · 24/7 AI operations
         </motion.p>
@@ -284,7 +284,7 @@ function AnimatedCounterSection() {
   ];
 
   return (
-    <section className="relative py-12 lg:py-16 bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#D8CFC4]" ref={ref}>
+    <section className="relative py-12 lg:py-16 bg-[#EEE6DC] rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E3D9CD]" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial="hidden"
@@ -294,7 +294,7 @@ function AnimatedCounterSection() {
         >
           {metrics.map((m, i) => (
             <motion.div key={i} variants={popIn} className="flex flex-col items-center">
-              <span className="text-3xl md:text-5xl font-bold text-[#9B6C3C] tabular-nums">{m.value}</span>
+              <span className="text-3xl md:text-5xl font-bold text-[#8E5E34] tabular-nums">{m.value}</span>
               <span className="text-sm text-[#7A746C] mt-1">{m.label}</span>
             </motion.div>
           ))}
@@ -335,7 +335,7 @@ function BeforeAfterSection() {
           variants={staggerContainer}
           className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">
             The Transformation
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45]">
@@ -354,7 +354,7 @@ function BeforeAfterSection() {
           <div className="flex justify-center mb-10">
             <button
               onClick={() => setShowAfter(!showAfter)}
-              className="relative flex items-center bg-white rounded-full p-1.5 shadow-sm border border-[#D8CFC4]"
+              className="relative flex items-center bg-[#EEE6DC] rounded-full p-1.5 shadow-sm border border-[#E3D9CD]"
             >
               <span className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${!showAfter ? 'bg-[#B07A45] text-white' : 'text-[#7A746C]'}`}>
                 Before
@@ -373,7 +373,7 @@ function BeforeAfterSection() {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -30 }}
-                  className="md:col-span-2 p-6 rounded-xl bg-white shadow-sm border border-[#D8CFC4]"
+                  className="md:col-span-2 p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD]"
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
@@ -381,7 +381,7 @@ function BeforeAfterSection() {
                   </div>
                   <div className="grid sm:grid-cols-2 gap-6">
                     {before.map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#EFE6DA]">
+                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#EEE6DC]">
                         <X size={18} className="text-[#C5C3BE] shrink-0" />
                         <span className="text-[#7A746C] font-medium">{item}</span>
                       </div>
@@ -394,16 +394,16 @@ function BeforeAfterSection() {
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 30 }}
-                  className="md:col-span-2 p-6 rounded-xl bg-white shadow-sm border border-[#9B6C3C]/20"
+                  className="md:col-span-2 p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#8E5E34]/20"
                 >
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-3 h-3 rounded-full bg-[#9B6C3C]" />
-                    <span className="text-[#9B6C3C] font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
+                    <div className="w-3 h-3 rounded-full bg-[#8E5E34]" />
+                    <span className="text-[#8E5E34] font-semibold text-sm uppercase tracking-wider">With Vantix AI</span>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-6">
                     {after.map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#9B6C3C]/5">
-                        <CheckCircle2 size={18} className="text-[#9B6C3C] shrink-0" />
+                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-[#8E5E34]/5">
+                        <CheckCircle2 size={18} className="text-[#8E5E34] shrink-0" />
                         <span className="text-[#B07A45] font-medium">{item}</span>
                       </div>
                     ))}
@@ -441,7 +441,7 @@ function ProblemSection() {
   ];
 
   return (
-    <section className="py-12 lg:py-16 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#D8CFC4]">
+    <section className="py-12 lg:py-16 relative bg-[#EEE6DC] rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E3D9CD]">
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <motion.div
           initial="hidden"
@@ -450,7 +450,7 @@ function ProblemSection() {
           variants={staggerContainer}
           className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">
             The Problem
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45] leading-tight max-w-3xl mx-auto">
@@ -465,7 +465,7 @@ function ProblemSection() {
           variants={staggerContainer}
           className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
         >
-          <motion.div variants={fadeLeft} className="relative p-6 rounded-xl bg-white shadow-sm border border-[#D8CFC4]">
+          <motion.div variants={fadeLeft} className="relative p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD]">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-3 h-3 rounded-full bg-[#C5C3BE]" />
               <span className="text-[#7A746C] font-semibold text-sm uppercase tracking-wider">Before Vantix</span>
@@ -480,15 +480,15 @@ function ProblemSection() {
             </ul>
           </motion.div>
 
-          <motion.div variants={fadeRight} className="relative p-6 rounded-xl bg-white shadow-sm border border-[#9B6C3C]/20">
+          <motion.div variants={fadeRight} className="relative p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#8E5E34]/20">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-3 h-3 rounded-full bg-[#9B6C3C]" />
-              <span className="text-[#9B6C3C] font-semibold text-sm uppercase tracking-wider">After Vantix</span>
+              <div className="w-3 h-3 rounded-full bg-[#8E5E34]" />
+              <span className="text-[#8E5E34] font-semibold text-sm uppercase tracking-wider">After Vantix</span>
             </div>
             <ul className="space-y-4">
               {after.map((item, i) => (
                 <li key={i} className="flex items-start gap-3 text-[#B07A45] text-base leading-relaxed">
-                  <CheckCircle2 size={16} className="text-[#9B6C3C] mt-1 shrink-0" />
+                  <CheckCircle2 size={16} className="text-[#8E5E34] mt-1 shrink-0" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -525,7 +525,7 @@ function ServicesSection() {
           variants={staggerContainer}
           className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">
             What We Deploy
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45] leading-tight">
@@ -547,10 +547,10 @@ function ServicesSection() {
             <motion.div
               key={i}
               variants={scaleUp}
-              className="group relative p-6 rounded-xl bg-white shadow-sm border border-[#D8CFC4] hover:border-[#9B6C3C]/20 cursor-default"
+              className="group relative p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD] hover:border-[#8E5E34]/20 cursor-default"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#EFE6DA] flex items-center justify-center mb-5 group-hover:bg-[#9B6C3C]/10 transition-colors">
-                <s.icon size={22} className="text-[#9B6C3C]" />
+              <div className="w-12 h-12 rounded-xl bg-[#EEE6DC] flex items-center justify-center mb-5 group-hover:bg-[#8E5E34]/10 transition-colors">
+                <s.icon size={22} className="text-[#8E5E34]" />
               </div>
               <h3 className="text-[#B07A45] font-semibold text-lg mb-2">{s.title}</h3>
               <p className="text-[#7A746C] text-sm leading-relaxed">{s.desc}</p>
@@ -571,7 +571,7 @@ function TechStackSection() {
   ];
 
   return (
-    <section className="py-12 lg:py-16 relative overflow-hidden bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#D8CFC4]">
+    <section className="py-12 lg:py-16 relative overflow-hidden bg-[#EEE6DC] rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E3D9CD]">
       <div className="max-w-5xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -580,7 +580,7 @@ function TechStackSection() {
           variants={staggerContainer}
           className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">
             Our Stack
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45]">
@@ -596,7 +596,7 @@ function TechStackSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06, duration: 0.5 }}
-              className="px-6 py-4 rounded-xl bg-white shadow-sm border border-[#D8CFC4] text-[#B07A45] font-semibold text-sm"
+              className="px-6 py-4 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD] text-[#B07A45] font-semibold text-sm"
             >
               {tech}
             </motion.div>
@@ -620,18 +620,18 @@ function CaseStudyHighlight() {
           viewport={{ once: true }}
           variants={staggerContainer}
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4 text-center">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4 text-center">
             Featured Work
           </motion.p>
           <motion.div
             variants={fadeUp}
-            className="relative p-5 md:p-8 rounded-xl bg-white shadow-sm border border-[#9B6C3C]/15 overflow-hidden"
+            className="relative p-5 md:p-8 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#8E5E34]/15 overflow-hidden"
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#9B6C3C]/5 rounded-full blur-3xl" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#8E5E34]/5 rounded-full blur-3xl" />
             <div className="relative grid md:grid-cols-2 gap-10 items-center">
               <motion.div variants={fadeLeft}>
                 <h3 className="text-2xl md:text-3xl font-bold text-[#B07A45] mb-2">Secured Tampa</h3>
-                <p className="text-[#9B6C3C] text-sm font-medium mb-6">
+                <p className="text-[#8E5E34] text-sm font-medium mb-6">
                   From Instagram DMs to a 122-page e-commerce empire — in 3 weeks.
                 </p>
                 <p className="text-[#7A746C] text-base leading-relaxed mb-6">
@@ -639,14 +639,14 @@ function CaseStudyHighlight() {
                 </p>
                 <div className="flex flex-wrap gap-3 mb-8">
                   {['E-Commerce', 'POS Integration', 'AI Automation', 'Custom Platform'].map((tag) => (
-                    <span key={tag} className="px-4 py-1.5 rounded-full border border-[#9B6C3C]/20 bg-[#9B6C3C]/5 text-[#9B6C3C] text-xs font-medium">
+                    <span key={tag} className="px-4 py-1.5 rounded-full border border-[#8E5E34]/20 bg-[#8E5E34]/5 text-[#8E5E34] text-xs font-medium">
                       {tag}
                     </span>
                   ))}
                 </div>
                 <a
                   href="/case-studies/secured-tampa"
-                  className="group inline-flex items-center gap-2 text-[#9B6C3C] font-semibold hover:text-[#B07A45] transition-colors"
+                  className="group inline-flex items-center gap-2 text-[#8E5E34] font-semibold hover:text-[#B07A45] transition-colors"
                 >
                   Read the Full Case Study
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -665,9 +665,9 @@ function CaseStudyHighlight() {
                     whileInView="visible"
                     viewport={{ once: true }}
                     variants={popIn}
-                    className="p-5 rounded-xl bg-[#EFE6DA] shadow-sm text-center"
+                    className="p-5 rounded-xl bg-[#EEE6DC] shadow-sm text-center"
                   >
-                    <div className="text-2xl font-bold text-[#9B6C3C]">{m.value}</div>
+                    <div className="text-2xl font-bold text-[#8E5E34]">{m.value}</div>
                     <div className="text-xs text-[#7A746C] mt-1">{m.label}</div>
                   </motion.div>
                 ))}
@@ -693,7 +693,7 @@ function ProcessTimeline() {
   ];
 
   return (
-    <section id="process" className="py-12 lg:py-16 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#D8CFC4]">
+    <section id="process" className="py-12 lg:py-16 relative bg-[#EEE6DC] rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E3D9CD]">
       <div className="max-w-4xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -702,7 +702,7 @@ function ProcessTimeline() {
           variants={staggerContainer}
           className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">
             How It Works
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45]">
@@ -712,7 +712,7 @@ function ProcessTimeline() {
 
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#9B6C3C]/30 to-transparent" />
+          <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#8E5E34]/30 to-transparent" />
 
           {steps.map((step, i) => (
             <motion.div
@@ -726,18 +726,18 @@ function ProcessTimeline() {
               {/* Timeline dot */}
               <motion.div
                 variants={popIn}
-                className="absolute left-6 w-3 h-3 rounded-full bg-[#9B6C3C] border-4 border-white shadow-md -translate-x-1.5 mt-6 z-10"
+                className="absolute left-6 w-3 h-3 rounded-full bg-[#8E5E34] border-4 border-white shadow-md -translate-x-1.5 mt-6 z-10"
               />
 
               <div className="ml-12 flex-1">
-                <div className="p-5 rounded-xl bg-white shadow-sm border border-[#D8CFC4]">
+                <div className="p-5 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD]">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#9B6C3C]/10 flex items-center justify-center">
-                      <step.icon size={18} className="text-[#9B6C3C]" />
+                    <div className="w-10 h-10 rounded-xl bg-[#8E5E34]/10 flex items-center justify-center">
+                      <step.icon size={18} className="text-[#8E5E34]" />
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-[#B07A45]">{step.title}</h3>
-                      <span className="text-xs text-[#9B6C3C] font-medium">{step.timeline}</span>
+                      <span className="text-xs text-[#8E5E34] font-medium">{step.timeline}</span>
                     </div>
                   </div>
                   <p className="text-[#7A746C] text-sm leading-relaxed">{step.desc}</p>
@@ -765,7 +765,7 @@ function TestimonialSection() {
           variants={staggerContainer}
           className="text-center"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">
             Client Results
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45] mb-8">
@@ -773,15 +773,15 @@ function TestimonialSection() {
           </motion.h2>
           <motion.div
             variants={scaleUp}
-            className="relative p-6 md:p-10 rounded-xl bg-white shadow-sm border border-[#D8CFC4]"
+            className="relative p-6 md:p-10 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD]"
           >
             {/* Quotation mark */}
-            <div className="text-[#9B6C3C]/10 text-8xl font-serif leading-none mb-2 select-none">&ldquo;</div>
+            <div className="text-[#8E5E34]/10 text-8xl font-serif leading-none mb-2 select-none">&ldquo;</div>
 
             {/* Stars */}
             <div className="flex justify-center gap-1 mb-6">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={20} className="text-[#9B6C3C] fill-[#9B6C3C]" />
+                <Star key={i} size={20} className="text-[#8E5E34] fill-[#8E5E34]" />
               ))}
             </div>
 
@@ -817,7 +817,7 @@ function ROISection() {
   ];
 
   return (
-    <section id="roi" className="py-12 lg:py-16 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#D8CFC4]">
+    <section id="roi" className="py-12 lg:py-16 relative bg-[#EEE6DC] rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E3D9CD]">
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -826,7 +826,7 @@ function ROISection() {
           variants={staggerContainer}
           className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">
             Your ROI
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45]">
@@ -845,10 +845,10 @@ function ROISection() {
             <motion.div
               key={i}
               variants={popIn}
-              className="text-center p-6 rounded-xl bg-white shadow-sm border border-[#D8CFC4]"
+              className="text-center p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD]"
             >
-              <s.icon size={28} className="text-[#9B6C3C] mx-auto mb-4" />
-              <div className="text-3xl md:text-4xl font-bold text-[#9B6C3C] mb-1">{s.value}</div>
+              <s.icon size={28} className="text-[#8E5E34] mx-auto mb-4" />
+              <div className="text-3xl md:text-4xl font-bold text-[#8E5E34] mb-1">{s.value}</div>
               <div className="text-sm text-[#7A746C]">{s.label}</div>
             </motion.div>
           ))}
@@ -887,7 +887,7 @@ function TeamSection() {
           variants={staggerContainer}
           className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">
             Who We Are
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45]">
@@ -909,13 +909,13 @@ function TeamSection() {
             <motion.div
               key={i}
               variants={i === 0 ? fadeLeft : fadeRight}
-              className="p-6 rounded-xl bg-white shadow-sm border border-[#D8CFC4] text-center"
+              className="p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD] text-center"
             >
               <div className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-sm border-2 border-white/80">
                 <img src={t.photo} alt={t.name} className="w-full h-full object-cover" />
               </div>
               <h3 className="text-xl font-bold text-[#B07A45]">{t.name}</h3>
-              <p className="text-[#9B6C3C] text-sm font-medium mb-4">{t.role}</p>
+              <p className="text-[#8E5E34] text-sm font-medium mb-4">{t.role}</p>
               <p className="text-[#7A746C] text-sm leading-relaxed">{t.desc}</p>
             </motion.div>
           ))}
@@ -932,10 +932,10 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-xl bg-white shadow-sm border border-[#D8CFC4] overflow-hidden">
+    <div className="rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD] overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-6 text-left hover:bg-[#EFE6DA] transition-colors"
+        className="w-full flex items-center justify-between p-6 text-left hover:bg-[#EEE6DC] transition-colors"
       >
         <span className="text-[#B07A45] font-medium pr-4">{q}</span>
         <ChevronDown size={18} className={`text-[#C5C3BE] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -968,7 +968,7 @@ function FAQSection() {
   ];
 
   return (
-    <section id="faq" className="py-12 lg:py-16 relative bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#D8CFC4]">
+    <section id="faq" className="py-12 lg:py-16 relative bg-[#EEE6DC] rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E3D9CD]">
       <div className="max-w-3xl mx-auto px-6 relative">
         <motion.div
           initial="hidden"
@@ -977,7 +977,7 @@ function FAQSection() {
           variants={staggerContainer}
           className="text-center mb-8"
         >
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">
             FAQ
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45]">
@@ -1098,17 +1098,17 @@ function BookingSection() {
     <section id="booking" className="py-12 lg:py-16 relative">
       <div className="max-w-4xl mx-auto px-6 relative" ref={ref}>
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="text-center mb-8">
-          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#9B6C3C] mb-4">Start This Week</motion.p>
+          <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">Start This Week</motion.p>
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#B07A45] mb-4">Book Your Free Consultation</motion.h2>
           <motion.p variants={fadeUp} className="text-[#7A746C] text-base leading-relaxed max-w-2xl mx-auto">Pick a time that works for you. 30 minutes, zero pressure.</motion.p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
-          className="rounded-xl bg-white shadow-sm border border-[#D8CFC4] overflow-hidden p-6 sm:p-8">
+          className="rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD] overflow-hidden p-6 sm:p-8">
           <AnimatePresence mode="wait">
             {step === 3 ? (
               <motion.div key="done" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-center py-12">
-                <CheckCircle2 className="mx-auto mb-4 text-[#9B6C3C]" size={48} />
+                <CheckCircle2 className="mx-auto mb-4 text-[#8E5E34]" size={48} />
                 <h3 className="text-2xl font-bold text-[#B07A45] mb-2">You&apos;re booked!</h3>
                 <p className="text-[#7A746C]">We&apos;ll call you at {selectedTime} on {selectedDate ? formatDateStr(selectedDate) : ''}.</p>
               </motion.div>
@@ -1125,7 +1125,7 @@ function BookingSection() {
                         <button key={d.toISOString()} disabled={past}
                           onClick={() => { setSelectedDate(d); setSelectedTime(null); }}
                           className={`flex-shrink-0 flex flex-col items-center justify-center min-w-[60px] h-[60px] rounded-xl text-xs font-medium transition-all
-                            ${active ? 'bg-[#9B6C3C] text-white shadow-md' : past ? 'bg-[#EFE6DA] text-[#D0C8BD] cursor-not-allowed' : 'bg-[#EFE6DA] text-[#B07A45] hover:bg-[#D8CFC4] cursor-pointer'}`}>
+                            ${active ? 'bg-[#8E5E34] text-white shadow-md' : past ? 'bg-[#EEE6DC] text-[#D0C8BD] cursor-not-allowed' : 'bg-[#EEE6DC] text-[#B07A45] hover:bg-[#E3D9CD] cursor-pointer'}`}>
                           <span className="text-[10px] uppercase">{dayNames[d.getDay()]}</span>
                           <span className="text-lg font-bold leading-tight">{d.getDate()}</span>
                         </button>
@@ -1145,7 +1145,7 @@ function BookingSection() {
                           return (
                             <button key={t} onClick={() => setSelectedTime(t)}
                               className={`py-2.5 rounded-lg text-sm font-medium transition-all
-                                ${active ? 'bg-[#9B6C3C] text-white shadow-md' : 'bg-[#EFE6DA] text-[#B07A45] hover:bg-[#D8CFC4]'}`}>
+                                ${active ? 'bg-[#8E5E34] text-white shadow-md' : 'bg-[#EEE6DC] text-[#B07A45] hover:bg-[#E3D9CD]'}`}>
                               {t}
                             </button>
                           );
@@ -1163,11 +1163,11 @@ function BookingSection() {
                       <p className="text-sm font-medium text-[#B07A45] mb-3">Your details</p>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                         <input type="text" required placeholder="Name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                          className="px-4 py-2.5 rounded-lg border border-[#D8CFC4] bg-[#F5EFE7] text-[#B07A45] placeholder-[#7A746C] text-sm focus:outline-none focus:ring-2 focus:ring-[#9B6C3C]/30" />
+                          className="px-4 py-2.5 rounded-lg border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#7A746C] text-sm focus:outline-none focus:ring-2 focus:ring-[#8E5E34]/30" />
                         <input type="email" required placeholder="Email *" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                          className="px-4 py-2.5 rounded-lg border border-[#D8CFC4] bg-[#F5EFE7] text-[#B07A45] placeholder-[#7A746C] text-sm focus:outline-none focus:ring-2 focus:ring-[#9B6C3C]/30" />
+                          className="px-4 py-2.5 rounded-lg border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#7A746C] text-sm focus:outline-none focus:ring-2 focus:ring-[#8E5E34]/30" />
                         <input type="tel" placeholder="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                          className="px-4 py-2.5 rounded-lg border border-[#D8CFC4] bg-[#F5EFE7] text-[#B07A45] placeholder-[#7A746C] text-sm focus:outline-none focus:ring-2 focus:ring-[#9B6C3C]/30" />
+                          className="px-4 py-2.5 rounded-lg border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#7A746C] text-sm focus:outline-none focus:ring-2 focus:ring-[#8E5E34]/30" />
                       </div>
                       <button type="submit" className={`${bronzeButtonClass} w-full`}>
                         Confirm Booking — {selectedDate && dayNames[selectedDate.getDay()]} {selectedDate?.getDate()} at {selectedTime}
@@ -1227,8 +1227,8 @@ function ContactForm() {
 
   if (status === 'sent') {
     return (
-      <div id="contact-form" className="max-w-lg mx-auto mt-8 bg-white rounded-xl p-6 shadow-sm text-center">
-        <CheckCircle2 size={48} className="mx-auto mb-4 text-[#9B6C3C]" />
+      <div id="contact-form" className="max-w-lg mx-auto mt-8 bg-[#EEE6DC] rounded-xl p-6 shadow-sm text-center">
+        <CheckCircle2 size={48} className="mx-auto mb-4 text-[#8E5E34]" />
         <h3 className="text-xl font-bold text-[#B07A45] mb-2">You&apos;re In.</h3>
         <p className="text-[#7A746C]">We&apos;ll reach out within 24 hours with next steps. Check your inbox.</p>
       </div>
@@ -1236,24 +1236,24 @@ function ContactForm() {
   }
 
   return (
-    <form id="contact-form" onSubmit={handleSubmit} className="max-w-lg mx-auto mt-8 bg-white rounded-xl p-6 shadow-sm">
+    <form id="contact-form" onSubmit={handleSubmit} className="max-w-lg mx-auto mt-8 bg-[#EEE6DC] rounded-xl p-6 shadow-sm">
       <p className="text-center text-[#7A746C] text-sm mb-6">Prefer to type? Drop us a message and we&apos;ll follow up within 24 hours.</p>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-[#B07A45] mb-1.5">Name *</label>
-          <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-[#D8CFC4] bg-[#F5EFE7] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#9B6C3C] focus:ring-1 focus:ring-[#9B6C3C]/30 transition-all" />
+          <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all" />
         </div>
         <div>
           <label className="block text-sm font-medium text-[#B07A45] mb-1.5">Email *</label>
-          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 rounded-xl border border-[#D8CFC4] bg-[#F5EFE7] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#9B6C3C] focus:ring-1 focus:ring-[#9B6C3C]/30 transition-all" />
+          <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all" />
         </div>
         <div>
           <label className="block text-sm font-medium text-[#B07A45] mb-1.5">Phone <span className="text-[#C5C3BE]">(optional)</span></label>
-          <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#D8CFC4] bg-[#F5EFE7] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#9B6C3C] focus:ring-1 focus:ring-[#9B6C3C]/30 transition-all" />
+          <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="(555) 123-4567" className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all" />
         </div>
         <div>
           <label className="block text-sm font-medium text-[#B07A45] mb-1.5">What&apos;s eating your time?</label>
-          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#D8CFC4] bg-[#F5EFE7] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#9B6C3C] focus:ring-1 focus:ring-[#9B6C3C]/30 transition-all resize-none" />
+          <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={4} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want AI to tackle..." className="w-full px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#C5C3BE] focus:outline-none focus:border-[#8E5E34] focus:ring-1 focus:ring-[#8E5E34]/30 transition-all resize-none" />
         </div>
         <button
           type="submit"
@@ -1271,7 +1271,7 @@ function ContactForm() {
 
 function FinalCTA() {
   return (
-    <section id="contact" className="py-12 lg:py-16 relative overflow-hidden bg-white rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#D8CFC4]">
+    <section id="contact" className="py-12 lg:py-16 relative overflow-hidden bg-[#EEE6DC] rounded-xl mx-4 lg:mx-0 shadow-sm border border-[#E3D9CD]">
       <div className="max-w-4xl mx-auto px-6 text-center relative">
         <motion.div
           initial="hidden"
@@ -1282,13 +1282,13 @@ function FinalCTA() {
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#B07A45] leading-tight mb-6">
             Every Day You Wait,
             <br />
-            <span className="text-[#9B6C3C]">Your Competitors Pull Ahead.</span>
+            <span className="text-[#8E5E34]">Your Competitors Pull Ahead.</span>
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#7A746C] text-base leading-relaxed max-w-2xl mx-auto mb-4">
             Book a free AI audit. In 30 minutes, we&apos;ll show you exactly which tasks to automate first and what the payback looks like. No commitment. No pressure.
           </motion.p>
           <motion.p variants={fadeUp} className="text-[#B07A45] font-semibold text-lg mb-8">
-            <a href="tel:9084987753" className="hover:text-[#9B6C3C] transition-colors inline-flex items-center gap-2">
+            <a href="tel:9084987753" className="hover:text-[#8E5E34] transition-colors inline-flex items-center gap-2">
               <Phone size={18} />
               (908) 498-7753
             </a>
@@ -1303,7 +1303,7 @@ function FinalCTA() {
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
           </motion.div>
-          <motion.p variants={fadeUp} className="text-[#9B6C3C]/60 text-sm mt-6 font-medium">
+          <motion.p variants={fadeUp} className="text-[#8E5E34]/60 text-sm mt-6 font-medium">
             Limited availability — we take on 3 new clients per month.
           </motion.p>
           <motion.div variants={fadeUp}>
@@ -1325,8 +1325,8 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-12 mb-14">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white font-extrabold text-sm">V</div>
-              <span className="text-2xl font-extrabold text-white tracking-tight">vantix<span className="text-[#9B6C3C]">.</span></span>
+              <div className="w-8 h-8 rounded-lg bg-[#EEE6DC]/10 flex items-center justify-center text-white font-extrabold text-sm">V</div>
+              <span className="text-2xl font-extrabold text-white tracking-tight">vantix<span className="text-[#8E5E34]">.</span></span>
             </div>
             <p className="text-white/60 mt-4 max-w-sm leading-relaxed">
               AI systems that generate revenue, eliminate busywork, and scale your operations — deployed in weeks, not months.
@@ -1392,7 +1392,7 @@ export function FuturisticLanding() {
   }, []);
 
   return (
-    <div className="bg-[#F5EFE7] text-[#B07A45] min-h-screen selection:bg-[#9B6C3C]/20 selection:text-[#B07A45] scroll-smooth">
+    <div className="bg-[#F4EFE8] text-[#B07A45] min-h-screen selection:bg-[#8E5E34]/20 selection:text-[#B07A45] scroll-smooth">
       <Navigation />
       <HeroSection />
       <AnimatedCounterSection />

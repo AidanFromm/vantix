@@ -32,7 +32,7 @@ function AnimatedCounter({ value, prefix = '', suffix = '' }: { value: number; p
   return <motion.span>{display}</motion.span>;
 }
 
-function Sparkline({ data, color = '#9B6C3C' }: { data: number[]; color?: string }) {
+function Sparkline({ data, color = '#8E5E34' }: { data: number[]; color?: string }) {
   const width = 80;
   const height = 32;
   const padding = 2;
@@ -156,8 +156,8 @@ export default function KPICard({
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className={`
         group relative overflow-hidden
-        bg-white
-        border border-[#D8CFC4] rounded-2xl
+        bg-[#EEE6DC]
+        border border-[#E3D9CD] rounded-2xl
         shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]
         p-5 transition-all duration-300
         hover:shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]
@@ -166,14 +166,14 @@ export default function KPICard({
       `}
     >
       {/* Subtle gradient overlay on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#9B6C3C]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#8E5E34]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       <div className="relative z-10">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
             {Icon && (
-              <div className="p-2 rounded-lg bg-[#9B6C3C]/10 text-[#9B6C3C]">
+              <div className="p-2 rounded-lg bg-[#8E5E34]/10 text-[#8E5E34]">
                 <Icon size={16} />
               </div>
             )}
@@ -181,14 +181,14 @@ export default function KPICard({
           </div>
           
           {sparklineData && sparklineData.length > 0 && (
-            <Sparkline data={sparklineData} color={trend && trend < 0 ? '#C4735B' : '#9B6C3C'} />
+            <Sparkline data={sparklineData} color={trend && trend < 0 ? '#C4735B' : '#8E5E34'} />
           )}
         </div>
 
         {/* Value */}
         <div className="flex items-end justify-between">
           <div>
-            <h3 className="text-3xl font-bold text-[#1E1E1E] tracking-tight">
+            <h3 className="text-3xl font-bold text-[#1C1C1C] tracking-tight">
               {isVisible && <AnimatedCounter value={value} prefix={prefix} suffix={suffix} />}
             </h3>
             

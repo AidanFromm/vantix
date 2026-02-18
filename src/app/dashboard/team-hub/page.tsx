@@ -150,7 +150,7 @@ export default function TeamHubPage() {
                     <span>{member.tasks.pending}</span>
                   </div>
                 </div>
-                <button className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
+                <button className="p-1.5 hover:bg-[#EEE6DC]/10 rounded-lg transition-colors">
                   <MessageSquare size={14} className="text-[var(--color-muted)]" />
                 </button>
               </div>

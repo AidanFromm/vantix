@@ -58,7 +58,7 @@ export default function BotsPage() {
             {/* Header */}
             <div className={`p-5 bg-gradient-to-r ${bot.color}`}>
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center text-white font-bold text-xl">
+                <div className="w-14 h-14 bg-[#EEE6DC]/20 rounded-xl flex items-center justify-center text-white font-bold text-xl">
                   {bot.name[0]}
                 </div>
                 <div className="text-white">
@@ -79,11 +79,11 @@ export default function BotsPage() {
 
               {/* Info Grid */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-xl bg-white/5 border border-[var(--color-border)]">
+                <div className="p-3 rounded-xl bg-[#EEE6DC]/5 border border-[var(--color-border)]">
                   <p className="text-xs text-[var(--color-muted)] mb-1">Platform</p>
                   <p className="font-medium flex items-center gap-2"><Cpu size={14} /> {bot.platform}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-white/5 border border-[var(--color-border)]">
+                <div className="p-3 rounded-xl bg-[#EEE6DC]/5 border border-[var(--color-border)]">
                   <p className="text-xs text-[var(--color-muted)] mb-1">Last Active</p>
                   <p className="font-medium flex items-center gap-2"><Clock size={14} /> {bot.lastActive}</p>
                 </div>
@@ -94,7 +94,7 @@ export default function BotsPage() {
                 <p className="text-xs text-[var(--color-muted)] mb-2">Channels</p>
                 <div className="flex gap-2">
                   {bot.channels.map((ch) => (
-                    <span key={ch} className="text-xs px-3 py-1 bg-white/5 border border-[var(--color-border)] rounded-full flex items-center gap-1">
+                    <span key={ch} className="text-xs px-3 py-1 bg-[#EEE6DC]/5 border border-[var(--color-border)] rounded-full flex items-center gap-1">
                       <Globe size={10} /> {ch}
                     </span>
                   ))}

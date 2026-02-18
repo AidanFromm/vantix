@@ -161,7 +161,7 @@ export default function ProposalsPage() {
         <button onClick={() => setPreviewId(null)} className="flex items-center gap-2 text-zinc-400 hover:text-white mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Proposals
         </button>
-        <div className="max-w-3xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl p-8 md:p-12 print:bg-white print:text-black print:border-none">
+        <div className="max-w-3xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl p-8 md:p-12 print:bg-[#EEE6DC] print:text-black print:border-none">
           <div className="flex justify-between items-start mb-10">
             <div>
               <h1 className="text-3xl font-bold text-white print:text-black">Vantix</h1>

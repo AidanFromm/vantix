@@ -329,7 +329,7 @@ export function RippleMagneticButton({
         {ripples.map((ripple) => (
           <motion.span
             key={ripple.id}
-            className="absolute bg-white/30 rounded-full pointer-events-none"
+            className="absolute bg-[#EEE6DC]/30 rounded-full pointer-events-none"
             style={{
               left: ripple.x,
               top: ripple.y,

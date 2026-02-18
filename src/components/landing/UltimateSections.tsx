@@ -615,7 +615,7 @@ export function PricingSection() {
                     'block w-full py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-center text-sm sm:text-base transition-colors',
                     plan.popular
                       ? 'bg-emerald-500 text-black hover:bg-emerald-400'
-                      : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-emerald-500/30'
+                      : 'bg-[#EEE6DC]/5 text-white border border-white/10 hover:bg-[#EEE6DC]/10 hover:border-emerald-500/30'
                   )}
                 >
                   Get Started
@@ -736,7 +736,7 @@ export function CTASection() {
 
                 <MagneticButton
                   href="mailto:hello@vantix.dev"
-                  className="bg-white/10 border border-white/30 hover:border-emerald-500/60 hover:bg-white/15 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300 w-full sm:w-auto"
+                  className="bg-[#EEE6DC]/10 border border-white/30 hover:border-emerald-500/60 hover:bg-[#EEE6DC]/15 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300 w-full sm:w-auto"
                 >
                   <Mail size={18} className="mr-2 flex-shrink-0" />
                   hello@vantix.dev

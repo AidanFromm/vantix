@@ -30,7 +30,7 @@ export default function SettingsResetButton() {
     <div ref={ref} className="relative">
       <button
         onClick={() => { setOpen(!open); setConfirming(false); }}
-        className="p-2 rounded-lg text-[var(--color-muted)] hover:text-white hover:bg-white/10 transition-colors"
+        className="p-2 rounded-lg text-[var(--color-muted)] hover:text-white hover:bg-[#EEE6DC]/10 transition-colors"
         title="Settings"
       >
         <Settings size={20} />
@@ -64,7 +64,7 @@ export default function SettingsResetButton() {
                 </button>
                 <button
                   onClick={() => setConfirming(false)}
-                  className="flex-1 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-[var(--color-muted)] text-sm transition-colors"
+                  className="flex-1 px-3 py-2 rounded-lg bg-[#EEE6DC]/5 hover:bg-[#EEE6DC]/10 text-[var(--color-muted)] text-sm transition-colors"
                 >
                   Cancel
                 </button>

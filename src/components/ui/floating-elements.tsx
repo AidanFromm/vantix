@@ -45,7 +45,7 @@ export function FloatingBadge({
         },
       }}
       className={cn(
-        'absolute px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10',
+        'absolute px-4 py-2 rounded-full bg-[#EEE6DC]/5 backdrop-blur-md border border-white/10',
         'text-sm font-medium text-white/80 shadow-lg',
         className
       )}

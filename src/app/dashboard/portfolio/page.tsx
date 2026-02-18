@@ -107,7 +107,7 @@ export default function PortfolioPage() {
                     href={item.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="p-1 hover:bg-white/10 rounded transition-colors"
+                    className="p-1 hover:bg-[#EEE6DC]/10 rounded transition-colors"
                   >
                     <ExternalLink size={14} className="text-[var(--color-muted)]" />
                   </a>

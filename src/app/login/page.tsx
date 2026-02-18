@@ -49,7 +49,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <Link href="/" className="flex items-center justify-center gap-3 mb-8">
           <img src="/logo-nav.png" alt="Vantix" className="w-10 h-10 object-contain" />
-          <span className="text-3xl font-bold text-[#1E1E1E]">vantix<span className="text-[#9B6C3C]">.</span></span>
+          <span className="text-3xl font-bold text-[#1C1C1C]">vantix<span className="text-[#8E5E34]">.</span></span>
         </Link>
 
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-8">
@@ -94,7 +94,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[#1E1E1E] transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[#1C1C1C] transition-colors"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -104,7 +104,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#1E1E1E] hover:bg-[#7A5530] disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              className="w-full bg-[#1C1C1C] hover:bg-[#7A5530] disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               {loading ? 'Signing in...' : 'Sign In'}
               {!loading && <ArrowRight size={20} />}

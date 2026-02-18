@@ -99,7 +99,7 @@ function LightNav() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300 ${
-        scrolled ? 'bg-white/80 backdrop-blur-lg border-b border-gray-100' : ''
+        scrolled ? 'bg-[#EEE6DC]/80 backdrop-blur-lg border-b border-gray-100' : ''
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -144,7 +144,7 @@ function LightHero() {
     <motion.section
       ref={ref}
       style={{ opacity, y, scale }}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#F5EFE7]"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#F4EFE8]"
     >
       {/* Subtle grid */}
       <div 
@@ -265,7 +265,7 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
     <section
       ref={ref}
       id={index === 0 ? 'work' : undefined}
-      className="relative min-h-screen flex items-center py-20 bg-white overflow-hidden"
+      className="relative min-h-screen flex items-center py-20 bg-[#EEE6DC] overflow-hidden"
     >
       {/* Background gradient */}
       <motion.div
@@ -376,7 +376,7 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
                 <div className="w-3 h-3 rounded-full bg-yellow-400" />
                 <div className="w-3 h-3 rounded-full bg-green-400" />
                 <div className="flex-1 mx-4">
-                  <div className="h-5 bg-white rounded border border-gray-200 max-w-xs mx-auto" />
+                  <div className="h-5 bg-[#EEE6DC] rounded border border-gray-200 max-w-xs mx-auto" />
                 </div>
               </div>
               
@@ -412,7 +412,7 @@ function ProjectChapter({ project, index }: { project: typeof projects[0]; index
 // ============================================
 function ServicesSection() {
   return (
-    <section id="services" className="py-32 bg-[#F5EFE7]">
+    <section id="services" className="py-32 bg-[#F4EFE8]">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -434,7 +434,7 @@ function ServicesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group p-8 bg-white rounded-2xl border border-gray-100 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50 transition-all cursor-pointer"
+              className="group p-8 bg-[#EEE6DC] rounded-2xl border border-gray-100 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50 transition-all cursor-pointer"
             >
               <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-100 transition-colors">
                 <service.icon size={24} className="text-emerald-600" />
@@ -454,7 +454,7 @@ function ServicesSection() {
 // ============================================
 function ContactSection() {
   return (
-    <section id="contact" className="py-32 bg-white">
+    <section id="contact" className="py-32 bg-[#EEE6DC]">
       <div className="max-w-4xl mx-auto px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -502,7 +502,7 @@ function ContactSection() {
 // ============================================
 function Footer() {
   return (
-    <footer className="py-8 px-6 bg-[#F5EFE7] border-t border-gray-100">
+    <footer className="py-8 px-6 bg-[#F4EFE8] border-t border-gray-100">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
         <p>© 2026 Vantix LLC. All rights reserved.</p>
         <p>New Jersey, USA</p>
@@ -524,7 +524,7 @@ export function LightLanding() {
   if (!mounted) return null;
 
   return (
-    <div className="bg-white text-gray-900 min-h-screen">
+    <div className="bg-[#EEE6DC] text-gray-900 min-h-screen">
       <LightNav />
       <LightHero />
       

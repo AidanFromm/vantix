@@ -96,7 +96,7 @@ export default function CallsPage() {
         ) : (
           <div className="divide-y divide-[var(--color-border)]">
             {filteredCalls.map(call => (
-              <div key={call.id} className="p-4 hover:bg-white/5 transition-colors">
+              <div key={call.id} className="p-4 hover:bg-[#EEE6DC]/5 transition-colors">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">
                     <div className="mt-1">{getIcon(call.type)}</div>

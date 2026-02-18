@@ -248,25 +248,25 @@ export default function CommandPalette() {
       {/* Trigger Button */}
       <button
         onClick={() => setOpen(true)}
-        className="group flex items-center gap-2.5 px-3.5 py-2 bg-white
-                   border border-[#D8CFC4] hover:border-[#9B6C3C]/40 rounded-xl 
+        className="group flex items-center gap-2.5 px-3.5 py-2 bg-[#EEE6DC]
+                   border border-[#E3D9CD] hover:border-[#8E5E34]/40 rounded-xl 
                    shadow-sm
                    hover:shadow-sm
                    transition-all duration-200 cursor-pointer"
       >
-        <Search size={14} className="text-[#7A746C] group-hover:text-[#9B6C3C] transition-colors" />
-        <span className="text-sm text-[#7A746C] group-hover:text-[#1E1E1E] transition-colors hidden sm:inline">
+        <Search size={14} className="text-[#7A746C] group-hover:text-[#8E5E34] transition-colors" />
+        <span className="text-sm text-[#7A746C] group-hover:text-[#1C1C1C] transition-colors hidden sm:inline">
           Search...
         </span>
         <div className="hidden sm:flex items-center gap-1 ml-1.5">
           <kbd className="min-w-[20px] h-5 px-1.5 flex items-center justify-center text-[10px] font-medium 
-                        text-[#7A746C] bg-[#EFE6DA] border border-[#D8CFC4] rounded-md
-                        group-hover:bg-[#EDE7DF] group-hover:border-[#9B6C3C]/30 transition-all">
+                        text-[#7A746C] bg-[#EEE6DC] border border-[#E3D9CD] rounded-md
+                        group-hover:bg-[#EDE7DF] group-hover:border-[#8E5E34]/30 transition-all">
             ⌘
           </kbd>
           <kbd className="min-w-[20px] h-5 px-1.5 flex items-center justify-center text-[10px] font-medium 
-                        text-[#7A746C] bg-[#EFE6DA] border border-[#D8CFC4] rounded-md
-                        group-hover:bg-[#EDE7DF] group-hover:border-[#9B6C3C]/30 transition-all">
+                        text-[#7A746C] bg-[#EEE6DC] border border-[#E3D9CD] rounded-md
+                        group-hover:bg-[#EDE7DF] group-hover:border-[#8E5E34]/30 transition-all">
             K
           </kbd>
         </div>
@@ -283,7 +283,7 @@ export default function CommandPalette() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 bg-[#1E1E1E]/40 backdrop-blur-md z-[100]"
+              className="fixed inset-0 bg-[#1C1C1C]/40 backdrop-blur-md z-[100]"
             />
 
             {/* Command Dialog */}
@@ -300,28 +300,28 @@ export default function CommandPalette() {
               <Command
                 value={selectedValue}
                 onValueChange={setSelectedValue}
-                className="relative overflow-hidden rounded-2xl border border-[#D8CFC4]
-                          bg-white/95 backdrop-blur-2xl shadow-lg"
+                className="relative overflow-hidden rounded-2xl border border-[#E3D9CD]
+                          bg-[#EEE6DC]/95 backdrop-blur-2xl shadow-lg"
                 loop
               >
                 {/* Glow effect at top */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-[#9B6C3C]/40 to-transparent" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-[#8E5E34]/40 to-transparent" />
 
                 {/* Search Input */}
-                <div className="flex items-center gap-3 px-4 py-4 border-b border-[#D8CFC4]">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#9B6C3C]/10">
-                    <Sparkles size={16} className="text-[#9B6C3C]" />
+                <div className="flex items-center gap-3 px-4 py-4 border-b border-[#E3D9CD]">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#8E5E34]/10">
+                    <Sparkles size={16} className="text-[#8E5E34]" />
                   </div>
                   <Command.Input
                     ref={inputRef}
                     value={search}
                     onValueChange={setSearch}
                     placeholder="Type a command or search..."
-                    className="flex-1 bg-transparent text-[15px] text-[#1E1E1E] placeholder:text-[#7A746C] 
-                              outline-none caret-[#9B6C3C]"
+                    className="flex-1 bg-transparent text-[15px] text-[#1C1C1C] placeholder:text-[#7A746C] 
+                              outline-none caret-[#8E5E34]"
                   />
-                  <kbd className="px-2 py-1 text-[11px] font-medium text-[#7A746C] bg-[#EFE6DA] 
-                                 border border-[#D8CFC4] rounded-lg">
+                  <kbd className="px-2 py-1 text-[11px] font-medium text-[#7A746C] bg-[#EEE6DC] 
+                                 border border-[#E3D9CD] rounded-lg">
                     esc
                   </kbd>
                 </div>
@@ -329,7 +329,7 @@ export default function CommandPalette() {
                 {/* Results */}
                 <Command.List className="max-h-[400px] overflow-y-auto overscroll-contain py-2 scroll-smooth">
                   <Command.Empty className="py-12 text-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 mb-3 rounded-full bg-[#EFE6DA]">
+                    <div className="inline-flex items-center justify-center w-12 h-12 mb-3 rounded-full bg-[#EEE6DC]">
                       <Search size={20} className="text-[#7A746C]" />
                     </div>
                     <p className="text-sm text-[#7A746C]">No results found</p>
@@ -357,16 +357,16 @@ export default function CommandPalette() {
                           })}
                           className="group mx-2 px-3 py-2.5 flex items-center gap-3 rounded-xl cursor-pointer
                                     text-[#7A746C] transition-all duration-150
-                                    data-[selected=true]:bg-[#9B6C3C]/10 data-[selected=true]:text-[#9B6C3C]
-                                    hover:bg-[#EFE6DA]"
+                                    data-[selected=true]:bg-[#8E5E34]/10 data-[selected=true]:text-[#8E5E34]
+                                    hover:bg-[#EEE6DC]"
                         >
                           <div className="flex items-center justify-center w-9 h-9 rounded-lg 
-                                        bg-[#EFE6DA] group-data-[selected=true]:bg-[#9B6C3C]/15
+                                        bg-[#EEE6DC] group-data-[selected=true]:bg-[#8E5E34]/15
                                         transition-colors duration-150">
                             {item.icon}
                           </div>
                           <div className="flex-1 flex flex-col">
-                            <span className="text-sm font-medium text-[#1E1E1E] group-data-[selected=true]:text-[#9B6C3C]">
+                            <span className="text-sm font-medium text-[#1C1C1C] group-data-[selected=true]:text-[#8E5E34]">
                               {item.label}
                             </span>
                             <span className="text-[11px] text-[#A9A29A] capitalize">
@@ -377,7 +377,7 @@ export default function CommandPalette() {
                             size={14} 
                             className="opacity-0 -translate-x-2 group-data-[selected=true]:opacity-100 
                                       group-data-[selected=true]:translate-x-0 transition-all duration-150
-                                      text-[#9B6C3C]" 
+                                      text-[#8E5E34]" 
                           />
                         </Command.Item>
                       ))}
@@ -391,7 +391,7 @@ export default function CommandPalette() {
                         <span className="text-[11px] font-semibold text-[#A9A29A] uppercase tracking-wider">
                           {group.heading}
                         </span>
-                        <div className="flex-1 h-px bg-gradient-to-r from-[#D8CFC4] to-transparent" />
+                        <div className="flex-1 h-px bg-gradient-to-r from-[#E3D9CD] to-transparent" />
                       </div>
                       {group.items.map((item) => (
                         <Command.Item
@@ -400,16 +400,16 @@ export default function CommandPalette() {
                           onSelect={() => handleSelect(item.onSelect)}
                           className="group mx-2 px-3 py-2.5 flex items-center gap-3 rounded-xl cursor-pointer
                                     text-[#7A746C] transition-all duration-150
-                                    data-[selected=true]:bg-[#9B6C3C]/10 data-[selected=true]:text-[#9B6C3C]
-                                    hover:bg-[#EFE6DA]"
+                                    data-[selected=true]:bg-[#8E5E34]/10 data-[selected=true]:text-[#8E5E34]
+                                    hover:bg-[#EEE6DC]"
                         >
                           <div className="flex items-center justify-center w-9 h-9 rounded-lg 
-                                        bg-[#EFE6DA] group-data-[selected=true]:bg-[#9B6C3C]/15
+                                        bg-[#EEE6DC] group-data-[selected=true]:bg-[#8E5E34]/15
                                         transition-colors duration-150">
                             {item.icon}
                           </div>
-                          <span className="flex-1 text-sm font-medium text-[#1E1E1E] 
-                                         group-data-[selected=true]:text-[#9B6C3C] transition-colors">
+                          <span className="flex-1 text-sm font-medium text-[#1C1C1C] 
+                                         group-data-[selected=true]:text-[#8E5E34] transition-colors">
                             {item.label}
                           </span>
                           {item.shortcut && (
@@ -419,10 +419,10 @@ export default function CommandPalette() {
                                   key={i}
                                   className="min-w-[22px] h-[22px] px-1.5 flex items-center justify-center
                                             text-[10px] font-medium text-[#7A746C] 
-                                            bg-[#EFE6DA] border border-[#D8CFC4] rounded-md
-                                            group-data-[selected=true]:bg-[#9B6C3C]/10 
-                                            group-data-[selected=true]:border-[#9B6C3C]/20
-                                            group-data-[selected=true]:text-[#9B6C3C]
+                                            bg-[#EEE6DC] border border-[#E3D9CD] rounded-md
+                                            group-data-[selected=true]:bg-[#8E5E34]/10 
+                                            group-data-[selected=true]:border-[#8E5E34]/20
+                                            group-data-[selected=true]:text-[#8E5E34]
                                             transition-all duration-150"
                                 >
                                   {key}
@@ -434,7 +434,7 @@ export default function CommandPalette() {
                             size={14} 
                             className="opacity-0 -translate-x-2 group-data-[selected=true]:opacity-100 
                                       group-data-[selected=true]:translate-x-0 transition-all duration-150
-                                      text-[#9B6C3C]" 
+                                      text-[#8E5E34]" 
                           />
                         </Command.Item>
                       ))}
@@ -443,24 +443,24 @@ export default function CommandPalette() {
                 </Command.List>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between px-4 py-3 border-t border-[#D8CFC4] 
-                              bg-gradient-to-r from-[#EFE6DA]/50 to-transparent">
+                <div className="flex items-center justify-between px-4 py-3 border-t border-[#E3D9CD] 
+                              bg-gradient-to-r from-[#EEE6DC]/50 to-transparent">
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1.5 text-[11px] text-[#A9A29A]">
                       <kbd className="min-w-[18px] h-[18px] px-1 flex items-center justify-center 
-                                    bg-[#EFE6DA] rounded text-[10px]">↑</kbd>
+                                    bg-[#EEE6DC] rounded text-[10px]">↑</kbd>
                       <kbd className="min-w-[18px] h-[18px] px-1 flex items-center justify-center 
-                                    bg-[#EFE6DA] rounded text-[10px]">↓</kbd>
+                                    bg-[#EEE6DC] rounded text-[10px]">↓</kbd>
                       <span className="ml-0.5">Navigate</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px] text-[#A9A29A]">
                       <kbd className="min-w-[18px] h-[18px] px-1 flex items-center justify-center 
-                                    bg-[#EFE6DA] rounded text-[10px]">↵</kbd>
+                                    bg-[#EEE6DC] rounded text-[10px]">↵</kbd>
                       <span className="ml-0.5">Select</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 text-[11px] text-[#A9A29A]">
-                    <CommandIcon size={12} className="text-[#9B6C3C]/60" />
+                    <CommandIcon size={12} className="text-[#8E5E34]/60" />
                     <span>Command Palette</span>
                   </div>
                 </div>
