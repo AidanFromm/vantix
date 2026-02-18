@@ -3,8 +3,19 @@ import type { Client, Lead, Project, Invoice, Expense, Activity, ScrapedLead, Te
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
+const IS_PLACEHOLDER = supabaseUrl.includes('placeholder');
 
-export const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey);
+// When Supabase isn't configured, create a proxy that throws on any .from() call
+// This ensures ALL functions fall through to localStorage immediately
+const realClient = createSupabaseClient(supabaseUrl, supabaseAnonKey);
+export const supabase = IS_PLACEHOLDER
+  ? new Proxy(realClient, {
+      get(target, prop) {
+        if (prop === 'from') return () => { throw new Error('Supabase not configured'); };
+        return (target as Record<string | symbol, unknown>)[prop];
+      },
+    })
+  : realClient;
 
 // ============================================
 // LOCALSTORAGE HELPERS
@@ -43,92 +54,97 @@ const LS_SCRAPED_LEADS = 'vantix_scraped_leads';
 // CLIENTS
 // ============================================
 export async function getClients(filters?: { status?: string; search?: string }) {
-  try {
-    let query = supabase.from('clients').select('*').order('created_at', { ascending: false });
-    if (filters?.status) query = query.eq('status', filters.status);
-    if (filters?.search) query = query.or(`name.ilike.%${filters.search}%,contact_email.ilike.%${filters.search}%`);
-    const { data, error } = await query;
-    if (error) throw error;
-    if (data) lsSet(LS_CLIENTS, data);
-    return { data: data as Client[] | null, error: null };
-  } catch {
-    let items = lsGet<Client>(LS_CLIENTS);
-    if (filters?.status) items = items.filter(c => c.status === filters.status);
-    if (filters?.search) {
-      const s = filters.search.toLowerCase();
-      items = items.filter(c => c.name?.toLowerCase().includes(s) || c.contact_email?.toLowerCase().includes(s));
-    }
-    return { data: items, error: null };
+  if (!IS_PLACEHOLDER) {
+    try {
+      let query = supabase.from('clients').select('*').order('created_at', { ascending: false });
+      if (filters?.status) query = query.eq('status', filters.status);
+      if (filters?.search) query = query.or(`name.ilike.%${filters.search}%,contact_email.ilike.%${filters.search}%`);
+      const { data, error } = await query;
+      if (error) throw error;
+      if (data && data.length > 0) lsSet(LS_CLIENTS, data);
+      return { data: data as Client[] | null, error: null };
+    } catch { /* fall through to localStorage */ }
   }
+  let items = lsGet<Client>(LS_CLIENTS);
+  if (filters?.status) items = items.filter(c => c.status === filters.status);
+  if (filters?.search) {
+    const s = filters.search.toLowerCase();
+    items = items.filter(c => c.name?.toLowerCase().includes(s) || c.contact_email?.toLowerCase().includes(s));
+  }
+  return { data: items, error: null };
 }
 
 export async function getClient(id: string) {
-  try {
-    const { data, error } = await supabase.from('clients').select('*').eq('id', id).single();
-    if (error) throw error;
-    return { data: data as Client | null, error: null };
-  } catch {
-    const items = lsGet<Client>(LS_CLIENTS);
-    return { data: items.find(c => c.id === id) || null, error: null };
+  if (!IS_PLACEHOLDER) {
+    try {
+      const { data, error } = await supabase.from('clients').select('*').eq('id', id).single();
+      if (error) throw error;
+      return { data: data as Client | null, error: null };
+    } catch { /* fall through */ }
   }
+  const items = lsGet<Client>(LS_CLIENTS);
+  return { data: items.find(c => c.id === id) || null, error: null };
 }
 
 export async function createClient(client: Partial<Client>) {
-  try {
-    const { data, error } = await supabase.from('clients').insert(client).select().single();
-    if (error) throw error;
-    return { data: data as Client | null, error: null };
-  } catch {
-    const now = new Date().toISOString();
-    const newClient: Client = {
-      id: generateId(),
-      name: client.name || '',
-      type: client.type || 'company',
-      status: client.status || 'lead',
-      contract_value: client.contract_value || 0,
-      lifetime_value: client.lifetime_value || 0,
-      tags: client.tags || [],
-      created_at: now,
-      updated_at: now,
-      ...client,
-    } as Client;
-    newClient.id = newClient.id || generateId();
-    newClient.created_at = newClient.created_at || now;
-    newClient.updated_at = now;
-    const items = lsGet<Client>(LS_CLIENTS);
-    items.unshift(newClient);
-    lsSet(LS_CLIENTS, items);
-    return { data: newClient, error: null };
+  if (!IS_PLACEHOLDER) {
+    try {
+      const { data, error } = await supabase.from('clients').insert(client).select().single();
+      if (error) throw error;
+      return { data: data as Client | null, error: null };
+    } catch { /* fall through */ }
   }
+  const now = new Date().toISOString();
+  const newClient: Client = {
+    id: generateId(),
+    name: client.name || '',
+    type: client.type || 'company',
+    status: client.status || 'lead',
+    contract_value: client.contract_value || 0,
+    lifetime_value: client.lifetime_value || 0,
+    tags: client.tags || [],
+    created_at: now,
+    updated_at: now,
+    ...client,
+  } as Client;
+  newClient.id = newClient.id || generateId();
+  newClient.created_at = newClient.created_at || now;
+  newClient.updated_at = now;
+  const items = lsGet<Client>(LS_CLIENTS);
+  items.unshift(newClient);
+  lsSet(LS_CLIENTS, items);
+  return { data: newClient, error: null };
 }
 
 export async function updateClient(id: string, updates: Partial<Client>) {
-  try {
-    const { data, error } = await supabase.from('clients').update(updates).eq('id', id).select().single();
-    if (error) throw error;
-    return { data: data as Client | null, error: null };
-  } catch {
-    const items = lsGet<Client>(LS_CLIENTS);
-    const idx = items.findIndex(c => c.id === id);
-    if (idx >= 0) {
-      items[idx] = { ...items[idx], ...updates, updated_at: new Date().toISOString() };
-      lsSet(LS_CLIENTS, items);
-      return { data: items[idx], error: null };
-    }
-    return { data: null, error: null };
+  if (!IS_PLACEHOLDER) {
+    try {
+      const { data, error } = await supabase.from('clients').update(updates).eq('id', id).select().single();
+      if (error) throw error;
+      return { data: data as Client | null, error: null };
+    } catch { /* fall through */ }
   }
+  const items = lsGet<Client>(LS_CLIENTS);
+  const idx = items.findIndex(c => c.id === id);
+  if (idx >= 0) {
+    items[idx] = { ...items[idx], ...updates, updated_at: new Date().toISOString() };
+    lsSet(LS_CLIENTS, items);
+    return { data: items[idx], error: null };
+  }
+  return { data: null, error: null };
 }
 
 export async function deleteClient(id: string) {
-  try {
-    const { error } = await supabase.from('clients').delete().eq('id', id);
-    if (error) throw error;
-    return { error: null };
-  } catch {
-    const items = lsGet<Client>(LS_CLIENTS).filter(c => c.id !== id);
-    lsSet(LS_CLIENTS, items);
-    return { error: null };
+  if (!IS_PLACEHOLDER) {
+    try {
+      const { error } = await supabase.from('clients').delete().eq('id', id);
+      if (error) throw error;
+      return { error: null };
+    } catch { /* fall through */ }
   }
+  const items = lsGet<Client>(LS_CLIENTS).filter(c => c.id !== id);
+  lsSet(LS_CLIENTS, items);
+  return { error: null };
 }
 
 // ============================================
@@ -142,7 +158,7 @@ export async function getLeads(filters?: { status?: string; source?: string; sea
     if (filters?.search) query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,company.ilike.%${filters.search}%`);
     const { data, error } = await query;
     if (error) throw error;
-    if (data) lsSet(LS_LEADS, data);
+    if (data && data.length > 0) lsSet(LS_LEADS, data);
     return { data: data as Lead[] | null, error: null };
   } catch {
     let items = lsGet<Lead>(LS_LEADS);
@@ -308,7 +324,7 @@ export async function getInvoices(filters?: { status?: string; client_id?: strin
     if (filters?.client_id) query = query.eq('client_id', filters.client_id);
     const { data, error } = await query;
     if (error) throw error;
-    if (data) lsSet(LS_INVOICES, data);
+    if (data && data.length > 0) lsSet(LS_INVOICES, data);
     return { data: data as Invoice[] | null, error: null };
   } catch {
     let items = lsGet<Invoice>(LS_INVOICES);
@@ -373,7 +389,7 @@ export async function getExpenses(filters?: { category?: string; from?: string; 
     if (filters?.to) query = query.lte('expense_date', filters.to);
     const { data, error } = await query;
     if (error) throw error;
-    if (data) lsSet(LS_EXPENSES, data);
+    if (data && data.length > 0) lsSet(LS_EXPENSES, data);
     return { data: data as Expense[] | null, error: null };
   } catch {
     let items = lsGet<Expense>(LS_EXPENSES);
