@@ -1,307 +1,321 @@
-'use client';
+'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useMemo } from 'react'
 import {
-  Plus, Trash2, X, Clock, CheckCircle2,
-  Layers, CircleDot, Eye, Zap, Calendar, ArrowRight, Loader2, Tag,
-  LayoutGrid, List, Filter,
-} from 'lucide-react';
-
-type Column = 'todo' | 'in_progress' | 'review' | 'done';
-type Priority = 'low' | 'medium' | 'high' | 'urgent';
+  Plus, ListTodo, LayoutGrid, Check, ChevronDown, X,
+  Circle, Clock, CheckCircle2, AlertTriangle, Flag,
+  Calendar, User, Search, MoreHorizontal, GripVertical,
+  Edit3, Trash2, Users
+} from 'lucide-react'
 
 interface Task {
-  id: string; title: string; description: string; column: Column; priority: Priority;
-  assignee: string; due_date?: string; project_id?: string; project_link?: string; created_at: string;
+  id: string
+  title: string
+  description: string
+  project: string
+  assignee: string
+  priority: 'Low' | 'Medium' | 'High' | 'Urgent'
+  status: 'To Do' | 'In Progress' | 'Done'
+  dueDate: string
+  completed: boolean
 }
-interface Project { id: string; name: string; }
 
-function lsGet<T>(key: string, fallback: T[] = []): T[] {
-  try { if (typeof window === 'undefined') return fallback; const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
+const SEED_TASKS: Task[] = [
+  { id: '1', title: 'Update firewall rules for main site', description: 'Review and update WAF rules for securedtampa.com', project: 'SecuredTampa', assignee: 'Kyle', priority: 'Urgent', status: 'In Progress', dueDate: '2026-02-20', completed: false },
+  { id: '2', title: 'Design new landing page hero', description: 'Create hero section mockup for JFK store relaunch', project: 'JFK', assignee: 'Aidan', priority: 'High', status: 'To Do', dueDate: '2026-02-22', completed: false },
+  { id: '3', title: 'Set up SSL certificate renewal', description: 'Automate SSL renewal for all SecuredTampa client domains', project: 'SecuredTampa', assignee: 'Kyle', priority: 'High', status: 'In Progress', dueDate: '2026-02-19', completed: false },
+  { id: '4', title: 'Product photography upload', description: 'Upload and tag new sneaker photos for JFK store', project: 'JFK', assignee: 'Aidan', priority: 'Medium', status: 'To Do', dueDate: '2026-02-25', completed: false },
+  { id: '5', title: 'Client invoice - February', description: 'Generate and send February invoices to all SecuredTampa clients', project: 'SecuredTampa', assignee: 'Kyle', priority: 'Medium', status: 'To Do', dueDate: '2026-02-28', completed: false },
+  { id: '6', title: 'Fix checkout flow bug', description: 'Resolve Stripe webhook issue on JFK checkout', project: 'JFK', assignee: 'Aidan', priority: 'Urgent', status: 'In Progress', dueDate: '2026-02-18', completed: false },
+  { id: '7', title: 'Write blog post on cybersecurity trends', description: 'SEO blog post for SecuredTampa site', project: 'SecuredTampa', assignee: 'Kyle', priority: 'Low', status: 'Done', dueDate: '2026-02-15', completed: true },
+  { id: '8', title: 'Update StockX API integration', description: 'Migrate to new StockX API endpoints for price fetching', project: 'JFK', assignee: 'Aidan', priority: 'High', status: 'Done', dueDate: '2026-02-16', completed: true },
+]
+
+const PRIORITY_COLORS: Record<string, string> = {
+  Urgent: 'bg-red-100 text-red-700 border-red-200',
+  High: 'bg-orange-100 text-orange-700 border-orange-200',
+  Medium: 'bg-[#F5E6D3] text-[#B07A45] border-[#E3D9CD]',
+  Low: 'bg-gray-100 text-gray-500 border-gray-200',
 }
-function lsSet<T>(key: string, data: T[]) {
-  try { if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(data)); } catch {}
+
+const STATUS_ICONS: Record<string, typeof Circle> = {
+  'To Do': Circle,
+  'In Progress': Clock,
+  'Done': CheckCircle2,
 }
-function generateId(): string { return crypto?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
-const COLUMNS: { key: Column; label: string; icon: typeof Clock; color: string; bg: string }[] = [
-  { key: 'todo', label: 'To Do', icon: CircleDot, color: 'text-[#7A746C]', bg: 'bg-[#7A746C]/10' },
-  { key: 'in_progress', label: 'In Progress', icon: Zap, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
-  { key: 'review', label: 'Review', icon: Eye, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
-  { key: 'done', label: 'Done', icon: CheckCircle2, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
-];
+const STATUSES = ['To Do', 'In Progress', 'Done'] as const
+const PRIORITIES = ['Low', 'Medium', 'High', 'Urgent'] as const
+const ASSIGNEES = ['Kyle', 'Aidan']
+const PROJECTS = ['SecuredTampa', 'JFK']
 
-const PRIORITY_CFG: Record<Priority, { color: string; bg: string }> = {
-  low: { color: 'text-[#7A746C]', bg: 'bg-[#EEE6DC]' },
-  medium: { color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
-  high: { color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5' },
-  urgent: { color: 'text-[#8E5E34]', bg: 'bg-[#B0614A]/5' },
-};
+function loadTasks(): Task[] {
+  try {
+    const raw = localStorage.getItem('vantix_tasks')
+    if (raw) return JSON.parse(raw)
+  } catch {}
+  return SEED_TASKS
+}
 
-function getDueDateColor(due_date?: string): string {
-  if (!due_date) return 'text-[#7A746C]';
-  const d = new Date(due_date); const now = new Date();
-  now.setHours(0, 0, 0, 0); d.setHours(0, 0, 0, 0);
-  if (d < now) return 'text-[#B0614A]/50';
-  if (d.getTime() === now.getTime()) return 'text-[#B07A45]';
-  return 'text-[#7A746C]';
+function saveTasks(tasks: Task[]) {
+  try { localStorage.setItem('vantix_tasks', JSON.stringify(tasks)) } catch {}
 }
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
-  const [showForm, setShowForm] = useState(false);
-  const [editId, setEditId] = useState<string | null>(null);
-  const [dragTask, setDragTask] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState<string | null>(null);
-  const [projectFilter, setProjectFilter] = useState<string>('all');
-  const [quickAdd, setQuickAdd] = useState<{ col: Column; title: string } | null>(null);
-  const [form, setForm] = useState({ title: '', description: '', column: 'todo' as Column, priority: 'medium' as Priority, assignee: 'Kyle', due_date: '', project_id: '' });
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [view, setView] = useState<'list' | 'board'>('list')
+  const [filterStatus, setFilterStatus] = useState<string>('All')
+  const [filterPriority, setFilterPriority] = useState<string>('All')
+  const [filterAssignee, setFilterAssignee] = useState<string>('All')
+  const [search, setSearch] = useState('')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editingTask, setEditingTask] = useState<Task | null>(null)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [bulkMenu, setBulkMenu] = useState(false)
 
-  const load = useCallback(() => {
-    try {
-      setTasks(lsGet<Task>('vantix_tasks'));
-      setProjects(lsGet<Project>('vantix_projects'));
-    } catch {}
-    setLoading(false);
-  }, []);
+  useEffect(() => { setTasks(loadTasks()) }, [])
+  useEffect(() => { if (tasks.length) saveTasks(tasks) }, [tasks])
 
-  useEffect(() => { load(); }, [load]);
+  const filtered = useMemo(() => {
+    return tasks.filter(t => {
+      if (filterStatus !== 'All' && t.status !== filterStatus) return false
+      if (filterPriority !== 'All' && t.priority !== filterPriority) return false
+      if (filterAssignee !== 'All' && t.assignee !== filterAssignee) return false
+      if (search && !t.title.toLowerCase().includes(search.toLowerCase())) return false
+      return true
+    })
+  }, [tasks, filterStatus, filterPriority, filterAssignee, search])
 
-  const filteredTasks = useMemo(() => {
-    if (projectFilter === 'all') return tasks;
-    return tasks.filter(t => t.project_id === projectFilter);
-  }, [tasks, projectFilter]);
+  const toggleComplete = (id: string) => {
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed, status: !t.completed ? 'Done' : 'To Do' } : t))
+  }
 
-  const resetForm = () => { setForm({ title: '', description: '', column: 'todo', priority: 'medium', assignee: 'Kyle', due_date: '', project_id: '' }); setEditId(null); setShowForm(false); };
+  const toggleSelect = (id: string) => {
+    setSelected(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
+  }
 
-  const saveTasks = (newTasks: Task[]) => { lsSet('vantix_tasks', newTasks); setTasks(newTasks); };
+  const bulkComplete = () => {
+    setTasks(prev => prev.map(t => selected.has(t.id) ? { ...t, completed: true, status: 'Done' } : t))
+    setSelected(new Set())
+    setBulkMenu(false)
+  }
 
-  const handleSubmit = () => {
-    if (!form.title.trim()) return;
-    try {
-      const items = lsGet<Task>('vantix_tasks');
-      const now = new Date().toISOString();
-      if (editId) {
-        const idx = items.findIndex(t => t.id === editId);
-        if (idx >= 0) items[idx] = { ...items[idx], ...form };
-      } else {
-        items.unshift({ id: generateId(), created_at: now, ...form } as Task);
-      }
-      saveTasks(items);
-      resetForm();
-    } catch {}
-  };
+  const bulkAssign = (assignee: string) => {
+    setTasks(prev => prev.map(t => selected.has(t.id) ? { ...t, assignee } : t))
+    setSelected(new Set())
+    setBulkMenu(false)
+  }
 
-  const handleQuickAdd = (col: Column, title: string) => {
-    if (!title.trim()) return;
-    try {
-      const items = lsGet<Task>('vantix_tasks');
-      items.unshift({ id: generateId(), title, description: '', column: col, priority: 'medium', assignee: 'Kyle', created_at: new Date().toISOString() } as Task);
-      saveTasks(items);
-      setQuickAdd(null);
-    } catch {}
-  };
+  const deleteTask = (id: string) => {
+    setTasks(prev => prev.filter(t => t.id !== id))
+  }
 
-  const handleDrop = (col: Column) => {
-    if (!dragTask) return;
-    try {
-      const items = lsGet<Task>('vantix_tasks');
-      const idx = items.findIndex(t => t.id === dragTask);
-      if (idx >= 0) { items[idx] = { ...items[idx], column: col }; saveTasks(items); }
-    } catch {}
-    setDragTask(null);
-  };
-
-  const handleDelete = (id: string) => {
-    if (!confirm('Delete this task?')) return;
-    setDeleting(id);
-    try { saveTasks(lsGet<Task>('vantix_tasks').filter(t => t.id !== id)); } catch {}
-    setDeleting(null);
-  };
-
-  const startEdit = (t: Task) => { setForm({ title: t.title, description: t.description || '', column: t.column, priority: t.priority, assignee: t.assignee || 'Kyle', due_date: t.due_date || '', project_id: t.project_id || '' }); setEditId(t.id); setShowForm(true); };
-
-  const moveTask = (id: string, direction: 'left' | 'right') => {
-    const task = tasks.find(t => t.id === id); if (!task) return;
-    const keys = COLUMNS.map(c => c.key); const idx = keys.indexOf(task.column);
-    const newIdx = direction === 'right' ? Math.min(idx + 1, keys.length - 1) : Math.max(idx - 1, 0);
-    if (newIdx === idx) return;
-    try {
-      const items = lsGet<Task>('vantix_tasks');
-      const ti = items.findIndex(t => t.id === id);
-      if (ti >= 0) { items[ti] = { ...items[ti], column: keys[newIdx] }; saveTasks(items); }
-    } catch {}
-  };
-
-  const inputCls = 'w-full bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl px-4 py-2.5 text-sm text-[#1C1C1C] focus:outline-none focus:border-[#8E5E34]/50';
+  const saveTask = (task: Task) => {
+    setTasks(prev => {
+      const exists = prev.find(t => t.id === task.id)
+      if (exists) return prev.map(t => t.id === task.id ? task : t)
+      return [...prev, task]
+    })
+    setModalOpen(false)
+    setEditingTask(null)
+  }
 
   return (
-    <div className="space-y-6 pb-12">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-[#1C1C1C] flex items-center gap-3"><div className="p-2 bg-[#8E5E34]/10 rounded-xl"><Layers className="w-6 h-6 text-[#8E5E34]" /></div>Tasks</h1>
-          <p className="text-[#7A746C] mt-1 text-sm">Manage your team&apos;s tasks</p>
+    <div className="min-h-screen bg-[#F4EFE8] p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-[#1C1C1C]">Tasks</h1>
+        <button onClick={() => { setEditingTask(null); setModalOpen(true) }} className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-shadow">
+          <Plus size={16} /> Add Task
+        </button>
+      </div>
+
+      {/* View toggle + filters */}
+      <div className="flex flex-wrap items-center gap-3 mb-5">
+        <div className="flex bg-[#EEE6DC] rounded-xl p-1 border border-[#E3D9CD]">
+          <button onClick={() => setView('list')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${view === 'list' ? 'bg-white text-[#1C1C1C] shadow-sm' : 'text-[#7A746C]'}`}>
+            <ListTodo size={14} /> List
+          </button>
+          <button onClick={() => setView('board')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${view === 'board' ? 'bg-white text-[#1C1C1C] shadow-sm' : 'text-[#7A746C]'}`}>
+            <LayoutGrid size={14} /> Board
+          </button>
         </div>
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2 text-sm text-[#7A746C]"><span>{filteredTasks.length} total</span><span>|</span><span className="text-[#8E5E34]">{filteredTasks.filter(t => t.column === 'done').length} done</span></div>
-          <div className="flex bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-1">
-            <button onClick={() => setViewMode('kanban')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${viewMode === 'kanban' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'text-[#7A746C]'}`}><LayoutGrid size={13} /> Kanban</button>
-            <button onClick={() => setViewMode('list')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${viewMode === 'list' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'text-[#7A746C]'}`}><List size={13} /> List</button>
-          </div>
-          <select value={projectFilter} onChange={e => setProjectFilter(e.target.value)} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl px-3 py-1.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#8E5E34]/50">
-            <option value="all">All Projects</option>
-            {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-          <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-5 py-2.5 bronze-btn hover:brightness-110 text-white rounded-xl font-medium transition-colors text-sm"><Plus className="w-4 h-4" /> New Task</button>
+
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A746C]" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks..." className="pl-8 pr-3 py-2 text-sm bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-[#1C1C1C] placeholder-[#7A746C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 w-48" />
         </div>
-      </motion.div>
 
-      {loading ? (
-        <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-[#8E5E34] border-t-transparent rounded-full animate-spin" /></div>
-      ) : viewMode === 'kanban' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {COLUMNS.map(col => {
-            const colTasks = filteredTasks.filter(t => t.column === col.key);
-            const ColIcon = col.icon;
-            return (
-              <div key={col.key} onDragOver={e => e.preventDefault()} onDrop={() => handleDrop(col.key)}
-                className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-4 min-h-[300px] shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2"><div className={`p-1.5 rounded-lg ${col.bg}`}><ColIcon className={`w-3.5 h-3.5 ${col.color}`} /></div><span className="text-sm font-semibold text-[#1C1C1C]">{col.label}</span></div>
-                  <span className="text-xs text-[#7A746C] bg-[#EEE6DC] px-2 py-0.5 rounded-full">{colTasks.length}</span>
-                </div>
+        <FilterDropdown label="Status" value={filterStatus} options={['All', ...STATUSES]} onChange={setFilterStatus} />
+        <FilterDropdown label="Priority" value={filterPriority} options={['All', ...PRIORITIES]} onChange={setFilterPriority} />
+        <FilterDropdown label="Assignee" value={filterAssignee} options={['All', ...ASSIGNEES]} onChange={setFilterAssignee} />
 
-                {/* Quick Add */}
-                {quickAdd?.col === col.key ? (
-                  <div className="mb-3">
-                    <input autoFocus value={quickAdd.title} onChange={e => setQuickAdd({ ...quickAdd, title: e.target.value })}
-                      onKeyDown={e => { if (e.key === 'Enter') handleQuickAdd(col.key, quickAdd.title); if (e.key === 'Escape') setQuickAdd(null); }}
-                      placeholder="Task title..." className="w-full bg-[#F4EFE8] border border-[#8E5E34]/30 rounded-lg px-3 py-2 text-sm text-[#1C1C1C] focus:outline-none" />
-                    <div className="flex gap-2 mt-1.5">
-                      <button onClick={() => handleQuickAdd(col.key, quickAdd.title)} className="px-3 py-1 bg-[#8E5E34] text-white rounded-lg text-xs">Add</button>
-                      <button onClick={() => setQuickAdd(null)} className="px-3 py-1 text-[#7A746C] text-xs">Cancel</button>
-                    </div>
-                  </div>
-                ) : (
-                  <button onClick={() => setQuickAdd({ col: col.key, title: '' })} className="w-full mb-3 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-[#E3D9CD] text-[#7A746C] hover:border-[#8E5E34]/30 hover:text-[#8E5E34] text-xs transition-colors">
-                    <Plus size={12} /> Quick add
-                  </button>
-                )}
-
-                <AnimatePresence mode="popLayout">
-                  {colTasks.length === 0 ? (
-                    <div className="text-center py-8 text-[#7A746C]/50 text-sm">No tasks</div>
-                  ) : (
-                    <div className="space-y-2.5">
-                      {colTasks.map(task => {
-                        const pcfg = PRIORITY_CFG[task.priority];
-                        const dueDateColor = getDueDateColor(task.due_date);
-                        const proj = projects.find(p => p.id === task.project_id);
-                        return (
-                          <motion.div key={task.id} layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                            draggable onDragStart={() => setDragTask(task.id)}
-                            className="bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl p-3.5 cursor-grab active:cursor-grabbing hover:border-[#8E5E34]/30 transition-all group">
-                            <div className="flex items-start justify-between mb-2">
-                              <p className="text-sm font-medium text-[#1C1C1C] leading-snug flex-1 mr-2">{task.title}</p>
-                              <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onClick={() => startEdit(task)} className="p-1 text-[#7A746C] hover:text-[#8E5E34] rounded"><Tag className="w-3 h-3" /></button>
-                                <button onClick={() => handleDelete(task.id)} className="p-1 text-[#7A746C] hover:text-[#B0614A]/50 rounded">
-                                  {deleting === task.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
-                                </button>
-                              </div>
-                            </div>
-                            {task.description && <p className="text-xs text-[#7A746C] mb-2.5 line-clamp-2">{task.description}</p>}
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${pcfg.bg} ${pcfg.color}`}>{task.priority}</span>
-                                {proj && <span className="text-[10px] text-[#7A746C] bg-[#EEE6DC] px-1.5 py-0.5 rounded truncate max-w-[80px]">{proj.name}</span>}
-                              </div>
-                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onClick={() => moveTask(task.id, 'left')} className="p-1 text-[#7A746C] hover:text-[#1C1C1C] rounded"><ArrowRight className="w-3 h-3 rotate-180" /></button>
-                                <button onClick={() => moveTask(task.id, 'right')} className="p-1 text-[#7A746C] hover:text-[#1C1C1C] rounded"><ArrowRight className="w-3 h-3" /></button>
-                              </div>
-                            </div>
-                            {task.due_date && <div className={`flex items-center gap-1 mt-2 text-[10px] ${dueDateColor}`}><Calendar className="w-3 h-3" />{new Date(task.due_date).toLocaleDateString()}</div>}
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </AnimatePresence>
+        {selected.size > 0 && (
+          <div className="relative ml-auto">
+            <button onClick={() => setBulkMenu(!bulkMenu)} className="flex items-center gap-1.5 px-3 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#4B4B4B]">
+              <MoreHorizontal size={14} /> {selected.size} selected
+            </button>
+            {bulkMenu && (
+              <div className="absolute right-0 top-full mt-1 bg-white border border-[#E3D9CD] rounded-xl shadow-lg z-20 py-1 min-w-[180px]">
+                <button onClick={bulkComplete} className="w-full text-left px-4 py-2 text-sm hover:bg-[#F4EFE8] text-[#1C1C1C] flex items-center gap-2"><CheckCircle2 size={14} /> Mark Complete</button>
+                <div className="border-t border-[#E3D9CD] my-1" />
+                {ASSIGNEES.map(a => (
+                  <button key={a} onClick={() => bulkAssign(a)} className="w-full text-left px-4 py-2 text-sm hover:bg-[#F4EFE8] text-[#1C1C1C] flex items-center gap-2"><User size={14} /> Assign to {a}</button>
+                ))}
               </div>
-            );
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      {view === 'list' ? (
+        <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden">
+          {filtered.length === 0 ? (
+            <div className="p-12 text-center text-[#7A746C] text-sm">No tasks match your filters</div>
+          ) : filtered.map((task, i) => {
+            const StatusIcon = STATUS_ICONS[task.status] || Circle
+            return (
+              <div key={task.id} className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? 'border-t border-[#E3D9CD]' : ''} hover:bg-[#E8DFD3] transition-colors`}>
+                <input type="checkbox" checked={selected.has(task.id)} onChange={() => toggleSelect(task.id)} className="accent-[#B07A45] w-4 h-4 flex-shrink-0" />
+                <button onClick={() => toggleComplete(task.id)} className="flex-shrink-0">
+                  {task.completed ? <CheckCircle2 size={18} className="text-green-600" /> : <StatusIcon size={18} className="text-[#7A746C]" />}
+                </button>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-medium ${task.completed ? 'line-through text-[#7A746C]' : 'text-[#1C1C1C]'}`}>{task.title}</p>
+                  <p className="text-xs text-[#7A746C]">{task.project}</p>
+                </div>
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-b from-[#C89A6A] to-[#B07A45] flex items-center justify-center text-white text-xs font-medium" title={task.assignee}>{task.assignee[0]}</div>
+                  <span className={`px-2 py-0.5 rounded-lg text-xs font-medium border ${PRIORITY_COLORS[task.priority]}`}>{task.priority}</span>
+                  <span className="text-xs text-[#7A746C] flex items-center gap-1"><Calendar size={12} /> {task.dueDate}</span>
+                  <button onClick={() => { setEditingTask(task); setModalOpen(true) }} className="p-1 rounded-lg hover:bg-[#E3D9CD] text-[#7A746C]"><Edit3 size={14} /></button>
+                  <button onClick={() => deleteTask(task.id)} className="p-1 rounded-lg hover:bg-red-50 text-[#7A746C] hover:text-red-500"><Trash2 size={14} /></button>
+                </div>
+              </div>
+            )
           })}
         </div>
       ) : (
-        /* List View */
-        <div className="rounded-2xl bg-[#EEE6DC] border border-[#E3D9CD] overflow-hidden shadow-sm">
-          <table className="w-full text-sm">
-            <thead><tr className="border-b border-[#E3D9CD] text-[#7A746C] text-xs uppercase tracking-wider">
-              <th className="text-left px-5 py-3 font-medium">Task</th>
-              <th className="text-left px-5 py-3 font-medium">Status</th>
-              <th className="text-left px-5 py-3 font-medium">Priority</th>
-              <th className="text-left px-5 py-3 font-medium">Due Date</th>
-              <th className="text-left px-5 py-3 font-medium">Project</th>
-              <th className="text-right px-5 py-3 font-medium">Actions</th>
-            </tr></thead>
-            <tbody>
-              {filteredTasks.map(task => {
-                const col = COLUMNS.find(c => c.key === task.column)!;
-                const pcfg = PRIORITY_CFG[task.priority];
-                const dueDateColor = getDueDateColor(task.due_date);
-                const proj = projects.find(p => p.id === task.project_id);
-                return (
-                  <tr key={task.id} className="border-b border-[#E3D9CD]/50 hover:bg-[#EEE6DC]/50 transition-colors">
-                    <td className="px-5 py-3.5 text-[#1C1C1C] font-medium">{task.title}</td>
-                    <td className="px-5 py-3.5"><span className={`text-xs font-medium ${col.color}`}>{col.label}</span></td>
-                    <td className="px-5 py-3.5"><span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${pcfg.bg} ${pcfg.color}`}>{task.priority}</span></td>
-                    <td className={`px-5 py-3.5 text-xs ${dueDateColor}`}>{task.due_date ? new Date(task.due_date).toLocaleDateString() : '-'}</td>
-                    <td className="px-5 py-3.5 text-xs text-[#7A746C]">{proj?.name || '-'}</td>
-                    <td className="px-5 py-3.5 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => startEdit(task)} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#8E5E34]"><Tag size={14} /></button>
-                        <button onClick={() => handleDelete(task.id)} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#B0614A]/50">
-                          {deleting === task.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                        </button>
+        <div className="grid grid-cols-3 gap-4">
+          {STATUSES.map(status => {
+            const statusTasks = filtered.filter(t => t.status === status)
+            const StatusIcon = STATUS_ICONS[status]
+            return (
+              <div key={status} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <StatusIcon size={16} className="text-[#B07A45]" />
+                  <h3 className="text-sm font-semibold text-[#1C1C1C]">{status}</h3>
+                  <span className="ml-auto text-xs text-[#7A746C] bg-[#F4EFE8] px-2 py-0.5 rounded-full">{statusTasks.length}</span>
+                </div>
+                <div className="space-y-2.5">
+                  {statusTasks.map(task => (
+                    <div key={task.id} onClick={() => { setEditingTask(task); setModalOpen(true) }} className="bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl p-3 cursor-pointer hover:shadow-sm transition-shadow">
+                      <p className="text-sm font-medium text-[#1C1C1C] mb-1">{task.title}</p>
+                      <p className="text-xs text-[#7A746C] mb-2">{task.project}</p>
+                      <div className="flex items-center justify-between">
+                        <span className={`px-2 py-0.5 rounded-lg text-xs font-medium border ${PRIORITY_COLORS[task.priority]}`}>{task.priority}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-[#7A746C]">{task.dueDate}</span>
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-b from-[#C89A6A] to-[#B07A45] flex items-center justify-center text-white text-[10px] font-medium">{task.assignee[0]}</div>
+                        </div>
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
 
-      <AnimatePresence>
-        {showForm && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#1C1C1C]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={resetForm}>
-            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 shadow-xl" onClick={e => e.stopPropagation()}>
-              <h2 className="text-xl font-bold text-[#1C1C1C] mb-6">{editId ? 'Edit' : 'New'} Task</h2>
-              <div className="space-y-4">
-                <div><label className="block text-xs text-[#7A746C] mb-1.5">Title *</label><input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className={inputCls} placeholder="Task title" /></div>
-                <div><label className="block text-xs text-[#7A746C] mb-1.5">Description</label><textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div><label className="block text-xs text-[#7A746C] mb-1.5">Column</label><select value={form.column} onChange={e => setForm(f => ({ ...f, column: e.target.value as Column }))} className={inputCls}>{COLUMNS.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}</select></div>
-                  <div><label className="block text-xs text-[#7A746C] mb-1.5">Priority</label><select value={form.priority} onChange={e => setForm(f => ({ ...f, priority: e.target.value as Priority }))} className={inputCls}>{(['low','medium','high','urgent'] as Priority[]).map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase()+p.slice(1)}</option>)}</select></div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div><label className="block text-xs text-[#7A746C] mb-1.5">Due Date</label><input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))} className={inputCls} /></div>
-                  <div><label className="block text-xs text-[#7A746C] mb-1.5">Project</label><select value={form.project_id} onChange={e => setForm(f => ({ ...f, project_id: e.target.value }))} className={inputCls}><option value="">None</option>{projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 mt-8">
-                <button onClick={resetForm} className="px-5 py-2.5 text-[#7A746C] hover:text-[#1C1C1C]">Cancel</button>
-                <button onClick={handleSubmit} disabled={!form.title} className="px-6 py-2.5 bronze-btn hover:brightness-110 disabled:opacity-40 text-white rounded-xl font-medium transition-colors">{editId ? 'Update' : 'Create'}</button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Modal */}
+      {modalOpen && <TaskModal task={editingTask} onSave={saveTask} onClose={() => { setModalOpen(false); setEditingTask(null) }} />}
     </div>
-  );
+  )
+}
+
+function FilterDropdown({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="relative">
+      <button onClick={() => setOpen(!open)} className="flex items-center gap-1.5 px-3 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#4B4B4B]">
+        {label}: {value} <ChevronDown size={12} />
+      </button>
+      {open && (
+        <div className="absolute top-full mt-1 bg-white border border-[#E3D9CD] rounded-xl shadow-lg z-20 py-1 min-w-[140px]">
+          {options.map(o => (
+            <button key={o} onClick={() => { onChange(o); setOpen(false) }} className={`w-full text-left px-4 py-1.5 text-sm hover:bg-[#F4EFE8] ${o === value ? 'text-[#B07A45] font-medium' : 'text-[#1C1C1C]'}`}>{o}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TaskModal({ task, onSave, onClose }: { task: Task | null; onSave: (t: Task) => void; onClose: () => void }) {
+  const [form, setForm] = useState<Task>(task || {
+    id: Date.now().toString(),
+    title: '', description: '', project: 'SecuredTampa', assignee: 'Kyle',
+    priority: 'Medium', status: 'To Do', dueDate: new Date().toISOString().slice(0, 10), completed: false,
+  })
+
+  const set = (k: keyof Task, v: string | boolean) => setForm(prev => ({ ...prev, [k]: v }))
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-[#F4EFE8] border border-[#E3D9CD] rounded-2xl w-full max-w-lg p-6" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold text-[#1C1C1C]">{task ? 'Edit Task' : 'New Task'}</h2>
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#EEE6DC] text-[#7A746C]"><X size={18} /></button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-[#4B4B4B] mb-1">Title</label>
+            <input value={form.title} onChange={e => set('title', e.target.value)} className="w-full px-3 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[#4B4B4B] mb-1">Description</label>
+            <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={3} className="w-full px-3 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 resize-none" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-[#4B4B4B] mb-1">Project</label>
+              <select value={form.project} onChange={e => set('project', e.target.value)} className="w-full px-3 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C]">
+                {PROJECTS.map(p => <option key={p}>{p}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#4B4B4B] mb-1">Assignee</label>
+              <select value={form.assignee} onChange={e => set('assignee', e.target.value)} className="w-full px-3 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C]">
+                {ASSIGNEES.map(a => <option key={a}>{a}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#4B4B4B] mb-1">Priority</label>
+              <select value={form.priority} onChange={e => set('priority', e.target.value)} className="w-full px-3 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C]">
+                {PRIORITIES.map(p => <option key={p}>{p}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#4B4B4B] mb-1">Status</label>
+              <select value={form.status} onChange={e => set('status', e.target.value)} className="w-full px-3 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C]">
+                {STATUSES.map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[#4B4B4B] mb-1">Due Date</label>
+            <input type="date" value={form.dueDate} onChange={e => set('dueDate', e.target.value)} className="w-full px-3 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C]" />
+          </div>
+        </div>
+        <div className="flex justify-end gap-3 mt-6">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-[#4B4B4B] hover:bg-[#EEE6DC] rounded-xl">Cancel</button>
+          <button onClick={() => form.title && onSave(form)} className="px-5 py-2.5 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-shadow">
+            {task ? 'Save Changes' : 'Create Task'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }

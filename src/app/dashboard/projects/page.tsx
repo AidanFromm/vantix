@@ -1,297 +1,339 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import {
-  Plus, Search, X, Clock, DollarSign, Briefcase, Zap,
-  AlertTriangle, CheckCircle2, Loader2, Trash2, Users, Flag, Shield,
+  FolderOpen, Plus, X, ChevronDown, ArrowLeft, CheckCircle2,
+  Circle, Clock, Pause, Calendar, DollarSign, Target, Edit2, Trash2
 } from 'lucide-react';
-import Link from 'next/link';
 
-interface Client { id: string; name: string; status: string; }
+interface Milestone {
+  name: string;
+  done: boolean;
+}
+
 interface Project {
-  id: string; name: string; client_id?: string; status: string; health?: string;
-  deadline?: string; budget?: number; spent: number; progress: number;
-  description?: string; tags: string[]; notes?: string; milestones?: { name: string; done: boolean }[];
-  created_at: string; updated_at: string; client?: Client;
+  id: string;
+  name: string;
+  client: string;
+  status: 'active' | 'completed' | 'on-hold';
+  budget: number;
+  spent: number;
+  progress: number;
+  startDate: string;
+  endDate: string;
+  description: string;
+  milestones: Milestone[];
 }
-type ProjectStatus = string;
 
-function lsGet<T>(key: string, fallback: T[] = []): T[] {
-  try { if (typeof window === 'undefined') return fallback; const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
-}
-function lsSet<T>(key: string, data: T[]) {
-  try { if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(data)); } catch {}
-}
-function generateId(): string { return crypto?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36); }
+const STORAGE_KEY = 'vantix_projects';
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  lead: { label: 'Lead', color: 'text-[#7A746C]', bg: 'bg-[#7A746C]/10', border: 'border-[#7A746C]/30' },
-  proposal: { label: 'Proposal', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
-  active: { label: 'Active', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
-  'on-hold': { label: 'On Hold', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
-  review: { label: 'Review', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
-  complete: { label: 'Complete', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
-  archived: { label: 'Archived', color: 'text-[#F4EFE8]0', bg: 'bg-[#F4EFE8]', border: 'border-[#E3D9CD]' },
+const SEED: Project[] = [
+  {
+    id: '1', name: 'SecuredTampa Build-Out', client: 'SecuredTampa', status: 'active',
+    budget: 4500, spent: 4050, progress: 90, startDate: '2025-11-01', endDate: '2026-03-01',
+    description: 'Full security system design, installation, and monitoring setup for SecuredTampa HQ.',
+    milestones: [
+      { name: 'Site Survey', done: true }, { name: 'Equipment Order', done: true },
+      { name: 'Installation', done: true }, { name: 'Testing & Handoff', done: false },
+    ],
+  },
+  {
+    id: '2', name: 'JFK Maintenance', client: 'JFK Maintenance', status: 'active',
+    budget: 6000, spent: 3000, progress: 50, startDate: '2025-07-01', endDate: '2026-07-01',
+    description: 'Ongoing monthly maintenance contract at $500/mo for JFK facility systems.',
+    milestones: [
+      { name: 'Q1 Maintenance', done: true }, { name: 'Q2 Maintenance', done: true },
+      { name: 'Q3 Maintenance', done: false }, { name: 'Q4 Maintenance', done: false },
+    ],
+  },
+];
+
+const CLIENTS = ['SecuredTampa', 'JFK Maintenance', 'Vantix Internal'];
+
+function load(): Project[] {
+  try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch {}
+  return SEED;
+}
+function save(p: Project[]) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch {} }
+
+const statusMeta: Record<string, { label: string; style: string; icon: typeof Circle }> = {
+  active: { label: 'Active', style: 'bg-green-100 text-green-700', icon: CheckCircle2 },
+  completed: { label: 'Completed', style: 'bg-[#B07A45]/20 text-[#8E5E34]', icon: Target },
+  'on-hold': { label: 'On Hold', style: 'bg-[#D6D2CD] text-[#4B4B4B]', icon: Pause },
 };
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n); }
-function daysUntil(d: string) { return Math.ceil((new Date(d).getTime() - Date.now()) / 86400000); }
-
-function computeHealth(project: Project): { label: string; color: string; icon: typeof CheckCircle2 } {
-  if (!project.deadline) return { label: 'On Track', color: 'text-[#8E5E34]', icon: CheckCircle2 };
-  const days = daysUntil(project.deadline);
-  const progress = project.progress || 0;
-  if (days < 0) return { label: 'Behind', color: 'text-[#8E5E34]', icon: AlertTriangle };
-  if (days <= 7 && progress < 80) return { label: 'At Risk', color: 'text-[#8E5E34]', icon: AlertTriangle };
-  if (days <= 14 && progress < 50) return { label: 'At Risk', color: 'text-[#8E5E34]', icon: AlertTriangle };
-  return { label: 'On Track', color: 'text-[#8E5E34]', icon: CheckCircle2 };
-}
-
-function ProjectModal({ project, clients, onClose, onSave }: { project?: Project | null; clients: Client[]; onClose: () => void; onSave: (data: Partial<Project>) => void }) {
-  const [form, setForm] = useState({
-    name: project?.name || '', client_id: project?.client_id || '', status: project?.status || 'lead',
-    budget: project?.budget || 0, spent: project?.spent || 0, progress: project?.progress || 0,
-    deadline: project?.deadline || '', description: project?.description || '', notes: project?.notes || '',
-  });
-  const [saving, setSaving] = useState(false);
-  const inputCls = 'w-full bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl px-4 py-3 text-sm text-[#1C1C1C] focus:outline-none focus:border-[#8E5E34]/50 transition-colors';
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); if (!form.name.trim()) return; setSaving(true);
-    onSave({ name: form.name, client_id: form.client_id || undefined, status: form.status, budget: form.budget || undefined, spent: form.spent, progress: form.progress, deadline: form.deadline || undefined, description: form.description || undefined, notes: form.notes || undefined });
-    onClose();
-  };
-
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#1C1C1C]/30 backdrop-blur-sm" onClick={onClose} />
-      <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="relative w-full max-w-lg bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-[#E3D9CD] flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-[#1C1C1C]">{project ? 'Edit Project' : 'New Project'}</h2>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[#EEE6DC] text-[#7A746C]"><X size={18} /></button>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Project Name *</label><input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required className={inputCls} /></div>
-          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Client</label>
-            <select value={form.client_id} onChange={e => setForm(p => ({ ...p, client_id: e.target.value }))} className={inputCls}>
-              <option value="">No client</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </div>
-          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Status</label>
-            <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value }))} className={inputCls}>
-              {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-            </select>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Budget</label><input type="number" value={form.budget} onChange={e => setForm(p => ({ ...p, budget: parseFloat(e.target.value) || 0 }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Spent</label><input type="number" value={form.spent} onChange={e => setForm(p => ({ ...p, spent: parseFloat(e.target.value) || 0 }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Progress %</label><input type="number" min={0} max={100} value={form.progress} onChange={e => setForm(p => ({ ...p, progress: parseInt(e.target.value) || 0 }))} className={inputCls} /></div>
-          </div>
-          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Deadline</label><input type="date" value={form.deadline} onChange={e => setForm(p => ({ ...p, deadline: e.target.value }))} className={inputCls} /></div>
-          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Description</label><textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#EEE6DC] text-[#7A746C] text-sm">Cancel</button>
-            <button type="submit" disabled={saving || !form.name.trim()} className="flex-1 px-4 py-3 rounded-xl bg-[#8E5E34] text-white font-medium text-sm disabled:opacity-50">{project ? 'Update' : 'Create'}</button>
-          </div>
-        </form>
-      </motion.div>
-    </motion.div>
-  );
-}
+const fmt = (n: number) => '$' + n.toLocaleString('en-US');
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [clients, setClients] = useState<Client[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [showModal, setShowModal] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null | undefined>(undefined);
-  const [deleting, setDeleting] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed' | 'on-hold'>('all');
+  const [selected, setSelected] = useState<Project | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<Project | null>(null);
 
-  const loadData = useCallback(() => {
-    try {
-      const allClients = lsGet<Client>('vantix_clients');
-      setClients(allClients);
-      let projs = lsGet<Project>('vantix_projects');
-      // Attach client data
-      projs = projs.map(p => ({ ...p, client: allClients.find(c => c.id === p.client_id) }));
-      if (statusFilter !== 'all') projs = projs.filter(p => p.status === statusFilter);
-      setProjects(projs);
-    } catch (e) { console.error(e); }
-    setLoading(false);
-  }, [statusFilter]);
+  // form
+  const [fName, setFName] = useState('');
+  const [fClient, setFClient] = useState(CLIENTS[0]);
+  const [fStatus, setFStatus] = useState<Project['status']>('active');
+  const [fBudget, setFBudget] = useState(0);
+  const [fStart, setFStart] = useState('');
+  const [fEnd, setFEnd] = useState('');
+  const [fDesc, setFDesc] = useState('');
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => { setProjects(load()); }, []);
+  useEffect(() => { if (projects.length) save(projects); }, [projects]);
 
-  const filtered = useMemo(() => {
-    if (!search) return projects;
-    const q = search.toLowerCase();
-    return projects.filter(p => p.name.toLowerCase().includes(q) || p.client?.name?.toLowerCase().includes(q));
-  }, [projects, search]);
+  const filtered = filter === 'all' ? projects : projects.filter(p => p.status === filter);
 
-  const stats = useMemo(() => ({
-    total: projects.length,
-    active: projects.filter(p => p.status === 'active').length,
-    totalBudget: projects.reduce((s, p) => s + (p.budget || 0), 0),
-    totalSpent: projects.reduce((s, p) => s + (p.spent || 0), 0),
-  }), [projects]);
+  function openCreate() {
+    setEditing(null); setFName(''); setFClient(CLIENTS[0]); setFStatus('active');
+    setFBudget(0); setFStart(''); setFEnd(''); setFDesc(''); setModalOpen(true);
+  }
 
-  const handleSave = (data: Partial<Project>) => {
-    try {
-      const items = lsGet<Project>('vantix_projects');
-      const now = new Date().toISOString();
-      if (editingProject) {
-        const idx = items.findIndex(p => p.id === editingProject.id);
-        if (idx >= 0) items[idx] = { ...items[idx], ...data, updated_at: now };
-      } else {
-        items.unshift({ id: generateId(), spent: 0, progress: 0, health: 'green', tags: [], created_at: now, updated_at: now, ...data } as Project);
-      }
-      lsSet('vantix_projects', items);
-      loadData();
-    } catch (e) { console.error(e); }
-  };
+  function openEdit(p: Project) {
+    setEditing(p); setFName(p.name); setFClient(p.client); setFStatus(p.status);
+    setFBudget(p.budget); setFStart(p.startDate); setFEnd(p.endDate); setFDesc(p.description);
+    setModalOpen(true);
+  }
 
-  const handleDelete = (id: string) => {
-    if (!confirm('Delete this project?')) return;
-    setDeleting(id);
-    try { const items = lsGet<Project>('vantix_projects').filter(p => p.id !== id); lsSet('vantix_projects', items); loadData(); } catch (e) { console.error(e); }
-    setDeleting(null);
-  };
+  function saveProject() {
+    if (editing) {
+      setProjects(prev => prev.map(p => p.id === editing.id ? {
+        ...p, name: fName, client: fClient, status: fStatus, budget: fBudget,
+        startDate: fStart, endDate: fEnd, description: fDesc,
+      } : p));
+    } else {
+      const np: Project = {
+        id: crypto.randomUUID(), name: fName, client: fClient, status: fStatus,
+        budget: fBudget, spent: 0, progress: 0, startDate: fStart, endDate: fEnd,
+        description: fDesc, milestones: [],
+      };
+      setProjects(prev => [...prev, np]);
+    }
+    setModalOpen(false);
+  }
 
-  if (loading) return (
-    <div className="space-y-6 animate-pulse">
-      <div className="h-8 w-48 bg-[#E3D9CD] rounded-lg" />
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-[#E3D9CD]/50 rounded-2xl" />)}</div>
-    </div>
-  );
+  function toggleMilestone(projId: string, msIdx: number) {
+    setProjects(prev => prev.map(p => {
+      if (p.id !== projId) return p;
+      const ms = p.milestones.map((m, i) => i === msIdx ? { ...m, done: !m.done } : m);
+      const progress = ms.length ? Math.round(ms.filter(m => m.done).length / ms.length * 100) : p.progress;
+      const updated = { ...p, milestones: ms, progress };
+      if (selected?.id === projId) setSelected(updated);
+      return updated;
+    }));
+  }
 
+  function deleteProject(id: string) {
+    setProjects(prev => prev.filter(p => p.id !== id));
+    if (selected?.id === id) setSelected(null);
+  }
+
+  // Detail view
+  if (selected) {
+    const p = projects.find(pr => pr.id === selected.id) || selected;
+    const pct = p.budget ? Math.min(100, Math.round(p.spent / p.budget * 100)) : 0;
+    const sm = statusMeta[p.status];
+    return (
+      <div className="min-h-screen bg-[#F4EFE8] p-6 md:p-10">
+        <button onClick={() => setSelected(null)} className="flex items-center gap-1 text-sm text-[#B07A45] mb-6 hover:underline">
+          <ArrowLeft size={16} /> Back to Projects
+        </button>
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-[#1C1C1C]">{p.name}</h1>
+            <p className="text-sm text-[#7A746C] mt-1">{p.client}</p>
+          </div>
+          <span className={`px-3 py-1 rounded-full text-xs font-medium ${sm.style}`}>{sm.label}</span>
+        </div>
+        <p className="text-sm text-[#4B4B4B] mb-8 leading-relaxed">{p.description}</p>
+
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* Budget */}
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5">
+            <h3 className="text-xs text-[#7A746C] uppercase tracking-wide mb-3 flex items-center gap-1"><DollarSign size={14} /> Budget</h3>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-[#4B4B4B]">Spent: {fmt(p.spent)}</span>
+              <span className="text-[#1C1C1C] font-semibold">/ {fmt(p.budget)}</span>
+            </div>
+            <div className="h-2.5 bg-[#E3D9CD] rounded-full overflow-hidden">
+              <div className="h-full rounded-full bg-gradient-to-r from-[#C89A6A] to-[#B07A45] transition-all" style={{ width: `${pct}%` }} />
+            </div>
+            <p className="text-xs text-[#7A746C] mt-1 text-right">{pct}%</p>
+          </div>
+          {/* Timeline */}
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5">
+            <h3 className="text-xs text-[#7A746C] uppercase tracking-wide mb-3 flex items-center gap-1"><Calendar size={14} /> Timeline</h3>
+            <div className="flex justify-between text-sm text-[#4B4B4B]">
+              <div><span className="text-[#7A746C] text-xs block">Start</span>{p.startDate}</div>
+              <div className="text-right"><span className="text-[#7A746C] text-xs block">End</span>{p.endDate || 'Ongoing'}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Milestones */}
+        <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5">
+          <h3 className="text-xs text-[#7A746C] uppercase tracking-wide mb-4 flex items-center gap-1"><Target size={14} /> Milestones</h3>
+          {p.milestones.length === 0 && <p className="text-sm text-[#7A746C]">No milestones yet.</p>}
+          <div className="space-y-2">
+            {p.milestones.map((m, i) => (
+              <button key={i} onClick={() => toggleMilestone(p.id, i)}
+                className="flex items-center gap-3 w-full text-left p-2 rounded-lg hover:bg-[#E3D9CD]/60 transition text-sm">
+                {m.done
+                  ? <CheckCircle2 size={18} className="text-green-600 shrink-0" />
+                  : <Circle size={18} className="text-[#7A746C] shrink-0" />}
+                <span className={m.done ? 'line-through text-[#7A746C]' : 'text-[#1C1C1C]'}>{m.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // List view
   return (
-    <div className="space-y-6 pb-12">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C]">Projects</h1><p className="text-sm text-[#7A746C] mt-1">Track and manage all your projects</p></div>
-        <button onClick={() => { setEditingProject(null); setShowModal(true); }} className="flex items-center gap-2 bronze-btn hover:brightness-110 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> New Project</button>
+    <div className="min-h-screen bg-[#F4EFE8] p-6 md:p-10">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-bold text-[#1C1C1C]">Projects</h1>
+        <button onClick={openCreate}
+          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium shadow hover:opacity-90 transition">
+          <Plus size={16} /> New Project
+        </button>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {[
-          { label: 'Total Projects', value: String(stats.total), icon: Briefcase, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
-          { label: 'Active', value: String(stats.active), icon: Zap, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
-          { label: 'Total Budget', value: formatCurrency(stats.totalBudget), icon: DollarSign, color: 'text-[#8E5E34]', bg: 'bg-[#8E5E34]/10', border: 'border-[#8E5E34]/20' },
-          { label: 'Total Spent', value: formatCurrency(stats.totalSpent), icon: CheckCircle2, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
-        ].map((stat, i) => (
-          <motion.div key={stat.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className={`bg-[#EEE6DC] border ${stat.border} rounded-2xl p-4 shadow-sm`}>
-            <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#7A746C]">{stat.label}</span><div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}><stat.icon size={18} className={stat.color} /></div></div>
-            <p className="text-xl sm:text-2xl font-bold text-[#1C1C1C]">{stat.value}</p>
-          </motion.div>
+      {/* Filter */}
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {(['all', 'active', 'completed', 'on-hold'] as const).map(f => (
+          <button key={f} onClick={() => setFilter(f)}
+            className={`px-4 py-1.5 rounded-xl text-xs font-medium capitalize transition ${
+              filter === f ? 'bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white shadow' : 'bg-[#EEE6DC] text-[#4B4B4B] border border-[#E3D9CD] hover:bg-[#E3D9CD]'
+            }`}>
+            {f === 'all' ? 'All' : f.replace('-', ' ')}
+          </button>
         ))}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-        <div className="relative flex-1 sm:max-w-sm">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7A746C]" />
-          <input type="text" placeholder="Search projects..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-11 pr-4 py-3 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C] focus:outline-none focus:border-[#8E5E34]/50" />
-        </div>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl px-3 py-2 text-sm text-[#1C1C1C] focus:outline-none focus:border-[#8E5E34]/50">
-          <option value="all">All Status</option>
-          {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-        </select>
+      {/* Cards */}
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {filtered.map(p => {
+          const pct = p.budget ? Math.min(100, Math.round(p.spent / p.budget * 100)) : 0;
+          const sm = statusMeta[p.status];
+          return (
+            <div key={p.id} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 hover:shadow-md transition cursor-pointer group"
+              onClick={() => setSelected(p)}>
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <FolderOpen size={18} className="text-[#B07A45]" />
+                  <h3 className="font-semibold text-[#1C1C1C] text-sm">{p.name}</h3>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${sm.style}`}>{sm.label}</span>
+              </div>
+              <p className="text-xs text-[#7A746C] mb-4">{p.client}</p>
+
+              {/* Budget bar */}
+              <div className="mb-3">
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-[#7A746C]">{fmt(p.spent)} / {fmt(p.budget)}</span>
+                  <span className="text-[#1C1C1C] font-semibold">{p.progress}%</span>
+                </div>
+                <div className="h-2 bg-[#E3D9CD] rounded-full overflow-hidden">
+                  <div className="h-full rounded-full bg-gradient-to-r from-[#C89A6A] to-[#B07A45] transition-all" style={{ width: `${p.progress}%` }} />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1 text-xs text-[#7A746C]">
+                  <Clock size={12} /> {p.endDate || 'Ongoing'}
+                </div>
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                  <button onClick={e => { e.stopPropagation(); openEdit(p); }} className="p-1 rounded hover:bg-[#E3D9CD] text-[#4B4B4B]"><Edit2 size={14} /></button>
+                  <button onClick={e => { e.stopPropagation(); deleteProject(p.id); }} className="p-1 rounded hover:bg-red-100 text-red-500"><Trash2 size={14} /></button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {!filtered.length && (
+          <div className="col-span-full text-center py-12 text-[#7A746C] text-sm">No projects found.</div>
+        )}
       </div>
 
-      {filtered.length === 0 && !search && statusFilter === 'all' ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-20 h-20 rounded-2xl bg-[#8E5E34]/10 flex items-center justify-center mb-6"><Briefcase size={40} className="text-[#8E5E34]" /></div>
-          <h3 className="text-xl font-semibold text-[#1C1C1C] mb-2">No projects yet</h3>
-          <p className="text-[#7A746C] max-w-md mb-6">Create your first project to start tracking work.</p>
-          <button onClick={() => { setEditingProject(null); setShowModal(true); }} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#8E5E34]/10 text-[#8E5E34] border border-[#8E5E34]/30 font-medium"><Plus size={18} /> Create Your First Project</button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((project, i) => {
-            const sc = STATUS_CONFIG[project.status] || STATUS_CONFIG.lead;
-            const days = project.deadline ? daysUntil(project.deadline) : null;
-            const progress = project.progress || 0;
-            const healthInfo = computeHealth(project);
-            const HealthIcon = healthInfo.icon;
-            const budgetPct = project.budget ? Math.round((project.spent / project.budget) * 100) : 0;
-            const overBudget = project.budget ? project.spent > project.budget : false;
-            const milestones = project.milestones || [];
+      {/* Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setModalOpen(false)}>
+          <div className="bg-[#F4EFE8] border border-[#E3D9CD] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-[#1C1C1C]">{editing ? 'Edit Project' : 'New Project'}</h2>
+              <button onClick={() => setModalOpen(false)} className="p-1 rounded-lg hover:bg-[#E3D9CD] text-[#7A746C]"><X size={18} /></button>
+            </div>
 
-            return (
-              <motion.div key={project.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                className="group relative overflow-hidden rounded-2xl bg-[#EEE6DC] border border-[#E3D9CD] p-5 hover:border-[#8E5E34]/30 hover:shadow-lg transition-all duration-300 shadow-sm">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-[#1C1C1C] truncate group-hover:text-[#8E5E34] transition-colors">{project.name}</h3>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${sc.bg} ${sc.color} ${sc.border}`}>{sc.label}</span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${healthInfo.color}`}>
-                        <HealthIcon size={10} /> {healthInfo.label}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            {[
+              { label: 'Project Name', value: fName, set: setFName, type: 'text' },
+            ].map(f => (
+              <div key={f.label} className="mb-4">
+                <label className="block text-xs text-[#7A746C] uppercase tracking-wide mb-1">{f.label}</label>
+                <input type={f.type} value={f.value} onChange={e => f.set(e.target.value)}
+                  className="w-full bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl px-4 py-2.5 text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/40" />
+              </div>
+            ))}
 
-                {/* Progress Bar */}
-                <div className="mb-3">
-                  <div className="flex justify-between text-xs text-[#7A746C] mb-1"><span>Progress</span><span className="text-[#1C1C1C] font-medium">{progress}%</span></div>
-                  <div className="h-2.5 bg-[#EEE6DC] rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full transition-all duration-700 ${progress >= 80 ? 'bg-[#B07A45]/50' : progress >= 50 ? 'bg-[#B07A45]/50' : 'bg-[#8E5E34]'}`} style={{ width: `${Math.min(progress, 100)}%` }} />
-                  </div>
-                </div>
+            <div className="mb-4">
+              <label className="block text-xs text-[#7A746C] uppercase tracking-wide mb-1">Client</label>
+              <div className="relative">
+                <select value={fClient} onChange={e => setFClient(e.target.value)}
+                  className="w-full appearance-none bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl px-4 py-2.5 text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/40">
+                  {CLIENTS.map(c => <option key={c}>{c}</option>)}
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-3 text-[#7A746C] pointer-events-none" />
+              </div>
+            </div>
 
-                {/* Budget vs Actual */}
-                {project.budget ? (
-                  <div className="mb-3 p-2.5 rounded-lg bg-[#F4EFE8] border border-[#E3D9CD]">
-                    <div className="flex items-center justify-between text-xs mb-1.5">
-                      <span className="text-[#7A746C]">Budget</span>
-                      <span className={`font-semibold ${overBudget ? 'text-[#8E5E34]' : 'text-[#1C1C1C]'}`}>{formatCurrency(project.spent)} / {formatCurrency(project.budget)}</span>
-                    </div>
-                    <div className="h-1.5 bg-[#E3D9CD] rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full ${overBudget ? 'bg-[#B0614A]/50' : budgetPct > 80 ? 'bg-[#B07A45]' : 'bg-[#B07A45]/50'}`} style={{ width: `${Math.min(budgetPct, 100)}%` }} />
-                    </div>
-                  </div>
-                ) : null}
+            <div className="mb-4">
+              <label className="block text-xs text-[#7A746C] uppercase tracking-wide mb-1">Status</label>
+              <div className="relative">
+                <select value={fStatus} onChange={e => setFStatus(e.target.value as Project['status'])}
+                  className="w-full appearance-none bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl px-4 py-2.5 text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/40">
+                  <option value="active">Active</option>
+                  <option value="completed">Completed</option>
+                  <option value="on-hold">On Hold</option>
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-3 text-[#7A746C] pointer-events-none" />
+              </div>
+            </div>
 
-                {/* Milestones */}
-                {milestones.length > 0 && (
-                  <div className="mb-3 flex items-center gap-1.5">
-                    <Flag size={12} className="text-[#7A746C]" />
-                    <div className="flex gap-1">
-                      {milestones.slice(0, 5).map((m, mi) => (
-                        <div key={mi} className={`w-3 h-3 rounded-full border ${m.done ? 'bg-[#B07A45]/50 border-[#C89A6A]' : 'bg-[#EEE6DC] border-[#E3D9CD]'}`} title={m.name} />
-                      ))}
-                    </div>
-                    <span className="text-[10px] text-[#7A746C]">{milestones.filter(m => m.done).length}/{milestones.length}</span>
-                  </div>
-                )}
+            <div className="mb-4">
+              <label className="block text-xs text-[#7A746C] uppercase tracking-wide mb-1">Budget</label>
+              <input type="number" value={fBudget || ''} onChange={e => setFBudget(+e.target.value)}
+                className="w-full bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl px-4 py-2.5 text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/40" />
+            </div>
 
-                {/* Client + Deadline */}
-                <div className="flex items-center justify-between text-xs mb-3">
-                  {project.client ? (
-                    <Link href="/dashboard/clients" className="flex items-center gap-1 text-[#8E5E34] hover:underline"><Users size={12} />{project.client.name}</Link>
-                  ) : <span className="text-[#7A746C]">No client</span>}
-                  {days !== null && <div className={`flex items-center gap-1 ${days < 0 ? 'text-[#B0614A]/50' : days <= 7 ? 'text-[#B07A45]' : 'text-[#7A746C]'}`}><Clock size={12} />{days < 0 ? `${Math.abs(days)}d over` : `${days}d left`}</div>}
-                </div>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-xs text-[#7A746C] uppercase tracking-wide mb-1">Start Date</label>
+                <input type="date" value={fStart} onChange={e => setFStart(e.target.value)}
+                  className="w-full bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl px-4 py-2.5 text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/40" />
+              </div>
+              <div>
+                <label className="block text-xs text-[#7A746C] uppercase tracking-wide mb-1">End Date</label>
+                <input type="date" value={fEnd} onChange={e => setFEnd(e.target.value)}
+                  className="w-full bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl px-4 py-2.5 text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/40" />
+              </div>
+            </div>
 
-                <div className="flex items-center gap-2 pt-3 border-t border-[#E3D9CD]">
-                  <button onClick={() => { setEditingProject(project); setShowModal(true); }} className="flex-1 text-center px-3 py-2 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-[#8E5E34] hover:bg-[#8E5E34]/10 text-xs font-medium transition-colors">Edit</button>
-                  <button onClick={() => handleDelete(project.id)} disabled={deleting === project.id} className="px-3 py-2 rounded-lg bg-[#EEE6DC] text-[#7A746C] hover:text-[#B0614A]/50 hover:bg-[#B0614A]/5 text-xs transition-colors">
-                    {deleting === project.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                  </button>
-                </div>
-              </motion.div>
-            );
-          })}
+            <div className="mb-6">
+              <label className="block text-xs text-[#7A746C] uppercase tracking-wide mb-1">Description</label>
+              <textarea value={fDesc} onChange={e => setFDesc(e.target.value)} rows={3}
+                className="w-full bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl px-4 py-2.5 text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/40 resize-none" />
+            </div>
+
+            <button onClick={saveProject}
+              className="w-full py-2.5 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium shadow hover:opacity-90 transition">
+              {editing ? 'Update Project' : 'Create Project'}
+            </button>
+          </div>
         </div>
       )}
-
-      {filtered.length === 0 && (search || statusFilter !== 'all') && (
-        <div className="text-center py-12"><p className="text-[#7A746C]">No projects match your filters</p></div>
-      )}
-
-      <AnimatePresence>{showModal && <ProjectModal project={editingProject} clients={clients} onClose={() => { setShowModal(false); setEditingProject(undefined); }} onSave={handleSave} />}</AnimatePresence>
     </div>
   );
 }

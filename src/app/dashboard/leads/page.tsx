@@ -1,400 +1,506 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useCallback } from 'react';
 import {
-  Search, Users, Phone, Mail, Clock, X, Zap, Target,
-  Plus, Building2, DollarSign, Loader2, Trash2, Trophy,
-  Download, LayoutGrid, List, UserCheck,
+  Plus, LayoutGrid, List, X, ChevronDown, Phone, Mail, Building2,
+  Globe, Users, Megaphone, MessageSquare, MoreVertical, ArrowRight,
+  TrendingUp, Clock, Search, Edit2, Trash2, Eye, Activity
 } from 'lucide-react';
 
+/* ─── Types ─── */
 interface Lead {
-  id: string; name: string; email?: string; phone?: string; company?: string;
-  status: string; estimated_value?: number; score: number; source?: string;
-  notes?: string; tags: string[]; created_at: string; updated_at: string;
-  role?: string; last_contacted_at?: string;
-}
-interface ScrapedLead {
-  id: string; business_name?: string; email?: string; phone?: string;
-  status: string; created_at: string;
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  source: Source;
+  stage: Stage;
+  score: number;
+  notes: string;
+  createdAt: string;
+  stageChangedAt: string;
+  activities: ActivityEntry[];
 }
 
-type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost';
-
-function lsGet<T>(key: string, fallback: T[] = []): T[] {
-  try { if (typeof window === 'undefined') return fallback; const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
+interface ActivityEntry {
+  id: string;
+  date: string;
+  text: string;
 }
-function lsSet<T>(key: string, data: T[]) {
-  try { if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(data)); } catch {}
-}
-function generateId(): string { return crypto?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
-const KANBAN_STATUSES: { id: LeadStatus; label: string; color: string; bg: string; border: string }[] = [
-  { id: 'new', label: 'New', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
-  { id: 'contacted', label: 'Contacted', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
-  { id: 'qualified', label: 'Qualified', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
-  { id: 'proposal', label: 'Proposal', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
-  { id: 'negotiation', label: 'Negotiation', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
-  { id: 'won', label: 'Won', color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/20' },
-  { id: 'lost', label: 'Lost', color: 'text-[#8E5E34]', bg: 'bg-[#B0614A]/5', border: 'border-[#B0614A]/20' },
+type Stage = 'new' | 'contacted' | 'qualified' | 'proposal' | 'won' | 'lost';
+type Source = 'Website' | 'Referral' | 'Cold Email' | 'Social' | 'Other';
+type ViewMode = 'kanban' | 'list';
+
+const STAGES: { key: Stage; label: string; color: string; bg: string; border: string }[] = [
+  { key: 'new', label: 'New', color: '#7A746C', bg: '#E3D9CD', border: '#CFC5B8' },
+  { key: 'contacted', label: 'Contacted', color: '#B07A45', bg: '#E8DDD0', border: '#D4C4B0' },
+  { key: 'qualified', label: 'Qualified', color: '#8E5E34', bg: '#E4D5C4', border: '#CEBC A6' },
+  { key: 'proposal', label: 'Proposal Sent', color: '#6B4226', bg: '#DCC9B4', border: '#C4AD94' },
+  { key: 'won', label: 'Won', color: '#2D7A4F', bg: '#D4E8DC', border: '#B4D4C0' },
+  { key: 'lost', label: 'Lost', color: '#A0403C', bg: '#EADADA', border: '#D4BABA' },
 ];
 
-const ALL_STATUSES = [...KANBAN_STATUSES];
+const SOURCES: Source[] = ['Website', 'Referral', 'Cold Email', 'Social', 'Other'];
+const STORAGE_KEY = 'vantix_leads';
 
-function formatCurrency(v: number) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(v); }
-function daysSince(d: string) { return Math.floor((Date.now() - new Date(d).getTime()) / 86400000); }
-function formatDate(d: string) { const diff = daysSince(d); if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday'; if (diff < 7) return `${diff}d ago`; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+const sourceIcon = (s: Source) => {
+  switch (s) {
+    case 'Website': return <Globe size={14} />;
+    case 'Referral': return <Users size={14} />;
+    case 'Cold Email': return <Mail size={14} />;
+    case 'Social': return <Megaphone size={14} />;
+    default: return <MessageSquare size={14} />;
+  }
+};
+
+function uid() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
+function daysBetween(a: string, b: string) {
+  return Math.max(0, Math.round((new Date(b).getTime() - new Date(a).getTime()) / 86400000));
+}
+
+function conversionProbability(score: number, stage: Stage): number {
+  const stageMultiplier: Record<Stage, number> = {
+    new: 0.15, contacted: 0.30, qualified: 0.55, proposal: 0.75, won: 1.0, lost: 0.0,
+  };
+  return Math.round(score * stageMultiplier[stage]);
+}
+
+function scoreBadgeColor(score: number) {
+  if (score >= 80) return { bg: '#D4E8DC', text: '#2D7A4F' };
+  if (score >= 50) return { bg: '#E8DDD0', text: '#8E5E34' };
+  return { bg: '#EADADA', text: '#A0403C' };
+}
+
+/* ─── Seed Data ─── */
+function seedLeads(): Lead[] {
+  const now = new Date().toISOString();
+  const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
+  return [
+    { id: uid(), name: 'Maria Gonzalez', email: 'maria@tampabakery.com', phone: '813-555-0101', company: 'Tampa Bakery', source: 'Website', stage: 'new', score: 65, notes: 'Interested in online ordering system', createdAt: daysAgo(3), stageChangedAt: daysAgo(3), activities: [{ id: uid(), date: daysAgo(3), text: 'Lead created from website form' }] },
+    { id: uid(), name: 'Carlos Reyes', email: 'carlos@miamifitness.com', phone: '305-555-0202', company: 'Miami Fitness', source: 'Cold Email', stage: 'contacted', score: 78, notes: 'Responded to cold outreach, wants a demo', createdAt: daysAgo(7), stageChangedAt: daysAgo(4), activities: [{ id: uid(), date: daysAgo(7), text: 'Lead created from cold email campaign' }, { id: uid(), date: daysAgo(4), text: 'Moved to Contacted after email reply' }] },
+    { id: uid(), name: 'Jenny Park', email: 'jenny@orlandoauto.com', phone: '407-555-0303', company: 'Orlando Auto Shop', source: 'Referral', stage: 'qualified', score: 82, notes: 'Referred by existing client. Needs CRM integration.', createdAt: daysAgo(14), stageChangedAt: daysAgo(5), activities: [{ id: uid(), date: daysAgo(14), text: 'Lead created via referral' }, { id: uid(), date: daysAgo(10), text: 'Initial call completed' }, { id: uid(), date: daysAgo(5), text: 'Qualified after discovery call' }] },
+    { id: uid(), name: 'Tony Moretti', email: 'tony@njrestaurant.com', phone: '732-555-0404', company: 'NJ Restaurant Group', source: 'Cold Email', stage: 'proposal', score: 90, notes: 'Multi-location restaurant group. High-value deal.', createdAt: daysAgo(21), stageChangedAt: daysAgo(2), activities: [{ id: uid(), date: daysAgo(21), text: 'Lead created from cold email' }, { id: uid(), date: daysAgo(15), text: 'Demo completed' }, { id: uid(), date: daysAgo(2), text: 'Proposal sent - $4,500/mo package' }] },
+    { id: uid(), name: 'Dave', email: 'dave@securedtampa.com', phone: '813-555-0505', company: 'SecuredTampa', source: 'Referral', stage: 'won', score: 95, notes: 'Long-time partner. Signed annual contract.', createdAt: daysAgo(30), stageChangedAt: daysAgo(1), activities: [{ id: uid(), date: daysAgo(30), text: 'Lead created via referral' }, { id: uid(), date: daysAgo(20), text: 'Multiple demos completed' }, { id: uid(), date: daysAgo(1), text: 'Deal won - Annual contract signed' }] },
+  ];
+}
+
+function loadLeads(): Lead[] {
+  if (typeof window === 'undefined') return [];
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) {
+    const seeded = seedLeads();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+    return seeded;
+  }
+  return JSON.parse(raw);
+}
+
+function saveLeads(leads: Lead[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+}
+
+/* ─── Components ─── */
 
 function ScoreBadge({ score }: { score: number }) {
-  const color = score >= 80 ? 'text-[#8E5E34] bg-[#B07A45]/5' : score >= 50 ? 'text-[#8E5E34] bg-[#B07A45]/5' : 'text-[#8E5E34] bg-[#B0614A]/5';
-  return <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${color}`}>{score}</span>;
-}
-
-function LeadModal({ lead, onClose, onSave }: { lead?: Lead | null; onClose: () => void; onSave: (data: Partial<Lead>) => void }) {
-  const [form, setForm] = useState({
-    name: lead?.name || '', email: lead?.email || '', phone: lead?.phone || '', company: lead?.company || '',
-    status: lead?.status || 'new', estimated_value: lead?.estimated_value || 0, score: lead?.score || 50,
-    source: lead?.source || '', notes: lead?.notes || '', tags: lead?.tags?.join(', ') || '',
-  });
-  const [saving, setSaving] = useState(false);
-  const inputCls = 'w-full bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl px-4 py-3 text-sm text-[#1C1C1C] focus:outline-none focus:border-[#8E5E34]/50';
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name.trim()) return;
-    setSaving(true);
-    onSave({
-      name: form.name, email: form.email || undefined, phone: form.phone || undefined, company: form.company || undefined,
-      status: form.status, estimated_value: form.estimated_value, score: form.score, source: form.source || undefined,
-      notes: form.notes || undefined, tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
-    });
-    onClose();
-  };
-
+  const c = scoreBadgeColor(score);
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#1C1C1C]/30 backdrop-blur-sm" onClick={onClose} />
-      <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="relative w-full max-w-lg bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-[#E3D9CD] flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-[#1C1C1C]">{lead ? 'Edit Lead' : 'Add New Lead'}</h2>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[#EEE6DC] text-[#7A746C]"><X size={18} /></button>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Name *</label><input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required className={inputCls} /></div>
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Email</label><input type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Phone</label><input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} className={inputCls} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Company</label><input type="text" value={form.company} onChange={e => setForm(p => ({ ...p, company: e.target.value }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Source</label><input type="text" value={form.source} onChange={e => setForm(p => ({ ...p, source: e.target.value }))} className={inputCls} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Estimated Value</label><input type="number" value={form.estimated_value} onChange={e => setForm(p => ({ ...p, estimated_value: parseFloat(e.target.value) || 0 }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Score (0-100)</label><input type="number" min={0} max={100} value={form.score} onChange={e => setForm(p => ({ ...p, score: parseInt(e.target.value) || 0 }))} className={inputCls} /></div>
-          </div>
-          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Status</label>
-            <div className="flex flex-wrap gap-2">{ALL_STATUSES.map(s => <button key={s.id} type="button" onClick={() => setForm(p => ({ ...p, status: s.id }))} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${form.status === s.id ? `${s.bg} ${s.color} ${s.border}` : 'bg-[#EEE6DC] text-[#7A746C] border-[#E3D9CD]'}`}>{s.label}</button>)}</div>
-          </div>
-          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Tags</label><input type="text" value={form.tags} onChange={e => setForm(p => ({ ...p, tags: e.target.value }))} className={inputCls} placeholder="tag1, tag2" /></div>
-          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Notes</label><textarea value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#EEE6DC] text-[#7A746C] text-sm">Cancel</button>
-            <button type="submit" disabled={saving || !form.name.trim()} className="flex-1 px-4 py-3 rounded-xl bg-[#8E5E34] text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">
-              {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : lead ? 'Update Lead' : 'Add Lead'}
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </motion.div>
+    <span style={{ background: c.bg, color: c.text }} className="text-xs font-semibold px-2 py-0.5 rounded-full">
+      {score}
+    </span>
   );
 }
 
-function KanbanCard({ lead, onSelect, onDelete, deleting }: { lead: Lead; onSelect: (l: Lead) => void; onDelete: (id: string) => void; deleting: string | null }) {
-  const daysInStage = daysSince(lead.updated_at || lead.created_at);
+function StageDropdown({ current, onMove }: { current: Stage; onMove: (s: Stage) => void }) {
+  const [open, setOpen] = useState(false);
+  const targets = STAGES.filter(s => s.key !== current);
   return (
-    <div draggable onDragStart={e => { e.dataTransfer.setData('leadId', lead.id); e.dataTransfer.effectAllowed = 'move'; }}>
-      <div className="group cursor-pointer rounded-xl bg-[#EEE6DC] border border-[#E3D9CD] hover:border-[#8E5E34]/40 p-3.5 transition-all shadow-sm" onClick={() => onSelect(lead)}>
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-[#1C1C1C] text-sm truncate group-hover:text-[#8E5E34]">{lead.company || lead.name}</h3>
-            <p className="text-xs text-[#7A746C] truncate mt-0.5">{lead.name}</p>
-          </div>
-          <ScoreBadge score={lead.score || 0} />
-        </div>
-        {lead.estimated_value ? <div className="flex items-center gap-1 text-[#8E5E34] mb-2"><DollarSign size={14} /><span className="font-bold text-sm">{formatCurrency(lead.estimated_value)}</span></div> : null}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-[10px] text-[#7A746C]"><Clock size={10} />{daysInStage}d in stage</div>
-          <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1 rounded text-[#7A746C] hover:text-[#B0614A]/50 opacity-0 group-hover:opacity-100 transition-all">
-            {deleting === lead.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function KanbanColumn({ status, leads, onSelect, onDrop, onDelete, deleting, onConvertToClient }: {
-  status: typeof KANBAN_STATUSES[0]; leads: Lead[]; onSelect: (l: Lead) => void;
-  onDrop: (id: string, s: string) => void; onDelete: (id: string) => void; deleting: string | null;
-  onConvertToClient: (lead: Lead) => void;
-}) {
-  const [isDragOver, setIsDragOver] = useState(false);
-  const totalValue = leads.reduce((sum, l) => sum + (l.estimated_value || 0), 0);
-
-  return (
-    <div className="flex flex-col min-w-[260px] w-[260px] flex-shrink-0 lg:min-w-0 lg:w-auto lg:flex-1 h-full">
-      <div className={`px-3 py-3 rounded-t-xl border border-b-0 bg-[#EEE6DC] transition-all ${isDragOver ? 'border-[#8E5E34]/50 bg-[#8E5E34]/5' : 'border-[#E3D9CD]'}`}>
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2"><h3 className={`font-semibold text-sm ${status.color}`}>{status.label}</h3><span className="text-xs px-1.5 py-0.5 rounded-md bg-[#EEE6DC] text-[#7A746C] font-medium">{leads.length}</span></div>
-        </div>
-        <div className="text-xs text-[#7A746C]">Total: <span className="text-[#8E5E34] font-semibold">{formatCurrency(totalValue)}</span></div>
-      </div>
-      <div
-        onDragOver={e => { e.preventDefault(); setIsDragOver(true); }} onDragLeave={() => setIsDragOver(false)}
-        onDrop={e => { e.preventDefault(); setIsDragOver(false); const id = e.dataTransfer.getData('leadId'); if (id) onDrop(id, status.id); }}
-        className={`flex-1 p-2.5 rounded-b-xl border border-t-0 min-h-[300px] max-h-[calc(100vh-400px)] overflow-y-auto transition-all ${isDragOver ? 'bg-[#8E5E34]/5 border-[#8E5E34]/40' : 'border-[#E3D9CD]'}`}
-      >
-        <div className="flex flex-col gap-2.5">
-          {leads.map(lead => (
-            <div key={lead.id}>
-              <KanbanCard lead={lead} onSelect={onSelect} onDelete={onDelete} deleting={deleting} />
-              {status.id === 'won' && (
-                <button onClick={() => onConvertToClient(lead)} className="mt-1 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#B07A45]/5 text-[#8E5E34] hover:bg-[#B07A45]/10 text-xs font-medium transition-colors">
-                  <UserCheck size={12} /> Convert to Client
-                </button>
-              )}
-            </div>
-          ))}
-          {leads.length === 0 && <div className="py-10 text-center"><Users size={18} className="mx-auto mb-2 text-[#7A746C]/40" /><p className="text-xs text-[#7A746C]">No leads here</p></div>}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ListView({ leads, onSelect, onDelete, deleting }: { leads: Lead[]; onSelect: (l: Lead) => void; onDelete: (id: string) => void; deleting: string | null }) {
-  const statusCfg = Object.fromEntries(ALL_STATUSES.map(s => [s.id, s]));
-  return (
-    <div className="rounded-2xl bg-[#EEE6DC] border border-[#E3D9CD] overflow-hidden shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead><tr className="border-b border-[#E3D9CD] text-[#7A746C] text-xs uppercase tracking-wider">
-            <th className="text-left px-5 py-3 font-medium">Name</th>
-            <th className="text-left px-5 py-3 font-medium">Company</th>
-            <th className="text-left px-5 py-3 font-medium">Status</th>
-            <th className="text-right px-5 py-3 font-medium">Value</th>
-            <th className="text-right px-5 py-3 font-medium">Score</th>
-            <th className="text-left px-5 py-3 font-medium">Created</th>
-            <th className="text-right px-5 py-3 font-medium">Actions</th>
-          </tr></thead>
-          <tbody>
-            {leads.map(lead => {
-              const sc = statusCfg[lead.status] || statusCfg.new;
-              return (
-                <tr key={lead.id} className="border-b border-[#E3D9CD]/50 hover:bg-[#EEE6DC]/50 transition-colors cursor-pointer" onClick={() => onSelect(lead)}>
-                  <td className="px-5 py-3.5 font-medium text-[#1C1C1C]">{lead.name}</td>
-                  <td className="px-5 py-3.5 text-[#7A746C]">{lead.company || '-'}</td>
-                  <td className="px-5 py-3.5"><span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium ${sc.color} ${sc.bg} border ${sc.border}`}>{sc.label}</span></td>
-                  <td className="px-5 py-3.5 text-right text-[#8E5E34] font-medium">{lead.estimated_value ? formatCurrency(lead.estimated_value) : '-'}</td>
-                  <td className="px-5 py-3.5 text-right"><ScoreBadge score={lead.score} /></td>
-                  <td className="px-5 py-3.5 text-[#7A746C]">{formatDate(lead.created_at)}</td>
-                  <td className="px-5 py-3.5 text-right">
-                    <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#B0614A]/50 hover:bg-[#B0614A]/5">
-                      {deleting === lead.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-export default function LeadsPage() {
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [scrapedLeads, setScrapedLeads] = useState<ScrapedLead[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'kanban' | 'list' | 'scraped'>('kanban');
-  const [search, setSearch] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [editingLead, setEditingLead] = useState<Lead | null | undefined>(undefined);
-  const [deleting, setDeleting] = useState<string | null>(null);
-
-  const loadData = useCallback(() => {
-    try {
-      setLeads(lsGet<Lead>('vantix_leads'));
-      setScrapedLeads(lsGet<ScrapedLead>('vantix_scraped_leads'));
-    } catch (e) { console.error(e); }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => { loadData(); }, [loadData]);
-
-  const filtered = useMemo(() => {
-    if (!search) return leads;
-    const q = search.toLowerCase();
-    return leads.filter(l => l.name?.toLowerCase().includes(q) || l.email?.toLowerCase().includes(q) || l.company?.toLowerCase().includes(q));
-  }, [leads, search]);
-
-  const leadsByStatus = useMemo(() => {
-    const grouped: Record<string, Lead[]> = {};
-    KANBAN_STATUSES.forEach(s => { grouped[s.id] = []; });
-    filtered.forEach(l => { if (grouped[l.status]) grouped[l.status].push(l); else if (grouped.new) grouped.new.push(l); });
-    return grouped;
-  }, [filtered]);
-
-  const stats = useMemo(() => ({
-    total: leads.length,
-    newLeads: leads.filter(l => l.status === 'new').length,
-    pipelineValue: leads.filter(l => !['won', 'lost'].includes(l.status)).reduce((s, l) => s + (l.estimated_value || 0), 0),
-    wonValue: leads.filter(l => l.status === 'won').reduce((s, l) => s + (l.estimated_value || 0), 0),
-  }), [leads]);
-
-  const handleSave = (data: Partial<Lead>) => {
-    try {
-      const items = lsGet<Lead>('vantix_leads');
-      const now = new Date().toISOString();
-      if (editingLead) {
-        const idx = items.findIndex(l => l.id === editingLead.id);
-        if (idx >= 0) items[idx] = { ...items[idx], ...data, updated_at: now };
-      } else {
-        items.unshift({ id: generateId(), score: 50, tags: [], created_at: now, updated_at: now, ...data } as Lead);
-      }
-      lsSet('vantix_leads', items);
-      setLeads(items);
-    } catch (e) { console.error(e); }
-  };
-
-  const handleDrop = (leadId: string, newStatus: string) => {
-    try {
-      const items = lsGet<Lead>('vantix_leads');
-      const idx = items.findIndex(l => l.id === leadId);
-      if (idx >= 0) { items[idx] = { ...items[idx], status: newStatus, updated_at: new Date().toISOString() }; lsSet('vantix_leads', items); setLeads(items); }
-    } catch (e) { console.error(e); }
-  };
-
-  const handleDelete = (id: string) => {
-    if (!confirm('Delete this lead?')) return;
-    setDeleting(id);
-    try {
-      const items = lsGet<Lead>('vantix_leads').filter(l => l.id !== id);
-      lsSet('vantix_leads', items);
-      setLeads(items);
-    } catch (e) { console.error(e); }
-    setDeleting(null);
-  };
-
-  const handleConvertToClient = (lead: Lead) => {
-    try {
-      const clients = lsGet<Record<string, unknown>>('vantix_clients');
-      const now = new Date().toISOString();
-      clients.unshift({
-        id: generateId(), name: lead.company || lead.name, type: 'company', status: 'active',
-        contact_name: lead.name, contact_email: lead.email, contact_phone: lead.phone,
-        contract_value: lead.estimated_value || 0, lifetime_value: lead.estimated_value || 0,
-        tags: ['converted-lead'], lead_source: lead.source, created_at: now, updated_at: now,
-      });
-      lsSet('vantix_clients', clients);
-      // Add activity
-      const activities = lsGet<Record<string, unknown>>('vantix_activities');
-      activities.unshift({ id: generateId(), type: 'lead', title: `Lead "${lead.name}" converted to client`, created_at: now });
-      lsSet('vantix_activities', activities);
-      alert(`${lead.company || lead.name} has been converted to a client!`);
-    } catch (e) { console.error(e); }
-  };
-
-  const handleConvertScraped = (scraped: ScrapedLead) => {
-    handleSave({ name: scraped.business_name || 'Unknown', email: scraped.email || undefined, phone: scraped.phone || undefined, company: scraped.business_name || undefined, status: 'new', score: 30, source: 'Scraper', tags: ['scraped'] });
-  };
-
-  if (loading) return <div className="space-y-6 animate-pulse"><div className="h-8 w-48 bg-[#E3D9CD] rounded-lg" /><div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-[#E3D9CD]/50 rounded-2xl" />)}</div></div>;
-
-  return (
-    <div className="space-y-6 pb-12">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C]">Leads</h1><p className="text-sm text-[#7A746C] mt-1">Manage your sales pipeline</p></div>
-        <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 bronze-btn hover:brightness-110 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> Add Lead</button>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {[
-          { label: 'Total Leads', value: String(stats.total), icon: Users, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
-          { label: 'New Leads', value: String(stats.newLeads), icon: Zap, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#D8C2A8]' },
-          { label: 'Pipeline Value', value: formatCurrency(stats.pipelineValue), icon: Target, color: 'text-[#8E5E34]', bg: 'bg-[#8E5E34]/10', border: 'border-[#8E5E34]/20' },
-          { label: 'Won Value', value: formatCurrency(stats.wonValue), icon: Trophy, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10' },
-        ].map((stat, i) => (
-          <motion.div key={stat.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className={`bg-[#EEE6DC] border ${stat.border} rounded-2xl p-4 shadow-sm`}>
-            <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#7A746C]">{stat.label}</span><div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}><stat.icon size={18} className={stat.color} /></div></div>
-            <p className="text-xl sm:text-2xl font-bold text-[#1C1C1C]">{stat.value}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-1">
-          <button onClick={() => setViewMode('kanban')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'kanban' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'text-[#7A746C]'}`}><LayoutGrid size={15} /> Kanban</button>
-          <button onClick={() => setViewMode('list')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'list' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'text-[#7A746C]'}`}><List size={15} /> List</button>
-          <button onClick={() => setViewMode('scraped')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'scraped' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'text-[#7A746C]'}`}><Download size={15} /> Scraped ({scrapedLeads.length})</button>
-        </div>
-        {viewMode !== 'scraped' && (
-          <div className="relative flex-1 sm:max-w-xs">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A746C]" />
-            <input type="text" placeholder="Search leads..." value={search} onChange={e => setSearch(e.target.value)} className="w-full bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl pl-10 pr-4 py-2 text-sm text-[#1C1C1C] focus:outline-none focus:border-[#8E5E34]/50" />
-          </div>
-        )}
-      </div>
-
-      {viewMode === 'kanban' ? (
-        filtered.length === 0 && !search ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 rounded-2xl bg-[#8E5E34]/10 flex items-center justify-center mb-6"><Target size={40} className="text-[#8E5E34]" /></div>
-            <h3 className="text-xl font-semibold text-[#1C1C1C] mb-2">No leads yet</h3>
-            <p className="text-[#7A746C] max-w-md mb-6">Start building your sales pipeline by adding leads.</p>
-            <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#8E5E34]/10 text-[#8E5E34] border border-[#8E5E34]/30 font-medium"><Plus size={18} /> Add Your First Lead</button>
-          </div>
-        ) : (
-          <div className="overflow-x-auto pb-4 -mx-4 px-4 lg:mx-0 lg:px-0">
-            <div className="flex gap-4 lg:grid lg:grid-cols-7 lg:gap-3 min-w-max lg:min-w-0">
-              {KANBAN_STATUSES.map((status, i) => (
-                <motion.div key={status.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                  <KanbanColumn status={status} leads={leadsByStatus[status.id] || []} onSelect={l => { setEditingLead(l); setShowModal(true); }} onDrop={handleDrop} onDelete={handleDelete} deleting={deleting} onConvertToClient={handleConvertToClient} />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )
-      ) : viewMode === 'list' ? (
-        filtered.length === 0 ? (
-          <div className="text-center py-16"><p className="text-sm text-[#7A746C]">No leads found</p></div>
-        ) : (
-          <ListView leads={filtered} onSelect={l => { setEditingLead(l); setShowModal(true); }} onDelete={handleDelete} deleting={deleting} />
-        )
-      ) : (
-        scrapedLeads.length === 0 ? (
-          <div className="text-center py-16"><div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#8E5E34]/10 flex items-center justify-center"><Search size={28} className="text-[#8E5E34]" /></div><h3 className="font-semibold text-[#1C1C1C] mb-2">No scraped leads yet</h3></div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-            {scrapedLeads.map((s, i) => (
-              <motion.div key={s.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="p-4 rounded-xl bg-[#EEE6DC] border border-[#E3D9CD] hover:border-[#8E5E34]/30 transition-all shadow-sm">
-                <h4 className="text-sm font-semibold text-[#1C1C1C] truncate mb-2">{s.business_name || 'Unknown Business'}</h4>
-                <div className="space-y-1 mb-3">
-                  {s.email && <p className="text-xs text-[#7A746C] flex items-center gap-1.5"><Mail size={11} />{s.email}</p>}
-                  {s.phone && <p className="text-xs text-[#7A746C] flex items-center gap-1.5"><Phone size={11} />{s.phone}</p>}
-                </div>
-                {s.status !== 'added_to_leads' && s.status !== 'ignored' && (
-                  <button onClick={() => handleConvertScraped(s)} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#8E5E34]/10 text-[#8E5E34] hover:bg-[#8E5E34]/20 text-xs font-medium"><Plus size={12} /> Convert to Lead</button>
-                )}
-              </motion.div>
+    <div className="relative">
+      <button onClick={(e) => { e.stopPropagation(); setOpen(!open); }} className="p-1 rounded hover:bg-black/5 transition-colors">
+        <MoreVertical size={16} className="text-[#7A746C]" />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-7 z-50 bg-white rounded-xl shadow-lg border border-[#E3D9CD] py-1 min-w-[160px]">
+            <div className="px-3 py-1.5 text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider">Move to</div>
+            {targets.map(s => (
+              <button key={s.key} onClick={(e) => { e.stopPropagation(); onMove(s.key); setOpen(false); }}
+                className="w-full text-left px-3 py-2 text-sm hover:bg-[#F4EFE8] flex items-center gap-2 text-[#4B4B4B]">
+                <ArrowRight size={12} style={{ color: s.color }} /> {s.label}
+              </button>
             ))}
           </div>
-        )
+        </>
+      )}
+    </div>
+  );
+}
+
+function LeadCard({ lead, onMove, onClick }: { lead: Lead; onMove: (s: Stage) => void; onClick: () => void }) {
+  const days = daysBetween(lead.stageChangedAt, new Date().toISOString());
+  return (
+    <div onClick={onClick}
+      className="bg-white rounded-xl p-3.5 border border-[#E3D9CD] hover:shadow-md transition-all cursor-pointer group">
+      <div className="flex items-start justify-between mb-2">
+        <div className="font-semibold text-sm text-[#1C1C1C] truncate flex-1">{lead.name}</div>
+        <StageDropdown current={lead.stage} onMove={onMove} />
+      </div>
+      <div className="text-xs text-[#4B4B4B] flex items-center gap-1.5 mb-1.5">
+        <Building2 size={12} className="text-[#7A746C] shrink-0" /> <span className="truncate">{lead.company}</span>
+      </div>
+      <div className="flex items-center justify-between mt-2.5">
+        <div className="flex items-center gap-1.5 text-[10px] text-[#7A746C]">
+          {sourceIcon(lead.source)} {lead.source}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-[#7A746C] flex items-center gap-1"><Clock size={10} />{days}d</span>
+          <ScoreBadge score={lead.score} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LeadDetailPanel({ lead, onClose, onEdit, onDelete }: { lead: Lead; onClose: () => void; onEdit: () => void; onDelete: () => void }) {
+  const stage = STAGES.find(s => s.key === lead.stage)!;
+  const prob = conversionProbability(lead.score, lead.stage);
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/20" />
+      <div className="relative w-full max-w-md bg-[#F4EFE8] h-full overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-[#1C1C1C]">{lead.name}</h2>
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#EEE6DC]"><X size={20} className="text-[#7A746C]" /></button>
+          </div>
+
+          <div className="flex gap-2 mb-6">
+            <button onClick={onEdit} className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-[#EEE6DC] text-[#4B4B4B] hover:bg-[#E3D9CD] transition-colors">
+              <Edit2 size={12} /> Edit
+            </button>
+            <button onClick={onDelete} className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-[#EADADA] text-[#A0403C] hover:bg-[#DFC8C8] transition-colors">
+              <Trash2 size={12} /> Delete
+            </button>
+          </div>
+
+          <div className="space-y-4 mb-6">
+            <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
+              <div className="text-xs font-semibold text-[#7A746C] uppercase tracking-wider mb-3">Contact</div>
+              <div className="space-y-2 text-sm text-[#4B4B4B]">
+                <div className="flex items-center gap-2"><Mail size={14} className="text-[#B07A45]" /> {lead.email}</div>
+                <div className="flex items-center gap-2"><Phone size={14} className="text-[#B07A45]" /> {lead.phone}</div>
+                <div className="flex items-center gap-2"><Building2 size={14} className="text-[#B07A45]" /> {lead.company}</div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
+              <div className="text-xs font-semibold text-[#7A746C] uppercase tracking-wider mb-3">Pipeline</div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <div className="text-[10px] text-[#7A746C]">Stage</div>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: stage.bg, color: stage.color }}>{stage.label}</span>
+                </div>
+                <div>
+                  <div className="text-[10px] text-[#7A746C]">Source</div>
+                  <div className="text-sm text-[#4B4B4B] flex items-center gap-1">{sourceIcon(lead.source)} {lead.source}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-[#7A746C]">Score</div>
+                  <ScoreBadge score={lead.score} />
+                </div>
+                <div>
+                  <div className="text-[10px] text-[#7A746C]">Conversion</div>
+                  <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: prob >= 60 ? '#2D7A4F' : prob >= 30 ? '#B07A45' : '#A0403C' }}>
+                    <TrendingUp size={14} /> {prob}%
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {lead.notes && (
+              <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
+                <div className="text-xs font-semibold text-[#7A746C] uppercase tracking-wider mb-2">Notes</div>
+                <p className="text-sm text-[#4B4B4B]">{lead.notes}</p>
+              </div>
+            )}
+
+            <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
+              <div className="text-xs font-semibold text-[#7A746C] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Activity size={14} /> Activity Log
+              </div>
+              <div className="space-y-3">
+                {lead.activities.slice().reverse().map(a => (
+                  <div key={a.id} className="flex gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#B07A45] mt-1.5 shrink-0" />
+                    <div>
+                      <div className="text-xs text-[#7A746C]">{new Date(a.date).toLocaleDateString()}</div>
+                      <div className="text-sm text-[#4B4B4B]">{a.text}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const emptyLead = (): Omit<Lead, 'id' | 'createdAt' | 'stageChangedAt' | 'activities'> => ({
+  name: '', email: '', phone: '', company: '', source: 'Website', stage: 'new', score: 50, notes: '',
+});
+
+function LeadModal({ lead, onSave, onClose }: { lead: Lead | null; onSave: (data: Partial<Lead>) => void; onClose: () => void }) {
+  const [form, setForm] = useState(lead ? { name: lead.name, email: lead.email, phone: lead.phone, company: lead.company, source: lead.source, stage: lead.stage, score: lead.score, notes: lead.notes } : emptyLead());
+  const set = (k: string, v: string | number) => setForm(f => ({ ...f, [k]: v }));
+  const isEdit = !!lead;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/30" />
+      <div className="relative bg-[#F4EFE8] rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-bold text-[#1C1C1C]">{isEdit ? 'Edit Lead' : 'Add Lead'}</h2>
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#EEE6DC]"><X size={20} className="text-[#7A746C]" /></button>
+          </div>
+
+          <div className="space-y-3.5">
+            {(['name', 'email', 'phone', 'company'] as const).map(field => (
+              <div key={field}>
+                <label className="text-xs font-medium text-[#7A746C] capitalize">{field}</label>
+                <input value={(form as Record<string, string | number>)[field] as string} onChange={e => set(field, e.target.value)}
+                  className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 focus:border-[#B07A45] transition-colors"
+                  placeholder={`Enter ${field}`} />
+              </div>
+            ))}
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium text-[#7A746C]">Source</label>
+                <select value={form.source} onChange={e => set('source', e.target.value)}
+                  className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
+                  {SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-[#7A746C]">Stage</label>
+                <select value={form.stage} onChange={e => set('stage', e.target.value)}
+                  className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
+                  {STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-[#7A746C]">Score (1-100)</label>
+              <div className="flex items-center gap-3 mt-1">
+                <input type="range" min={1} max={100} value={form.score} onChange={e => set('score', +e.target.value)}
+                  className="flex-1 accent-[#B07A45]" />
+                <ScoreBadge score={form.score} />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-[#7A746C]">Notes</label>
+              <textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={3}
+                className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 resize-none" />
+            </div>
+          </div>
+
+          <div className="flex gap-2 mt-6">
+            <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-[#E3D9CD] text-sm text-[#4B4B4B] hover:bg-[#EEE6DC] transition-colors">Cancel</button>
+            <button onClick={() => onSave(form)} disabled={!form.name.trim()}
+              className="flex-1 py-2.5 rounded-xl bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white text-sm font-semibold hover:shadow-lg transition-all disabled:opacity-40">
+              {isEdit ? 'Save Changes' : 'Add Lead'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main Page ─── */
+export default function LeadsPage() {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [view, setView] = useState<ViewMode>('kanban');
+  const [search, setSearch] = useState('');
+  const [modalLead, setModalLead] = useState<Lead | null | 'new'>(null);
+  const [detailLead, setDetailLead] = useState<Lead | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setLeads(loadLeads()); setMounted(true); }, []);
+
+  const persist = useCallback((updated: Lead[]) => { setLeads(updated); saveLeads(updated); }, []);
+
+  const moveLead = useCallback((id: string, stage: Stage) => {
+    persist(leads.map(l => l.id === id ? { ...l, stage, stageChangedAt: new Date().toISOString(), activities: [...l.activities, { id: uid(), date: new Date().toISOString(), text: `Moved to ${STAGES.find(s => s.key === stage)!.label}` }] } : l));
+  }, [leads, persist]);
+
+  const saveLead = useCallback((data: Partial<Lead>) => {
+    if (modalLead === 'new') {
+      const now = new Date().toISOString();
+      const newLead: Lead = { id: uid(), name: '', email: '', phone: '', company: '', source: 'Website', stage: 'new', score: 50, notes: '', createdAt: now, stageChangedAt: now, activities: [{ id: uid(), date: now, text: 'Lead created' }], ...data };
+      persist([...leads, newLead]);
+    } else if (modalLead) {
+      const oldStage = (modalLead as Lead).stage;
+      persist(leads.map(l => {
+        if (l.id !== (modalLead as Lead).id) return l;
+        const updated = { ...l, ...data };
+        if (data.stage && data.stage !== oldStage) {
+          updated.stageChangedAt = new Date().toISOString();
+          updated.activities = [...updated.activities, { id: uid(), date: new Date().toISOString(), text: `Moved to ${STAGES.find(s => s.key === data.stage)!.label}` }];
+        }
+        return updated;
+      }));
+    }
+    setModalLead(null);
+  }, [modalLead, leads, persist]);
+
+  const deleteLead = useCallback((id: string) => {
+    persist(leads.filter(l => l.id !== id));
+    setDetailLead(null);
+  }, [leads, persist]);
+
+  const filtered = leads.filter(l =>
+    !search || [l.name, l.company, l.source].some(f => f.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  if (!mounted) return <div className="min-h-screen bg-[#F4EFE8]" />;
+
+  return (
+    <div className="min-h-screen bg-[#F4EFE8] p-4 md:p-6 lg:p-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1C1C1C]">Lead Pipeline</h1>
+          <p className="text-sm text-[#7A746C] mt-0.5">{leads.length} total leads</p>
+        </div>
+        <button onClick={() => setModalLead('new')}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white text-sm font-semibold hover:shadow-lg transition-all">
+          <Plus size={16} /> Add Lead
+        </button>
+      </div>
+
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-5">
+        <div className="flex items-center bg-[#EEE6DC] rounded-xl p-1">
+          {([['kanban', LayoutGrid], ['list', List]] as [ViewMode, typeof LayoutGrid][]).map(([v, Icon]) => (
+            <button key={v} onClick={() => setView(v)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${view === v ? 'bg-white text-[#1C1C1C] shadow-sm' : 'text-[#7A746C] hover:text-[#4B4B4B]'}`}>
+              <Icon size={14} /> {v === 'kanban' ? 'Kanban' : 'List'}
+            </button>
+          ))}
+        </div>
+        <div className="relative flex-1 max-w-xs">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A746C]" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search leads..."
+            className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#EEE6DC] border border-[#E3D9CD] text-sm text-[#1C1C1C] placeholder:text-[#7A746C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30" />
+        </div>
+      </div>
+
+      {/* Kanban View */}
+      {view === 'kanban' && (
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 overflow-x-auto">
+          {STAGES.filter(s => s.key !== 'lost').map(stage => {
+            const colLeads = filtered.filter(l => l.stage === stage.key);
+            // Show lost leads in the Won column too
+            const lostLeads = stage.key === 'won' ? filtered.filter(l => l.stage === 'lost') : [];
+            return (
+              <div key={stage.key} className="min-w-[260px]">
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: stage.color }} />
+                    <span className="text-sm font-semibold text-[#1C1C1C]">{stage.label}</span>
+                  </div>
+                  <span className="text-xs text-[#7A746C] bg-[#EEE6DC] px-2 py-0.5 rounded-full">{colLeads.length + lostLeads.length}</span>
+                </div>
+                <div className="space-y-2.5 bg-[#EEE6DC]/50 rounded-xl p-2.5 min-h-[120px] border border-[#E3D9CD]/50">
+                  {colLeads.map(l => (
+                    <LeadCard key={l.id} lead={l} onMove={s => moveLead(l.id, s)} onClick={() => setDetailLead(l)} />
+                  ))}
+                  {lostLeads.length > 0 && (
+                    <>
+                      <div className="flex items-center gap-2 pt-2">
+                        <div className="w-2 h-2 rounded-full bg-[#A0403C]" />
+                        <span className="text-xs font-semibold text-[#A0403C]">Lost</span>
+                      </div>
+                      {lostLeads.map(l => (
+                        <LeadCard key={l.id} lead={l} onMove={s => moveLead(l.id, s)} onClick={() => setDetailLead(l)} />
+                      ))}
+                    </>
+                  )}
+                  {colLeads.length === 0 && lostLeads.length === 0 && (
+                    <div className="text-center py-6 text-xs text-[#7A746C]">No leads</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
 
-      <AnimatePresence>{showModal && <LeadModal lead={editingLead} onClose={() => { setShowModal(false); setEditingLead(undefined); }} onSave={handleSave} />}</AnimatePresence>
+      {/* List View */}
+      {view === 'list' && (
+        <div className="bg-white rounded-2xl border border-[#E3D9CD] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-[#EEE6DC] text-[#7A746C]">
+                  {['Name', 'Company', 'Source', 'Score', 'Stage', 'Created', 'Actions'].map(h => (
+                    <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E3D9CD]">
+                {filtered.map(l => {
+                  const stage = STAGES.find(s => s.key === l.stage)!;
+                  return (
+                    <tr key={l.id} className="hover:bg-[#F4EFE8]/50 cursor-pointer transition-colors" onClick={() => setDetailLead(l)}>
+                      <td className="px-4 py-3 font-medium text-[#1C1C1C]">{l.name}</td>
+                      <td className="px-4 py-3 text-[#4B4B4B]">{l.company}</td>
+                      <td className="px-4 py-3 text-[#4B4B4B]"><span className="flex items-center gap-1.5">{sourceIcon(l.source)} {l.source}</span></td>
+                      <td className="px-4 py-3"><ScoreBadge score={l.score} /></td>
+                      <td className="px-4 py-3">
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: stage.bg, color: stage.color }}>{stage.label}</span>
+                      </td>
+                      <td className="px-4 py-3 text-[#7A746C]">{new Date(l.createdAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
+                          <button onClick={e => { e.stopPropagation(); setModalLead(l); }} className="p-1.5 rounded-lg hover:bg-[#EEE6DC]"><Edit2 size={14} className="text-[#7A746C]" /></button>
+                          <button onClick={e => { e.stopPropagation(); deleteLead(l.id); }} className="p-1.5 rounded-lg hover:bg-[#EADADA]"><Trash2 size={14} className="text-[#A0403C]" /></button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modal */}
+      {modalLead && (
+        <LeadModal lead={modalLead === 'new' ? null : modalLead} onSave={saveLead} onClose={() => setModalLead(null)} />
+      )}
+
+      {/* Detail Panel */}
+      {detailLead && (
+        <LeadDetailPanel
+          lead={leads.find(l => l.id === detailLead.id) || detailLead}
+          onClose={() => setDetailLead(null)}
+          onEdit={() => { setModalLead(detailLead); setDetailLead(null); }}
+          onDelete={() => deleteLead(detailLead.id)}
+        />
+      )}
     </div>
   );
 }
