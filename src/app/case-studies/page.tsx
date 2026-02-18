@@ -23,14 +23,14 @@ const caseStudies = [
 
 export default function CaseStudiesPage() {
   return (
-    <div className="min-h-screen bg-[#F0DFD1] text-[#4A2112]">
+    <div className="min-h-screen bg-[#F0DFD1] text-[#2C1810]">
       <nav className="sticky top-0 z-50 bg-[#F0DFD1]/90 backdrop-blur-md border-b border-[#E0CCBA]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
             <ArrowLeft className="w-4 h-4" /> Vantix
           </Link>
           <Link
-            href="/contact"
+            href="/#booking"
             className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] transition-all"
             style={{ background: 'linear-gradient(to right, #E6C78C, #D4A85C, #C89B4E, #DDB878)' }}
           >
@@ -87,8 +87,8 @@ export default function CaseStudiesPage() {
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#4A2112] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#4A2112] transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-[#2C1810] transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-[#2C1810] transition-colors">Terms</Link>
           </div>
         </div>
       </footer>

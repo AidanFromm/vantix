@@ -31,14 +31,14 @@ const team = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#F0DFD1] text-[#4A2112] scroll-smooth">
+    <div className="min-h-screen bg-[#F0DFD1] text-[#2C1810] scroll-smooth">
       <nav className="sticky top-0 z-50 bg-[#F0DFD1]/90 backdrop-blur-md border-b border-[#E0CCBA]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#6B3A1F] transition-colors">
             <ArrowLeft className="w-4 h-4" /> Vantix
           </Link>
           <Link
-            href="/contact"
+            href="/#booking"
             className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
             style={woodButtonStyle}
           >
@@ -67,7 +67,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-bold mb-4">Why We Exist</h2>
           <div className="space-y-4 text-[#5C5650] leading-relaxed">
             <p>We started Vantix because we watched business after business get sold overpriced AI "consulting" that never actually shipped anything. Decks without deployments. Strategies without systems. Six-figure invoices for PowerPoints.</p>
-            <p><strong className="text-[#4A2112]">We decided to be the opposite.</strong> No theory. No fluff. We build AI systems that are live in weeks and generating ROI from day one.</p>
+            <p><strong className="text-[#2C1810]">We decided to be the opposite.</strong> No theory. No fluff. We build AI systems that are live in weeks and generating ROI from day one.</p>
             <p>Our unfair advantage? Half our team is AI. Two AI assistants work alongside us 24/7 — researching, building, testing, optimizing — while our competitors&apos; teams are asleep. That&apos;s how we built a 122-page e-commerce platform in 3 weeks. That&apos;s how we deliver what agencies 10x our size can&apos;t.</p>
           </div>
         </motion.div>
@@ -151,7 +151,7 @@ export default function AboutPage() {
             We take on 3 new clients per month. If you&apos;re serious about automating your business, let&apos;s talk before the spots fill.
           </p>
           <Link
-            href="/contact"
+            href="/#booking"
             className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
             style={woodButtonStyle}
           >
@@ -164,8 +164,8 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#4A2112] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#4A2112] transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-[#2C1810] transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-[#2C1810] transition-colors">Terms</Link>
           </div>
         </div>
       </footer>

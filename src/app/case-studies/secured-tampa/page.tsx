@@ -31,14 +31,14 @@ const techStack = [
 
 export default function SecuredTampaPage() {
   return (
-    <div className="min-h-screen bg-[#F0DFD1] text-[#4A2112] scroll-smooth">
+    <div className="min-h-screen bg-[#F0DFD1] text-[#2C1810] scroll-smooth">
       <nav className="sticky top-0 z-50 bg-[#F0DFD1]/90 backdrop-blur-md border-b border-[#E0CCBA]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/case-studies" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#6B3A1F] transition-colors">
             <ArrowLeft className="w-4 h-4" /> Case Studies
           </Link>
           <Link
-            href="/contact"
+            href="/#booking"
             className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
             style={woodButtonStyle}
           >
@@ -81,7 +81,7 @@ export default function SecuredTampaPage() {
           <div className="space-y-4 text-[#5C5650] leading-relaxed">
             <p>Dave runs SecuredTampa — a growing sneaker, collectibles, and Pokémon card business in Tampa, FL. Business was booming. Then Shopify terminated his account.</p>
             <p>Overnight, he lost his entire online storefront. No e-commerce. No checkout. No shipping automation. He was left running a growing business through Instagram DMs and a disorganized Lightspeed POS system that couldn&apos;t keep up.</p>
-            <p><strong className="text-[#4A2112]">The clock was ticking.</strong> Every day without a platform meant lost sales, frustrated customers, and competitors gaining ground. He needed a complete solution — fast.</p>
+            <p><strong className="text-[#2C1810]">The clock was ticking.</strong> Every day without a platform meant lost sales, frustrated customers, and competitors gaining ground. He needed a complete solution — fast.</p>
           </div>
         </motion.div>
       </section>
@@ -170,10 +170,10 @@ export default function SecuredTampaPage() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
           className="rounded-2xl p-8 md:p-10 bg-white border border-[#E0CCBA] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] text-center">
           <MessageSquare className="w-8 h-8 text-[#6B3A1F]/30 mx-auto mb-4" />
-          <blockquote className="text-xl md:text-2xl text-[#4A2112] font-medium leading-relaxed mb-6 max-w-2xl mx-auto">
+          <blockquote className="text-xl md:text-2xl text-[#2C1810] font-medium leading-relaxed mb-6 max-w-2xl mx-auto">
             &ldquo;Shopify shut us down and I thought it was over. Vantix built something better than I ever had — in 3 weeks. The POS integration alone saves me hours every day. I own the whole thing now, no platform can take it away.&rdquo;
           </blockquote>
-          <p className="text-[#4A2112] font-semibold">Dave</p>
+          <p className="text-[#2C1810] font-semibold">Dave</p>
           <p className="text-[#8B6B56] text-sm">Founder, SecuredTampa</p>
         </motion.div>
       </section>
@@ -188,7 +188,7 @@ export default function SecuredTampaPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/contact"
+              href="/#booking"
               className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
               style={woodButtonStyle}
             >
@@ -208,8 +208,8 @@ export default function SecuredTampaPage() {
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#4A2112] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#4A2112] transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-[#2C1810] transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-[#2C1810] transition-colors">Terms</Link>
           </div>
         </div>
       </footer>

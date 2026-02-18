@@ -75,7 +75,7 @@ const services = [
 
 export default function ServicesPage() {
   return (
-    <div className="min-h-screen bg-[#F0DFD1] text-[#4A2112] scroll-smooth">
+    <div className="min-h-screen bg-[#F0DFD1] text-[#2C1810] scroll-smooth">
       {/* Nav */}
       <nav className="sticky top-0 z-50 bg-[#F0DFD1]/90 backdrop-blur-md border-b border-[#E0CCBA]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -83,7 +83,7 @@ export default function ServicesPage() {
             <ArrowLeft className="w-4 h-4" /> Vantix
           </Link>
           <Link
-            href="/contact"
+            href="/#booking"
             className="px-5 py-2 text-sm font-semibold rounded-full text-[#5C4033] shadow-[4px_4px_10px_#c8c4be,-4px_-4px_10px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
             style={woodButtonStyle}
           >
@@ -141,7 +141,7 @@ export default function ServicesPage() {
                   </li>
                 ))}
               </ul>
-              <Link href="/contact" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#6B3A1F] hover:text-[#9A7048] transition-colors">
+              <Link href="/#booking" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#6B3A1F] hover:text-[#9A7048] transition-colors">
                 Get Started <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -163,7 +163,7 @@ export default function ServicesPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/contact"
+              href="/#booking"
               className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#5C4033] font-semibold rounded-full shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#b8965f,inset_-3px_-3px_6px_#e8d4a8] transition-all"
               style={woodButtonStyle}
             >
@@ -184,8 +184,8 @@ export default function ServicesPage() {
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#4A2112] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#4A2112] transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-[#2C1810] transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-[#2C1810] transition-colors">Terms</Link>
           </div>
         </div>
       </footer>

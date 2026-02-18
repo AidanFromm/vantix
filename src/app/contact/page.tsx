@@ -52,7 +52,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0DFD1] text-[#4A2112] scroll-smooth">
+    <div className="min-h-screen bg-[#F0DFD1] text-[#2C1810] scroll-smooth">
       <nav className="sticky top-0 z-50 bg-[#F0DFD1]/90 backdrop-blur-md border-b border-[#E0CCBA]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#6B3A1F] transition-colors">
@@ -150,7 +150,7 @@ export default function ContactPage() {
               <h3 className="font-bold mb-3">Skip the Form — Book a Call</h3>
               <p className="text-sm text-[#8B6B56] mb-4">30-minute free AI audit. We&apos;ll map your automation opportunities and show you projected ROI.</p>
               <a
-                href="https://cal.com/vantix/ai-consultation"
+                href="/#booking"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-full border border-[#E0CCBA] text-sm font-semibold shadow-[4px_4px_10px_#d1cdc7,-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#6B3A1F]/20 transition-all"
@@ -198,8 +198,8 @@ export default function ContactPage() {
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#4A2112] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#4A2112] transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-[#2C1810] transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-[#2C1810] transition-colors">Terms</Link>
           </div>
         </div>
       </footer>
