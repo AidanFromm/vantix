@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
+import { Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 
 // Temporary users until Supabase is set up
@@ -19,6 +19,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,20 +83,27 @@ export default function LoginPage() {
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)]" size={20} />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[var(--color-primary)] border border-[var(--color-border)] rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:border-[var(--color-accent)] transition-colors"
+                  className="w-full bg-[var(--color-primary)] border border-[var(--color-border)] rounded-lg py-3 pl-12 pr-12 focus:outline-none focus:border-[var(--color-accent)] transition-colors"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[#4A2112] transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+              className="w-full bg-[#4A2112] hover:bg-[#3A1A0D] disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               {loading ? 'Signing in...' : 'Sign In'}
               {!loading && <ArrowRight size={20} />}
