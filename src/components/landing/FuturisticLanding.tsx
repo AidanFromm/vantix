@@ -1111,17 +1111,18 @@ const TIME_SLOTS = [
   '7:00 PM','7:30 PM','8:00 PM','8:30 PM','9:00 PM','9:30 PM','10:00 PM',
 ];
 
-function getWeekdays(weeks: number): Date[] {
-  const days: Date[] = [];
-  const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  for (let i = 0; days.length < weeks * 5; i++) {
-    const d = new Date(start);
-    d.setDate(start.getDate() + i);
-    const dow = d.getDay();
-    if (dow !== 0 && dow !== 6) days.push(d);
-  }
-  return days;
+function getCalendarDays(month: number, year: number): (Date | null)[] {
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells: (Date | null)[] = [];
+  for (let i = 0; i < firstDay; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
+  return cells;
+}
+
+function isWeekend(d: Date) {
+  const dow = d.getDay();
+  return dow === 0 || dow === 6;
 }
 
 function isSameDay(a: Date, b: Date) {
@@ -1150,12 +1151,21 @@ function toISO(d: Date, timeStr: string) {
 
 function BookingSection() {
   const { ref } = useAnimateInView();
+  const now = new Date();
+  const [viewMonth, setViewMonth] = useState(now.getMonth());
+  const [viewYear, setViewYear] = useState(now.getFullYear());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [submitted, setSubmitted] = useState(false);
-  const weekdays = getWeekdays(3);
-  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const calendarDays = getCalendarDays(viewMonth, viewYear);
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dayHeaders = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const canGoPrev = viewYear > now.getFullYear() || (viewYear === now.getFullYear() && viewMonth > now.getMonth());
+  const goNext = () => { if (viewMonth === 11) { setViewMonth(0); setViewYear(viewYear + 1); } else setViewMonth(viewMonth + 1); };
+  const goPrev = () => { if (!canGoPrev) return; if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); } else setViewMonth(viewMonth - 1); };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1214,20 +1224,39 @@ function BookingSection() {
               </motion.div>
             ) : (
               <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                {/* Date pills */}
+                {/* Calendar Grid */}
                 <div className="mb-6">
-                  <p className="text-sm font-medium text-[#B07A45] mb-3">Select a date</p>
-                  <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin' }}>
-                    {weekdays.map((d) => {
-                      const past = isPastOrToday(d);
+                  <div className="flex items-center justify-between mb-4">
+                    <button onClick={goPrev} disabled={!canGoPrev}
+                      className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${canGoPrev ? 'hover:bg-[#E3D9CD] text-[#B07A45]' : 'text-[#E3D9CD] cursor-not-allowed'}`}>
+                      <ChevronDown size={18} className="rotate-90" />
+                    </button>
+                    <p className="text-sm font-semibold text-[#1C1C1C] tracking-wide">{monthNames[viewMonth]} {viewYear}</p>
+                    <button onClick={goNext}
+                      className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[#E3D9CD] text-[#B07A45] transition-all">
+                      <ChevronDown size={18} className="-rotate-90" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-7 gap-1">
+                    {dayHeaders.map((dh) => (
+                      <div key={dh} className="text-center text-[10px] font-semibold text-[#A39B90] uppercase tracking-wider py-2">{dh}</div>
+                    ))}
+                    {calendarDays.map((d, i) => {
+                      if (!d) return <div key={`empty-${i}`} />;
+                      const past = d <= today;
+                      const weekend = isWeekend(d);
+                      const disabled = past || weekend;
                       const active = selectedDate && isSameDay(d, selectedDate);
+                      const isToday = isSameDay(d, today);
                       return (
-                        <button key={d.toISOString()} disabled={past}
+                        <button key={d.toISOString()} disabled={disabled}
                           onClick={() => { setSelectedDate(d); setSelectedTime(null); }}
-                          className={`flex-shrink-0 flex flex-col items-center justify-center min-w-[60px] h-[60px] rounded-xl text-xs font-medium transition-all
-                            ${active ? 'bg-[#8E5E34] text-white shadow-md' : past ? 'bg-[#EEE6DC] text-[#E3D9CD] cursor-not-allowed' : 'bg-[#EEE6DC] text-[#B07A45] hover:bg-[#E3D9CD] cursor-pointer'}`}>
-                          <span className="text-[10px] uppercase">{dayNames[d.getDay()]}</span>
-                          <span className="text-lg font-bold leading-tight">{d.getDate()}</span>
+                          className={`aspect-square rounded-lg flex items-center justify-center text-sm font-medium transition-all
+                            ${active ? 'bg-[#8E5E34] text-white shadow-md' :
+                              disabled ? 'text-[#E3D9CD] cursor-not-allowed' :
+                              isToday ? 'bg-[#B07A45]/10 text-[#B07A45] font-bold' :
+                              'text-[#4B4B4B] hover:bg-[#E3D9CD] cursor-pointer'}`}>
+                          {d.getDate()}
                         </button>
                       );
                     })}
@@ -1270,7 +1299,7 @@ function BookingSection() {
                           className="px-4 py-2.5 rounded-lg border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#7A746C] text-sm focus:outline-none focus:ring-2 focus:ring-[#8E5E34]/30" />
                       </div>
                       <button type="submit" className={`${bronzeButtonClass} w-full`}>
-                        Confirm Booking — {selectedDate && dayNames[selectedDate.getDay()]} {selectedDate?.getDate()} at {selectedTime}
+                        Confirm Booking — {selectedDate && selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} at {selectedTime}
                       </button>
                     </motion.form>
                   )}
@@ -1406,9 +1435,6 @@ function FinalCTA() {
           <motion.p variants={fadeUp} className="text-[#8E5E34]/60 text-sm mt-6 font-medium">
             Limited availability — we take on 3 new clients per month.
           </motion.p>
-          <motion.div variants={fadeUp}>
-            <ContactForm />
-          </motion.div>
         </motion.div>
       </div>
     </section>
