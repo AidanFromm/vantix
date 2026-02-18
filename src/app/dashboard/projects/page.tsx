@@ -62,7 +62,7 @@ const statusMeta: Record<string, { label: string; style: string; icon: typeof Ci
   'on-hold': { label: 'On Hold', style: 'bg-[#D6D2CD] text-[#4B4B4B]', icon: Pause },
 };
 
-const fmt = (n: number) => '$' + n.toLocaleString('en-US');
+const fmt = (n: number | undefined | null) => '$' + (n || 0).toLocaleString('en-US');
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
