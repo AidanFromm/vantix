@@ -12,7 +12,7 @@ export async function GET() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#F5EDE4',
+          backgroundColor: '#F5EFE7',
           backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(184, 137, 90, 0.12) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(184, 137, 90, 0.08) 0%, transparent 50%)',
         }}
       >
@@ -29,7 +29,7 @@ export async function GET() {
             width: 160,
             height: 160,
             borderRadius: 40,
-            background: 'linear-gradient(135deg, #8B5E3C, #9A7048)',
+            background: 'linear-gradient(135deg, #B07A45, #9A7048)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -51,7 +51,7 @@ export async function GET() {
             style={{
               fontSize: 80,
               fontWeight: 800,
-              color: '#2C1810',
+              color: '#1E1E1E',
               letterSpacing: 4,
             }}
           >
@@ -61,7 +61,7 @@ export async function GET() {
             style={{
               fontSize: 26,
               fontWeight: 600,
-              color: '#8B5E3C',
+              color: '#B07A45',
               letterSpacing: 3,
               marginTop: 8,
             }}
@@ -71,7 +71,7 @@ export async function GET() {
           <div
             style={{
               fontSize: 20,
-              color: '#9C8575',
+              color: '#A89F94',
               marginTop: 16,
             }}
           >
@@ -87,7 +87,7 @@ export async function GET() {
             left: 0,
             right: 0,
             height: 6,
-            background: 'linear-gradient(90deg, #8B5E3C, #D4A76A, #8B5E3C)',
+            background: 'linear-gradient(90deg, #B07A45, #D4A76A, #B07A45)',
           }}
         />
       </div>

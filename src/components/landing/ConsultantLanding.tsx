@@ -27,7 +27,7 @@ export function ConsultantLanding() {
   if (!mounted) return null;
 
   return (
-    <div className="bg-[#F5EDE4] text-gray-900 min-h-screen overflow-x-hidden">
+    <div className="bg-[#F5EFE7] text-gray-900 min-h-screen overflow-x-hidden">
       <Navigation />
       <HeroSection />
       <LogoBar />
@@ -308,7 +308,7 @@ function LogoBar() {
 // ============================================
 function ProblemSection() {
   return (
-    <section className="py-24 lg:py-32 bg-[#F5EDE4]">
+    <section className="py-24 lg:py-32 bg-[#F5EFE7]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - The problem */}
@@ -655,7 +655,7 @@ function ProofSection() {
   ];
 
   return (
-    <section id="results" className="py-24 lg:py-32 bg-[#F5EDE4]">
+    <section id="results" className="py-24 lg:py-32 bg-[#F5EFE7]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
         <motion.div

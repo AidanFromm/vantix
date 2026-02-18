@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #F5EDE4;
-  --color-text: #2C1810;
-  --color-muted: #9C8575;
-  --color-accent: #8B5E3C;
-  --color-accent-light: #8B5E3C;
-  --color-accent-hover: #5A3628;
-  --color-border: #E8D8CA;
+  --color-bg: #F5EFE7;
+  --color-text: #1E1E1E;
+  --color-muted: #A89F94;
+  --color-accent: #B07A45;
+  --color-accent-light: #B07A45;
+  --color-accent-hover: #B07A45;
+  --color-border: #D8CFC4;
   --color-card: #FFFFFF;
-  --color-surface: #EDE3D8;
-  --color-sage: #9C8575;
-  --color-primary: #6B4332;
-  --color-hover-bg: #EDE3D8;
+  --color-surface: #EFE6DA;
+  --color-sage: #A89F94;
+  --color-primary: #9B6C3C;
+  --color-hover-bg: #EFE6DA;
 }
 
 * {
@@ -99,8 +99,7 @@ body {
 }
 
 .bg-dot-pattern {
-  background-image: radial-gradient(circle, rgba(197,195,190,0.4) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background: transparent;
 }
 
 /* ========================================
@@ -149,15 +148,15 @@ body {
    ======================================== */
 
 .neu-raised {
-  box-shadow: 6px 6px 12px #d1cdc7, -6px -6px 12px #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .neu-pressed {
-  box-shadow: inset 4px 4px 8px #d1cdc7, inset -4px -4px 8px #ffffff;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .neu-subtle {
-  box-shadow: 4px 4px 10px #d1cdc7, -4px -4px 10px #ffffff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 /* ========================================
@@ -352,14 +351,14 @@ textarea {
    ======================================== */
 
 .dashboard-scope {
-  --dash-bg: #F5EDE4;
+  --dash-bg: #F5EFE7;
   --dash-card: #FFFFFF;
-  --dash-text: #2C1810;
-  --dash-muted: #9C8575;
-  --dash-accent: #8B5E3C;
-  --dash-border: #E8D8CA;
-  --dash-surface: #E8D5C4;
-  --dash-shadow: 6px 6px 16px #d1cdc7, -6px -6px 16px #ffffff;
+  --dash-text: #1E1E1E;
+  --dash-muted: #A89F94;
+  --dash-accent: #B07A45;
+  --dash-border: #D8CFC4;
+  --dash-surface: #EFE6DA;
+  --dash-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .dashboard-scope .neu-card {
@@ -371,42 +370,25 @@ textarea {
 }
 
 .dashboard-scope .neu-card:hover {
-  box-shadow: 8px 8px 20px #d1cdc7, -8px -8px 20px #ffffff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
   transform: scale(1.01);
 }
 
 .dashboard-scope .wood-btn {
-  background: linear-gradient(135deg, #E8CFA0 0%, #D4B07C 50%, #C9A06E 100%);
-  background-size: 100% 100%;
-  position: relative;
+  background: #9B6C3C;
   color: #FFFFFF;
-  font-weight: 600;
-  border-radius: 0.75rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
   padding: 0.625rem 1.25rem;
   border: none;
   cursor: pointer;
-  overflow: hidden;
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
-  box-shadow: 3px 3px 8px #d1cdc7, -3px -3px 8px #ffffff;
-}
-
-.dashboard-scope .wood-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent,
-    transparent 3px,
-    rgba(255,255,255,0.06) 3px,
-    rgba(255,255,255,0.06) 4px
-  );
-  pointer-events: none;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .dashboard-scope .wood-btn:hover {
-  box-shadow: 4px 4px 12px #d1cdc7, -4px -4px 12px #ffffff;
-  transform: translateY(-1px);
+  background: #B07A45;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .dashboard-scope .neu-input {
