@@ -1,367 +1,284 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, X, Clock, User, Tag, FileText, Trash2, Edit3, Check,
-} from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { CalendarDays, ChevronLeft, ChevronRight, Plus, X, Clock, MapPin } from 'lucide-react';
 
-interface CalendarEvent {
-  id: string; title: string; date: string; start_time: string; end_time: string;
-  client_id: string | null; type: 'consultation' | 'meeting' | 'deadline' | 'follow-up' | 'subscription' | 'task' | 'invoice';
-  notes: string; created_at: string; source?: string;
-}
-interface ClientOption { id: string; name: string; }
-type ViewMode = 'month' | 'week';
+type EventType = 'meeting' | 'deadline' | 'task' | 'followup';
 
-function lsGet<T>(key: string, fallback: T[] = []): T[] {
-  try { if (typeof window === 'undefined') return fallback; const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
+interface CalEvent {
+  id: string;
+  title: string;
+  type: EventType;
+  date: string; // YYYY-MM-DD
+  time: string;
+  notes: string;
+  client: string;
 }
-function lsSet<T>(key: string, data: T[]) {
-  try { if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(data)); } catch {}
-}
-function generateId(): string { return crypto?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
-const EVENT_TYPES = ['consultation', 'meeting', 'deadline', 'follow-up'] as const;
-const EVENT_COLORS: Record<string, string> = {
-  consultation: '#8E5E34', meeting: '#B07A45', deadline: '#8E5E34', 'follow-up': '#7A746C',
-  subscription: '#B07A45', task: '#B07A45', invoice: '#B07A45',
+const EVENT_COLORS: Record<EventType, string> = {
+  meeting: '#B07A45',
+  deadline: '#DC2626',
+  task: '#2563EB',
+  followup: '#9CA3AF',
 };
 
-function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
-function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).getDay(); }
-function fmtDate(y: number, m: number, d: number) { return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; }
-function fmtTime(t: string) { if (!t) return ''; const [h, m] = t.split(':'); const hour = parseInt(h); return `${hour % 12 || 12}:${m} ${hour >= 12 ? 'PM' : 'AM'}`; }
+const EVENT_LABELS: Record<EventType, string> = {
+  meeting: 'Meeting',
+  deadline: 'Deadline',
+  task: 'Task',
+  followup: 'Follow-up',
+};
 
+function getToday() { return new Date(); }
+function fmt(d: Date) { return d.toISOString().split('T')[0]; }
+function addDays(d: Date, n: number) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+
+function seedEvents(): CalEvent[] {
+  const today = getToday();
+  const dow = today.getDay();
+  const monday = addDays(today, -dow + 1);
+  return [
+    { id: '1', title: 'Client Strategy Call', type: 'meeting', date: fmt(addDays(monday, 0)), time: '10:00', notes: 'Q1 review', client: 'Apex Holdings' },
+    { id: '2', title: 'Design Review', type: 'meeting', date: fmt(addDays(monday, 2)), time: '14:00', notes: 'Website mockups', client: 'Summit Digital' },
+    { id: '3', title: 'Sprint Planning', type: 'meeting', date: fmt(addDays(monday, 4)), time: '09:00', notes: 'Next sprint scope', client: '' },
+    { id: '4', title: 'Proposal Due', type: 'deadline', date: fmt(addDays(monday, 1)), time: '17:00', notes: 'Metro Finance proposal', client: 'Metro Finance' },
+    { id: '5', title: 'Invoice Submission', type: 'deadline', date: fmt(addDays(monday, 3)), time: '12:00', notes: 'Monthly invoices', client: '' },
+    { id: '6', title: 'Follow up with lead', type: 'followup', date: fmt(addDays(monday, 2)), time: '11:00', notes: 'Check interest level', client: 'Peak Industries' },
+  ];
+}
+
+function loadEvents(): CalEvent[] {
+  try {
+    const raw = localStorage.getItem('vantix_calendar_events');
+    if (raw) return JSON.parse(raw);
+  } catch { /* noop */ }
+  const seeded = seedEvents();
+  try { localStorage.setItem('vantix_calendar_events', JSON.stringify(seeded)); } catch {}
+  return seeded;
+}
+
+function saveEvents(events: CalEvent[]) {
+  try { localStorage.setItem('vantix_calendar_events', JSON.stringify(events)); } catch {}
+}
+
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 export default function CalendarPage() {
-  const today = new Date();
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-  const [selectedDate, setSelectedDate] = useState(fmtDate(today.getFullYear(), today.getMonth(), today.getDate()));
-  const [viewMode, setViewMode] = useState<ViewMode>('month');
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [clients, setClients] = useState<ClientOption[]>([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
-  const [detailEvent, setDetailEvent] = useState<CalendarEvent | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<CalEvent[]>([]);
+  const [viewDate, setViewDate] = useState(getToday());
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [form, setForm] = useState({ title: '', type: 'meeting' as EventType, date: '', time: '09:00', notes: '', client: '' });
 
-  const todayStr = fmtDate(today.getFullYear(), today.getMonth(), today.getDate());
+  useEffect(() => { setEvents(loadEvents()); }, []);
 
-  const generateExtraEvents = useCallback((): CalendarEvent[] => {
-    const extra: CalendarEvent[] = [];
-    const startDate = fmtDate(currentYear, currentMonth, 1);
-    const endDate = fmtDate(currentYear, currentMonth, getDaysInMonth(currentYear, currentMonth));
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    // Subscription expenses
-    try {
-      const subRaw = localStorage.getItem('vantix_subscription_meta');
-      const subs = subRaw ? JSON.parse(subRaw) : [];
-      for (const sub of subs) {
-        if (!sub.next_due_date) continue;
-        const due = new Date(sub.next_due_date + 'T00:00:00');
-        const increment = sub.billing_cycle === 'monthly' ? 1 : sub.billing_cycle === 'quarterly' ? 3 : 12;
-        while (due > new Date(endDate + 'T23:59:59')) due.setMonth(due.getMonth() - increment);
-        while (due < new Date(startDate + 'T00:00:00')) due.setMonth(due.getMonth() + increment);
-        for (let i = 0; i < 3 && due <= new Date(endDate + 'T23:59:59'); i++) {
-          if (due >= new Date(startDate + 'T00:00:00')) {
-            const ds = fmtDate(due.getFullYear(), due.getMonth(), due.getDate());
-            extra.push({ id: `sub-${sub.expense_id}-${ds}`, title: `${sub.company_name} - $${sub.amount}`, date: ds, start_time: '00:00', end_time: '00:00', client_id: null, type: 'subscription', notes: `${sub.billing_cycle} subscription`, created_at: new Date().toISOString(), source: 'subscription' });
-          }
-          due.setMonth(due.getMonth() + increment);
-        }
-      }
-    } catch {}
+  const calendarCells = useMemo(() => {
+    const cells: (number | null)[] = [];
+    for (let i = 0; i < firstDay; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+    while (cells.length % 7 !== 0) cells.push(null);
+    return cells;
+  }, [firstDay, daysInMonth]);
 
-    // Task deadlines
-    try {
-      const tasks = lsGet<{ id: string; title: string; due_date?: string; column: string }>('vantix_tasks');
-      tasks.filter(t => t.due_date && t.column !== 'done' && t.due_date >= startDate && t.due_date <= endDate).forEach(t => {
-        extra.push({ id: `task-${t.id}`, title: `Task: ${t.title}`, date: t.due_date!, start_time: '09:00', end_time: '09:30', client_id: null, type: 'task', notes: '', created_at: new Date().toISOString(), source: 'task' });
-      });
-    } catch {}
+  const eventsForDate = (dateStr: string) => events.filter(e => e.date === dateStr);
+  const dateStr = (day: number) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  const todayStr = fmt(getToday());
 
-    // Invoice due dates
-    try {
-      const invoices = lsGet<{ id: string; invoice_number?: string; due_date?: string; total: number; status: string }>('vantix_invoices');
-      invoices.filter(i => i.due_date && i.status !== 'paid' && i.due_date >= startDate && i.due_date <= endDate).forEach(i => {
-        extra.push({ id: `inv-${i.id}`, title: `Invoice ${i.invoice_number || i.id.slice(0,6)} due - $${i.total}`, date: i.due_date!, start_time: '00:00', end_time: '00:00', client_id: null, type: 'invoice', notes: `Status: ${i.status}`, created_at: new Date().toISOString(), source: 'invoice' });
-      });
-    } catch {}
+  const upcoming = useMemo(() => {
+    const today = getToday();
+    const end = addDays(today, 7);
+    return events
+      .filter(e => e.date >= fmt(today) && e.date <= fmt(end))
+      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  }, [events]);
 
-    return extra;
-  }, [currentYear, currentMonth]);
+  const prevMonth = () => setViewDate(new Date(year, month - 1, 1));
+  const nextMonth = () => setViewDate(new Date(year, month + 1, 1));
 
-  const loadEvents = useCallback(() => {
-    setLoading(true);
-    try {
-      const stored = lsGet<CalendarEvent>('vantix_calendar_events');
-      const startDate = fmtDate(currentYear, currentMonth, 1);
-      const endDate = fmtDate(currentYear, currentMonth, getDaysInMonth(currentYear, currentMonth));
-      const filtered = stored.filter(e => e.date >= startDate && e.date <= endDate);
-      const extra = generateExtraEvents();
-      setEvents([...filtered, ...extra]);
-      setClients(lsGet<ClientOption>('vantix_clients'));
-    } catch {}
-    setLoading(false);
-  }, [currentYear, currentMonth, generateExtraEvents]);
-
-  useEffect(() => { loadEvents(); }, [loadEvents]);
-
-  const prevMonth = () => { if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(y => y - 1); } else setCurrentMonth(m => m - 1); };
-  const nextMonth = () => { if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(y => y + 1); } else setCurrentMonth(m => m + 1); };
-  const goToToday = () => { setCurrentYear(today.getFullYear()); setCurrentMonth(today.getMonth()); setSelectedDate(todayStr); };
-
-  const selectedDayEvents = useMemo(() => events.filter(e => e.date === selectedDate), [events, selectedDate]);
-  const eventsByDate = useMemo(() => { const m: Record<string, CalendarEvent[]> = {}; events.forEach(e => { if (!m[e.date]) m[e.date] = []; m[e.date].push(e); }); return m; }, [events]);
-
-  const handleSave = (eventData: Partial<CalendarEvent>) => {
-    try {
-      const items = lsGet<CalendarEvent>('vantix_calendar_events');
-      if (editingEvent && eventData.id) {
-        const idx = items.findIndex(e => e.id === eventData.id);
-        if (idx >= 0) { const { id, ...updates } = eventData; items[idx] = { ...items[idx], ...updates }; }
-      } else {
-        items.unshift({ id: generateId(), created_at: new Date().toISOString(), ...eventData } as CalendarEvent);
-      }
-      lsSet('vantix_calendar_events', items);
-    } catch {}
-    setModalOpen(false); setEditingEvent(null); loadEvents();
+  const addEvent = () => {
+    if (!form.title || !form.date) return;
+    const ev: CalEvent = { ...form, id: Date.now().toString() };
+    const updated = [...events, ev];
+    setEvents(updated);
+    saveEvents(updated);
+    setShowModal(false);
+    setForm({ title: '', type: 'meeting', date: '', time: '09:00', notes: '', client: '' });
   };
 
-  const handleDelete = (id: string) => {
-    try { lsSet('vantix_calendar_events', lsGet<CalendarEvent>('vantix_calendar_events').filter(e => e.id !== id)); } catch {}
-    loadEvents();
+  const deleteEvent = (id: string) => {
+    const updated = events.filter(e => e.id !== id);
+    setEvents(updated);
+    saveEvents(updated);
   };
 
-  const openCreateForDate = (dateStr: string) => { setSelectedDate(dateStr); setEditingEvent(null); setModalOpen(true); };
-  const openEdit = (event: CalendarEvent) => { if (event.source) { setDetailEvent(event); return; } setEditingEvent(event); setModalOpen(true); };
-
-  // Calendar grid
-  const daysInMonth = getDaysInMonth(currentYear, currentMonth);
-  const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
-  const prevMonthDays = getDaysInMonth(currentMonth === 0 ? currentYear - 1 : currentYear, currentMonth === 0 ? 11 : currentMonth - 1);
-
-  const calendarCells: { day: number; dateStr: string; isCurrentMonth: boolean }[] = [];
-  for (let i = firstDay - 1; i >= 0; i--) { const d = prevMonthDays - i; const m = currentMonth === 0 ? 11 : currentMonth - 1; const y = currentMonth === 0 ? currentYear - 1 : currentYear; calendarCells.push({ day: d, dateStr: fmtDate(y, m, d), isCurrentMonth: false }); }
-  for (let d = 1; d <= daysInMonth; d++) calendarCells.push({ day: d, dateStr: fmtDate(currentYear, currentMonth, d), isCurrentMonth: true });
-  const remaining = 42 - calendarCells.length;
-  for (let d = 1; d <= remaining; d++) { const m = currentMonth === 11 ? 0 : currentMonth + 1; const y = currentMonth === 11 ? currentYear + 1 : currentYear; calendarCells.push({ day: d, dateStr: fmtDate(y, m, d), isCurrentMonth: false }); }
-
-  const getWeekDays = () => {
-    const sel = new Date(selectedDate + 'T00:00:00');
-    const weekStart = new Date(sel); weekStart.setDate(sel.getDate() - sel.getDay());
-    return Array.from({ length: 7 }, (_, i) => { const d = new Date(weekStart); d.setDate(weekStart.getDate() + i); return { day: d.getDate(), dateStr: fmtDate(d.getFullYear(), d.getMonth(), d.getDate()), dayName: DAY_NAMES[d.getDay()], monthName: MONTH_NAMES[d.getMonth()].slice(0, 3) }; });
-  };
-  const weekDays = viewMode === 'week' ? getWeekDays() : [];
+  const selectedEvents = selectedDate ? eventsForDate(selectedDate) : [];
 
   return (
-    <div className="min-h-screen bg-[#F4EFE8] p-4 md:p-8">
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#C89A6A] to-[#B07A45] shadow-sm">
-            <CalendarIcon size={22} className="text-[#8E5E34]" />
-          </div>
-          <div><h1 className="text-2xl font-bold text-[#1C1C1C]">Calendar</h1><p className="text-sm text-[#7A746C]">Schedule and manage events</p></div>
+    <div className="min-h-screen bg-[#F4EFE8] p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1C1C1C] flex items-center gap-2">
+            <CalendarDays className="w-6 h-6 text-[#B07A45]" /> Calendar
+          </h1>
+          <p className="text-[#7A746C] text-sm mt-1">Schedule, deadlines, and follow-ups</p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex rounded-xl overflow-hidden border border-[#E3D9CD]">
-            {(['month', 'week'] as ViewMode[]).map(mode => (
-              <button key={mode} onClick={() => setViewMode(mode)} className={`px-4 py-2 text-sm font-medium transition-all ${viewMode === mode ? 'bg-[#8E5E34] text-white' : 'bg-[#EEE6DC] text-[#1C1C1C] hover:bg-[#EEE6DC]'}`}>{mode.charAt(0).toUpperCase() + mode.slice(1)}</button>
-            ))}
-          </div>
-          <button onClick={goToToday} className="px-4 py-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C] hover:bg-[#EEE6DC]">Today</button>
-          <button onClick={() => openCreateForDate(selectedDate)} className="px-5 py-2.5 bg-[#8E5E34] text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-[#B07A45]"><Plus size={16} /> New Event</button>
-        </div>
-      </motion.div>
-
-      {/* Legend */}
-      <div className="flex flex-wrap gap-4 mb-4">
-        {[{ label: 'Meeting', color: EVENT_COLORS.meeting }, { label: 'Task', color: EVENT_COLORS.task }, { label: 'Subscription', color: EVENT_COLORS.subscription }, { label: 'Invoice', color: EVENT_COLORS.invoice }, { label: 'Deadline', color: EVENT_COLORS.deadline }].map(l => (
-          <div key={l.label} className="flex items-center gap-1.5 text-xs text-[#7A746C]">
-            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: l.color }} />{l.label}
-          </div>
-        ))}
+        <button onClick={() => { setForm({ ...form, date: selectedDate || todayStr }); setShowModal(true); }}
+          className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium hover:opacity-90 transition">
+          <Plus className="w-4 h-4" /> Add Event
+        </button>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex-1">
-          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-sm">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3D9CD]">
-              <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-[#EEE6DC] text-[#7A746C]"><ChevronLeft size={20} /></button>
-              <h2 className="text-lg font-bold text-[#1C1C1C]">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
-              <button onClick={nextMonth} className="p-2 rounded-xl hover:bg-[#EEE6DC] text-[#7A746C]"><ChevronRight size={20} /></button>
+        {/* Calendar Grid */}
+        <div className="flex-1">
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-[#E3D9CD] transition">
+                <ChevronLeft className="w-5 h-5 text-[#4B4B4B]" />
+              </button>
+              <h2 className="text-lg font-semibold text-[#1C1C1C]">{MONTH_NAMES[month]} {year}</h2>
+              <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-[#E3D9CD] transition">
+                <ChevronRight className="w-5 h-5 text-[#4B4B4B]" />
+              </button>
             </div>
-
-            {viewMode === 'month' ? (
-              <div className="p-3 md:p-4">
-                <div className="grid grid-cols-7 mb-2">{DAY_NAMES.map(d => <div key={d} className="text-center text-xs font-semibold text-[#7A746C] py-2">{d}</div>)}</div>
-                <div className="grid grid-cols-7 gap-1">
-                  {calendarCells.map((cell, i) => {
-                    const isToday = cell.dateStr === todayStr;
-                    const isSelected = cell.dateStr === selectedDate;
-                    const dayEvents = eventsByDate[cell.dateStr] || [];
-                    return (
-                      <button key={i} onClick={() => setSelectedDate(cell.dateStr)} onDoubleClick={() => openCreateForDate(cell.dateStr)}
-                        className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm transition-all ${!cell.isCurrentMonth ? 'text-[#E3D9CD]' : isSelected ? 'bg-[#8E5E34]/10 text-[#1C1C1C] font-bold' : 'text-[#1C1C1C] hover:bg-[#EEE6DC]'} ${isToday ? 'ring-2 ring-[#8E5E34] ring-offset-1' : ''}`}>
-                        <span className="text-xs md:text-sm">{cell.day}</span>
-                        {dayEvents.length > 0 && (
-                          <div className="flex gap-0.5 mt-0.5">
-                            {dayEvents.slice(0, 3).map((ev, j) => <div key={j} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: EVENT_COLORS[ev.type] || '#8E5E34' }} />)}
-                            {dayEvents.length > 3 && <span className="text-[8px] text-[#7A746C]">+</span>}
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : (
-              <div className="p-3 md:p-4">
-                <div className="grid grid-cols-7 gap-2">
-                  {weekDays.map(wd => {
-                    const isToday = wd.dateStr === todayStr;
-                    const isSelected = wd.dateStr === selectedDate;
-                    const dayEvents = eventsByDate[wd.dateStr] || [];
-                    return (
-                      <div key={wd.dateStr} className="flex flex-col">
-                        <button onClick={() => setSelectedDate(wd.dateStr)} onDoubleClick={() => openCreateForDate(wd.dateStr)}
-                          className={`flex flex-col items-center p-2 rounded-xl transition-all ${isSelected ? 'bg-[#8E5E34]/10' : 'hover:bg-[#EEE6DC]'} ${isToday ? 'ring-2 ring-[#8E5E34]' : ''}`}>
-                          <span className="text-xs text-[#7A746C] font-medium">{wd.dayName}</span>
-                          <span className="text-lg font-bold text-[#1C1C1C]">{wd.day}</span>
-                        </button>
-                        <div className="mt-2 space-y-1 min-h-[80px]">
-                          {dayEvents.map(ev => (
-                            <button key={ev.id} onClick={() => openEdit(ev)} className="w-full text-left px-2 py-1.5 rounded-lg text-xs font-medium truncate hover:opacity-80" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#8E5E34') + '18', color: EVENT_COLORS[ev.type] || '#8E5E34', borderLeft: `3px solid ${EVENT_COLORS[ev.type] || '#8E5E34'}` }}>
-                              <div className="truncate">{ev.title}</div>
-                              {ev.start_time !== '00:00' && <div className="text-[10px] opacity-70">{fmtTime(ev.start_time)}</div>}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Sidebar */}
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="lg:w-80 xl:w-96">
-          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-sm">
-            <div className="px-5 py-4 border-b border-[#E3D9CD] flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-[#1C1C1C]">{new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h3>
-                <p className="text-xs text-[#7A746C]">{selectedDayEvents.length} event{selectedDayEvents.length !== 1 ? 's' : ''}</p>
-              </div>
-              <button onClick={() => openCreateForDate(selectedDate)} className="p-2 rounded-xl bg-[#8E5E34]/10 text-[#8E5E34] hover:bg-[#8E5E34]/20"><Plus size={18} /></button>
-            </div>
-            <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
-              {loading ? (
-                <div className="flex items-center justify-center py-12"><div className="w-6 h-6 border-2 border-[#8E5E34]/30 border-t-[#8E5E34] rounded-full animate-spin" /></div>
-              ) : selectedDayEvents.length === 0 ? (
-                <div className="text-center py-12"><CalendarIcon size={36} className="mx-auto text-[#E3D9CD] mb-3" /><p className="text-sm text-[#7A746C]">No events scheduled</p></div>
-              ) : selectedDayEvents.map((ev, i) => {
-                const clientName = clients.find(c => c.id === ev.client_id)?.name;
+            <div className="grid grid-cols-7 gap-1">
+              {DAYS.map(d => (
+                <div key={d} className="text-center text-xs font-medium text-[#7A746C] py-2">{d}</div>
+              ))}
+              {calendarCells.map((day, i) => {
+                if (day === null) return <div key={i} />;
+                const ds = dateStr(day);
+                const dayEvents = eventsForDate(ds);
+                const isToday = ds === todayStr;
+                const isSelected = ds === selectedDate;
                 return (
-                  <motion.div key={ev.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                    className="p-4 rounded-xl border border-[#E3D9CD] hover:border-[#8E5E34]/20 transition-all group cursor-pointer" onClick={() => openEdit(ev)}
-                    style={{ borderLeft: `4px solid ${EVENT_COLORS[ev.type] || '#8E5E34'}` }}>
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-[#1C1C1C] text-sm truncate">{ev.title}</h4>
-                        {ev.start_time !== '00:00' && <div className="flex items-center gap-1 mt-1 text-xs text-[#7A746C]"><Clock size={12} />{fmtTime(ev.start_time)} - {fmtTime(ev.end_time)}</div>}
-                        {clientName && <div className="flex items-center gap-1 mt-1 text-xs text-[#7A746C]"><User size={12} />{clientName}</div>}
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-full text-[10px] font-semibold" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#8E5E34') + '18', color: EVENT_COLORS[ev.type] || '#8E5E34' }}><Tag size={10} />{ev.type}</span>
-                        {ev.notes && <p className="mt-2 text-xs text-[#7A746C] line-clamp-2">{ev.notes}</p>}
+                  <button key={i} onClick={() => setSelectedDate(ds)}
+                    className={`relative p-2 rounded-xl text-sm transition min-h-[56px] flex flex-col items-center
+                      ${isSelected ? 'bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white' : isToday ? 'bg-[#F4EFE8] border-2 border-[#B07A45] text-[#1C1C1C]' : 'hover:bg-[#F4EFE8] text-[#1C1C1C]'}`}>
+                    <span className="font-medium">{day}</span>
+                    {dayEvents.length > 0 && (
+                      <div className="flex gap-0.5 mt-1">
+                        {dayEvents.slice(0, 3).map((e, j) => (
+                          <div key={j} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: isSelected ? '#fff' : EVENT_COLORS[e.type] }} />
+                        ))}
+                        {dayEvents.length > 3 && <span className="text-[8px]">+{dayEvents.length - 3}</span>}
                       </div>
-                      {!ev.source && (
-                        <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={e => { e.stopPropagation(); openEdit(ev); }} className="p-1.5 rounded-lg hover:bg-[#EEE6DC] text-[#7A746C] hover:text-[#8E5E34]"><Edit3 size={14} /></button>
-                          <button onClick={e => { e.stopPropagation(); handleDelete(ev.id); }} className="p-1.5 rounded-lg hover:bg-[#B0614A]/5 text-[#7A746C] hover:text-[#B0614A]/50"><Trash2 size={14} /></button>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
+                    )}
+                  </button>
                 );
               })}
             </div>
+            {/* Legend */}
+            <div className="flex gap-4 mt-4 pt-3 border-t border-[#E3D9CD]">
+              {(Object.entries(EVENT_LABELS) as [EventType, string][]).map(([type, label]) => (
+                <div key={type} className="flex items-center gap-1.5 text-xs text-[#7A746C]">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: EVENT_COLORS[type] }} />
+                  {label}
+                </div>
+              ))}
+            </div>
           </div>
-        </motion.div>
+
+          {/* Upcoming */}
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-5 mt-6">
+            <h3 className="text-base font-semibold text-[#1C1C1C] mb-3">Upcoming (Next 7 Days)</h3>
+            {upcoming.length === 0 ? (
+              <p className="text-sm text-[#7A746C]">No upcoming events</p>
+            ) : (
+              <div className="space-y-2">
+                {upcoming.map(e => (
+                  <div key={e.id} className="flex items-center gap-3 bg-[#F4EFE8] rounded-xl p-3">
+                    <div className="w-1 h-8 rounded-full" style={{ backgroundColor: EVENT_COLORS[e.type] }} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-[#1C1C1C] truncate">{e.title}</p>
+                      <p className="text-xs text-[#7A746C]">{e.date} at {e.time}{e.client ? ` — ${e.client}` : ''}</p>
+                    </div>
+                    <span className="text-[10px] font-medium text-[#7A746C] uppercase">{EVENT_LABELS[e.type]}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Sidebar — selected day */}
+        <div className="w-full lg:w-80">
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-5 sticky top-6">
+            <h3 className="text-base font-semibold text-[#1C1C1C] mb-3">
+              {selectedDate ? new Date(selectedDate + 'T12:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) : 'Select a day'}
+            </h3>
+            {selectedDate ? (
+              selectedEvents.length === 0 ? (
+                <p className="text-sm text-[#7A746C]">No events this day</p>
+              ) : (
+                <div className="space-y-3">
+                  {selectedEvents.map(e => (
+                    <div key={e.id} className="bg-[#F4EFE8] rounded-xl p-3 border border-[#E3D9CD]">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full mt-1" style={{ backgroundColor: EVENT_COLORS[e.type] }} />
+                          <div>
+                            <p className="text-sm font-medium text-[#1C1C1C]">{e.title}</p>
+                            <p className="text-xs text-[#7A746C] flex items-center gap-1 mt-0.5">
+                              <Clock className="w-3 h-3" /> {e.time}
+                            </p>
+                          </div>
+                        </div>
+                        <button onClick={() => deleteEvent(e.id)} className="text-[#7A746C] hover:text-red-600 transition">
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      {e.client && <p className="text-xs text-[#7A746C] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" /> {e.client}</p>}
+                      {e.notes && <p className="text-xs text-[#4B4B4B] mt-1">{e.notes}</p>}
+                    </div>
+                  ))}
+                </div>
+              )
+            ) : (
+              <p className="text-sm text-[#7A746C]">Click a date on the calendar to view events</p>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Detail modal for auto-generated events */}
-      <AnimatePresence>
-        {detailEvent && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#1C1C1C]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setDetailEvent(null)}>
-            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-[#EEE6DC] rounded-2xl w-full max-w-md p-6 shadow-xl" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-[#1C1C1C]">Event Details</h2>
-                <button onClick={() => setDetailEvent(null)} className="p-2 rounded-lg hover:bg-[#EEE6DC] text-[#7A746C]"><X size={18} /></button>
+      {/* Add Event Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[#1C1C1C]">Add Event</h3>
+              <button onClick={() => setShowModal(false)} className="text-[#7A746C] hover:text-[#1C1C1C]"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="space-y-3">
+              <input placeholder="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] outline-none focus:border-[#B07A45]" />
+              <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value as EventType })}
+                className="w-full px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] outline-none focus:border-[#B07A45]">
+                {Object.entries(EVENT_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              </select>
+              <div className="grid grid-cols-2 gap-3">
+                <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })}
+                  className="px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] outline-none focus:border-[#B07A45]" />
+                <input type="time" value={form.time} onChange={e => setForm({ ...form, time: e.target.value })}
+                  className="px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] outline-none focus:border-[#B07A45]" />
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full" style={{ backgroundColor: EVENT_COLORS[detailEvent.type] || '#8E5E34' }} /><h3 className="font-semibold text-[#1C1C1C]">{detailEvent.title}</h3></div>
-                <p className="text-sm text-[#7A746C]">Date: {detailEvent.date}</p>
-                <p className="text-sm text-[#7A746C]">Type: {detailEvent.type}</p>
-                {detailEvent.notes && <p className="text-sm text-[#7A746C]">{detailEvent.notes}</p>}
-                <p className="text-xs text-[#8E5E34]">Auto-generated from {detailEvent.source}</p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Event Form Modal */}
-      <AnimatePresence>
-        {modalOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#1C1C1C]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => { setModalOpen(false); setEditingEvent(null); }}>
-            <EventFormInner editEvent={editingEvent} initialDate={selectedDate} clients={clients} onSave={handleSave} onClose={() => { setModalOpen(false); setEditingEvent(null); }} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <input placeholder="Linked Client (optional)" value={form.client} onChange={e => setForm({ ...form, client: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] outline-none focus:border-[#B07A45]" />
+              <textarea placeholder="Notes" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} rows={3}
+                className="w-full px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] outline-none focus:border-[#B07A45] resize-none" />
+              <button onClick={addEvent} className="w-full py-2 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium hover:opacity-90 transition">
+                Add Event
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  );
-}
-
-function EventFormInner({ editEvent, initialDate, clients, onSave, onClose }: { editEvent: CalendarEvent | null; initialDate: string; clients: ClientOption[]; onSave: (e: Partial<CalendarEvent>) => void; onClose: () => void }) {
-  const [title, setTitle] = useState(editEvent?.title || '');
-  const [date, setDate] = useState(editEvent?.date || initialDate);
-  const [startTime, setStartTime] = useState(editEvent?.start_time || '09:00');
-  const [endTime, setEndTime] = useState(editEvent?.end_time || '10:00');
-  const [clientId, setClientId] = useState(editEvent?.client_id || '');
-  const [eventType, setEventType] = useState(editEvent?.type || 'meeting');
-  const [notes, setNotes] = useState(editEvent?.notes || '');
-
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (!title.trim()) return; onSave({ ...(editEvent ? { id: editEvent.id } : {}), title: title.trim(), date, start_time: startTime, end_time: endTime, client_id: clientId || null, type: eventType as CalendarEvent['type'], notes: notes.trim() }); };
-  const inputCls = 'w-full px-3 py-2.5 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#1C1C1C] focus:outline-none focus:border-[#8E5E34]/50 text-sm';
-
-  return (
-    <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-[#EEE6DC] rounded-2xl w-full max-w-lg shadow-xl" onClick={e => e.stopPropagation()}>
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3D9CD]">
-        <h2 className="text-lg font-bold text-[#1C1C1C]">{editEvent ? 'Edit Event' : 'New Event'}</h2>
-        <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#EEE6DC] text-[#7A746C]"><X size={20} /></button>
-      </div>
-      <form onSubmit={handleSubmit} className="p-6 space-y-4">
-        <div><label className="block text-sm font-medium text-[#1C1C1C] mb-1">Title</label><input type="text" value={title} onChange={e => setTitle(e.target.value)} required className={inputCls} /></div>
-        <div className="grid grid-cols-3 gap-3">
-          <div><label className="block text-sm font-medium text-[#1C1C1C] mb-1">Date</label><input type="date" value={date} onChange={e => setDate(e.target.value)} className={inputCls} /></div>
-          <div><label className="block text-sm font-medium text-[#1C1C1C] mb-1">Start</label><input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className={inputCls} /></div>
-          <div><label className="block text-sm font-medium text-[#1C1C1C] mb-1">End</label><input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className={inputCls} /></div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><label className="block text-sm font-medium text-[#1C1C1C] mb-1">Type</label><select value={eventType} onChange={e => setEventType(e.target.value)} className={inputCls}>{EVENT_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}</select></div>
-          <div><label className="block text-sm font-medium text-[#1C1C1C] mb-1">Client</label><select value={clientId} onChange={e => setClientId(e.target.value)} className={inputCls}><option value="">No client</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
-        </div>
-        <div><label className="block text-sm font-medium text-[#1C1C1C] mb-1">Notes</label><textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} className={inputCls + ' resize-none'} /></div>
-        <div className="flex justify-end gap-3 pt-2">
-          <button type="button" onClick={onClose} className="px-5 py-2.5 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl text-sm text-[#1C1C1C]">Cancel</button>
-          <button type="submit" className="px-5 py-2.5 bg-[#8E5E34] text-white rounded-xl text-sm font-medium flex items-center gap-2"><Check size={16} />{editEvent ? 'Update' : 'Create'}</button>
-        </div>
-      </form>
-    </motion.div>
   );
 }

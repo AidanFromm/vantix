@@ -1,332 +1,231 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import {
-  BarChart3, TrendingUp, DollarSign, Users, Target,
-  Calendar, Filter, Briefcase, ArrowUpRight, ArrowDownRight,
-} from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { BarChart3, TrendingUp, Users, Target, Download, Filter, DollarSign, CheckCircle } from 'lucide-react';
 
-interface Invoice { id: string; status: string; total?: number; amount?: number; paid_at?: string; paid_date?: string; due_date?: string; created_at: string; client_id?: string; project_id?: string; }
-interface Lead { id: string; status: string; estimated_value?: number; created_at: string; }
-interface Project { id: string; name: string; status: string; budget?: number; spent?: number; }
-interface Expense { id: string; category?: string; amount: number; description?: string; date?: string; created_at: string; }
+type DateRange = 'month' | 'quarter' | 'year' | 'all';
 
-function lsGet<T>(key: string, fallback: T[] = []): T[] {
-  try { if (typeof window === 'undefined') return fallback; const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const revenueData = [
+  { month: 'Mar', value: 12400 }, { month: 'Apr', value: 18200 }, { month: 'May', value: 15800 },
+  { month: 'Jun', value: 22100 }, { month: 'Jul', value: 19500 }, { month: 'Aug', value: 24300 },
+  { month: 'Sep', value: 21700 }, { month: 'Oct', value: 28900 }, { month: 'Nov', value: 26100 },
+  { month: 'Dec', value: 31200 }, { month: 'Jan', value: 27800 }, { month: 'Feb', value: 33500 },
+];
+
+const clientMetrics = [
+  { name: 'Apex Holdings', ltv: 48500, projects: 4, profitMargin: 42 },
+  { name: 'Summit Digital', ltv: 36200, projects: 3, profitMargin: 38 },
+  { name: 'Coastal Ventures', ltv: 29800, projects: 2, profitMargin: 51 },
+  { name: 'Metro Finance', ltv: 22100, projects: 2, profitMargin: 35 },
+  { name: 'Peak Industries', ltv: 18700, projects: 1, profitMargin: 44 },
+];
+
+const funnelStages = [
+  { label: 'Leads', count: 248 },
+  { label: 'Contacted', count: 186 },
+  { label: 'Qualified', count: 94 },
+  { label: 'Proposal', count: 52 },
+  { label: 'Won', count: 31 },
+];
+
+const teamData = [
+  { name: 'Alex Rivera', tasksCompleted: 47, projectsDelivered: 3 },
+  { name: 'Jordan Lee', tasksCompleted: 52, projectsDelivered: 4 },
+  { name: 'Sam Chen', tasksCompleted: 38, projectsDelivered: 2 },
+  { name: 'Morgan Blake', tasksCompleted: 41, projectsDelivered: 3 },
+];
+
+function safeGetLS(key: string, fallback: string): string {
+  try { return localStorage.getItem(key) || fallback; } catch { return fallback; }
 }
 
-function formatCurrency(n: number): string { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n); }
-
-function BarChartSVG({ data, color = '#8E5E34' }: { data: { label: string; value: number }[]; color?: string }) {
-  const max = Math.max(...data.map(d => d.value), 1);
-  const barW = 36;
-  const gap = 12;
-  const chartH = 120;
-  const chartW = data.length * (barW + gap) + gap;
-
-  return (
-    <svg viewBox={`0 0 ${chartW} ${chartH + 30}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
-      {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
-        <line key={i} x1={0} x2={chartW} y1={chartH * (1 - pct)} y2={chartH * (1 - pct)} stroke="#E3D9CD" strokeWidth="0.5" />
-      ))}
-      {data.map((d, i) => {
-        const h = (d.value / max) * (chartH - 10);
-        const x = gap + i * (barW + gap);
-        return (
-          <g key={i}>
-            <rect x={x} y={chartH - h} width={barW} height={h} rx={4} fill={color} fillOpacity={0.75} />
-            <rect x={x} y={chartH - h} width={barW} height={h} rx={4} fill={color} fillOpacity={0.15} />
-            {d.value > 0 && (
-              <text x={x + barW / 2} y={chartH - h - 6} textAnchor="middle" className="fill-[#1C1C1C]" fontSize="9" fontWeight="600">
-                ${(d.value / 1000).toFixed(d.value >= 1000 ? 1 : 0)}{d.value >= 1000 ? 'k' : ''}
-              </text>
-            )}
-            <text x={x + barW / 2} y={chartH + 16} textAnchor="middle" className="fill-[#7A746C]" fontSize="10">{d.label}</text>
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
-
-function HorizontalBars({ data, maxWidth = 300 }: { data: { label: string; value: number; color: string }[]; maxWidth?: number }) {
-  const max = Math.max(...data.map(d => d.value), 1);
-  return (
-    <div className="space-y-3">
-      {data.map((d, i) => (
-        <div key={i}>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-[#7A746C]">{d.label}</span>
-            <span className="text-xs font-semibold text-[#1C1C1C]">{formatCurrency(d.value)}</span>
-          </div>
-          <div className="h-5 bg-[#EEE6DC] rounded-lg overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${Math.max((d.value / max) * 100, d.value > 0 ? 8 : 0)}%` }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="h-full rounded-lg"
-              style={{ backgroundColor: d.color }}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+function safeSetLS(key: string, val: string) {
+  try { localStorage.setItem(key, val); } catch { /* noop */ }
 }
 
 export default function ReportsPage() {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState<'ytd' | '3m' | '6m' | '12m'>('ytd');
+  const [range, setRange] = useState<DateRange>('year');
 
-  const loadData = useCallback(() => {
-    try {
-      setInvoices(lsGet<Invoice>('vantix_invoices'));
-      setLeads(lsGet<Lead>('vantix_leads'));
-      setProjects(lsGet<Project>('vantix_projects'));
-      setExpenses(lsGet<Expense>('vantix_expenses'));
-    } catch {}
-    setLoading(false);
+  useEffect(() => {
+    setRange(safeGetLS('vantix_report_range', 'year') as DateRange);
   }, []);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  const handleRange = (r: DateRange) => {
+    setRange(r);
+    safeSetLS('vantix_report_range', r);
+  };
 
-  const rangeStart = useMemo(() => {
-    const now = new Date();
-    switch (dateRange) {
-      case 'ytd': return new Date(now.getFullYear(), 0, 1);
-      case '3m': return new Date(now.getFullYear(), now.getMonth() - 3, 1);
-      case '6m': return new Date(now.getFullYear(), now.getMonth() - 6, 1);
-      case '12m': return new Date(now.getFullYear(), now.getMonth() - 12, 1);
-    }
-  }, [dateRange]);
+  const filteredRevenue = range === 'month' ? revenueData.slice(-1)
+    : range === 'quarter' ? revenueData.slice(-3)
+    : revenueData;
 
-  const filteredInvoices = useMemo(() => invoices.filter(i => new Date(i.paid_at || i.paid_date || i.created_at) >= rangeStart), [invoices, rangeStart]);
+  const maxRev = Math.max(...filteredRevenue.map(r => r.value));
+  const totalYTD = filteredRevenue.reduce((s, r) => s + r.value, 0);
 
-  // Revenue by month
-  const revenueByMonth = useMemo(() => {
-    const months: { label: string; value: number }[] = [];
-    const now = new Date();
-    const numMonths = dateRange === '3m' ? 3 : dateRange === '6m' ? 6 : dateRange === '12m' ? 12 : now.getMonth() + 1;
-    for (let i = numMonths - 1; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const label = d.toLocaleDateString('en-US', { month: 'short' });
-      const year = d.getFullYear(); const month = d.getMonth();
-      const total = invoices
-        .filter(inv => {
-          if (inv.status !== 'paid') return false;
-          const pd = new Date(inv.paid_at || inv.paid_date || inv.created_at);
-          return pd.getFullYear() === year && pd.getMonth() === month;
-        })
-        .reduce((s, inv) => s + (inv.total || inv.amount || 0), 0);
-      months.push({ label, value: total });
-    }
-    return months;
-  }, [invoices, dateRange]);
+  const exportCSV = useCallback(() => {
+    const rows = [
+      ['Month','Revenue'],
+      ...filteredRevenue.map(r => [r.month, r.value.toString()]),
+      [],
+      ['Client','LTV','Projects','Profit Margin %'],
+      ...clientMetrics.map(c => [c.name, c.ltv.toString(), c.projects.toString(), c.profitMargin.toString()]),
+      [],
+      ['Funnel Stage','Count'],
+      ...funnelStages.map(f => [f.label, f.count.toString()]),
+      [],
+      ['Team Member','Tasks Completed','Projects Delivered'],
+      ...teamData.map(t => [t.name, t.tasksCompleted.toString(), t.projectsDelivered.toString()]),
+    ];
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'vantix-report.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }, [filteredRevenue]);
 
-  // Expense breakdown by category
-  const expenseBreakdown = useMemo(() => {
-    const cats: Record<string, number> = {};
-    expenses.filter(e => new Date(e.date || e.created_at) >= rangeStart).forEach(e => {
-      const cat = e.category || 'Other';
-      cats[cat] = (cats[cat] || 0) + (e.amount || 0);
-    });
-    const colors = ['#8E5E34', '#B07A45', '#B07A45', '#B07A45', '#B07A45', '#8E5E34', '#B07A45'];
-    return Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([label, value], i) => ({ label, value, color: colors[i % colors.length] }));
-  }, [expenses, rangeStart]);
-
-  // Project profitability
-  const projectProfit = useMemo(() => {
-    return projects.filter(p => p.budget).map(p => {
-      const revenue = invoices.filter(i => i.project_id === p.id && i.status === 'paid').reduce((s, i) => s + (i.total || i.amount || 0), 0);
-      const spent = p.spent || 0;
-      return { name: p.name, budget: p.budget || 0, revenue, spent, profit: revenue - spent };
-    }).sort((a, b) => b.profit - a.profit);
-  }, [projects, invoices]);
-
-  // Lead conversion
-  const leadConversion = useMemo(() => {
-    const total = leads.length || 1;
-    const won = leads.filter(l => l.status === 'won').length;
-    const lost = leads.filter(l => l.status === 'lost').length;
-    const active = leads.filter(l => !['won', 'lost'].includes(l.status)).length;
-    return { total: leads.length, won, lost, active, rate: Math.round((won / total) * 100) };
-  }, [leads]);
-
-  // Top metrics
-  const totalRevenue = useMemo(() => filteredInvoices.filter(i => i.status === 'paid').reduce((s, i) => s + (i.total || i.amount || 0), 0), [filteredInvoices]);
-  const totalExpenses = useMemo(() => expenses.filter(e => new Date(e.date || e.created_at) >= rangeStart).reduce((s, e) => s + (e.amount || 0), 0), [expenses, rangeStart]);
-  const netProfit = totalRevenue - totalExpenses;
-  const avgDealSize = useMemo(() => {
-    const won = leads.filter(l => l.status === 'won');
-    return won.length ? won.reduce((s, l) => s + (l.estimated_value || 0), 0) / won.length : 0;
-  }, [leads]);
-
-  if (loading) return (
-    <div className="space-y-6 animate-pulse">
-      <div className="h-8 w-48 bg-[#E3D9CD] rounded-lg" />
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-28 bg-[#E3D9CD]/50 rounded-2xl" />)}</div>
-    </div>
-  );
-
-  const metrics = [
-    { label: 'Total Revenue', value: formatCurrency(totalRevenue), icon: DollarSign, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10', trend: totalRevenue > 0 },
-    { label: 'Total Expenses', value: formatCurrency(totalExpenses), icon: TrendingUp, color: 'text-[#B0614A]/50', bg: 'bg-[#B0614A]/5', border: 'border-[#B0614A]/10', trend: false },
-    { label: 'Net Profit', value: formatCurrency(netProfit), icon: BarChart3, color: netProfit >= 0 ? 'text-[#8E5E34]' : 'text-[#B0614A]/50', bg: 'bg-[#8E5E34]/10', border: 'border-[#8E5E34]/20', trend: netProfit >= 0 },
-    { label: 'Conversion Rate', value: `${leadConversion.rate}%`, icon: Target, color: 'text-[#8E5E34]', bg: 'bg-[#B07A45]/5', border: 'border-[#B07A45]/10', trend: leadConversion.rate > 20 },
+  const rangeButtons: { label: string; value: DateRange }[] = [
+    { label: 'This Month', value: 'month' },
+    { label: 'Quarter', value: 'quarter' },
+    { label: 'Year', value: 'year' },
+    { label: 'All Time', value: 'all' },
   ];
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="min-h-screen bg-[#F4EFE8] p-6 space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#8E5E34]/10"><BarChart3 size={22} className="text-[#8E5E34]" /></div>
-          <div>
-            <h1 className="text-2xl font-bold text-[#1C1C1C]">Reports</h1>
-            <p className="text-sm text-[#7A746C]">Analytics and business insights</p>
-          </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1C1C1C] flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-[#B07A45]" /> Reports & Analytics
+          </h1>
+          <p className="text-[#7A746C] text-sm mt-1">Performance overview and business metrics</p>
         </div>
         <div className="flex items-center gap-2">
-          <Filter size={14} className="text-[#7A746C]" />
-          <div className="flex bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-1">
-            {(['ytd', '3m', '6m', '12m'] as const).map(r => (
-              <button key={r} onClick={() => setDateRange(r)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${dateRange === r ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'text-[#7A746C] hover:text-[#1C1C1C]'}`}>
-                {r === 'ytd' ? 'YTD' : r.toUpperCase()}
+          <div className="flex bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl overflow-hidden">
+            {rangeButtons.map(b => (
+              <button key={b.value} onClick={() => handleRange(b.value)}
+                className={`px-3 py-1.5 text-sm font-medium transition-all ${range === b.value ? 'bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white' : 'text-[#4B4B4B] hover:bg-[#E3D9CD]'}`}>
+                {b.label}
               </button>
             ))}
           </div>
+          <button onClick={exportCSV} className="flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium hover:opacity-90 transition">
+            <Download className="w-4 h-4" /> Export CSV
+          </button>
         </div>
       </div>
 
-      {/* Top Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((m, i) => (
-          <motion.div key={m.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-            className={`bg-[#EEE6DC] border ${m.border} rounded-2xl p-5 shadow-sm`}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-[#7A746C] uppercase tracking-wide">{m.label}</span>
-              <div className={`p-2 rounded-xl ${m.bg}`}><m.icon size={16} className={m.color} /></div>
+      {/* Revenue Chart */}
+      <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-[#1C1C1C] flex items-center gap-2">
+            <DollarSign className="w-5 h-5 text-[#B07A45]" /> Revenue
+          </h2>
+          <span className="text-sm font-medium text-[#B07A45]">YTD: ${totalYTD.toLocaleString()}</span>
+        </div>
+        <div className="flex items-end gap-2 h-48">
+          {filteredRevenue.map((r, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <span className="text-[10px] text-[#7A746C]">${(r.value / 1000).toFixed(0)}k</span>
+              <div className="w-full rounded-t-md bg-gradient-to-t from-[#B07A45] to-[#C89A6A] transition-all duration-500"
+                style={{ height: `${(r.value / maxRev) * 100}%`, minHeight: 4 }} />
+              <span className="text-[10px] text-[#7A746C]">{r.month}</span>
             </div>
-            <div className="flex items-end gap-2">
-              <span className="text-2xl font-bold text-[#1C1C1C]">{m.value}</span>
-              {m.trend ? <ArrowUpRight size={16} className="text-[#B07A45]/50 mb-1" /> : <ArrowDownRight size={16} className="text-[#B0614A] mb-1" />}
-            </div>
-          </motion.div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Revenue by Month + Expense Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-          className="lg:col-span-2 bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[#E3D9CD] flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-[#8E5E34]/10"><BarChart3 size={14} className="text-[#8E5E34]" /></div>
-            <h3 className="text-sm font-semibold text-[#1C1C1C]">Revenue by Month</h3>
-          </div>
-          <div className="p-4">
-            {revenueByMonth.some(m => m.value > 0) ? (
-              <BarChartSVG data={revenueByMonth} />
-            ) : (
-              <div className="text-center py-6 text-sm text-[#7A746C]">No revenue data for this period</div>
-            )}
-          </div>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[#E3D9CD] flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-[#B07A45]/5"><DollarSign size={14} className="text-[#8E5E34]" /></div>
-            <h3 className="text-sm font-semibold text-[#1C1C1C]">Expense Breakdown</h3>
-          </div>
-          <div className="p-4">
-            {expenseBreakdown.length > 0 ? (
-              <HorizontalBars data={expenseBreakdown} />
-            ) : (
-              <div className="text-center py-6 text-sm text-[#7A746C]">No expense data</div>
-            )}
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Project Profitability + Lead Conversion */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-          className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[#E3D9CD] flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-[#B07A45]/5"><Briefcase size={16} className="text-[#8E5E34]" /></div>
-            <h3 className="text-sm font-semibold text-[#1C1C1C]">Project Profitability</h3>
-          </div>
-          <div className="p-5">
-            {projectProfit.length > 0 ? (
-              <div className="space-y-3">
-                {projectProfit.map((p, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD]">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[#1C1C1C] truncate">{p.name}</p>
-                      <p className="text-xs text-[#7A746C]">Budget: {formatCurrency(p.budget)} | Spent: {formatCurrency(p.spent)}</p>
-                    </div>
-                    <div className={`text-sm font-bold ${p.profit >= 0 ? 'text-[#8E5E34]' : 'text-[#B0614A]/50'}`}>
-                      {p.profit >= 0 ? '+' : ''}{formatCurrency(p.profit)}
-                    </div>
-                  </div>
+        {/* Client Metrics */}
+        <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6">
+          <h2 className="text-lg font-semibold text-[#1C1C1C] flex items-center gap-2 mb-4">
+            <Users className="w-5 h-5 text-[#B07A45]" /> Client Metrics
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-[#7A746C] border-b border-[#E3D9CD]">
+                  <th className="text-left py-2 font-medium">Client</th>
+                  <th className="text-right py-2 font-medium">LTV</th>
+                  <th className="text-right py-2 font-medium">Projects</th>
+                  <th className="text-right py-2 font-medium">Margin</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clientMetrics.map((c, i) => (
+                  <tr key={i} className="border-b border-[#E3D9CD]/50">
+                    <td className="py-2 text-[#1C1C1C] font-medium">{c.name}</td>
+                    <td className="py-2 text-right text-[#4B4B4B]">${c.ltv.toLocaleString()}</td>
+                    <td className="py-2 text-right text-[#4B4B4B]">{c.projects}</td>
+                    <td className="py-2 text-right">
+                      <span className={`font-medium ${c.profitMargin >= 40 ? 'text-green-700' : 'text-[#B07A45]'}`}>{c.profitMargin}%</span>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            ) : (
-              <div className="text-center py-6 text-sm text-[#7A746C]">No project data with budgets</div>
-            )}
+              </tbody>
+            </table>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-          className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-[#E3D9CD] flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-[#B07A45]/5"><Users size={16} className="text-[#8E5E34]" /></div>
-            <h3 className="text-sm font-semibold text-[#1C1C1C]">Lead Conversion</h3>
-          </div>
-          <div className="p-5">
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              {[
-                { label: 'Total Leads', value: leadConversion.total, color: 'text-[#8E5E34]' },
-                { label: 'Won', value: leadConversion.won, color: 'text-[#8E5E34]' },
-                { label: 'Lost', value: leadConversion.lost, color: 'text-[#B0614A]/50' },
-                { label: 'Active', value: leadConversion.active, color: 'text-[#8E5E34]' },
-              ].map(s => (
-                <div key={s.label} className="p-3 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-center">
-                  <p className="text-xs text-[#7A746C]">{s.label}</p>
-                  <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
-                </div>
-              ))}
-            </div>
-            {/* Conversion funnel visual */}
-            <div className="space-y-2">
-              {[
-                { label: 'Won', pct: leadConversion.total ? (leadConversion.won / leadConversion.total) * 100 : 0, color: '#B07A45' },
-                { label: 'Active', pct: leadConversion.total ? (leadConversion.active / leadConversion.total) * 100 : 0, color: '#8E5E34' },
-                { label: 'Lost', pct: leadConversion.total ? (leadConversion.lost / leadConversion.total) * 100 : 0, color: '#8E5E34' },
-              ].map(s => (
-                <div key={s.label} className="flex items-center gap-3">
-                  <span className="text-xs text-[#7A746C] w-12 text-right">{s.label}</span>
-                  <div className="flex-1 h-5 bg-[#EEE6DC] rounded-lg overflow-hidden">
-                    <motion.div initial={{ width: 0 }} animate={{ width: `${Math.max(s.pct, s.pct > 0 ? 8 : 0)}%` }} transition={{ duration: 0.6 }}
-                      className="h-full rounded-lg flex items-center px-2" style={{ backgroundColor: s.color }}>
-                      {s.pct > 10 && <span className="text-[10px] font-bold text-white">{Math.round(s.pct)}%</span>}
-                    </motion.div>
+        {/* Lead Conversion Funnel */}
+        <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6">
+          <h2 className="text-lg font-semibold text-[#1C1C1C] flex items-center gap-2 mb-4">
+            <Target className="w-5 h-5 text-[#B07A45]" /> Lead Conversion Funnel
+          </h2>
+          <div className="space-y-3">
+            {funnelStages.map((s, i) => {
+              const pct = (s.count / funnelStages[0].count) * 100;
+              const convRate = i > 0 ? ((s.count / funnelStages[i - 1].count) * 100).toFixed(1) : '100';
+              return (
+                <div key={i}>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-[#1C1C1C] font-medium">{s.label}</span>
+                    <span className="text-[#7A746C]">{s.count} ({convRate}%)</span>
+                  </div>
+                  <div className="h-6 bg-[#F4EFE8] rounded-lg overflow-hidden">
+                    <div className="h-full rounded-lg bg-gradient-to-r from-[#B07A45] to-[#C89A6A] transition-all duration-700"
+                      style={{ width: `${pct}%` }} />
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="mt-4 p-3 rounded-xl bg-[#8E5E34]/5 border border-[#8E5E34]/20 text-center">
-              <p className="text-xs text-[#7A746C]">Avg Deal Size</p>
-              <p className="text-lg font-bold text-[#8E5E34]">{formatCurrency(avgDealSize)}</p>
-            </div>
+              );
+            })}
+            <p className="text-xs text-[#7A746C] mt-2">
+              Overall conversion: {((funnelStages[4].count / funnelStages[0].count) * 100).toFixed(1)}%
+            </p>
           </div>
-        </motion.div>
+        </div>
+      </div>
+
+      {/* Team Productivity */}
+      <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6">
+        <h2 className="text-lg font-semibold text-[#1C1C1C] flex items-center gap-2 mb-4">
+          <CheckCircle className="w-5 h-5 text-[#B07A45]" /> Team Productivity
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {teamData.map((t, i) => {
+            const maxTasks = Math.max(...teamData.map(d => d.tasksCompleted));
+            return (
+              <div key={i} className="bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl p-4">
+                <p className="text-[#1C1C1C] font-medium text-sm">{t.name}</p>
+                <div className="mt-3 space-y-2">
+                  <div>
+                    <div className="flex justify-between text-xs text-[#7A746C] mb-1">
+                      <span>Tasks</span><span>{t.tasksCompleted}</span>
+                    </div>
+                    <div className="h-2 bg-[#E3D9CD] rounded-full">
+                      <div className="h-full rounded-full bg-gradient-to-r from-[#B07A45] to-[#C89A6A]"
+                        style={{ width: `${(t.tasksCompleted / maxTasks) * 100}%` }} />
+                    </div>
+                  </div>
+                  <p className="text-xs text-[#7A746C]">{t.projectsDelivered} projects delivered</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

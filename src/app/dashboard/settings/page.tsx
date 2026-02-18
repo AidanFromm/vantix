@@ -1,97 +1,246 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Save, User, Shield, Database, Github, CreditCard, Cloud, Zap, CheckCircle2, Info } from 'lucide-react';
+import { Settings, Building2, Users, Plug, Bell, CreditCard, AlertTriangle, Plus, X, Eye, EyeOff, Trash2, Download, Save } from 'lucide-react';
 
-interface UserData { name: string; email: string; role: string; }
-interface Integration { id: string; name: string; icon: React.ElementType; description: string; benefits: string[]; status: 'connected' | 'ready'; color: string; }
+interface TeamMember { id: string; name: string; role: string; email: string; }
+interface CompanyInfo { name: string; email: string; phone: string; address: string; }
+interface Integration { id: string; name: string; description: string; connected: boolean; apiKey: string; }
+interface NotifPrefs { emailDigest: boolean; inAppAlerts: boolean; weeklyReport: boolean; leadNotifs: boolean; }
 
-const integrations: Integration[] = [
-  { id: 'github', name: 'GitHub', icon: Github, description: 'Pull project status, commits, and issues into your dashboard.', benefits: ['See latest commits per project', 'Track open issues and PRs', 'Auto-update project activity'], status: 'ready', color: 'from-[#F4EFE8]0 to-[#1C1C1C]' },
-  { id: 'stripe', name: 'Stripe', icon: CreditCard, description: 'Track payments, revenue, and client invoices.', benefits: ['See total revenue per client', 'Track payment status', 'Get notified on payments'], status: 'ready', color: 'from-[#B07A45]/50 to-[#B07A45]' },
-  { id: 'supabase', name: 'Supabase', icon: Database, description: 'Store client data, project notes, and files securely.', benefits: ['Persistent files and notes', 'Real-time sync', 'Secure auth'], status: 'ready', color: 'from-[#B07A45]/50 to-[#8E5E34]' },
-  { id: 'vercel', name: 'Vercel', icon: Cloud, description: 'Monitor deployments and build status.', benefits: ['See deployment status', 'Build failure alerts', 'Preview URLs'], status: 'ready', color: 'from-[#4B4B4B] to-[#1C1C1C]' },
+function loadLS<T>(key: string, fallback: T): T {
+  try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
+}
+function saveLS(key: string, val: unknown) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+}
+
+const defaultCompany: CompanyInfo = { name: 'Vantix', email: 'hello@vantix.io', phone: '(908) 499-7696', address: '123 Business Ave, Suite 200' };
+const defaultTeam: TeamMember[] = [
+  { id: '1', name: 'Alex Rivera', role: 'Project Manager', email: 'alex@vantix.io' },
+  { id: '2', name: 'Jordan Lee', role: 'Developer', email: 'jordan@vantix.io' },
+  { id: '3', name: 'Sam Chen', role: 'Designer', email: 'sam@vantix.io' },
 ];
-
-const teamMembers = [
-  { name: 'Kyle', role: 'Admin', type: 'human' },
-  { name: 'Aidan', role: 'Admin', type: 'human' },
-  { name: 'Vantix', role: 'AI - OpenClaw', type: 'bot' },
-  { name: 'Botskii', role: 'AI - OpenClaw', type: 'bot' },
+const defaultIntegrations: Integration[] = [
+  { id: 'resend', name: 'Resend', description: 'Transactional email delivery', connected: true, apiKey: '' },
+  { id: 'twilio', name: 'Twilio', description: 'SMS and voice communications', connected: true, apiKey: '' },
+  { id: 'replicate', name: 'Replicate', description: 'AI model inference', connected: false, apiKey: '' },
+  { id: 'calcom', name: 'Cal.com', description: 'Appointment scheduling', connected: true, apiKey: '' },
+  { id: 'stripe', name: 'Stripe', description: 'Payment processing', connected: false, apiKey: '' },
 ];
+const defaultNotifs: NotifPrefs = { emailDigest: true, inAppAlerts: true, weeklyReport: false, leadNotifs: true };
 
 export default function SettingsPage() {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [company, setCompany] = useState<CompanyInfo>(defaultCompany);
+  const [team, setTeam] = useState<TeamMember[]>(defaultTeam);
+  const [integrations, setIntegrations] = useState<Integration[]>(defaultIntegrations);
+  const [notifs, setNotifs] = useState<NotifPrefs>(defaultNotifs);
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [newMember, setNewMember] = useState({ name: '', role: '', email: '' });
+  const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
   const [saved, setSaved] = useState(false);
-  const [expandedIntegration, setExpandedIntegration] = useState<string | null>(null);
 
-  useEffect(() => { try { const stored = localStorage.getItem('vantix_user'); if (stored) setUser(JSON.parse(stored)); } catch {} }, []);
+  useEffect(() => {
+    setCompany(loadLS('vantix_company', defaultCompany));
+    setTeam(loadLS('vantix_team', defaultTeam));
+    setIntegrations(loadLS('vantix_integrations', defaultIntegrations));
+    setNotifs(loadLS('vantix_notifs', defaultNotifs));
+  }, []);
 
-  const handleSave = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  const saveAll = () => {
+    saveLS('vantix_company', company);
+    saveLS('vantix_team', team);
+    saveLS('vantix_integrations', integrations);
+    saveLS('vantix_notifs', notifs);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const addMember = () => {
+    if (!newMember.name) return;
+    const updated = [...team, { ...newMember, id: Date.now().toString() }];
+    setTeam(updated);
+    setNewMember({ name: '', role: '', email: '' });
+    setShowAddMember(false);
+  };
+
+  const removeMember = (id: string) => setTeam(team.filter(m => m.id !== id));
+
+  const toggleIntegration = (id: string) => {
+    setIntegrations(integrations.map(i => i.id === id ? { ...i, connected: !i.connected } : i));
+  };
+
+  const updateIntKey = (id: string, key: string) => {
+    setIntegrations(integrations.map(i => i.id === id ? { ...i, apiKey: key } : i));
+  };
+
+  const toggleKey = (id: string) => setVisibleKeys(v => ({ ...v, [id]: !v[id] }));
+
+  const exportData = () => {
+    const data = { company, team, integrations: integrations.map(i => ({ ...i, apiKey: '***' })), notifs };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'vantix-settings.json'; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const clearCache = () => {
+    try {
+      ['vantix_company','vantix_team','vantix_integrations','vantix_notifs','vantix_calendar_events','vantix_report_range'].forEach(k => localStorage.removeItem(k));
+    } catch {}
+    setCompany(defaultCompany); setTeam(defaultTeam); setIntegrations(defaultIntegrations); setNotifs(defaultNotifs);
+  };
+
+  const Section = ({ icon: Icon, title, children }: { icon: typeof Settings; title: string; children: React.ReactNode }) => (
+    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6">
+      <h2 className="text-lg font-semibold text-[#1C1C1C] flex items-center gap-2 mb-4">
+        <Icon className="w-5 h-5 text-[#B07A45]" /> {title}
+      </h2>
+      {children}
+    </div>
+  );
+
+  const Toggle = ({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) => (
+    <div className="flex items-center justify-between py-2">
+      <span className="text-sm text-[#4B4B4B]">{label}</span>
+      <button onClick={onChange} className={`w-10 h-5 rounded-full transition-colors relative ${checked ? 'bg-[#B07A45]' : 'bg-[#E3D9CD]'}`}>
+        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
+      </button>
+    </div>
+  );
+
+  const Input = ({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) => (
+    <div>
+      <label className="text-xs font-medium text-[#7A746C] mb-1 block">{label}</label>
+      <input value={value} onChange={e => onChange(e.target.value)}
+        className="w-full px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] outline-none focus:border-[#B07A45]" />
+    </div>
+  );
 
   return (
-    <div className="space-y-8 max-w-4xl pb-12">
-      <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C]">Settings</h1><p className="text-[#7A746C] mt-1 text-sm">Manage integrations and team access</p></div>
-
-      {/* Profile */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 rounded-xl bg-[#8E5E34]/10 flex items-center justify-center"><User className="text-[#8E5E34]" size={20} /></div><div><h2 className="text-xl font-semibold text-[#1C1C1C]">Your Profile</h2><p className="text-sm text-[#7A746C]">Logged in as {user?.name || 'Unknown'}</p></div></div>
-        <div className="grid md:grid-cols-3 gap-4">
-          {[{ label: 'Name', value: user?.name }, { label: 'Email', value: user?.email }, { label: 'Role', value: user?.role }].map(f => (
-            <div key={f.label} className="p-4 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD]"><p className="text-xs text-[#7A746C] mb-1">{f.label}</p><p className="font-medium text-[#1C1C1C] capitalize">{f.value || '-'}</p></div>
-          ))}
+    <div className="min-h-screen bg-[#F4EFE8] p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1C1C1C] flex items-center gap-2">
+            <Settings className="w-6 h-6 text-[#B07A45]" /> Settings
+          </h1>
+          <p className="text-[#7A746C] text-sm mt-1">Manage your workspace configuration</p>
         </div>
-      </motion.div>
+        <button onClick={saveAll} className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium hover:opacity-90 transition">
+          <Save className="w-4 h-4" /> {saved ? 'Saved!' : 'Save Changes'}
+        </button>
+      </div>
 
-      {/* Integrations */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center gap-3 mb-2"><div className="w-10 h-10 rounded-xl bg-[#8E5E34]/10 flex items-center justify-center"><Zap className="text-[#8E5E34]" size={20} /></div><div><h2 className="text-xl font-semibold text-[#1C1C1C]">Integrations</h2><p className="text-sm text-[#7A746C]">Connect external services to power up Vantix</p></div></div>
-        <div className="mt-4 p-4 rounded-xl bg-[#B07A45]/5 border border-[#B07A45]/20 flex items-start gap-3"><Info size={18} className="text-[#8E5E34] shrink-0 mt-0.5" /><p className="text-sm text-[#8E5E34]">Integrations let you pull data from other services directly into Vantix.</p></div>
-        <div className="space-y-4 mt-6">
-          {integrations.map(integration => {
-            const Icon = integration.icon;
-            const isExpanded = expandedIntegration === integration.id;
-            return (
-              <div key={integration.id} className="bg-[#F4EFE8] rounded-xl border border-[#E3D9CD] overflow-hidden hover:border-[#8E5E34]/30 transition-colors">
-                <div className="p-4 cursor-pointer" onClick={() => setExpandedIntegration(isExpanded ? null : integration.id)}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${integration.color} flex items-center justify-center`}><Icon className="text-white" size={24} /></div>
-                      <div><h3 className="font-semibold text-[#1C1C1C]">{integration.name}</h3><p className="text-sm text-[#7A746C]">{integration.description}</p></div>
-                    </div>
-                    <span className="flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-[#B07A45]/5 text-[#8E5E34] border border-[#B07A45]/20"><Zap size={12} /> Ready</span>
-                  </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Company Info */}
+        <Section icon={Building2} title="Company Info">
+          <div className="space-y-3">
+            <Input label="Company Name" value={company.name} onChange={v => setCompany({ ...company, name: v })} />
+            <Input label="Email" value={company.email} onChange={v => setCompany({ ...company, email: v })} />
+            <Input label="Phone" value={company.phone} onChange={v => setCompany({ ...company, phone: v })} />
+            <Input label="Address" value={company.address} onChange={v => setCompany({ ...company, address: v })} />
+          </div>
+        </Section>
+
+        {/* Team Members */}
+        <Section icon={Users} title="Team Members">
+          <div className="space-y-2 mb-3">
+            {team.map(m => (
+              <div key={m.id} className="flex items-center justify-between bg-[#F4EFE8] rounded-xl p-3 border border-[#E3D9CD]">
+                <div>
+                  <p className="text-sm font-medium text-[#1C1C1C]">{m.name}</p>
+                  <p className="text-xs text-[#7A746C]">{m.role} — {m.email}</p>
                 </div>
-                {isExpanded && (
-                  <div className="border-t border-[#E3D9CD] p-4 bg-[#EEE6DC]">
-                    <h4 className="text-sm font-medium text-[#1C1C1C] mb-3">What you&apos;ll get:</h4>
-                    <ul className="space-y-2">{integration.benefits.map((b, i) => <li key={i} className="flex items-center gap-2 text-sm text-[#7A746C]"><CheckCircle2 size={14} className="text-[#B07A45]/50" /> {b}</li>)}</ul>
-                    <button className="mt-4 w-full bronze-btn hover:brightness-110 text-white py-3 rounded-xl font-medium transition-all">Connect {integration.name}</button>
-                  </div>
-                )}
+                <button onClick={() => removeMember(m.id)} className="text-[#7A746C] hover:text-red-600 transition">
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-            );
-          })}
-        </div>
-      </motion.div>
-
-      {/* Team */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 rounded-xl bg-[#B07A45]/5 flex items-center justify-center"><Shield className="text-[#B07A45]/50" size={20} /></div><div><h2 className="text-xl font-semibold text-[#1C1C1C]">Team Members</h2><p className="text-sm text-[#7A746C]">{teamMembers.length} members with access</p></div></div>
-        <div className="grid md:grid-cols-2 gap-4">
-          {teamMembers.map(member => (
-            <div key={member.name} className="flex items-center gap-4 p-4 bg-[#F4EFE8] rounded-xl border border-[#E3D9CD]">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${member.type === 'bot' ? 'bg-[#8E5E34]/10 text-[#8E5E34]' : 'bg-[#B07A45]/5 text-[#B07A45]/50'}`}>{member.name[0]}</div>
-              <div><h3 className="font-medium text-[#1C1C1C]">{member.name}</h3><p className="text-sm text-[#7A746C]">{member.role}</p></div>
+            ))}
+          </div>
+          {showAddMember ? (
+            <div className="space-y-2 bg-[#F4EFE8] rounded-xl p-3 border border-[#E3D9CD]">
+              <input placeholder="Name" value={newMember.name} onChange={e => setNewMember({ ...newMember, name: e.target.value })}
+                className="w-full px-3 py-1.5 rounded-lg bg-[#EEE6DC] border border-[#E3D9CD] text-sm outline-none" />
+              <input placeholder="Role" value={newMember.role} onChange={e => setNewMember({ ...newMember, role: e.target.value })}
+                className="w-full px-3 py-1.5 rounded-lg bg-[#EEE6DC] border border-[#E3D9CD] text-sm outline-none" />
+              <input placeholder="Email" value={newMember.email} onChange={e => setNewMember({ ...newMember, email: e.target.value })}
+                className="w-full px-3 py-1.5 rounded-lg bg-[#EEE6DC] border border-[#E3D9CD] text-sm outline-none" />
+              <div className="flex gap-2">
+                <button onClick={addMember} className="px-3 py-1.5 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-lg text-sm">Add</button>
+                <button onClick={() => setShowAddMember(false)} className="px-3 py-1.5 text-[#7A746C] text-sm">Cancel</button>
+              </div>
             </div>
-          ))}
-        </div>
-      </motion.div>
+          ) : (
+            <button onClick={() => setShowAddMember(true)} className="flex items-center gap-1 text-sm text-[#B07A45] hover:text-[#8E5E34] transition">
+              <Plus className="w-4 h-4" /> Add Member
+            </button>
+          )}
+        </Section>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex justify-end">
-        <button onClick={handleSave} className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${saved ? 'bg-[#B07A45]/50 text-white' : 'bronze-btn hover:brightness-110 text-white'}`}><Save size={20} />{saved ? 'Saved!' : 'Save Changes'}</button>
-      </motion.div>
+        {/* Integrations */}
+        <Section icon={Plug} title="Integrations">
+          <div className="space-y-3">
+            {integrations.map(int => (
+              <div key={int.id} className="bg-[#F4EFE8] rounded-xl p-3 border border-[#E3D9CD]">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <p className="text-sm font-medium text-[#1C1C1C]">{int.name}</p>
+                    <p className="text-xs text-[#7A746C]">{int.description}</p>
+                  </div>
+                  <button onClick={() => toggleIntegration(int.id)}
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${int.connected ? 'bg-green-100 text-green-700' : 'bg-[#E3D9CD] text-[#7A746C]'}`}>
+                    {int.connected ? 'Connected' : 'Disconnected'}
+                  </button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input type={visibleKeys[int.id] ? 'text' : 'password'} placeholder="API Key" value={int.apiKey}
+                    onChange={e => updateIntKey(int.id, e.target.value)}
+                    className="flex-1 px-2 py-1 rounded-lg bg-[#EEE6DC] border border-[#E3D9CD] text-xs outline-none font-mono" />
+                  <button onClick={() => toggleKey(int.id)} className="text-[#7A746C]">
+                    {visibleKeys[int.id] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* Notifications + Billing */}
+        <div className="space-y-6">
+          <Section icon={Bell} title="Notification Preferences">
+            <Toggle label="Daily email digest" checked={notifs.emailDigest} onChange={() => setNotifs({ ...notifs, emailDigest: !notifs.emailDigest })} />
+            <Toggle label="In-app alerts" checked={notifs.inAppAlerts} onChange={() => setNotifs({ ...notifs, inAppAlerts: !notifs.inAppAlerts })} />
+            <Toggle label="Weekly performance report" checked={notifs.weeklyReport} onChange={() => setNotifs({ ...notifs, weeklyReport: !notifs.weeklyReport })} />
+            <Toggle label="New lead notifications" checked={notifs.leadNotifs} onChange={() => setNotifs({ ...notifs, leadNotifs: !notifs.leadNotifs })} />
+          </Section>
+
+          <Section icon={CreditCard} title="Billing">
+            <div className="bg-[#F4EFE8] rounded-xl p-4 border border-[#E3D9CD]">
+              <p className="text-sm font-medium text-[#1C1C1C]">Pro Plan</p>
+              <p className="text-xs text-[#7A746C] mt-1">$49/month — Unlimited projects, priority support</p>
+              <p className="text-xs text-[#7A746C] mt-0.5">Next billing: March 1, 2026</p>
+              <button className="mt-3 px-3 py-1.5 text-sm text-[#B07A45] border border-[#B07A45] rounded-xl hover:bg-[#B07A45]/10 transition">
+                Manage Subscription
+              </button>
+            </div>
+          </Section>
+        </div>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="bg-[#EEE6DC] border border-red-200 rounded-2xl p-6">
+        <h2 className="text-lg font-semibold text-red-700 flex items-center gap-2 mb-4">
+          <AlertTriangle className="w-5 h-5" /> Danger Zone
+        </h2>
+        <div className="flex flex-wrap gap-3">
+          <button onClick={exportData} className="flex items-center gap-1.5 px-4 py-2 border border-[#E3D9CD] rounded-xl text-sm text-[#4B4B4B] hover:bg-[#F4EFE8] transition">
+            <Download className="w-4 h-4" /> Export All Data
+          </button>
+          <button onClick={clearCache} className="flex items-center gap-1.5 px-4 py-2 border border-red-300 rounded-xl text-sm text-red-600 hover:bg-red-50 transition">
+            <Trash2 className="w-4 h-4" /> Clear Cache
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
