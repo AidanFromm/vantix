@@ -48,6 +48,26 @@ export async function POST(request: Request) {
       writeFileSync(leadsFile, JSON.stringify(leads, null, 2));
     } catch (e) { console.error('Failed to create lead from contact:', e); }
 
+    // Send emails via Resend (non-blocking)
+    try {
+      const { sendEmail } = await import('@/lib/email');
+      const { contactConfirmationEmail, contactNotificationEmail } = await import('@/lib/email-templates');
+      // Confirmation to submitter
+      if (data.email) {
+        sendEmail(
+          data.email,
+          'We got your message — Vantix',
+          contactConfirmationEmail(data.name || 'there')
+        ).catch(() => {});
+      }
+      // Notification to team
+      sendEmail(
+        'usevantix@gmail.com',
+        `New contact: ${data.name || 'Unknown'}`,
+        contactNotificationEmail(data.name || 'Unknown', data.email || 'No email', data.message || '')
+      ).catch(() => {});
+    } catch { /* never block contact flow */ }
+
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('Contact submit error:', err);

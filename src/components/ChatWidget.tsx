@@ -45,6 +45,21 @@ const TYPING_DELAY = 900;
 
 const STORAGE_KEY = "vantix_chat_leads";
 
+async function sendLeadEmailNotification(lead: Lead) {
+  try {
+    const { chatLeadNotificationEmail } = await import('@/lib/email-templates');
+    await fetch('/api/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: 'usevantix@gmail.com',
+        subject: `Chat lead: ${lead.name || 'Anonymous'} — ${lead.interest || 'General'}`,
+        html: chatLeadNotificationEmail(lead.name || '', lead.email || '', lead.phone || '', lead.interest || ''),
+      }),
+    });
+  } catch { /* never block chat flow */ }
+}
+
 async function saveLeadToStorage(lead: Lead) {
   // Save to localStorage as fallback
   try {
@@ -55,6 +70,8 @@ async function saveLeadToStorage(lead: Lead) {
   } catch {
     /* noop */
   }
+  // Send email notification to team
+  sendLeadEmailNotification(lead).catch(() => {});
   // Save to Supabase
   try {
     const { createLead } = await import('@/lib/supabase');
