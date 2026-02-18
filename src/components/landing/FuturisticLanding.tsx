@@ -203,34 +203,39 @@ function HeroSection() {
   ]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#F4EFE8]">
-      <div className="relative z-20 max-w-5xl mx-auto px-6 text-center pt-20">
+    <section className="relative min-h-[85vh] sm:min-h-screen flex items-center justify-center overflow-hidden bg-[#F4EFE8]">
+      {/* Subtle gradient overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#F4EFE8] via-[#F4EFE8] to-[#EEE6DC] z-0" />
+      {/* Decorative bronze accent line */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-20 sm:h-32 bg-gradient-to-b from-transparent to-[#B07A45]/20 z-10" />
+
+      <div className="relative z-20 max-w-5xl mx-auto px-6 text-center pt-24 sm:pt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#E3D9CD] bg-[#EEE6DC] mb-8 shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#D8C2A8]/60 bg-[#EEE6DC]/80 mb-6 sm:mb-8 shadow-sm backdrop-blur-sm"
         >
           <span className="w-2 h-2 rounded-full bg-[#8E5E34] animate-pulse" />
-          <span className="text-sm text-[#7A746C] font-medium">2 Humans + 2 AI Assistants — Building 24/7</span>
+          <span className="text-xs sm:text-sm text-[#7A746C] font-medium">2 Humans + 2 AI Assistants — Building 24/7</span>
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[-0.03em] text-[#B07A45] leading-[0.93] mb-8"
+          className="text-[2.5rem] leading-[1] sm:text-6xl lg:text-7xl font-bold tracking-[-0.03em] text-[#1C1C1C] sm:leading-[0.93] mb-5 sm:mb-8"
         >
           Your Competitors Are
           <br />
-          Automating. <span className="text-[#8E5E34]">Are You?</span>
+          <span className="text-[#B07A45]">Automating.</span> <span className="text-[#8E5E34]">Are You?</span>
         </motion.h1>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.6 }}
-          className="h-16 sm:h-12 flex items-center justify-center mb-10"
+          className="h-12 sm:h-12 flex items-center justify-center mb-8"
         >
           <p className="text-base sm:text-lg text-[#7A746C] max-w-2xl mx-auto leading-relaxed">
             <span>{typedText}</span>
@@ -253,14 +258,27 @@ function HeroSection() {
           </a>
         </motion.div>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="text-sm text-[#8E5E34]/70 mt-8 font-medium"
+          transition={{ delay: 1.0, duration: 0.8 }}
+          className="mt-8 sm:mt-10 flex items-center justify-center gap-6 sm:gap-8"
         >
-          122-page platform built in 3 weeks · $50K+ in projects delivered · 24/7 AI operations
-        </motion.p>
+          <div className="text-center">
+            <p className="text-2xl sm:text-3xl font-bold text-[#B07A45]">122</p>
+            <p className="text-[10px] sm:text-xs text-[#7A746C] uppercase tracking-wider mt-1">Pages Built</p>
+          </div>
+          <div className="w-px h-8 bg-[#E3D9CD]" />
+          <div className="text-center">
+            <p className="text-2xl sm:text-3xl font-bold text-[#B07A45]">3 wks</p>
+            <p className="text-[10px] sm:text-xs text-[#7A746C] uppercase tracking-wider mt-1">Delivery</p>
+          </div>
+          <div className="w-px h-8 bg-[#E3D9CD]" />
+          <div className="text-center">
+            <p className="text-2xl sm:text-3xl font-bold text-[#B07A45]">24/7</p>
+            <p className="text-[10px] sm:text-xs text-[#7A746C] uppercase tracking-wider mt-1">AI Operations</p>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
