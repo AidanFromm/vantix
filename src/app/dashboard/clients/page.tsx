@@ -30,7 +30,7 @@ function ClientModal({ client, onClose, onSave }: { client?: Client | null; onCl
     tags: client?.tags?.join(', ') || '',
   });
   const [saving, setSaving] = useState(false);
-  const inputCls = 'w-full bg-[#F5EFE7] border border-[#D8CFC4] rounded-xl px-4 py-3 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#B07A45]/50';
+  const inputCls = 'w-full bg-[#F5EFE7] border border-[#D8CFC4] rounded-xl px-4 py-3 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#9B6C3C]/50';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,32 +53,32 @@ function ClientModal({ client, onClose, onSave }: { client?: Client | null; onCl
       <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="relative w-full max-w-lg bg-white border border-[#D8CFC4] rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-[#D8CFC4] flex items-center justify-between">
           <h2 className="text-lg font-semibold text-[#1E1E1E]">{client ? 'Edit Client' : 'Add New Client'}</h2>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[#EFE6DA] text-[#A89F94]"><X size={18} /></button>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[#EFE6DA] text-[#7A746C]"><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div><label className="text-xs text-[#A89F94] mb-1.5 block">Company / Client Name *</label><input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required className={inputCls} /></div>
+          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Company / Client Name *</label><input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required className={inputCls} /></div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Contact Name</label><input type="text" value={form.contact_name} onChange={e => setForm(p => ({ ...p, contact_name: e.target.value }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Email</label><input type="email" value={form.contact_email} onChange={e => setForm(p => ({ ...p, contact_email: e.target.value }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Contact Name</label><input type="text" value={form.contact_name} onChange={e => setForm(p => ({ ...p, contact_name: e.target.value }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Email</label><input type="email" value={form.contact_email} onChange={e => setForm(p => ({ ...p, contact_email: e.target.value }))} className={inputCls} /></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Phone</label><input type="tel" value={form.contact_phone} onChange={e => setForm(p => ({ ...p, contact_phone: e.target.value }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Industry</label><input type="text" value={form.industry} onChange={e => setForm(p => ({ ...p, industry: e.target.value }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Phone</label><input type="tel" value={form.contact_phone} onChange={e => setForm(p => ({ ...p, contact_phone: e.target.value }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Industry</label><input type="text" value={form.industry} onChange={e => setForm(p => ({ ...p, industry: e.target.value }))} className={inputCls} /></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Website</label><input type="text" value={form.website} onChange={e => setForm(p => ({ ...p, website: e.target.value }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Contract Value</label><input type="number" value={form.contract_value} onChange={e => setForm(p => ({ ...p, contract_value: parseFloat(e.target.value) || 0 }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Website</label><input type="text" value={form.website} onChange={e => setForm(p => ({ ...p, website: e.target.value }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Contract Value</label><input type="number" value={form.contract_value} onChange={e => setForm(p => ({ ...p, contract_value: parseFloat(e.target.value) || 0 }))} className={inputCls} /></div>
           </div>
-          <div><label className="text-xs text-[#A89F94] mb-1.5 block">Status</label>
+          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Status</label>
             <div className="flex flex-wrap gap-2">
-              {PIPELINE.map(s => { const cfg = STATUS_CONFIG[s]; return <button key={s} type="button" onClick={() => setForm(p => ({ ...p, status: s }))} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${form.status === s ? `${cfg.bg} ${cfg.color} ${cfg.border}` : 'bg-[#EFE6DA] text-[#A89F94] border-[#D8CFC4]'}`}>{cfg.label}</button>; })}
+              {PIPELINE.map(s => { const cfg = STATUS_CONFIG[s]; return <button key={s} type="button" onClick={() => setForm(p => ({ ...p, status: s }))} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${form.status === s ? `${cfg.bg} ${cfg.color} ${cfg.border}` : 'bg-[#EFE6DA] text-[#7A746C] border-[#D8CFC4]'}`}>{cfg.label}</button>; })}
             </div>
           </div>
-          <div><label className="text-xs text-[#A89F94] mb-1.5 block">Tags (comma separated)</label><input type="text" value={form.tags} onChange={e => setForm(p => ({ ...p, tags: e.target.value }))} className={inputCls} /></div>
-          <div><label className="text-xs text-[#A89F94] mb-1.5 block">Notes</label><textarea value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
+          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Tags (comma separated)</label><input type="text" value={form.tags} onChange={e => setForm(p => ({ ...p, tags: e.target.value }))} className={inputCls} /></div>
+          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Notes</label><textarea value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#EFE6DA] text-[#A89F94] text-sm">Cancel</button>
-            <button type="submit" disabled={saving || !form.name.trim()} className="flex-1 px-4 py-3 rounded-xl bg-[#B07A45] text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#EFE6DA] text-[#7A746C] text-sm">Cancel</button>
+            <button type="submit" disabled={saving || !form.name.trim()} className="flex-1 px-4 py-3 rounded-xl bg-[#9B6C3C] text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">
               {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : client ? 'Update Client' : 'Add Client'}
             </button>
           </div>
@@ -132,19 +132,19 @@ export default function ClientsPage() {
   return (
     <div className="space-y-6 pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1E1E1E]">Clients</h1><p className="text-sm text-[#A89F94] mt-1">Manage your client relationships</p></div>
-        <button onClick={() => { setEditingClient(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#B07A45] hover:bg-[#A67A4B] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#B07A45]/20 text-sm"><Plus size={18} /> Add Client</button>
+        <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1E1E1E]">Clients</h1><p className="text-sm text-[#7A746C] mt-1">Manage your client relationships</p></div>
+        <button onClick={() => { setEditingClient(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#9B6C3C] hover:bg-[#A67A4B] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#9B6C3C]/20 text-sm"><Plus size={18} /> Add Client</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: 'Total Clients', value: String(stats.total), icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
           { label: 'Active', value: String(stats.active), icon: Zap, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-          { label: 'Contract Value', value: formatCurrency(stats.totalValue), icon: DollarSign, color: 'text-[#B07A45]', bg: 'bg-[#B07A45]/10', border: 'border-[#B07A45]/20' },
+          { label: 'Contract Value', value: formatCurrency(stats.totalValue), icon: DollarSign, color: 'text-[#9B6C3C]', bg: 'bg-[#9B6C3C]/10', border: 'border-[#9B6C3C]/20' },
           { label: 'Lifetime Revenue', value: formatCurrency(stats.lifetimeValue), icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className={`bg-white border ${stat.border} rounded-2xl p-4 shadow-sm`}>
-            <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#A89F94]">{stat.label}</span><stat.icon size={18} className={stat.color} /></div>
+            <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#7A746C]">{stat.label}</span><stat.icon size={18} className={stat.color} /></div>
             <p className="text-2xl font-bold text-[#1E1E1E]">{stat.value}</p>
           </motion.div>
         ))}
@@ -152,13 +152,13 @@ export default function ClientsPage() {
 
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#A89F94]" />
-          <input type="text" placeholder="Search clients..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-11 pr-4 py-3 bg-white border border-[#D8CFC4] rounded-xl text-sm text-[#1E1E1E] focus:outline-none focus:border-[#B07A45]/50" />
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7A746C]" />
+          <input type="text" placeholder="Search clients..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-11 pr-4 py-3 bg-white border border-[#D8CFC4] rounded-xl text-sm text-[#1E1E1E] focus:outline-none focus:border-[#9B6C3C]/50" />
         </div>
         <div className="flex gap-2">
           {PIPELINE.map(s => {
             const cfg = STATUS_CONFIG[s];
-            return <button key={s} onClick={() => setStatusFilter(statusFilter === s ? 'all' : s)} className={`px-3 py-2 rounded-xl text-xs font-medium transition-all border hidden sm:block ${statusFilter === s ? `${cfg.bg} ${cfg.color} ${cfg.border}` : 'bg-white text-[#A89F94] border-[#D8CFC4] hover:text-[#1E1E1E]'}`}>{cfg.label}</button>;
+            return <button key={s} onClick={() => setStatusFilter(statusFilter === s ? 'all' : s)} className={`px-3 py-2 rounded-xl text-xs font-medium transition-all border hidden sm:block ${statusFilter === s ? `${cfg.bg} ${cfg.color} ${cfg.border}` : 'bg-white text-[#7A746C] border-[#D8CFC4] hover:text-[#1E1E1E]'}`}>{cfg.label}</button>;
           })}
         </div>
       </div>
@@ -168,28 +168,28 @@ export default function ClientsPage() {
           const sc = STATUS_CONFIG[client.status] || STATUS_CONFIG.lead;
           return (
             <motion.div key={client.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-              className="group relative overflow-hidden rounded-2xl bg-white border border-[#D8CFC4] p-5 hover:border-[#B07A45]/30 hover:shadow-lg transition-all shadow-sm">
+              className="group relative overflow-hidden rounded-2xl bg-white border border-[#D8CFC4] p-5 hover:border-[#9B6C3C]/30 hover:shadow-lg transition-all shadow-sm">
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#C89A6A]/40 to-[#B07A45]/40 border border-[#B07A45]/30 flex items-center justify-center text-lg font-bold text-[#B07A45] shrink-0">{getInitials(client.name)}</div>
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#C89A6A]/40 to-[#9B6C3C]/40 border border-[#9B6C3C]/30 flex items-center justify-center text-lg font-bold text-[#9B6C3C] shrink-0">{getInitials(client.name)}</div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-base font-semibold text-[#1E1E1E] truncate group-hover:text-[#B07A45] transition-colors">{client.name}</h3>
+                  <h3 className="text-base font-semibold text-[#1E1E1E] truncate group-hover:text-[#9B6C3C] transition-colors">{client.name}</h3>
                   <div className="flex items-center gap-2 mt-1">
                     <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${sc.bg} ${sc.color} ${sc.border}`}>{sc.label}</span>
-                    {client.industry && <span className="text-[10px] text-[#A89F94]">{client.industry}</span>}
+                    {client.industry && <span className="text-[10px] text-[#7A746C]">{client.industry}</span>}
                   </div>
                 </div>
               </div>
-              {client.contact_name && <div className="mb-3"><p className="text-sm text-[#1E1E1E] truncate">{client.contact_name}</p>{client.contact_email && <p className="text-xs text-[#A89F94] truncate">{client.contact_email}</p>}</div>}
+              {client.contact_name && <div className="mb-3"><p className="text-sm text-[#1E1E1E] truncate">{client.contact_name}</p>{client.contact_email && <p className="text-xs text-[#7A746C] truncate">{client.contact_email}</p>}</div>}
               <div className="flex items-center justify-between mb-3">
-                <div><p className="text-xs text-[#A89F94]">Contract Value</p><p className="text-lg font-bold text-[#B07A45]">{formatCurrency(client.contract_value || 0)}</p></div>
-                <div className="text-right"><p className="text-xs text-[#A89F94]">Created</p><p className="text-sm text-[#1E1E1E]">{formatDate(client.created_at)}</p></div>
+                <div><p className="text-xs text-[#7A746C]">Contract Value</p><p className="text-lg font-bold text-[#9B6C3C]">{formatCurrency(client.contract_value || 0)}</p></div>
+                <div className="text-right"><p className="text-xs text-[#7A746C]">Created</p><p className="text-sm text-[#1E1E1E]">{formatDate(client.created_at)}</p></div>
               </div>
-              {(client.tags?.length ?? 0) > 0 && <div className="flex flex-wrap gap-1.5 mb-3">{client.tags!.slice(0, 3).map(tag => <span key={tag} className="px-2 py-0.5 rounded-md bg-[#EFE6DA] text-[10px] text-[#A89F94]">{tag}</span>)}</div>}
+              {(client.tags?.length ?? 0) > 0 && <div className="flex flex-wrap gap-1.5 mb-3">{client.tags!.slice(0, 3).map(tag => <span key={tag} className="px-2 py-0.5 rounded-md bg-[#EFE6DA] text-[10px] text-[#7A746C]">{tag}</span>)}</div>}
               <div className="flex items-center gap-2 pt-3 border-t border-[#D8CFC4]">
-                {client.contact_email && <a href={`mailto:${client.contact_email}`} onClick={e => e.stopPropagation()} className="w-8 h-8 rounded-lg bg-[#EFE6DA] text-[#A89F94] hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors"><Mail size={14} /></a>}
-                {client.contact_phone && <a href={`tel:${client.contact_phone}`} onClick={e => e.stopPropagation()} className="w-8 h-8 rounded-lg bg-[#EFE6DA] text-[#A89F94] hover:text-emerald-600 hover:bg-emerald-50 flex items-center justify-center transition-colors"><Phone size={14} /></a>}
-                <button onClick={() => { setEditingClient(client); setShowModal(true); }} className="w-8 h-8 rounded-lg bg-[#EFE6DA] text-[#A89F94] hover:text-[#B07A45] hover:bg-[#B07A45]/10 flex items-center justify-center transition-colors ml-auto"><Edit3 size={14} /></button>
-                <button onClick={() => handleDelete(client.id)} disabled={deleting === client.id} className="w-8 h-8 rounded-lg bg-[#EFE6DA] text-[#A89F94] hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors">
+                {client.contact_email && <a href={`mailto:${client.contact_email}`} onClick={e => e.stopPropagation()} className="w-8 h-8 rounded-lg bg-[#EFE6DA] text-[#7A746C] hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors"><Mail size={14} /></a>}
+                {client.contact_phone && <a href={`tel:${client.contact_phone}`} onClick={e => e.stopPropagation()} className="w-8 h-8 rounded-lg bg-[#EFE6DA] text-[#7A746C] hover:text-emerald-600 hover:bg-emerald-50 flex items-center justify-center transition-colors"><Phone size={14} /></a>}
+                <button onClick={() => { setEditingClient(client); setShowModal(true); }} className="w-8 h-8 rounded-lg bg-[#EFE6DA] text-[#7A746C] hover:text-[#9B6C3C] hover:bg-[#9B6C3C]/10 flex items-center justify-center transition-colors ml-auto"><Edit3 size={14} /></button>
+                <button onClick={() => handleDelete(client.id)} disabled={deleting === client.id} className="w-8 h-8 rounded-lg bg-[#EFE6DA] text-[#7A746C] hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors">
                   {deleting === client.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                 </button>
               </div>
@@ -200,10 +200,10 @@ export default function ClientsPage() {
 
       {clients.length === 0 && !loading && (
         <div className="text-center py-20">
-          <div className="w-16 h-16 rounded-2xl bg-white border border-[#D8CFC4] flex items-center justify-center mx-auto mb-4 shadow-sm"><Users size={28} className="text-[#A89F94]" /></div>
+          <div className="w-16 h-16 rounded-2xl bg-white border border-[#D8CFC4] flex items-center justify-center mx-auto mb-4 shadow-sm"><Users size={28} className="text-[#7A746C]" /></div>
           <h3 className="text-lg font-medium text-[#1E1E1E] mb-2">{search || statusFilter !== 'all' ? 'No clients found' : 'No clients yet'}</h3>
-          <p className="text-sm text-[#A89F94] mb-6">{search || statusFilter !== 'all' ? 'Try adjusting your search or filters' : 'Add your first client to get started'}</p>
-          {!search && statusFilter === 'all' && <button onClick={() => { setEditingClient(null); setShowModal(true); }} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#B07A45]/10 text-[#B07A45] rounded-xl hover:bg-[#B07A45]/20 text-sm font-medium"><Plus size={16} /> Add Your First Client</button>}
+          <p className="text-sm text-[#7A746C] mb-6">{search || statusFilter !== 'all' ? 'Try adjusting your search or filters' : 'Add your first client to get started'}</p>
+          {!search && statusFilter === 'all' && <button onClick={() => { setEditingClient(null); setShowModal(true); }} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#9B6C3C]/10 text-[#9B6C3C] rounded-xl hover:bg-[#9B6C3C]/20 text-sm font-medium"><Plus size={16} /> Add Your First Client</button>}
         </div>
       )}
 

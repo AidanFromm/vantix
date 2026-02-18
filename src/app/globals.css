@@ -3,15 +3,15 @@
 :root {
   --color-bg: #F5EFE7;
   --color-text: #1E1E1E;
-  --color-muted: #A89F94;
-  --color-accent: #B07A45;
-  --color-accent-light: #B07A45;
-  --color-accent-hover: #B07A45;
+  --color-muted: #7A746C;
+  --color-accent: #9B6C3C;
+  --color-accent-light: #9B6C3C;
+  --color-accent-hover: #9B6C3C;
   --color-border: #D8CFC4;
   --color-card: #FFFFFF;
   --color-surface: #EFE6DA;
-  --color-sage: #A89F94;
-  --color-primary: #9B6C3C;
+  --color-sage: #7A746C;
+  --color-primary: #B07A45;
   --color-hover-bg: #EFE6DA;
 }
 
@@ -354,8 +354,8 @@ textarea {
   --dash-bg: #F5EFE7;
   --dash-card: #FFFFFF;
   --dash-text: #1E1E1E;
-  --dash-muted: #A89F94;
-  --dash-accent: #B07A45;
+  --dash-muted: #7A746C;
+  --dash-accent: #9B6C3C;
   --dash-border: #D8CFC4;
   --dash-surface: #EFE6DA;
   --dash-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
@@ -375,7 +375,7 @@ textarea {
 }
 
 .dashboard-scope .wood-btn {
-  background: #9B6C3C;
+  background: #B07A45;
   color: #FFFFFF;
   font-weight: 500;
   border-radius: 0.5rem;
@@ -387,7 +387,7 @@ textarea {
 }
 
 .dashboard-scope .wood-btn:hover {
-  background: #B07A45;
+  background: #9B6C3C;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 

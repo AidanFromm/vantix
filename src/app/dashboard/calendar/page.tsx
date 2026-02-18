@@ -24,7 +24,7 @@ function generateId(): string { return crypto?.randomUUID?.() || Math.random().t
 
 const EVENT_TYPES = ['consultation', 'meeting', 'deadline', 'follow-up'] as const;
 const EVENT_COLORS: Record<string, string> = {
-  consultation: '#B07A45', meeting: '#7B9E6B', deadline: '#C75B5B', 'follow-up': '#6B8EB8',
+  consultation: '#9B6C3C', meeting: '#7B9E6B', deadline: '#C75B5B', 'follow-up': '#6B8EB8',
   subscription: '#8B5CF6', task: '#3B82F6', invoice: '#F97316',
 };
 
@@ -162,26 +162,26 @@ export default function CalendarPage() {
     <div className="min-h-screen bg-[#F5EFE7] p-4 md:p-8">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#C89A6A] to-[#9B6C3C] shadow-[3px_3px_8px_#c8c4be,-3px_-3px_8px_#ffffff]">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#C89A6A] to-[#B07A45] shadow-[3px_3px_8px_#c8c4be,-3px_-3px_8px_#ffffff]">
             <CalendarIcon size={22} className="text-[#5C4033]" />
           </div>
-          <div><h1 className="text-2xl font-bold text-[#1E1E1E]">Calendar</h1><p className="text-sm text-[#A89F94]">Schedule and manage events</p></div>
+          <div><h1 className="text-2xl font-bold text-[#1E1E1E]">Calendar</h1><p className="text-sm text-[#7A746C]">Schedule and manage events</p></div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <div className="flex rounded-xl overflow-hidden border border-[#D8CFC4]">
             {(['month', 'week'] as ViewMode[]).map(mode => (
-              <button key={mode} onClick={() => setViewMode(mode)} className={`px-4 py-2 text-sm font-medium transition-all ${viewMode === mode ? 'bg-[#B07A45] text-white' : 'bg-white text-[#1E1E1E] hover:bg-[#EFE6DA]'}`}>{mode.charAt(0).toUpperCase() + mode.slice(1)}</button>
+              <button key={mode} onClick={() => setViewMode(mode)} className={`px-4 py-2 text-sm font-medium transition-all ${viewMode === mode ? 'bg-[#9B6C3C] text-white' : 'bg-white text-[#1E1E1E] hover:bg-[#EFE6DA]'}`}>{mode.charAt(0).toUpperCase() + mode.slice(1)}</button>
             ))}
           </div>
           <button onClick={goToToday} className="px-4 py-2 bg-white border border-[#D8CFC4] rounded-xl text-sm text-[#1E1E1E] hover:bg-[#EFE6DA]">Today</button>
-          <button onClick={() => openCreateForDate(selectedDate)} className="px-5 py-2.5 bg-[#B07A45] text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-[#A67A4B]"><Plus size={16} /> New Event</button>
+          <button onClick={() => openCreateForDate(selectedDate)} className="px-5 py-2.5 bg-[#9B6C3C] text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-[#A67A4B]"><Plus size={16} /> New Event</button>
         </div>
       </motion.div>
 
       {/* Legend */}
       <div className="flex flex-wrap gap-4 mb-4">
         {[{ label: 'Meeting', color: EVENT_COLORS.meeting }, { label: 'Task', color: EVENT_COLORS.task }, { label: 'Subscription', color: EVENT_COLORS.subscription }, { label: 'Invoice', color: EVENT_COLORS.invoice }, { label: 'Deadline', color: EVENT_COLORS.deadline }].map(l => (
-          <div key={l.label} className="flex items-center gap-1.5 text-xs text-[#A89F94]">
+          <div key={l.label} className="flex items-center gap-1.5 text-xs text-[#7A746C]">
             <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: l.color }} />{l.label}
           </div>
         ))}
@@ -191,14 +191,14 @@ export default function CalendarPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex-1">
           <div className="bg-white rounded-2xl overflow-hidden shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#D8CFC4]">
-              <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-[#EFE6DA] text-[#A89F94]"><ChevronLeft size={20} /></button>
+              <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-[#EFE6DA] text-[#7A746C]"><ChevronLeft size={20} /></button>
               <h2 className="text-lg font-bold text-[#1E1E1E]">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
-              <button onClick={nextMonth} className="p-2 rounded-xl hover:bg-[#EFE6DA] text-[#A89F94]"><ChevronRight size={20} /></button>
+              <button onClick={nextMonth} className="p-2 rounded-xl hover:bg-[#EFE6DA] text-[#7A746C]"><ChevronRight size={20} /></button>
             </div>
 
             {viewMode === 'month' ? (
               <div className="p-3 md:p-4">
-                <div className="grid grid-cols-7 mb-2">{DAY_NAMES.map(d => <div key={d} className="text-center text-xs font-semibold text-[#A89F94] py-2">{d}</div>)}</div>
+                <div className="grid grid-cols-7 mb-2">{DAY_NAMES.map(d => <div key={d} className="text-center text-xs font-semibold text-[#7A746C] py-2">{d}</div>)}</div>
                 <div className="grid grid-cols-7 gap-1">
                   {calendarCells.map((cell, i) => {
                     const isToday = cell.dateStr === todayStr;
@@ -206,12 +206,12 @@ export default function CalendarPage() {
                     const dayEvents = eventsByDate[cell.dateStr] || [];
                     return (
                       <button key={i} onClick={() => setSelectedDate(cell.dateStr)} onDoubleClick={() => openCreateForDate(cell.dateStr)}
-                        className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm transition-all ${!cell.isCurrentMonth ? 'text-[#D8CFC4]' : isSelected ? 'bg-[#B07A45]/10 text-[#1E1E1E] font-bold' : 'text-[#1E1E1E] hover:bg-[#EFE6DA]'} ${isToday ? 'ring-2 ring-[#B07A45] ring-offset-1' : ''}`}>
+                        className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm transition-all ${!cell.isCurrentMonth ? 'text-[#D8CFC4]' : isSelected ? 'bg-[#9B6C3C]/10 text-[#1E1E1E] font-bold' : 'text-[#1E1E1E] hover:bg-[#EFE6DA]'} ${isToday ? 'ring-2 ring-[#9B6C3C] ring-offset-1' : ''}`}>
                         <span className="text-xs md:text-sm">{cell.day}</span>
                         {dayEvents.length > 0 && (
                           <div className="flex gap-0.5 mt-0.5">
-                            {dayEvents.slice(0, 3).map((ev, j) => <div key={j} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: EVENT_COLORS[ev.type] || '#B07A45' }} />)}
-                            {dayEvents.length > 3 && <span className="text-[8px] text-[#A89F94]">+</span>}
+                            {dayEvents.slice(0, 3).map((ev, j) => <div key={j} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: EVENT_COLORS[ev.type] || '#9B6C3C' }} />)}
+                            {dayEvents.length > 3 && <span className="text-[8px] text-[#7A746C]">+</span>}
                           </div>
                         )}
                       </button>
@@ -229,13 +229,13 @@ export default function CalendarPage() {
                     return (
                       <div key={wd.dateStr} className="flex flex-col">
                         <button onClick={() => setSelectedDate(wd.dateStr)} onDoubleClick={() => openCreateForDate(wd.dateStr)}
-                          className={`flex flex-col items-center p-2 rounded-xl transition-all ${isSelected ? 'bg-[#B07A45]/10' : 'hover:bg-[#EFE6DA]'} ${isToday ? 'ring-2 ring-[#B07A45]' : ''}`}>
-                          <span className="text-xs text-[#A89F94] font-medium">{wd.dayName}</span>
+                          className={`flex flex-col items-center p-2 rounded-xl transition-all ${isSelected ? 'bg-[#9B6C3C]/10' : 'hover:bg-[#EFE6DA]'} ${isToday ? 'ring-2 ring-[#9B6C3C]' : ''}`}>
+                          <span className="text-xs text-[#7A746C] font-medium">{wd.dayName}</span>
                           <span className="text-lg font-bold text-[#1E1E1E]">{wd.day}</span>
                         </button>
                         <div className="mt-2 space-y-1 min-h-[80px]">
                           {dayEvents.map(ev => (
-                            <button key={ev.id} onClick={() => openEdit(ev)} className="w-full text-left px-2 py-1.5 rounded-lg text-xs font-medium truncate hover:opacity-80" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#B07A45') + '18', color: EVENT_COLORS[ev.type] || '#B07A45', borderLeft: `3px solid ${EVENT_COLORS[ev.type] || '#B07A45'}` }}>
+                            <button key={ev.id} onClick={() => openEdit(ev)} className="w-full text-left px-2 py-1.5 rounded-lg text-xs font-medium truncate hover:opacity-80" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#9B6C3C') + '18', color: EVENT_COLORS[ev.type] || '#9B6C3C', borderLeft: `3px solid ${EVENT_COLORS[ev.type] || '#9B6C3C'}` }}>
                               <div className="truncate">{ev.title}</div>
                               {ev.start_time !== '00:00' && <div className="text-[10px] opacity-70">{fmtTime(ev.start_time)}</div>}
                             </button>
@@ -256,33 +256,33 @@ export default function CalendarPage() {
             <div className="px-5 py-4 border-b border-[#D8CFC4] flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-[#1E1E1E]">{new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h3>
-                <p className="text-xs text-[#A89F94]">{selectedDayEvents.length} event{selectedDayEvents.length !== 1 ? 's' : ''}</p>
+                <p className="text-xs text-[#7A746C]">{selectedDayEvents.length} event{selectedDayEvents.length !== 1 ? 's' : ''}</p>
               </div>
-              <button onClick={() => openCreateForDate(selectedDate)} className="p-2 rounded-xl bg-[#B07A45]/10 text-[#B07A45] hover:bg-[#B07A45]/20"><Plus size={18} /></button>
+              <button onClick={() => openCreateForDate(selectedDate)} className="p-2 rounded-xl bg-[#9B6C3C]/10 text-[#9B6C3C] hover:bg-[#9B6C3C]/20"><Plus size={18} /></button>
             </div>
             <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
               {loading ? (
-                <div className="flex items-center justify-center py-12"><div className="w-6 h-6 border-2 border-[#B07A45]/30 border-t-[#B07A45] rounded-full animate-spin" /></div>
+                <div className="flex items-center justify-center py-12"><div className="w-6 h-6 border-2 border-[#9B6C3C]/30 border-t-[#9B6C3C] rounded-full animate-spin" /></div>
               ) : selectedDayEvents.length === 0 ? (
-                <div className="text-center py-12"><CalendarIcon size={36} className="mx-auto text-[#D8CFC4] mb-3" /><p className="text-sm text-[#A89F94]">No events scheduled</p></div>
+                <div className="text-center py-12"><CalendarIcon size={36} className="mx-auto text-[#D8CFC4] mb-3" /><p className="text-sm text-[#7A746C]">No events scheduled</p></div>
               ) : selectedDayEvents.map((ev, i) => {
                 const clientName = clients.find(c => c.id === ev.client_id)?.name;
                 return (
                   <motion.div key={ev.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                    className="p-4 rounded-xl border border-[#D8CFC4] hover:border-[#B07A45]/20 transition-all group cursor-pointer" onClick={() => openEdit(ev)}
-                    style={{ borderLeft: `4px solid ${EVENT_COLORS[ev.type] || '#B07A45'}` }}>
+                    className="p-4 rounded-xl border border-[#D8CFC4] hover:border-[#9B6C3C]/20 transition-all group cursor-pointer" onClick={() => openEdit(ev)}
+                    style={{ borderLeft: `4px solid ${EVENT_COLORS[ev.type] || '#9B6C3C'}` }}>
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-[#1E1E1E] text-sm truncate">{ev.title}</h4>
-                        {ev.start_time !== '00:00' && <div className="flex items-center gap-1 mt-1 text-xs text-[#A89F94]"><Clock size={12} />{fmtTime(ev.start_time)} - {fmtTime(ev.end_time)}</div>}
-                        {clientName && <div className="flex items-center gap-1 mt-1 text-xs text-[#A89F94]"><User size={12} />{clientName}</div>}
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-full text-[10px] font-semibold" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#B07A45') + '18', color: EVENT_COLORS[ev.type] || '#B07A45' }}><Tag size={10} />{ev.type}</span>
-                        {ev.notes && <p className="mt-2 text-xs text-[#A89F94] line-clamp-2">{ev.notes}</p>}
+                        {ev.start_time !== '00:00' && <div className="flex items-center gap-1 mt-1 text-xs text-[#7A746C]"><Clock size={12} />{fmtTime(ev.start_time)} - {fmtTime(ev.end_time)}</div>}
+                        {clientName && <div className="flex items-center gap-1 mt-1 text-xs text-[#7A746C]"><User size={12} />{clientName}</div>}
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-full text-[10px] font-semibold" style={{ backgroundColor: (EVENT_COLORS[ev.type] || '#9B6C3C') + '18', color: EVENT_COLORS[ev.type] || '#9B6C3C' }}><Tag size={10} />{ev.type}</span>
+                        {ev.notes && <p className="mt-2 text-xs text-[#7A746C] line-clamp-2">{ev.notes}</p>}
                       </div>
                       {!ev.source && (
                         <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={e => { e.stopPropagation(); openEdit(ev); }} className="p-1.5 rounded-lg hover:bg-[#EFE6DA] text-[#A89F94] hover:text-[#B07A45]"><Edit3 size={14} /></button>
-                          <button onClick={e => { e.stopPropagation(); handleDelete(ev.id); }} className="p-1.5 rounded-lg hover:bg-red-50 text-[#A89F94] hover:text-red-500"><Trash2 size={14} /></button>
+                          <button onClick={e => { e.stopPropagation(); openEdit(ev); }} className="p-1.5 rounded-lg hover:bg-[#EFE6DA] text-[#7A746C] hover:text-[#9B6C3C]"><Edit3 size={14} /></button>
+                          <button onClick={e => { e.stopPropagation(); handleDelete(ev.id); }} className="p-1.5 rounded-lg hover:bg-red-50 text-[#7A746C] hover:text-red-500"><Trash2 size={14} /></button>
                         </div>
                       )}
                     </div>
@@ -301,14 +301,14 @@ export default function CalendarPage() {
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-[#1E1E1E]">Event Details</h2>
-                <button onClick={() => setDetailEvent(null)} className="p-2 rounded-lg hover:bg-[#EFE6DA] text-[#A89F94]"><X size={18} /></button>
+                <button onClick={() => setDetailEvent(null)} className="p-2 rounded-lg hover:bg-[#EFE6DA] text-[#7A746C]"><X size={18} /></button>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full" style={{ backgroundColor: EVENT_COLORS[detailEvent.type] || '#B07A45' }} /><h3 className="font-semibold text-[#1E1E1E]">{detailEvent.title}</h3></div>
-                <p className="text-sm text-[#A89F94]">Date: {detailEvent.date}</p>
-                <p className="text-sm text-[#A89F94]">Type: {detailEvent.type}</p>
-                {detailEvent.notes && <p className="text-sm text-[#A89F94]">{detailEvent.notes}</p>}
-                <p className="text-xs text-[#B07A45]">Auto-generated from {detailEvent.source}</p>
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full" style={{ backgroundColor: EVENT_COLORS[detailEvent.type] || '#9B6C3C' }} /><h3 className="font-semibold text-[#1E1E1E]">{detailEvent.title}</h3></div>
+                <p className="text-sm text-[#7A746C]">Date: {detailEvent.date}</p>
+                <p className="text-sm text-[#7A746C]">Type: {detailEvent.type}</p>
+                {detailEvent.notes && <p className="text-sm text-[#7A746C]">{detailEvent.notes}</p>}
+                <p className="text-xs text-[#9B6C3C]">Auto-generated from {detailEvent.source}</p>
               </div>
             </motion.div>
           </motion.div>
@@ -337,13 +337,13 @@ function EventFormInner({ editEvent, initialDate, clients, onSave, onClose }: { 
   const [notes, setNotes] = useState(editEvent?.notes || '');
 
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (!title.trim()) return; onSave({ ...(editEvent ? { id: editEvent.id } : {}), title: title.trim(), date, start_time: startTime, end_time: endTime, client_id: clientId || null, type: eventType as CalendarEvent['type'], notes: notes.trim() }); };
-  const inputCls = 'w-full px-3 py-2.5 rounded-xl border border-[#D8CFC4] bg-[#F5EFE7] text-[#1E1E1E] focus:outline-none focus:border-[#B07A45]/50 text-sm';
+  const inputCls = 'w-full px-3 py-2.5 rounded-xl border border-[#D8CFC4] bg-[#F5EFE7] text-[#1E1E1E] focus:outline-none focus:border-[#9B6C3C]/50 text-sm';
 
   return (
     <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-white rounded-2xl w-full max-w-lg shadow-xl" onClick={e => e.stopPropagation()}>
       <div className="flex items-center justify-between px-6 py-4 border-b border-[#D8CFC4]">
         <h2 className="text-lg font-bold text-[#1E1E1E]">{editEvent ? 'Edit Event' : 'New Event'}</h2>
-        <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#EFE6DA] text-[#A89F94]"><X size={20} /></button>
+        <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#EFE6DA] text-[#7A746C]"><X size={20} /></button>
       </div>
       <form onSubmit={handleSubmit} className="p-6 space-y-4">
         <div><label className="block text-sm font-medium text-[#1E1E1E] mb-1">Title</label><input type="text" value={title} onChange={e => setTitle(e.target.value)} required className={inputCls} /></div>
@@ -359,7 +359,7 @@ function EventFormInner({ editEvent, initialDate, clients, onSave, onClose }: { 
         <div><label className="block text-sm font-medium text-[#1E1E1E] mb-1">Notes</label><textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} className={inputCls + ' resize-none'} /></div>
         <div className="flex justify-end gap-3 pt-2">
           <button type="button" onClick={onClose} className="px-5 py-2.5 bg-white border border-[#D8CFC4] rounded-xl text-sm text-[#1E1E1E]">Cancel</button>
-          <button type="submit" className="px-5 py-2.5 bg-[#B07A45] text-white rounded-xl text-sm font-medium flex items-center gap-2"><Check size={16} />{editEvent ? 'Update' : 'Create'}</button>
+          <button type="submit" className="px-5 py-2.5 bg-[#9B6C3C] text-white rounded-xl text-sm font-medium flex items-center gap-2"><Check size={16} />{editEvent ? 'Update' : 'Create'}</button>
         </div>
       </form>
     </motion.div>

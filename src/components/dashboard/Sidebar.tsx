@@ -117,7 +117,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
           {/* Collapse button - desktop only */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg bg-[#EFE6DA] hover:bg-[#EDE7DF] text-[#A89F94] hover:text-[#1E1E1E] transition-all"
+            className="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg bg-[#EFE6DA] hover:bg-[#EDE7DF] text-[#7A746C] hover:text-[#1E1E1E] transition-all"
           >
             {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
@@ -125,7 +125,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
           {/* Close button - mobile only */}
           <button
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden p-2 rounded-lg text-[#A89F94] hover:text-[#1E1E1E] hover:bg-[#EFE6DA] transition-colors"
+            className="lg:hidden p-2 rounded-lg text-[#7A746C] hover:text-[#1E1E1E] hover:bg-[#EFE6DA] transition-colors"
           >
             <X size={20} />
           </button>
@@ -136,8 +136,8 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       <div className="px-3 py-4 border-b border-[#D8CFC4]">
         <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
           <div className="relative flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C89A6A]/40 to-[#B07A45]/40 border border-[#B07A45]/30 flex items-center justify-center">
-              <span className="text-[#B07A45] font-semibold text-sm">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C89A6A]/40 to-[#9B6C3C]/40 border border-[#9B6C3C]/30 flex items-center justify-center">
+              <span className="text-[#9B6C3C] font-semibold text-sm">
                 {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
               </span>
             </div>
@@ -153,7 +153,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
                 className="min-w-0"
               >
                 <p className="text-sm font-medium text-[#1E1E1E] truncate">{user.name}</p>
-                <p className="text-xs text-[#A89F94] truncate">{user.role}</p>
+                <p className="text-xs text-[#7A746C] truncate">{user.role}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -175,8 +175,8 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
                   isCollapsed ? 'justify-center' : ''
                 } ${
                   isActive
-                    ? 'bg-[#B07A45] text-white rounded-lg shadow-sm'
-                    : 'text-[#A89F94] hover:text-[#1E1E1E] hover:bg-[#EFE6DA]'
+                    ? 'bg-[#9B6C3C] text-white rounded-lg shadow-sm'
+                    : 'text-[#7A746C] hover:text-[#1E1E1E] hover:bg-[#EFE6DA]'
                 }`}
               >
                 {/* Active indicator */}
@@ -211,7 +211,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
 
                 {/* Badge */}
                 {item.badge && item.badge > 0 && !isCollapsed && (
-                  <span className="ml-auto px-2 py-0.5 text-xs font-semibold bg-[#B07A45] text-white rounded-full">
+                  <span className="ml-auto px-2 py-0.5 text-xs font-semibold bg-[#9B6C3C] text-white rounded-full">
                     {item.badge}
                   </span>
                 )}
@@ -232,7 +232,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       <div className="p-3 border-t border-[#D8CFC4]">
         <button
           onClick={onLogout}
-          className={`flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-[#A89F94] hover:text-[#C4735B] hover:bg-[#C4735B]/10 transition-all ${
+          className={`flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-[#7A746C] hover:text-[#C4735B] hover:bg-[#C4735B]/10 transition-all ${
             isCollapsed ? 'justify-center' : ''
           }`}
         >

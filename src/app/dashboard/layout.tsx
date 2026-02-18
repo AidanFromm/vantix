@@ -38,8 +38,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5EFE7]">
         <div className="relative">
-          <div className="w-12 h-12 rounded-full border-2 border-[#B07A45]/30 border-t-[#B07A45] animate-spin" />
-          <div className="absolute inset-0 w-12 h-12 rounded-full bg-[#B07A45]/10 blur-xl" />
+          <div className="w-12 h-12 rounded-full border-2 border-[#9B6C3C]/30 border-t-[#9B6C3C] animate-spin" />
+          <div className="absolute inset-0 w-12 h-12 rounded-full bg-[#9B6C3C]/10 blur-xl" />
         </div>
       </div>
     );

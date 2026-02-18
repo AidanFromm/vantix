@@ -57,7 +57,7 @@ function LeadModal({ lead, onClose, onSave }: { lead?: Lead | null; onClose: () 
     source: lead?.source || '', notes: lead?.notes || '', tags: lead?.tags?.join(', ') || '',
   });
   const [saving, setSaving] = useState(false);
-  const inputCls = 'w-full bg-[#F5EFE7] border border-[#D8CFC4] rounded-xl px-4 py-3 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#B07A45]/50';
+  const inputCls = 'w-full bg-[#F5EFE7] border border-[#D8CFC4] rounded-xl px-4 py-3 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#9B6C3C]/50';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,30 +77,30 @@ function LeadModal({ lead, onClose, onSave }: { lead?: Lead | null; onClose: () 
       <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="relative w-full max-w-lg bg-white border border-[#D8CFC4] rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-[#D8CFC4] flex items-center justify-between">
           <h2 className="text-lg font-semibold text-[#1E1E1E]">{lead ? 'Edit Lead' : 'Add New Lead'}</h2>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[#EFE6DA] text-[#A89F94]"><X size={18} /></button>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[#EFE6DA] text-[#7A746C]"><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div><label className="text-xs text-[#A89F94] mb-1.5 block">Name *</label><input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required className={inputCls} /></div>
+          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Name *</label><input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required className={inputCls} /></div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Email</label><input type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Phone</label><input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} className={inputCls} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Company</label><input type="text" value={form.company} onChange={e => setForm(p => ({ ...p, company: e.target.value }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Source</label><input type="text" value={form.source} onChange={e => setForm(p => ({ ...p, source: e.target.value }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Email</label><input type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Phone</label><input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} className={inputCls} /></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Estimated Value</label><input type="number" value={form.estimated_value} onChange={e => setForm(p => ({ ...p, estimated_value: parseFloat(e.target.value) || 0 }))} className={inputCls} /></div>
-            <div><label className="text-xs text-[#A89F94] mb-1.5 block">Score (0-100)</label><input type="number" min={0} max={100} value={form.score} onChange={e => setForm(p => ({ ...p, score: parseInt(e.target.value) || 0 }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Company</label><input type="text" value={form.company} onChange={e => setForm(p => ({ ...p, company: e.target.value }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Source</label><input type="text" value={form.source} onChange={e => setForm(p => ({ ...p, source: e.target.value }))} className={inputCls} /></div>
           </div>
-          <div><label className="text-xs text-[#A89F94] mb-1.5 block">Status</label>
-            <div className="flex flex-wrap gap-2">{ALL_STATUSES.map(s => <button key={s.id} type="button" onClick={() => setForm(p => ({ ...p, status: s.id }))} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${form.status === s.id ? `${s.bg} ${s.color} ${s.border}` : 'bg-[#EFE6DA] text-[#A89F94] border-[#D8CFC4]'}`}>{s.label}</button>)}</div>
+          <div className="grid grid-cols-2 gap-4">
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Estimated Value</label><input type="number" value={form.estimated_value} onChange={e => setForm(p => ({ ...p, estimated_value: parseFloat(e.target.value) || 0 }))} className={inputCls} /></div>
+            <div><label className="text-xs text-[#7A746C] mb-1.5 block">Score (0-100)</label><input type="number" min={0} max={100} value={form.score} onChange={e => setForm(p => ({ ...p, score: parseInt(e.target.value) || 0 }))} className={inputCls} /></div>
           </div>
-          <div><label className="text-xs text-[#A89F94] mb-1.5 block">Tags</label><input type="text" value={form.tags} onChange={e => setForm(p => ({ ...p, tags: e.target.value }))} className={inputCls} placeholder="tag1, tag2" /></div>
-          <div><label className="text-xs text-[#A89F94] mb-1.5 block">Notes</label><textarea value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
+          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Status</label>
+            <div className="flex flex-wrap gap-2">{ALL_STATUSES.map(s => <button key={s.id} type="button" onClick={() => setForm(p => ({ ...p, status: s.id }))} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${form.status === s.id ? `${s.bg} ${s.color} ${s.border}` : 'bg-[#EFE6DA] text-[#7A746C] border-[#D8CFC4]'}`}>{s.label}</button>)}</div>
+          </div>
+          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Tags</label><input type="text" value={form.tags} onChange={e => setForm(p => ({ ...p, tags: e.target.value }))} className={inputCls} placeholder="tag1, tag2" /></div>
+          <div><label className="text-xs text-[#7A746C] mb-1.5 block">Notes</label><textarea value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#EFE6DA] text-[#A89F94] text-sm">Cancel</button>
-            <button type="submit" disabled={saving || !form.name.trim()} className="flex-1 px-4 py-3 rounded-xl bg-[#B07A45] text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#EFE6DA] text-[#7A746C] text-sm">Cancel</button>
+            <button type="submit" disabled={saving || !form.name.trim()} className="flex-1 px-4 py-3 rounded-xl bg-[#9B6C3C] text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">
               {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : lead ? 'Update Lead' : 'Add Lead'}
             </button>
           </div>
@@ -114,18 +114,18 @@ function KanbanCard({ lead, onSelect, onDelete, deleting }: { lead: Lead; onSele
   const daysInStage = daysSince(lead.updated_at || lead.created_at);
   return (
     <div draggable onDragStart={e => { e.dataTransfer.setData('leadId', lead.id); e.dataTransfer.effectAllowed = 'move'; }}>
-      <div className="group cursor-pointer rounded-xl bg-white border border-[#D8CFC4] hover:border-[#B07A45]/40 p-3.5 transition-all shadow-sm" onClick={() => onSelect(lead)}>
+      <div className="group cursor-pointer rounded-xl bg-white border border-[#D8CFC4] hover:border-[#9B6C3C]/40 p-3.5 transition-all shadow-sm" onClick={() => onSelect(lead)}>
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-[#1E1E1E] text-sm truncate group-hover:text-[#B07A45]">{lead.company || lead.name}</h3>
-            <p className="text-xs text-[#A89F94] truncate mt-0.5">{lead.name}</p>
+            <h3 className="font-semibold text-[#1E1E1E] text-sm truncate group-hover:text-[#9B6C3C]">{lead.company || lead.name}</h3>
+            <p className="text-xs text-[#7A746C] truncate mt-0.5">{lead.name}</p>
           </div>
           <ScoreBadge score={lead.score || 0} />
         </div>
-        {lead.estimated_value ? <div className="flex items-center gap-1 text-[#B07A45] mb-2"><DollarSign size={14} /><span className="font-bold text-sm">{formatCurrency(lead.estimated_value)}</span></div> : null}
+        {lead.estimated_value ? <div className="flex items-center gap-1 text-[#9B6C3C] mb-2"><DollarSign size={14} /><span className="font-bold text-sm">{formatCurrency(lead.estimated_value)}</span></div> : null}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-[10px] text-[#A89F94]"><Clock size={10} />{daysInStage}d in stage</div>
-          <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1 rounded text-[#A89F94] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+          <div className="flex items-center gap-1.5 text-[10px] text-[#7A746C]"><Clock size={10} />{daysInStage}d in stage</div>
+          <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1 rounded text-[#7A746C] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
             {deleting === lead.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
           </button>
         </div>
@@ -144,16 +144,16 @@ function KanbanColumn({ status, leads, onSelect, onDrop, onDelete, deleting, onC
 
   return (
     <div className="flex flex-col min-w-[260px] w-[260px] flex-shrink-0 lg:min-w-0 lg:w-auto lg:flex-1 h-full">
-      <div className={`px-3 py-3 rounded-t-xl border border-b-0 bg-white transition-all ${isDragOver ? 'border-[#B07A45]/50 bg-[#B07A45]/5' : 'border-[#D8CFC4]'}`}>
+      <div className={`px-3 py-3 rounded-t-xl border border-b-0 bg-white transition-all ${isDragOver ? 'border-[#9B6C3C]/50 bg-[#9B6C3C]/5' : 'border-[#D8CFC4]'}`}>
         <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2"><h3 className={`font-semibold text-sm ${status.color}`}>{status.label}</h3><span className="text-xs px-1.5 py-0.5 rounded-md bg-[#EFE6DA] text-[#A89F94] font-medium">{leads.length}</span></div>
+          <div className="flex items-center gap-2"><h3 className={`font-semibold text-sm ${status.color}`}>{status.label}</h3><span className="text-xs px-1.5 py-0.5 rounded-md bg-[#EFE6DA] text-[#7A746C] font-medium">{leads.length}</span></div>
         </div>
-        <div className="text-xs text-[#A89F94]">Total: <span className="text-[#B07A45] font-semibold">{formatCurrency(totalValue)}</span></div>
+        <div className="text-xs text-[#7A746C]">Total: <span className="text-[#9B6C3C] font-semibold">{formatCurrency(totalValue)}</span></div>
       </div>
       <div
         onDragOver={e => { e.preventDefault(); setIsDragOver(true); }} onDragLeave={() => setIsDragOver(false)}
         onDrop={e => { e.preventDefault(); setIsDragOver(false); const id = e.dataTransfer.getData('leadId'); if (id) onDrop(id, status.id); }}
-        className={`flex-1 p-2.5 rounded-b-xl border border-t-0 min-h-[300px] max-h-[calc(100vh-400px)] overflow-y-auto transition-all ${isDragOver ? 'bg-[#B07A45]/5 border-[#B07A45]/40' : 'border-[#D8CFC4]'}`}
+        className={`flex-1 p-2.5 rounded-b-xl border border-t-0 min-h-[300px] max-h-[calc(100vh-400px)] overflow-y-auto transition-all ${isDragOver ? 'bg-[#9B6C3C]/5 border-[#9B6C3C]/40' : 'border-[#D8CFC4]'}`}
       >
         <div className="flex flex-col gap-2.5">
           {leads.map(lead => (
@@ -166,7 +166,7 @@ function KanbanColumn({ status, leads, onSelect, onDrop, onDelete, deleting, onC
               )}
             </div>
           ))}
-          {leads.length === 0 && <div className="py-10 text-center"><Users size={18} className="mx-auto mb-2 text-[#A89F94]/40" /><p className="text-xs text-[#A89F94]">No leads here</p></div>}
+          {leads.length === 0 && <div className="py-10 text-center"><Users size={18} className="mx-auto mb-2 text-[#7A746C]/40" /><p className="text-xs text-[#7A746C]">No leads here</p></div>}
         </div>
       </div>
     </div>
@@ -179,7 +179,7 @@ function ListView({ leads, onSelect, onDelete, deleting }: { leads: Lead[]; onSe
     <div className="rounded-2xl bg-white border border-[#D8CFC4] overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="border-b border-[#D8CFC4] text-[#A89F94] text-xs uppercase tracking-wider">
+          <thead><tr className="border-b border-[#D8CFC4] text-[#7A746C] text-xs uppercase tracking-wider">
             <th className="text-left px-5 py-3 font-medium">Name</th>
             <th className="text-left px-5 py-3 font-medium">Company</th>
             <th className="text-left px-5 py-3 font-medium">Status</th>
@@ -194,13 +194,13 @@ function ListView({ leads, onSelect, onDelete, deleting }: { leads: Lead[]; onSe
               return (
                 <tr key={lead.id} className="border-b border-[#D8CFC4]/50 hover:bg-[#EFE6DA]/50 transition-colors cursor-pointer" onClick={() => onSelect(lead)}>
                   <td className="px-5 py-3.5 font-medium text-[#1E1E1E]">{lead.name}</td>
-                  <td className="px-5 py-3.5 text-[#A89F94]">{lead.company || '-'}</td>
+                  <td className="px-5 py-3.5 text-[#7A746C]">{lead.company || '-'}</td>
                   <td className="px-5 py-3.5"><span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium ${sc.color} ${sc.bg} border ${sc.border}`}>{sc.label}</span></td>
-                  <td className="px-5 py-3.5 text-right text-[#B07A45] font-medium">{lead.estimated_value ? formatCurrency(lead.estimated_value) : '-'}</td>
+                  <td className="px-5 py-3.5 text-right text-[#9B6C3C] font-medium">{lead.estimated_value ? formatCurrency(lead.estimated_value) : '-'}</td>
                   <td className="px-5 py-3.5 text-right"><ScoreBadge score={lead.score} /></td>
-                  <td className="px-5 py-3.5 text-[#A89F94]">{formatDate(lead.created_at)}</td>
+                  <td className="px-5 py-3.5 text-[#7A746C]">{formatDate(lead.created_at)}</td>
                   <td className="px-5 py-3.5 text-right">
-                    <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1.5 rounded-lg text-[#A89F94] hover:text-red-500 hover:bg-red-50">
+                    <button onClick={e => { e.stopPropagation(); onDelete(lead.id); }} className="p-1.5 rounded-lg text-[#7A746C] hover:text-red-500 hover:bg-red-50">
                       {deleting === lead.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                     </button>
                   </td>
@@ -316,19 +316,19 @@ export default function LeadsPage() {
   return (
     <div className="space-y-6 pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1E1E1E]">Leads</h1><p className="text-sm text-[#A89F94] mt-1">Manage your sales pipeline</p></div>
-        <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#B07A45] hover:bg-[#A67A4B] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#B07A45]/20 text-sm"><Plus size={18} /> Add Lead</button>
+        <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1E1E1E]">Leads</h1><p className="text-sm text-[#7A746C] mt-1">Manage your sales pipeline</p></div>
+        <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#9B6C3C] hover:bg-[#A67A4B] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#9B6C3C]/20 text-sm"><Plus size={18} /> Add Lead</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: 'Total Leads', value: String(stats.total), icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
           { label: 'New Leads', value: String(stats.newLeads), icon: Zap, color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-100' },
-          { label: 'Pipeline Value', value: formatCurrency(stats.pipelineValue), icon: Target, color: 'text-[#B07A45]', bg: 'bg-[#B07A45]/10', border: 'border-[#B07A45]/20' },
+          { label: 'Pipeline Value', value: formatCurrency(stats.pipelineValue), icon: Target, color: 'text-[#9B6C3C]', bg: 'bg-[#9B6C3C]/10', border: 'border-[#9B6C3C]/20' },
           { label: 'Won Value', value: formatCurrency(stats.wonValue), icon: Trophy, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className={`bg-white border ${stat.border} rounded-2xl p-4 shadow-sm`}>
-            <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#A89F94]">{stat.label}</span><div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}><stat.icon size={18} className={stat.color} /></div></div>
+            <div className="flex items-center justify-between mb-2"><span className="text-xs text-[#7A746C]">{stat.label}</span><div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}><stat.icon size={18} className={stat.color} /></div></div>
             <p className="text-xl sm:text-2xl font-bold text-[#1E1E1E]">{stat.value}</p>
           </motion.div>
         ))}
@@ -336,14 +336,14 @@ export default function LeadsPage() {
 
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex bg-white border border-[#D8CFC4] rounded-xl p-1">
-          <button onClick={() => setViewMode('kanban')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'kanban' ? 'bg-[#B07A45]/10 text-[#B07A45]' : 'text-[#A89F94]'}`}><LayoutGrid size={15} /> Kanban</button>
-          <button onClick={() => setViewMode('list')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'list' ? 'bg-[#B07A45]/10 text-[#B07A45]' : 'text-[#A89F94]'}`}><List size={15} /> List</button>
-          <button onClick={() => setViewMode('scraped')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'scraped' ? 'bg-[#B07A45]/10 text-[#B07A45]' : 'text-[#A89F94]'}`}><Download size={15} /> Scraped ({scrapedLeads.length})</button>
+          <button onClick={() => setViewMode('kanban')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'kanban' ? 'bg-[#9B6C3C]/10 text-[#9B6C3C]' : 'text-[#7A746C]'}`}><LayoutGrid size={15} /> Kanban</button>
+          <button onClick={() => setViewMode('list')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'list' ? 'bg-[#9B6C3C]/10 text-[#9B6C3C]' : 'text-[#7A746C]'}`}><List size={15} /> List</button>
+          <button onClick={() => setViewMode('scraped')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'scraped' ? 'bg-[#9B6C3C]/10 text-[#9B6C3C]' : 'text-[#7A746C]'}`}><Download size={15} /> Scraped ({scrapedLeads.length})</button>
         </div>
         {viewMode !== 'scraped' && (
           <div className="relative flex-1 sm:max-w-xs">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89F94]" />
-            <input type="text" placeholder="Search leads..." value={search} onChange={e => setSearch(e.target.value)} className="w-full bg-white border border-[#D8CFC4] rounded-xl pl-10 pr-4 py-2 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#B07A45]/50" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A746C]" />
+            <input type="text" placeholder="Search leads..." value={search} onChange={e => setSearch(e.target.value)} className="w-full bg-white border border-[#D8CFC4] rounded-xl pl-10 pr-4 py-2 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#9B6C3C]/50" />
           </div>
         )}
       </div>
@@ -351,10 +351,10 @@ export default function LeadsPage() {
       {viewMode === 'kanban' ? (
         filtered.length === 0 && !search ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 rounded-2xl bg-[#B07A45]/10 flex items-center justify-center mb-6"><Target size={40} className="text-[#B07A45]" /></div>
+            <div className="w-20 h-20 rounded-2xl bg-[#9B6C3C]/10 flex items-center justify-center mb-6"><Target size={40} className="text-[#9B6C3C]" /></div>
             <h3 className="text-xl font-semibold text-[#1E1E1E] mb-2">No leads yet</h3>
-            <p className="text-[#A89F94] max-w-md mb-6">Start building your sales pipeline by adding leads.</p>
-            <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#B07A45]/10 text-[#B07A45] border border-[#B07A45]/30 font-medium"><Plus size={18} /> Add Your First Lead</button>
+            <p className="text-[#7A746C] max-w-md mb-6">Start building your sales pipeline by adding leads.</p>
+            <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#9B6C3C]/10 text-[#9B6C3C] border border-[#9B6C3C]/30 font-medium"><Plus size={18} /> Add Your First Lead</button>
           </div>
         ) : (
           <div className="overflow-x-auto pb-4 -mx-4 px-4 lg:mx-0 lg:px-0">
@@ -369,24 +369,24 @@ export default function LeadsPage() {
         )
       ) : viewMode === 'list' ? (
         filtered.length === 0 ? (
-          <div className="text-center py-16"><p className="text-sm text-[#A89F94]">No leads found</p></div>
+          <div className="text-center py-16"><p className="text-sm text-[#7A746C]">No leads found</p></div>
         ) : (
           <ListView leads={filtered} onSelect={l => { setEditingLead(l); setShowModal(true); }} onDelete={handleDelete} deleting={deleting} />
         )
       ) : (
         scrapedLeads.length === 0 ? (
-          <div className="text-center py-16"><div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#B07A45]/10 flex items-center justify-center"><Search size={28} className="text-[#B07A45]" /></div><h3 className="font-semibold text-[#1E1E1E] mb-2">No scraped leads yet</h3></div>
+          <div className="text-center py-16"><div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#9B6C3C]/10 flex items-center justify-center"><Search size={28} className="text-[#9B6C3C]" /></div><h3 className="font-semibold text-[#1E1E1E] mb-2">No scraped leads yet</h3></div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
             {scrapedLeads.map((s, i) => (
-              <motion.div key={s.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="p-4 rounded-xl bg-white border border-[#D8CFC4] hover:border-[#B07A45]/30 transition-all shadow-sm">
+              <motion.div key={s.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="p-4 rounded-xl bg-white border border-[#D8CFC4] hover:border-[#9B6C3C]/30 transition-all shadow-sm">
                 <h4 className="text-sm font-semibold text-[#1E1E1E] truncate mb-2">{s.business_name || 'Unknown Business'}</h4>
                 <div className="space-y-1 mb-3">
-                  {s.email && <p className="text-xs text-[#A89F94] flex items-center gap-1.5"><Mail size={11} />{s.email}</p>}
-                  {s.phone && <p className="text-xs text-[#A89F94] flex items-center gap-1.5"><Phone size={11} />{s.phone}</p>}
+                  {s.email && <p className="text-xs text-[#7A746C] flex items-center gap-1.5"><Mail size={11} />{s.email}</p>}
+                  {s.phone && <p className="text-xs text-[#7A746C] flex items-center gap-1.5"><Phone size={11} />{s.phone}</p>}
                 </div>
                 {s.status !== 'added_to_leads' && s.status !== 'ignored' && (
-                  <button onClick={() => handleConvertScraped(s)} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#B07A45]/10 text-[#B07A45] hover:bg-[#B07A45]/20 text-xs font-medium"><Plus size={12} /> Convert to Lead</button>
+                  <button onClick={() => handleConvertScraped(s)} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#9B6C3C]/10 text-[#9B6C3C] hover:bg-[#9B6C3C]/20 text-xs font-medium"><Plus size={12} /> Convert to Lead</button>
                 )}
               </motion.div>
             ))}

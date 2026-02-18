@@ -149,7 +149,7 @@ export default function InvoicesPage() {
   const handlePrint = (inv: Invoice) => {
     const w = window.open('', '_blank');
     if (!w) return;
-    w.document.write(`<html><head><title>Invoice ${inv.invoice_number || inv.id.slice(0,8)}</title><style>body{font-family:system-ui;padding:40px;color:#1E1E1E}h1{color:#B07A45}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #D8CFC4}.total{font-size:24px;font-weight:bold}</style></head><body>`);
+    w.document.write(`<html><head><title>Invoice ${inv.invoice_number || inv.id.slice(0,8)}</title><style>body{font-family:system-ui;padding:40px;color:#1E1E1E}h1{color:#9B6C3C}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #D8CFC4}.total{font-size:24px;font-weight:bold}</style></head><body>`);
     w.document.write(`<h1>INVOICE</h1><p><strong>${inv.invoice_number || inv.id.slice(0,8)}</strong></p>`);
     w.document.write(`<p>Client: ${inv.client?.name || 'N/A'}</p>`);
     w.document.write(`<p>Date: ${formatDate(inv.created_at)}</p>`);
@@ -172,8 +172,8 @@ export default function InvoicesPage() {
   return (
     <div className="space-y-6 pb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div><h1 className="text-2xl font-bold text-[#1E1E1E]">Invoices</h1><p className="text-sm text-[#A89F94] mt-0.5">Manage invoices and track payments</p></div>
-        <button onClick={() => { setEditingInvoice(null); setShowForm(true); }} className="flex items-center gap-2 px-4 py-2.5 bg-[#B07A45] hover:bg-[#A67A4B] text-white rounded-xl font-medium text-sm transition-colors"><Plus size={16} /> New Invoice</button>
+        <div><h1 className="text-2xl font-bold text-[#1E1E1E]">Invoices</h1><p className="text-sm text-[#7A746C] mt-0.5">Manage invoices and track payments</p></div>
+        <button onClick={() => { setEditingInvoice(null); setShowForm(true); }} className="flex items-center gap-2 px-4 py-2.5 bg-[#9B6C3C] hover:bg-[#A67A4B] text-white rounded-xl font-medium text-sm transition-colors"><Plus size={16} /> New Invoice</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -181,22 +181,22 @@ export default function InvoicesPage() {
           <motion.div key={s.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`rounded-2xl bg-white border ${s.border} p-4 shadow-sm`}>
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-xl ${s.bg} flex items-center justify-center`}><s.icon size={18} className={s.color} /></div>
-              <div><p className="text-xs text-[#A89F94]">{s.label}</p><p className="text-lg font-bold text-[#1E1E1E]">{s.value}</p></div>
+              <div><p className="text-xs text-[#7A746C]">{s.label}</p><p className="text-lg font-bold text-[#1E1E1E]">{s.value}</p></div>
             </div>
           </motion.div>
         ))}
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-[#B07A45] border-t-transparent rounded-full animate-spin" /></div>
+        <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-[#9B6C3C] border-t-transparent rounded-full animate-spin" /></div>
       ) : (
         <>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89F94]" />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by client or invoice number..." className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#D8CFC4] rounded-xl text-sm text-[#1E1E1E] focus:outline-none focus:border-[#B07A45]/50" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A746C]" />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by client or invoice number..." className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#D8CFC4] rounded-xl text-sm text-[#1E1E1E] focus:outline-none focus:border-[#9B6C3C]/50" />
             </div>
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-white border border-[#D8CFC4] rounded-xl px-3 py-2 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#B07A45]/50">
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-white border border-[#D8CFC4] rounded-xl px-3 py-2 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#9B6C3C]/50">
               <option value="all">All Status</option>
               {(['draft','sent','paid','overdue','cancelled'] as const).map(s => <option key={s} value={s}>{statusConfig[s].label}</option>)}
             </select>
@@ -204,15 +204,15 @@ export default function InvoicesPage() {
 
           {filtered.length === 0 ? (
             <div className="text-center py-16">
-              <Receipt size={40} className="mx-auto mb-3 text-[#A89F94]/30" />
-              <p className="text-sm text-[#A89F94]">{search || statusFilter !== 'all' ? 'No invoices found' : 'No invoices yet'}</p>
-              {!search && statusFilter === 'all' && <button onClick={() => { setEditingInvoice(null); setShowForm(true); }} className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#B07A45]/10 text-[#B07A45] rounded-xl text-sm font-medium"><Plus size={14} /> Create Your First Invoice</button>}
+              <Receipt size={40} className="mx-auto mb-3 text-[#7A746C]/30" />
+              <p className="text-sm text-[#7A746C]">{search || statusFilter !== 'all' ? 'No invoices found' : 'No invoices yet'}</p>
+              {!search && statusFilter === 'all' && <button onClick={() => { setEditingInvoice(null); setShowForm(true); }} className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#9B6C3C]/10 text-[#9B6C3C] rounded-xl text-sm font-medium"><Plus size={14} /> Create Your First Invoice</button>}
             </div>
           ) : (
             <div className="rounded-2xl bg-white border border-[#D8CFC4] overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead><tr className="border-b border-[#D8CFC4] text-[#A89F94] text-xs uppercase tracking-wider">
+                  <thead><tr className="border-b border-[#D8CFC4] text-[#7A746C] text-xs uppercase tracking-wider">
                     <th className="text-left px-5 py-3 font-medium">Invoice</th>
                     <th className="text-left px-5 py-3 font-medium">Client</th>
                     <th className="text-left px-5 py-3 font-medium">Status</th>
@@ -225,18 +225,18 @@ export default function InvoicesPage() {
                       const amt = inv.total || inv.amount || 0;
                       return (
                         <tr key={inv.id} className="border-b border-[#D8CFC4]/50 hover:bg-[#EFE6DA]/50 transition-colors">
-                          <td className="px-5 py-3.5 font-mono text-[#B07A45] font-medium">{inv.invoice_number || inv.id.slice(0, 8)}</td>
+                          <td className="px-5 py-3.5 font-mono text-[#9B6C3C] font-medium">{inv.invoice_number || inv.id.slice(0, 8)}</td>
                           <td className="px-5 py-3.5 text-[#1E1E1E]">{inv.client?.name || 'N/A'}</td>
                           <td className="px-5 py-3.5"><StatusBadge status={inv.status} /></td>
                           <td className="px-5 py-3.5 text-right text-[#1E1E1E] font-medium">{formatCurrency(amt)}</td>
-                          <td className="px-5 py-3.5 text-[#A89F94]">{inv.due_date ? formatDate(inv.due_date) : 'N/A'}</td>
+                          <td className="px-5 py-3.5 text-[#7A746C]">{inv.due_date ? formatDate(inv.due_date) : 'N/A'}</td>
                           <td className="px-5 py-3.5 text-right">
                             <div className="flex items-center justify-end gap-1">
                               {inv.status === 'draft' && <button onClick={() => handleStatusChange(inv.id, 'sent')} className="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50" title="Mark Sent"><Send size={14} /></button>}
                               {(inv.status === 'sent' || inv.status === 'overdue') && <button onClick={() => handleStatusChange(inv.id, 'paid')} className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50" title="Record Payment"><CheckCircle2 size={14} /></button>}
-                              <button onClick={() => handlePrint(inv)} className="p-1.5 rounded-lg text-[#A89F94] hover:text-[#B07A45] hover:bg-[#B07A45]/10" title="Print/PDF"><Printer size={14} /></button>
-                              <button onClick={() => { setEditingInvoice(inv); setShowForm(true); }} className="p-1.5 rounded-lg text-[#A89F94] hover:text-[#B07A45] hover:bg-[#B07A45]/10"><Edit3 size={14} /></button>
-                              <button onClick={() => handleDelete(inv.id)} disabled={deleting === inv.id} className="p-1.5 rounded-lg text-[#A89F94] hover:text-red-500 hover:bg-red-50">
+                              <button onClick={() => handlePrint(inv)} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#9B6C3C] hover:bg-[#9B6C3C]/10" title="Print/PDF"><Printer size={14} /></button>
+                              <button onClick={() => { setEditingInvoice(inv); setShowForm(true); }} className="p-1.5 rounded-lg text-[#7A746C] hover:text-[#9B6C3C] hover:bg-[#9B6C3C]/10"><Edit3 size={14} /></button>
+                              <button onClick={() => handleDelete(inv.id)} disabled={deleting === inv.id} className="p-1.5 rounded-lg text-[#7A746C] hover:text-red-500 hover:bg-red-50">
                                 {deleting === inv.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                               </button>
                             </div>
@@ -271,7 +271,7 @@ function InvoiceFormModal({ invoice, clients, projects, onClose, onSave }: { inv
     notes: invoice?.notes || '',
   });
   const [saving, setSaving] = useState(false);
-  const inputCls = 'w-full bg-[#F5EFE7] border border-[#D8CFC4] rounded-xl px-4 py-3 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#B07A45]/50';
+  const inputCls = 'w-full bg-[#F5EFE7] border border-[#D8CFC4] rounded-xl px-4 py-3 text-sm text-[#1E1E1E] focus:outline-none focus:border-[#9B6C3C]/50';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); if (!form.total) return; setSaving(true);
@@ -283,33 +283,33 @@ function InvoiceFormModal({ invoice, clients, projects, onClose, onSave }: { inv
       <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-white border border-[#D8CFC4] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-xl" onClick={e => e.stopPropagation()}>
         <div className="p-6 border-b border-[#D8CFC4] flex items-center justify-between">
           <h2 className="text-lg font-semibold text-[#1E1E1E]">{invoice ? 'Edit Invoice' : 'New Invoice'}</h2>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[#EFE6DA] text-[#A89F94]"><X size={18} /></button>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[#EFE6DA] text-[#7A746C]"><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="block text-xs text-[#A89F94] mb-1.5">Invoice Number</label><input value={form.invoice_number} onChange={e => setForm(f => ({ ...f, invoice_number: e.target.value }))} placeholder="INV-1001" className={inputCls} /></div>
-            <div><label className="block text-xs text-[#A89F94] mb-1.5">Amount ($) *</label><input type="number" min={0} step={0.01} value={form.total || ''} onChange={e => setForm(f => ({ ...f, total: Number(e.target.value) }))} className={inputCls} required /></div>
+            <div><label className="block text-xs text-[#7A746C] mb-1.5">Invoice Number</label><input value={form.invoice_number} onChange={e => setForm(f => ({ ...f, invoice_number: e.target.value }))} placeholder="INV-1001" className={inputCls} /></div>
+            <div><label className="block text-xs text-[#7A746C] mb-1.5">Amount ($) *</label><input type="number" min={0} step={0.01} value={form.total || ''} onChange={e => setForm(f => ({ ...f, total: Number(e.target.value) }))} className={inputCls} required /></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="block text-xs text-[#A89F94] mb-1.5">Client</label><select value={form.client_id} onChange={e => setForm(f => ({ ...f, client_id: e.target.value }))} className={inputCls}><option value="">Select...</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
-            <div><label className="block text-xs text-[#A89F94] mb-1.5">Project</label><select value={form.project_id} onChange={e => setForm(f => ({ ...f, project_id: e.target.value }))} className={inputCls}><option value="">Select...</option>{projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
+            <div><label className="block text-xs text-[#7A746C] mb-1.5">Client</label><select value={form.client_id} onChange={e => setForm(f => ({ ...f, client_id: e.target.value }))} className={inputCls}><option value="">Select...</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
+            <div><label className="block text-xs text-[#7A746C] mb-1.5">Project</label><select value={form.project_id} onChange={e => setForm(f => ({ ...f, project_id: e.target.value }))} className={inputCls}><option value="">Select...</option>{projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
           </div>
-          <div><label className="block text-xs text-[#A89F94] mb-1.5">Status</label>
+          <div><label className="block text-xs text-[#7A746C] mb-1.5">Status</label>
             <div className="flex flex-wrap gap-2">
               {(['draft','sent','paid','overdue','cancelled'] as const).map(s => {
                 const cfg = statusConfig[s];
-                return <button key={s} type="button" onClick={() => setForm(f => ({ ...f, status: s, ...(s === 'paid' && !f.paid_at ? { paid_at: new Date().toISOString().split('T')[0] } : {}) }))} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${form.status === s ? `${cfg.bg} ${cfg.color} ${cfg.border}` : 'bg-[#EFE6DA] text-[#A89F94] border-[#D8CFC4]'}`}>{cfg.label}</button>;
+                return <button key={s} type="button" onClick={() => setForm(f => ({ ...f, status: s, ...(s === 'paid' && !f.paid_at ? { paid_at: new Date().toISOString().split('T')[0] } : {}) }))} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${form.status === s ? `${cfg.bg} ${cfg.color} ${cfg.border}` : 'bg-[#EFE6DA] text-[#7A746C] border-[#D8CFC4]'}`}>{cfg.label}</button>;
               })}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="block text-xs text-[#A89F94] mb-1.5">Due Date</label><input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))} className={inputCls} /></div>
-            <div><label className="block text-xs text-[#A89F94] mb-1.5">Paid Date</label><input type="date" value={form.paid_at} onChange={e => setForm(f => ({ ...f, paid_at: e.target.value }))} className={inputCls} /></div>
+            <div><label className="block text-xs text-[#7A746C] mb-1.5">Due Date</label><input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))} className={inputCls} /></div>
+            <div><label className="block text-xs text-[#7A746C] mb-1.5">Paid Date</label><input type="date" value={form.paid_at} onChange={e => setForm(f => ({ ...f, paid_at: e.target.value }))} className={inputCls} /></div>
           </div>
-          <div><label className="block text-xs text-[#A89F94] mb-1.5">Notes</label><textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
+          <div><label className="block text-xs text-[#7A746C] mb-1.5">Notes</label><textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={3} className={inputCls + ' resize-none'} /></div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#EFE6DA] text-[#A89F94] text-sm">Cancel</button>
-            <button type="submit" disabled={saving || !form.total} className="flex-1 px-4 py-3 rounded-xl bg-[#B07A45] text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl bg-[#EFE6DA] text-[#7A746C] text-sm">Cancel</button>
+            <button type="submit" disabled={saving || !form.total} className="flex-1 px-4 py-3 rounded-xl bg-[#9B6C3C] text-white font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2">
               {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : invoice ? 'Update' : 'Create'}
             </button>
           </div>

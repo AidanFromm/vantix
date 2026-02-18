@@ -49,7 +49,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <Link href="/" className="flex items-center justify-center gap-3 mb-8">
           <img src="/logo-v.png" alt="Vantix" className="w-10 h-10 rounded-xl object-cover" />
-          <span className="text-3xl font-bold text-[#1E1E1E]">vantix<span className="text-[#B07A45]">.</span></span>
+          <span className="text-3xl font-bold text-[#1E1E1E]">vantix<span className="text-[#9B6C3C]">.</span></span>
         </Link>
 
         <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl p-8">

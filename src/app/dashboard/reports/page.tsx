@@ -18,7 +18,7 @@ function lsGet<T>(key: string, fallback: T[] = []): T[] {
 
 function formatCurrency(n: number): string { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n); }
 
-function BarChartSVG({ data, color = '#B07A45' }: { data: { label: string; value: number }[]; color?: string }) {
+function BarChartSVG({ data, color = '#9B6C3C' }: { data: { label: string; value: number }[]; color?: string }) {
   const max = Math.max(...data.map(d => d.value), 1);
   const barW = 36;
   const gap = 12;
@@ -42,7 +42,7 @@ function BarChartSVG({ data, color = '#B07A45' }: { data: { label: string; value
                 ${(d.value / 1000).toFixed(d.value >= 1000 ? 1 : 0)}{d.value >= 1000 ? 'k' : ''}
               </text>
             )}
-            <text x={x + barW / 2} y={chartH + 16} textAnchor="middle" className="fill-[#A89F94]" fontSize="10">{d.label}</text>
+            <text x={x + barW / 2} y={chartH + 16} textAnchor="middle" className="fill-[#7A746C]" fontSize="10">{d.label}</text>
           </g>
         );
       })}
@@ -57,7 +57,7 @@ function HorizontalBars({ data, maxWidth = 300 }: { data: { label: string; value
       {data.map((d, i) => (
         <div key={i}>
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-[#A89F94]">{d.label}</span>
+            <span className="text-xs text-[#7A746C]">{d.label}</span>
             <span className="text-xs font-semibold text-[#1E1E1E]">{formatCurrency(d.value)}</span>
           </div>
           <div className="h-5 bg-[#EFE6DA] rounded-lg overflow-hidden">
@@ -135,7 +135,7 @@ export default function ReportsPage() {
       const cat = e.category || 'Other';
       cats[cat] = (cats[cat] || 0) + (e.amount || 0);
     });
-    const colors = ['#B07A45', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899'];
+    const colors = ['#9B6C3C', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899'];
     return Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([label, value], i) => ({ label, value, color: colors[i % colors.length] }));
   }, [expenses, rangeStart]);
 
@@ -176,7 +176,7 @@ export default function ReportsPage() {
   const metrics = [
     { label: 'Total Revenue', value: formatCurrency(totalRevenue), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100', trend: totalRevenue > 0 },
     { label: 'Total Expenses', value: formatCurrency(totalExpenses), icon: TrendingUp, color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-100', trend: false },
-    { label: 'Net Profit', value: formatCurrency(netProfit), icon: BarChart3, color: netProfit >= 0 ? 'text-[#B07A45]' : 'text-red-500', bg: 'bg-[#B07A45]/10', border: 'border-[#B07A45]/20', trend: netProfit >= 0 },
+    { label: 'Net Profit', value: formatCurrency(netProfit), icon: BarChart3, color: netProfit >= 0 ? 'text-[#9B6C3C]' : 'text-red-500', bg: 'bg-[#9B6C3C]/10', border: 'border-[#9B6C3C]/20', trend: netProfit >= 0 },
     { label: 'Conversion Rate', value: `${leadConversion.rate}%`, icon: Target, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100', trend: leadConversion.rate > 20 },
   ];
 
@@ -185,18 +185,18 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#B07A45]/10"><BarChart3 size={22} className="text-[#B07A45]" /></div>
+          <div className="p-2.5 rounded-xl bg-[#9B6C3C]/10"><BarChart3 size={22} className="text-[#9B6C3C]" /></div>
           <div>
             <h1 className="text-2xl font-bold text-[#1E1E1E]">Reports</h1>
-            <p className="text-sm text-[#A89F94]">Analytics and business insights</p>
+            <p className="text-sm text-[#7A746C]">Analytics and business insights</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Filter size={14} className="text-[#A89F94]" />
+          <Filter size={14} className="text-[#7A746C]" />
           <div className="flex bg-white border border-[#D8CFC4] rounded-xl p-1">
             {(['ytd', '3m', '6m', '12m'] as const).map(r => (
               <button key={r} onClick={() => setDateRange(r)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${dateRange === r ? 'bg-[#B07A45]/10 text-[#B07A45]' : 'text-[#A89F94] hover:text-[#1E1E1E]'}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${dateRange === r ? 'bg-[#9B6C3C]/10 text-[#9B6C3C]' : 'text-[#7A746C] hover:text-[#1E1E1E]'}`}>
                 {r === 'ytd' ? 'YTD' : r.toUpperCase()}
               </button>
             ))}
@@ -210,7 +210,7 @@ export default function ReportsPage() {
           <motion.div key={m.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
             className={`bg-white border ${m.border} rounded-2xl p-5 shadow-sm`}>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-[#A89F94] uppercase tracking-wide">{m.label}</span>
+              <span className="text-xs text-[#7A746C] uppercase tracking-wide">{m.label}</span>
               <div className={`p-2 rounded-xl ${m.bg}`}><m.icon size={16} className={m.color} /></div>
             </div>
             <div className="flex items-end gap-2">
@@ -226,14 +226,14 @@ export default function ReportsPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           className="lg:col-span-2 bg-white border border-[#D8CFC4] rounded-xl overflow-hidden shadow-sm">
           <div className="px-4 py-3 border-b border-[#D8CFC4] flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-[#B07A45]/10"><BarChart3 size={14} className="text-[#B07A45]" /></div>
+            <div className="p-1.5 rounded-lg bg-[#9B6C3C]/10"><BarChart3 size={14} className="text-[#9B6C3C]" /></div>
             <h3 className="text-sm font-semibold text-[#1E1E1E]">Revenue by Month</h3>
           </div>
           <div className="p-4">
             {revenueByMonth.some(m => m.value > 0) ? (
               <BarChartSVG data={revenueByMonth} />
             ) : (
-              <div className="text-center py-6 text-sm text-[#A89F94]">No revenue data for this period</div>
+              <div className="text-center py-6 text-sm text-[#7A746C]">No revenue data for this period</div>
             )}
           </div>
         </motion.div>
@@ -248,7 +248,7 @@ export default function ReportsPage() {
             {expenseBreakdown.length > 0 ? (
               <HorizontalBars data={expenseBreakdown} />
             ) : (
-              <div className="text-center py-6 text-sm text-[#A89F94]">No expense data</div>
+              <div className="text-center py-6 text-sm text-[#7A746C]">No expense data</div>
             )}
           </div>
         </motion.div>
@@ -269,7 +269,7 @@ export default function ReportsPage() {
                   <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4]">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[#1E1E1E] truncate">{p.name}</p>
-                      <p className="text-xs text-[#A89F94]">Budget: {formatCurrency(p.budget)} | Spent: {formatCurrency(p.spent)}</p>
+                      <p className="text-xs text-[#7A746C]">Budget: {formatCurrency(p.budget)} | Spent: {formatCurrency(p.spent)}</p>
                     </div>
                     <div className={`text-sm font-bold ${p.profit >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
                       {p.profit >= 0 ? '+' : ''}{formatCurrency(p.profit)}
@@ -278,7 +278,7 @@ export default function ReportsPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-6 text-sm text-[#A89F94]">No project data with budgets</div>
+              <div className="text-center py-6 text-sm text-[#7A746C]">No project data with budgets</div>
             )}
           </div>
         </motion.div>
@@ -295,10 +295,10 @@ export default function ReportsPage() {
                 { label: 'Total Leads', value: leadConversion.total, color: 'text-blue-600' },
                 { label: 'Won', value: leadConversion.won, color: 'text-emerald-600' },
                 { label: 'Lost', value: leadConversion.lost, color: 'text-red-500' },
-                { label: 'Active', value: leadConversion.active, color: 'text-[#B07A45]' },
+                { label: 'Active', value: leadConversion.active, color: 'text-[#9B6C3C]' },
               ].map(s => (
                 <div key={s.label} className="p-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4] text-center">
-                  <p className="text-xs text-[#A89F94]">{s.label}</p>
+                  <p className="text-xs text-[#7A746C]">{s.label}</p>
                   <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
                 </div>
               ))}
@@ -307,11 +307,11 @@ export default function ReportsPage() {
             <div className="space-y-2">
               {[
                 { label: 'Won', pct: leadConversion.total ? (leadConversion.won / leadConversion.total) * 100 : 0, color: '#10B981' },
-                { label: 'Active', pct: leadConversion.total ? (leadConversion.active / leadConversion.total) * 100 : 0, color: '#B07A45' },
+                { label: 'Active', pct: leadConversion.total ? (leadConversion.active / leadConversion.total) * 100 : 0, color: '#9B6C3C' },
                 { label: 'Lost', pct: leadConversion.total ? (leadConversion.lost / leadConversion.total) * 100 : 0, color: '#EF4444' },
               ].map(s => (
                 <div key={s.label} className="flex items-center gap-3">
-                  <span className="text-xs text-[#A89F94] w-12 text-right">{s.label}</span>
+                  <span className="text-xs text-[#7A746C] w-12 text-right">{s.label}</span>
                   <div className="flex-1 h-5 bg-[#EFE6DA] rounded-lg overflow-hidden">
                     <motion.div initial={{ width: 0 }} animate={{ width: `${Math.max(s.pct, s.pct > 0 ? 8 : 0)}%` }} transition={{ duration: 0.6 }}
                       className="h-full rounded-lg flex items-center px-2" style={{ backgroundColor: s.color }}>
@@ -321,9 +321,9 @@ export default function ReportsPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-4 p-3 rounded-xl bg-[#B07A45]/5 border border-[#B07A45]/20 text-center">
-              <p className="text-xs text-[#A89F94]">Avg Deal Size</p>
-              <p className="text-lg font-bold text-[#B07A45]">{formatCurrency(avgDealSize)}</p>
+            <div className="mt-4 p-3 rounded-xl bg-[#9B6C3C]/5 border border-[#9B6C3C]/20 text-center">
+              <p className="text-xs text-[#7A746C]">Avg Deal Size</p>
+              <p className="text-lg font-bold text-[#9B6C3C]">{formatCurrency(avgDealSize)}</p>
             </div>
           </div>
         </motion.div>

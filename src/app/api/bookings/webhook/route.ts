@@ -92,14 +92,14 @@ export async function POST(req: NextRequest) {
               subject: `New Booking: ${booking.name} — ${booking.date} at ${booking.time}`,
               html: `<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#F5EFE7;border-radius:12px;">
                 <h2 style="color:#1E1E1E;margin:0 0 16px;">New Consultation Booking</h2>
-                <p style="color:#9B6C3C;margin:4px 0;"><strong>Name:</strong> ${booking.name}</p>
-                <p style="color:#9B6C3C;margin:4px 0;"><strong>Email:</strong> ${booking.email}</p>
-                ${booking.phone ? `<p style="color:#9B6C3C;margin:4px 0;"><strong>Phone:</strong> ${booking.phone}</p>` : ''}
-                <p style="color:#9B6C3C;margin:4px 0;"><strong>Date:</strong> ${booking.date}</p>
-                <p style="color:#9B6C3C;margin:4px 0;"><strong>Time:</strong> ${booking.time}</p>
-                ${booking.notes ? `<p style="color:#9B6C3C;margin:4px 0;"><strong>Notes:</strong> ${booking.notes}</p>` : ''}
+                <p style="color:#B07A45;margin:4px 0;"><strong>Name:</strong> ${booking.name}</p>
+                <p style="color:#B07A45;margin:4px 0;"><strong>Email:</strong> ${booking.email}</p>
+                ${booking.phone ? `<p style="color:#B07A45;margin:4px 0;"><strong>Phone:</strong> ${booking.phone}</p>` : ''}
+                <p style="color:#B07A45;margin:4px 0;"><strong>Date:</strong> ${booking.date}</p>
+                <p style="color:#B07A45;margin:4px 0;"><strong>Time:</strong> ${booking.time}</p>
+                ${booking.notes ? `<p style="color:#B07A45;margin:4px 0;"><strong>Notes:</strong> ${booking.notes}</p>` : ''}
                 <hr style="border:1px solid #D8CFC4;margin:16px 0;"/>
-                <p style="color:#B07A45;font-size:13px;">View all bookings on your <a href="https://usevantix.com/dashboard" style="color:#1E1E1E;">dashboard</a></p>
+                <p style="color:#9B6C3C;font-size:13px;">View all bookings on your <a href="https://usevantix.com/dashboard" style="color:#1E1E1E;">dashboard</a></p>
               </div>`,
             }),
           });

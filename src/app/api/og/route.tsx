@@ -29,7 +29,7 @@ export async function GET() {
             width: 160,
             height: 160,
             borderRadius: 40,
-            background: 'linear-gradient(135deg, #B07A45, #9A7048)',
+            background: 'linear-gradient(135deg, #9B6C3C, #9A7048)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -61,7 +61,7 @@ export async function GET() {
             style={{
               fontSize: 26,
               fontWeight: 600,
-              color: '#B07A45',
+              color: '#9B6C3C',
               letterSpacing: 3,
               marginTop: 8,
             }}
@@ -71,7 +71,7 @@ export async function GET() {
           <div
             style={{
               fontSize: 20,
-              color: '#A89F94',
+              color: '#7A746C',
               marginTop: 16,
             }}
           >
@@ -87,7 +87,7 @@ export async function GET() {
             left: 0,
             right: 0,
             height: 6,
-            background: 'linear-gradient(90deg, #B07A45, #D4A76A, #B07A45)',
+            background: 'linear-gradient(90deg, #9B6C3C, #D4A76A, #9B6C3C)',
           }}
         />
       </div>

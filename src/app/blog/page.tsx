@@ -46,8 +46,8 @@ export default function BlogPage() {
               onClick={() => setActiveCategory(cat)}
               className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                 activeCategory === cat
-                  ? "bg-[#B07A45] text-white shadow-sm"
-                  : "bg-[#F5EFE7] text-[#1E1E1E]/70 border border-[#D8CFC4] shadow-sm hover:text-[#B07A45]"
+                  ? "bg-[#9B6C3C] text-white shadow-sm"
+                  : "bg-[#F5EFE7] text-[#1E1E1E]/70 border border-[#D8CFC4] shadow-sm hover:text-[#9B6C3C]"
               }`}
             >
               {cat}
@@ -67,14 +67,14 @@ export default function BlogPage() {
             >
               {/* Category Tag */}
               <div className="flex items-center gap-2 mb-4">
-                <Tag className="w-3.5 h-3.5 text-[#B07A45]" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#B07A45]">
+                <Tag className="w-3.5 h-3.5 text-[#9B6C3C]" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#9B6C3C]">
                   {post.category}
                 </span>
               </div>
 
               {/* Title */}
-              <h2 className="text-xl font-bold text-[#1E1E1E] mb-3 group-hover:text-[#B07A45] transition-colors">
+              <h2 className="text-xl font-bold text-[#1E1E1E] mb-3 group-hover:text-[#9B6C3C] transition-colors">
                 {post.title}
               </h2>
 
@@ -99,7 +99,7 @@ export default function BlogPage() {
                     {post.readTime}
                   </span>
                 </div>
-                <ArrowRight className="w-5 h-5 text-[#B07A45] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+                <ArrowRight className="w-5 h-5 text-[#9B6C3C] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
               </div>
             </Link>
           ))}
@@ -109,7 +109,7 @@ export default function BlogPage() {
       {/* Newsletter Signup */}
       <section className="px-6 pb-32">
         <div className="max-w-2xl mx-auto rounded-2xl border border-[#D8CFC4] bg-[#F5EFE7] p-10 shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff] text-center">
-          <Mail className="w-10 h-10 text-[#B07A45] mx-auto mb-4" />
+          <Mail className="w-10 h-10 text-[#9B6C3C] mx-auto mb-4" />
           <h3 className="text-2xl font-bold text-[#1E1E1E] mb-2">
             Get automation insights delivered
           </h3>
@@ -130,11 +130,11 @@ export default function BlogPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
               required
-              className="flex-1 px-5 py-3 rounded-xl border border-[#D8CFC4] bg-[#F5EFE7] text-[#1E1E1E] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 text-sm"
+              className="flex-1 px-5 py-3 rounded-xl border border-[#D8CFC4] bg-[#F5EFE7] text-[#1E1E1E] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#9B6C3C]/30 text-sm"
             />
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl bg-[#B07A45] text-white font-medium text-sm shadow-sm hover:bg-[#a67a4d] transition-colors"
+              className="px-6 py-3 rounded-xl bg-[#9B6C3C] text-white font-medium text-sm shadow-sm hover:bg-[#a67a4d] transition-colors"
             >
               Subscribe
             </button>

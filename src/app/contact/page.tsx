@@ -55,20 +55,20 @@ export default function ContactPage() {
     <div className="min-h-screen bg-[#F5EFE7] text-[#1E1E1E] scroll-smooth">
       <nav className="sticky top-0 z-50 bg-[#F5EFE7]/90 backdrop-blur-md border-b border-[#D8CFC4]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#B07A45] transition-colors">
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#9B6C3C] transition-colors">
             <ArrowLeft className="w-4 h-4" /> Vantix
           </Link>
         </div>
       </nav>
 
       <section className="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
-        <motion.p initial="hidden" animate="visible" variants={fadeUp} className="text-[#B07A45] text-sm font-semibold uppercase tracking-widest mb-4">
+        <motion.p initial="hidden" animate="visible" variants={fadeUp} className="text-[#9B6C3C] text-sm font-semibold uppercase tracking-widest mb-4">
           Let&apos;s Talk
         </motion.p>
         <motion.h1 initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.05 } } }} className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
           Stop Losing Time.<br />Start Automating This Week.
         </motion.h1>
-        <motion.p initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.1 } } }} className="text-lg text-[#A89F94] max-w-2xl mx-auto">
+        <motion.p initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.1 } } }} className="text-lg text-[#7A746C] max-w-2xl mx-auto">
           Tell us what&apos;s eating your time. We&apos;ll respond within 24 hours with a clear plan to fix it.
         </motion.p>
       </section>
@@ -80,19 +80,19 @@ export default function ContactPage() {
             className="lg:col-span-3 rounded-2xl p-8 bg-white border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
             {submitted ? (
               <div className="text-center py-12">
-                <CheckCircle2 className="w-12 h-12 text-[#B07A45] mx-auto mb-4" />
+                <CheckCircle2 className="w-12 h-12 text-[#9B6C3C] mx-auto mb-4" />
                 <h3 className="text-2xl font-bold mb-2">You&apos;re In.</h3>
-                <p className="text-[#A89F94] mb-2">We&apos;ll respond within 24 hours with next steps.</p>
-                <p className="text-[#A89F94] text-sm">Check your inbox — or book a call below for faster turnaround.</p>
+                <p className="text-[#7A746C] mb-2">We&apos;ll respond within 24 hours with next steps.</p>
+                <p className="text-[#7A746C] text-sm">Check your inbox — or book a call below for faster turnaround.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                <p className="text-sm text-[#A89F94] mb-2">Takes 60 seconds. No commitment required.</p>
+                <p className="text-sm text-[#7A746C] mb-2">Takes 60 seconds. No commitment required.</p>
                 <div>
                   <label className="block text-sm font-medium mb-2">Name *</label>
                   <input
                     required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 focus:border-[#B07A45] transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#9B6C3C]/30 focus:border-[#9B6C3C] transition-all"
                     placeholder="Your name"
                   />
                 </div>
@@ -100,7 +100,7 @@ export default function ContactPage() {
                   <label className="block text-sm font-medium mb-2">Email *</label>
                   <input
                     required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 focus:border-[#B07A45] transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#9B6C3C]/30 focus:border-[#9B6C3C] transition-all"
                     placeholder="you@company.com"
                   />
                 </div>
@@ -108,7 +108,7 @@ export default function ContactPage() {
                   <label className="block text-sm font-medium mb-2">Company <span className="text-[#C5C3BE]">(optional)</span></label>
                   <input
                     value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 focus:border-[#B07A45] transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#9B6C3C]/30 focus:border-[#9B6C3C] transition-all"
                     placeholder="Your company"
                   />
                 </div>
@@ -116,7 +116,7 @@ export default function ContactPage() {
                   <label className="block text-sm font-medium mb-2">What&apos;s eating your time? *</label>
                   <textarea
                     required rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 focus:border-[#B07A45] transition-all resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-[#F5EFE7] border border-[#D8CFC4] shadow-[inset_3px_3px_6px_#d1cdc7,inset_-3px_-3px_6px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#9B6C3C]/30 focus:border-[#9B6C3C] transition-all resize-none"
                     placeholder="Tell us about the manual tasks, bottlenecks, or goals you want to automate..."
                   />
                 </div>
@@ -138,24 +138,24 @@ export default function ContactPage() {
             <div className="rounded-2xl p-6 bg-white border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
               <h3 className="font-bold mb-4">Direct Line</h3>
               <div className="space-y-4">
-                <a href="tel:+19084987753" className="flex items-center gap-3 text-sm text-[#5C5650] hover:text-[#B07A45] transition-colors">
-                  <Phone className="w-4 h-4 text-[#B07A45]" /> (908) 498-7753
+                <a href="tel:+19084987753" className="flex items-center gap-3 text-sm text-[#5C5650] hover:text-[#9B6C3C] transition-colors">
+                  <Phone className="w-4 h-4 text-[#9B6C3C]" /> (908) 498-7753
                 </a>
-                <a href="mailto:hello@usevantix.com" className="flex items-center gap-3 text-sm text-[#5C5650] hover:text-[#B07A45] transition-colors">
-                  <Mail className="w-4 h-4 text-[#B07A45]" /> hello@usevantix.com
+                <a href="mailto:hello@usevantix.com" className="flex items-center gap-3 text-sm text-[#5C5650] hover:text-[#9B6C3C] transition-colors">
+                  <Mail className="w-4 h-4 text-[#9B6C3C]" /> hello@usevantix.com
                 </a>
               </div>
             </div>
             <div className="rounded-2xl p-6 bg-white border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
               <h3 className="font-bold mb-3">Skip the Form — Book a Call</h3>
-              <p className="text-sm text-[#A89F94] mb-4">30-minute free AI audit. We&apos;ll map your automation opportunities and show you projected ROI.</p>
+              <p className="text-sm text-[#7A746C] mb-4">30-minute free AI audit. We&apos;ll map your automation opportunities and show you projected ROI.</p>
               <a
                 href="/#booking"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-full border border-[#D8CFC4] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#B07A45]/20 transition-all"
+                className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-full border border-[#D8CFC4] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#9B6C3C]/20 transition-all"
               >
-                <Calendar className="w-4 h-4 text-[#B07A45]" /> Open Cal.com
+                <Calendar className="w-4 h-4 text-[#9B6C3C]" /> Open Cal.com
               </a>
             </div>
             <div className="rounded-2xl p-6 bg-white border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
@@ -167,7 +167,7 @@ export default function ContactPage() {
                   { icon: Zap, text: 'Custom proposal with ROI projections' },
                 ].map((step) => (
                   <div key={step.text} className="flex items-start gap-3 text-sm text-[#5C5650]">
-                    <step.icon className="w-4 h-4 text-[#B07A45] mt-0.5 shrink-0" />
+                    <step.icon className="w-4 h-4 text-[#9B6C3C] mt-0.5 shrink-0" />
                     <span>{step.text}</span>
                   </div>
                 ))}
@@ -181,7 +181,7 @@ export default function ContactPage() {
       <section className="max-w-4xl mx-auto px-6 pb-24">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
           <h2 className="text-2xl font-bold mb-2 text-center">Prefer to Talk Live?</h2>
-          <p className="text-[#A89F94] text-center mb-6">Pick a time below. 30 minutes. Zero pressure. All value.</p>
+          <p className="text-[#7A746C] text-center mb-6">Pick a time below. 30 minutes. Zero pressure. All value.</p>
           <div className="rounded-2xl overflow-hidden border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
             <iframe
               src="https://cal.com/vantix/ai-consultation"
@@ -194,7 +194,7 @@ export default function ContactPage() {
         </motion.div>
       </section>
 
-      <footer className="border-t border-[#D8CFC4] py-8 text-center text-sm text-[#A89F94]">
+      <footer className="border-t border-[#D8CFC4] py-8 text-center text-sm text-[#7A746C]">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">

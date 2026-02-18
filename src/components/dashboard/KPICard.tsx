@@ -32,7 +32,7 @@ function AnimatedCounter({ value, prefix = '', suffix = '' }: { value: number; p
   return <motion.span>{display}</motion.span>;
 }
 
-function Sparkline({ data, color = '#B07A45' }: { data: number[]; color?: string }) {
+function Sparkline({ data, color = '#9B6C3C' }: { data: number[]; color?: string }) {
   const width = 80;
   const height = 32;
   const padding = 2;
@@ -105,8 +105,8 @@ function TrendIndicator({ value, label }: { value: number; label?: string }) {
   const isNeutral = value === 0;
   
   const Icon = isNeutral ? Minus : isPositive ? TrendingUp : TrendingDown;
-  const color = isNeutral ? 'text-[#A89F94]' : isPositive ? 'text-[#8DB580]' : 'text-[#C4735B]';
-  const bgColor = isNeutral ? 'bg-[#A89F94]/10' : isPositive ? 'bg-[#8DB580]/10' : 'bg-[#C4735B]/10';
+  const color = isNeutral ? 'text-[#7A746C]' : isPositive ? 'text-[#8DB580]' : 'text-[#C4735B]';
+  const bgColor = isNeutral ? 'bg-[#7A746C]/10' : isPositive ? 'bg-[#8DB580]/10' : 'bg-[#C4735B]/10';
 
   return (
     <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full ${bgColor}`}>
@@ -114,7 +114,7 @@ function TrendIndicator({ value, label }: { value: number; label?: string }) {
       <span className={`text-xs font-medium ${color}`}>
         {isPositive ? '+' : ''}{value}%
       </span>
-      {label && <span className="text-xs text-[#A89F94]">{label}</span>}
+      {label && <span className="text-xs text-[#7A746C]">{label}</span>}
     </div>
   );
 }
@@ -166,22 +166,22 @@ export default function KPICard({
       `}
     >
       {/* Subtle gradient overlay on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#B07A45]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#9B6C3C]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       <div className="relative z-10">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
             {Icon && (
-              <div className="p-2 rounded-lg bg-[#B07A45]/10 text-[#B07A45]">
+              <div className="p-2 rounded-lg bg-[#9B6C3C]/10 text-[#9B6C3C]">
                 <Icon size={16} />
               </div>
             )}
-            <span className="text-sm font-medium text-[#A89F94]">{title}</span>
+            <span className="text-sm font-medium text-[#7A746C]">{title}</span>
           </div>
           
           {sparklineData && sparklineData.length > 0 && (
-            <Sparkline data={sparklineData} color={trend && trend < 0 ? '#C4735B' : '#B07A45'} />
+            <Sparkline data={sparklineData} color={trend && trend < 0 ? '#C4735B' : '#9B6C3C'} />
           )}
         </div>
 

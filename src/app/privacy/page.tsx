@@ -21,7 +21,7 @@ export default function PrivacyPage() {
 
       <article className="max-w-4xl mx-auto px-6 py-16 prose prose-neutral prose-sm max-w-none">
         <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
-        <p className="text-sm text-[#A89F94] mb-8">Last updated: February 17, 2026</p>
+        <p className="text-sm text-[#7A746C] mb-8">Last updated: February 17, 2026</p>
 
         <p>Vantix (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) operates the website usevantix.com. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or engage our services.</p>
 
@@ -87,11 +87,11 @@ export default function PrivacyPage() {
         <ul className="list-none pl-0 space-y-1 text-[#5C5650]">
           <li>Email: hello@usevantix.com</li>
           <li>Phone: (908) 498-7753</li>
-          <li>Website: <Link href="/contact" className="text-[#B07A45] hover:underline">usevantix.com/contact</Link></li>
+          <li>Website: <Link href="/contact" className="text-[#9B6C3C] hover:underline">usevantix.com/contact</Link></li>
         </ul>
       </article>
 
-      <footer className="border-t border-[#D8CFC4] py-8 text-center text-sm text-[#A89F94]">
+      <footer className="border-t border-[#D8CFC4] py-8 text-center text-sm text-[#7A746C]">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">

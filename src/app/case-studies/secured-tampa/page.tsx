@@ -34,7 +34,7 @@ export default function SecuredTampaPage() {
     <div className="min-h-screen bg-[#F5EFE7] text-[#1E1E1E] scroll-smooth">
       <nav className="sticky top-0 z-50 bg-[#F5EFE7]/90 backdrop-blur-md border-b border-[#D8CFC4]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/case-studies" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#B07A45] transition-colors">
+          <Link href="/case-studies" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#9B6C3C] transition-colors">
             <ArrowLeft className="w-4 h-4" /> Case Studies
           </Link>
           <Link
@@ -50,11 +50,11 @@ export default function SecuredTampaPage() {
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-6 pt-20 pb-12">
         <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-          <p className="text-xs font-semibold text-[#B07A45] uppercase tracking-wider mb-3">Client Case Study</p>
+          <p className="text-xs font-semibold text-[#9B6C3C] uppercase tracking-wider mb-3">Client Case Study</p>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
             Shopify Shut Them Down.<br />We Built Something Better in 3 Weeks.
           </h1>
-          <p className="text-lg text-[#A89F94] max-w-2xl">
+          <p className="text-lg text-[#7A746C] max-w-2xl">
             How SecuredTampa went from selling sneakers through Instagram DMs to running a 122-page custom e-commerce platform with full POS integration — and never looked back.
           </p>
         </motion.div>
@@ -65,9 +65,9 @@ export default function SecuredTampaPage() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((s) => (
             <div key={s.label} className="rounded-2xl p-6 text-center bg-white border border-[#D8CFC4] shadow-[6px_6px_16px_#d1cdc7,-6px_-6px_16px_#ffffff]">
-              <s.icon className="w-5 h-5 text-[#B07A45] mx-auto mb-2" />
-              <p className="text-3xl font-bold text-[#B07A45]">{s.value}</p>
-              <p className="text-sm text-[#A89F94] mt-1">{s.label}</p>
+              <s.icon className="w-5 h-5 text-[#9B6C3C] mx-auto mb-2" />
+              <p className="text-3xl font-bold text-[#9B6C3C]">{s.value}</p>
+              <p className="text-sm text-[#7A746C] mt-1">{s.label}</p>
             </div>
           ))}
         </motion.div>
@@ -103,7 +103,7 @@ export default function SecuredTampaPage() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
           className="rounded-2xl p-8 md:p-10 bg-white border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
           <h2 className="text-2xl font-bold mb-2">The Solution: 122 Pages in 3 Weeks</h2>
-          <p className="text-[#B07A45] text-sm font-medium mb-6">Built from scratch. Deployed in production. Running 24/7.</p>
+          <p className="text-[#9B6C3C] text-sm font-medium mb-6">Built from scratch. Deployed in production. Running 24/7.</p>
           <p className="text-[#5C5650] leading-relaxed mb-6">
             We designed and built a complete custom e-commerce platform with integrated inventory management, POS connectivity, automated shipping, and transactional emails — from the first line of code to production deployment in just 3 weeks.
           </p>
@@ -119,7 +119,7 @@ export default function SecuredTampaPage() {
               { icon: Package, text: 'Specialized Pokémon card inventory management' },
             ].map((item) => (
               <div key={item.text} className="flex items-start gap-3 p-3 rounded-xl hover:bg-[#F5EFE7] transition-colors">
-                <item.icon className="w-5 h-5 text-[#B07A45] mt-0.5 shrink-0" />
+                <item.icon className="w-5 h-5 text-[#9B6C3C] mt-0.5 shrink-0" />
                 <span className="text-sm text-[#5C5650]">{item.text}</span>
               </div>
             ))}
@@ -133,7 +133,7 @@ export default function SecuredTampaPage() {
           <h2 className="text-2xl font-bold mb-6 text-center">Tech Stack</h2>
           <div className="flex flex-wrap justify-center gap-3">
             {techStack.map((t) => (
-              <span key={t} className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-[#D8CFC4] shadow-sm hover:border-[#B07A45]/20 transition-colors">
+              <span key={t} className="px-5 py-2.5 rounded-full text-sm font-medium bg-white border border-[#D8CFC4] shadow-sm hover:border-[#9B6C3C]/20 transition-colors">
                 {t}
               </span>
             ))}
@@ -144,7 +144,7 @@ export default function SecuredTampaPage() {
       {/* Results */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-white border border-[#B07A45]/20 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-8 md:p-10 bg-white border border-[#9B6C3C]/20 shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
           <h2 className="text-2xl font-bold mb-6">The Results: Back Online and Better Than Ever</h2>
           <ul className="space-y-3 mb-8">
             {[
@@ -157,7 +157,7 @@ export default function SecuredTampaPage() {
               '99.9% uptime since launch — zero critical outages',
             ].map((r) => (
               <li key={r} className="flex items-start gap-3 text-[#5C5650]">
-                <CheckCircle2 className="w-5 h-5 text-[#B07A45] mt-0.5 shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-[#9B6C3C] mt-0.5 shrink-0" />
                 <span>{r}</span>
               </li>
             ))}
@@ -169,12 +169,12 @@ export default function SecuredTampaPage() {
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
           className="rounded-2xl p-8 md:p-10 bg-white border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff] text-center">
-          <MessageSquare className="w-8 h-8 text-[#B07A45]/30 mx-auto mb-4" />
+          <MessageSquare className="w-8 h-8 text-[#9B6C3C]/30 mx-auto mb-4" />
           <blockquote className="text-xl md:text-2xl text-[#1E1E1E] font-medium leading-relaxed mb-6 max-w-2xl mx-auto">
             &ldquo;Shopify shut us down and I thought it was over. Vantix built something better than I ever had — in 3 weeks. The POS integration alone saves me hours every day. I own the whole thing now, no platform can take it away.&rdquo;
           </blockquote>
           <p className="text-[#1E1E1E] font-semibold">Dave</p>
-          <p className="text-[#A89F94] text-sm">Founder, SecuredTampa</p>
+          <p className="text-[#7A746C] text-sm">Founder, SecuredTampa</p>
         </motion.div>
       </section>
 
@@ -183,7 +183,7 @@ export default function SecuredTampaPage() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
           className="rounded-2xl p-12 bg-white border border-[#D8CFC4] shadow-[8px_8px_20px_#d1cdc7,-8px_-8px_20px_#ffffff]">
           <h2 className="text-3xl font-bold mb-4">Ready for Results Like This?</h2>
-          <p className="text-[#A89F94] mb-8 max-w-lg mx-auto">
+          <p className="text-[#7A746C] mb-8 max-w-lg mx-auto">
             Whether you need a custom platform, AI automation, or a complete digital transformation — we deliver in weeks, not months. Let&apos;s talk about your project.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -196,7 +196,7 @@ export default function SecuredTampaPage() {
             </Link>
             <a
               href="tel:+19084987753"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#D8CFC4] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#B07A45]/20 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#D8CFC4] text-sm font-semibold shadow-sm hover:shadow-[6px_6px_14px_#c8c4be,-6px_-6px_14px_#ffffff] hover:border-[#9B6C3C]/20 transition-all"
             >
               <Phone className="w-4 h-4" /> (908) 498-7753
             </a>
@@ -204,7 +204,7 @@ export default function SecuredTampaPage() {
         </motion.div>
       </section>
 
-      <footer className="border-t border-[#D8CFC4] py-8 text-center text-sm text-[#A89F94]">
+      <footer className="border-t border-[#D8CFC4] py-8 text-center text-sm text-[#7A746C]">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>Vantix {new Date().getFullYear()}</p>
           <div className="flex gap-6">
