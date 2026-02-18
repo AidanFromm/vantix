@@ -21,12 +21,12 @@ const mockDeals: Deal[] = [
 ];
 
 const stageColors: Record<string, string> = {
-  discovery: 'bg-[#B07A45]/50/20 text-[#C89A6A] border-[#B07A45]/50/30',
-  proposal: 'bg-[#B07A45]/50/20 text-[#C89A6A] border-[#B07A45]/50/30',
+  discovery: 'bg-[#B07A45]/20 text-[#C89A6A] border-[#B07A45]/30',
+  proposal: 'bg-[#B07A45]/20 text-[#C89A6A] border-[#B07A45]/30',
   negotiation: 'bg-[#B07A45]/20 text-[#C89A6A] border-[#B07A45]/30',
   closing: 'bg-[#B07A45]/20 text-[#C89A6A] border-[#B07A45]/30',
-  won: 'bg-[#B07A45]/50/20 text-[#C89A6A] border-[#B07A45]/50/30',
-  lost: 'bg-[#B0614A]/50/20 text-[#B0614A] border-[#B0614A]/50/30',
+  won: 'bg-[#B07A45]/20 text-[#C89A6A] border-[#B07A45]/30',
+  lost: 'bg-[#B0614A]/20 text-[#B0614A] border-[#B0614A]/30',
 };
 
 export default function DealRoomPage() {

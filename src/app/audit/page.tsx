@@ -38,7 +38,7 @@ export default function AuditPage() {
     return (
       <main className="min-h-screen bg-[#1C1C1C] flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center">
-          <div className="w-16 h-16 rounded-full bg-[#B07A45]/50/20 flex items-center justify-center mx-auto mb-6">
+          <div className="w-16 h-16 rounded-full bg-[#B07A45]/20 flex items-center justify-center mx-auto mb-6">
             <CheckCircle size={32} className="text-[#C89A6A]" />
           </div>
           <h1 className="text-2xl font-bold mb-4">Audit Request Received!</h1>

@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   ArrowRight, ArrowLeft, Zap, Eye, Target, Lightbulb,
-  Users, Bot, Phone, Calendar, Settings, Code, Clock, Shield
+  Bot, Settings, Code, Clock, Shield
 } from 'lucide-react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const } },
 };
 
 

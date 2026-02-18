@@ -25,14 +25,14 @@ const statusConfig: Record<
 > = {
   active: {
     color: 'bg-[#B07A45]/50',
-    bgColor: 'bg-[#B07A45]/50/20',
-    ringColor: 'ring-[#B07A45]/50/30',
+    bgColor: 'bg-[#B07A45]/20',
+    ringColor: 'ring-[#B07A45]/30',
     label: 'Active',
   },
   success: {
     color: 'bg-[#B07A45]/50',
-    bgColor: 'bg-[#B07A45]/50/20',
-    ringColor: 'ring-[#B07A45]/50/30',
+    bgColor: 'bg-[#B07A45]/20',
+    ringColor: 'ring-[#B07A45]/30',
     label: 'Success',
   },
   idle: {
@@ -49,8 +49,8 @@ const statusConfig: Record<
   },
   error: {
     color: 'bg-[#B0614A]/50',
-    bgColor: 'bg-[#B0614A]/50/20',
-    ringColor: 'ring-[#B0614A]/50/30',
+    bgColor: 'bg-[#B0614A]/20',
+    ringColor: 'ring-[#B0614A]/30',
     label: 'Error',
   },
   offline: {
@@ -127,7 +127,7 @@ export function StatusDot({
           )}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+          transition={{ type: 'spring' as const, stiffness: 500, damping: 30 }}
         />
       </div>
 
@@ -208,7 +208,7 @@ export function ConnectionStatus({
       <span
         className={cn(
           'text-sm font-medium',
-          isConnected ? 'text-[#C89A6A]' : 'text-[#F4EFE8]0'
+          isConnected ? 'text-[#C89A6A]' : 'text-[#F4EFE8]/60'
         )}
       >
         {isConnected ? 'Connected' : 'Disconnected'}
@@ -232,7 +232,7 @@ export function LiveIndicator({
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn(
-        'inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#B0614A]/50/20 border border-[#B0614A]/50/30',
+        'inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#B0614A]/20 border border-[#B0614A]/30',
         className
       )}
     >

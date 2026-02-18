@@ -106,10 +106,10 @@ export default function OutreachPage() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-            <div className="p-2 bg-[#B07A45]/50/10 rounded-xl"><Mail className="w-6 h-6 text-[#C89A6A]" /></div>
+            <div className="p-2 bg-[#B07A45]/10 rounded-xl"><Mail className="w-6 h-6 text-[#C89A6A]" /></div>
             Email Outreach
           </h1>
-          <p className="text-[#F4EFE8]0 mt-1 text-sm">Campaign management and email performance tracking</p>
+          <p className="text-[#F4EFE8]/60 mt-1 text-sm">Campaign management and email performance tracking</p>
         </div>
         <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-5 py-2.5 bg-[#B07A45]/50 hover:bg-[#8E5E34] text-white rounded-xl font-medium transition-colors">
           <Plus className="w-4 h-4" /> New Campaign
@@ -129,7 +129,7 @@ export default function OutreachPage() {
           <motion.div key={i} variants={fadeUp} className="bg-[#1C1C1C] border border-[#1C1C1C] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <s.icon className={`w-4 h-4 ${s.color}`} />
-              <span className="text-xs text-[#F4EFE8]0">{s.label}</span>
+              <span className="text-xs text-[#F4EFE8]/60">{s.label}</span>
             </div>
             <p className="text-xl font-bold text-white">{s.value}</p>
           </motion.div>
@@ -143,10 +143,10 @@ export default function OutreachPage() {
             <Users className="w-5 h-5 text-[#C89A6A]" />
             <div>
               <span className="text-sm font-medium text-white">{leads.length} leads in database</span>
-              <span className="text-xs text-[#F4EFE8]0 ml-3">{leads.filter(l => l.email).length} with email</span>
+              <span className="text-xs text-[#F4EFE8]/60 ml-3">{leads.filter(l => l.email).length} with email</span>
             </div>
           </div>
-          <div className="flex items-center gap-4 text-xs text-[#F4EFE8]0">
+          <div className="flex items-center gap-4 text-xs text-[#F4EFE8]/60">
             <span>New: {leads.filter(l => l.status === 'new').length}</span>
             <span>Contacted: {leads.filter(l => l.status === 'contacted').length}</span>
             <span>Qualified: {leads.filter(l => l.status === 'qualified').length}</span>
@@ -180,9 +180,9 @@ export default function OutreachPage() {
                       <h3 className="text-white font-semibold truncate">{c.name}</h3>
                       <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${cfg.bg} ${cfg.color}`}>{c.status}</span>
                     </div>
-                    <p className="text-sm text-[#F4EFE8]0 mb-3 truncate">Subject: {c.subject}</p>
+                    <p className="text-sm text-[#F4EFE8]/60 mb-3 truncate">Subject: {c.subject}</p>
                     {/* Performance bar */}
-                    <div className="flex items-center gap-6 text-xs text-[#F4EFE8]0">
+                    <div className="flex items-center gap-6 text-xs text-[#F4EFE8]/60">
                       <span className="flex items-center gap-1"><Send className="w-3 h-3" />{c.sent} sent</span>
                       <span className="flex items-center gap-1"><Eye className="w-3 h-3 text-[#C89A6A]" />{c.opened} opened ({cOpenRate}%)</span>
                       <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3 text-[#C89A6A]" />{c.replied} replied ({cReplyRate}%)</span>
@@ -199,9 +199,9 @@ export default function OutreachPage() {
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => startEdit(c)} className="p-2 text-[#F4EFE8]0 hover:text-white hover:bg-[#1C1C1C] rounded-lg transition-colors"><Edit3 className="w-4 h-4" /></button>
-                    <button onClick={() => setDetailId(c.id)} className="p-2 text-[#F4EFE8]0 hover:text-white hover:bg-[#1C1C1C] rounded-lg transition-colors"><Eye className="w-4 h-4" /></button>
-                    <button onClick={async () => { await deleteCampaign(c.id); load(); }} className="p-2 text-[#F4EFE8]0 hover:text-[#B0614A] hover:bg-[#B0614A]/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    <button onClick={() => startEdit(c)} className="p-2 text-[#F4EFE8]/60 hover:text-white hover:bg-[#1C1C1C] rounded-lg transition-colors"><Edit3 className="w-4 h-4" /></button>
+                    <button onClick={() => setDetailId(c.id)} className="p-2 text-[#F4EFE8]/60 hover:text-white hover:bg-[#1C1C1C] rounded-lg transition-colors"><Eye className="w-4 h-4" /></button>
+                    <button onClick={async () => { await deleteCampaign(c.id); load(); }} className="p-2 text-[#F4EFE8]/60 hover:text-[#B0614A] hover:bg-[#B0614A]/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </div>
               </motion.div>
@@ -217,7 +217,7 @@ export default function OutreachPage() {
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               className="bg-[#1C1C1C] border border-[#1C1C1C] rounded-2xl w-full max-w-xl p-6" onClick={e => e.stopPropagation()}>
               <h2 className="text-xl font-bold text-white mb-1">{detailCampaign.name}</h2>
-              <p className="text-sm text-[#F4EFE8]0 mb-6">Subject: {detailCampaign.subject}</p>
+              <p className="text-sm text-[#F4EFE8]/60 mb-6">Subject: {detailCampaign.subject}</p>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 {[
                   { label: 'Sent', value: detailCampaign.sent, color: 'text-[#C89A6A]' },
@@ -227,7 +227,7 @@ export default function OutreachPage() {
                 ].map((m, i) => (
                   <div key={i} className="bg-[#1C1C1C] rounded-xl p-4 text-center">
                     <p className={`text-2xl font-bold ${m.color}`}>{m.value}</p>
-                    <p className="text-xs text-[#F4EFE8]0 mt-1">{m.label}</p>
+                    <p className="text-xs text-[#F4EFE8]/60 mt-1">{m.label}</p>
                   </div>
                 ))}
               </div>

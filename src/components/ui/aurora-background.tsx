@@ -56,9 +56,9 @@ export function AuroraBackground({
 export function GradientMesh({ className }: { className?: string }) {
   return (
     <div className={cn('absolute inset-0 overflow-hidden', className)}>
-      <div className="absolute -left-1/4 -top-1/4 h-1/2 w-1/2 rounded-full bg-gradient-to-br from-[#B07A45]/50/20 to-transparent blur-3xl" />
+      <div className="absolute -left-1/4 -top-1/4 h-1/2 w-1/2 rounded-full bg-gradient-to-br from-[#B07A45]/20 to-transparent blur-3xl" />
       <div className="absolute -right-1/4 top-1/4 h-1/2 w-1/2 rounded-full bg-gradient-to-bl from-[#B07A45]/20 to-transparent blur-3xl" />
-      <div className="absolute -bottom-1/4 left-1/4 h-1/2 w-1/2 rounded-full bg-gradient-to-tr from-[#B07A45]/50/20 to-transparent blur-3xl" />
+      <div className="absolute -bottom-1/4 left-1/4 h-1/2 w-1/2 rounded-full bg-gradient-to-tr from-[#B07A45]/20 to-transparent blur-3xl" />
     </div>
   );
 }
@@ -67,7 +67,7 @@ export function GradientMesh({ className }: { className?: string }) {
 export function GradientOrbs({ className }: { className?: string }) {
   return (
     <div className={cn('absolute inset-0 overflow-hidden', className)}>
-      <div className="animate-float-slow absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-gradient-to-br from-[#B07A45]/50/30 to-transparent blur-3xl" />
+      <div className="animate-float-slow absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-gradient-to-br from-[#B07A45]/30 to-transparent blur-3xl" />
       <div className="animate-float-medium absolute right-1/4 top-1/2 h-80 w-80 rounded-full bg-gradient-to-bl from-[#C89A6A]/25 to-transparent blur-3xl" />
       <div className="animate-float-fast absolute bottom-1/4 left-1/2 h-72 w-72 rounded-full bg-gradient-to-tr from-[#C89A6A]/20 to-transparent blur-3xl" />
     </div>

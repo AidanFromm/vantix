@@ -62,7 +62,7 @@ export default function BookingsPage() {
   const thisWeek = bookings.filter(b => b.date >= todayStr && b.date <= thisWeekStr).length;
 
   const updateStatus = async (id: string, status: BookingStatus) => {
-    try { await updateRecord('bookings', id, { status }); } catch {}
+    try { await updateRecord<Booking>('bookings', id, { status } as Partial<Booking>); } catch {}
     setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
   };
 
@@ -70,7 +70,7 @@ export default function BookingsPage() {
     if (!noteInput.trim()) return;
     const booking = bookings.find(b => b.id === id);
     const notes = (booking?.notes ? booking.notes + '\n' : '') + noteInput;
-    try { await updateRecord('bookings', id, { notes }); } catch {}
+    try { await updateRecord<Booking>('bookings', id, { notes } as Partial<Booking>); } catch {}
     setBookings(prev => prev.map(b => b.id === id ? { ...b, notes } : b));
     setNoteInput('');
   };

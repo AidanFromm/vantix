@@ -293,7 +293,7 @@ export default function CommandPalette() {
               exit={{ opacity: 0, scale: 0.96, y: -10 }}
               transition={{ 
                 duration: 0.2, 
-                ease: [0.16, 1, 0.3, 1]
+                ease: [0.16, 1, 0.3, 1] as const
               }}
               className="fixed left-1/2 top-[15%] -translate-x-1/2 w-full max-w-[580px] z-[101] px-4"
             >

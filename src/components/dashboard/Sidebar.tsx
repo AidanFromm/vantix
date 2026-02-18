@@ -403,7 +403,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       <motion.aside
         initial={false}
         animate={{ width: isCollapsed ? 72 : 256 }}
-        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] as const }}
         className={`
           fixed lg:sticky top-0 left-0 z-50 h-screen
           bg-[#F4EFE8] border-r border-[#E3D9CD]

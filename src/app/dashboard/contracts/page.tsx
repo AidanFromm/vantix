@@ -101,10 +101,10 @@ export default function ContractsPage() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-            <div className="p-2 bg-[#B07A45]/50/10 rounded-xl"><Scale className="w-6 h-6 text-[#C89A6A]" /></div>
+            <div className="p-2 bg-[#B07A45]/10 rounded-xl"><Scale className="w-6 h-6 text-[#C89A6A]" /></div>
             Contracts
           </h1>
-          <p className="text-[#F4EFE8]0 mt-1 text-sm">Manage contracts and e-signatures via Documenso</p>
+          <p className="text-[#F4EFE8]/60 mt-1 text-sm">Manage contracts and e-signatures via Documenso</p>
         </div>
         <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-5 py-2.5 bg-[#B07A45]/50 hover:bg-[#8E5E34] text-white rounded-xl font-medium transition-colors">
           <Plus className="w-4 h-4" /> New Contract
@@ -122,7 +122,7 @@ export default function ContractsPage() {
           <motion.div key={i} variants={fadeUp} className="bg-[#1C1C1C] border border-[#1C1C1C] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <s.icon className={`w-4 h-4 ${s.color}`} />
-              <span className="text-xs text-[#F4EFE8]0">{s.label}</span>
+              <span className="text-xs text-[#F4EFE8]/60">{s.label}</span>
             </div>
             <p className="text-xl font-bold text-white">{s.value}</p>
           </motion.div>
@@ -167,7 +167,7 @@ export default function ContractsPage() {
                       </span>
                       <span className={`text-xs font-medium ${TYPE_CFG[c.type] || 'text-[#A39B90]'}`}>{c.type}</span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-[#F4EFE8]0 flex-wrap">
+                    <div className="flex items-center gap-4 text-sm text-[#F4EFE8]/60 flex-wrap">
                       <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" />{c.client_name}</span>
                       <span className="flex items-center gap-1"><DollarSign className="w-3.5 h-3.5" />${c.value.toLocaleString()}</span>
                       {c.signed_date && <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-[#C89A6A]" />Signed {new Date(c.signed_date).toLocaleDateString()}</span>}
@@ -176,14 +176,14 @@ export default function ContractsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     {c.documenso_url && (
-                      <a href={c.documenso_url} target="_blank" rel="noopener noreferrer" className="p-2 text-[#F4EFE8]0 hover:text-[#C89A6A] hover:bg-[#C89A6A]/10 rounded-lg transition-colors" title="Open in Documenso">
+                      <a href={c.documenso_url} target="_blank" rel="noopener noreferrer" className="p-2 text-[#F4EFE8]/60 hover:text-[#C89A6A] hover:bg-[#C89A6A]/10 rounded-lg transition-colors" title="Open in Documenso">
                         <ExternalLink className="w-4 h-4" />
                       </a>
                     )}
-                    <button onClick={() => startEdit(c)} className="p-2 text-[#F4EFE8]0 hover:text-white hover:bg-[#1C1C1C] rounded-lg transition-colors"><Edit3 className="w-4 h-4" /></button>
-                    {c.status === 'draft' && <button onClick={() => handleStatus(c.id, 'sent')} className="p-2 text-[#F4EFE8]0 hover:text-[#C89A6A] hover:bg-[#C89A6A]/10 rounded-lg transition-colors" title="Mark Sent"><Send className="w-4 h-4" /></button>}
-                    {c.status === 'sent' && <button onClick={() => handleStatus(c.id, 'signed')} className="p-2 text-[#F4EFE8]0 hover:text-[#C89A6A] hover:bg-[#C89A6A]/10 rounded-lg transition-colors" title="Mark Signed"><CheckCircle className="w-4 h-4" /></button>}
-                    <button onClick={async () => { await deleteContract(c.id); load(); }} className="p-2 text-[#F4EFE8]0 hover:text-[#B0614A] hover:bg-[#B0614A]/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    <button onClick={() => startEdit(c)} className="p-2 text-[#F4EFE8]/60 hover:text-white hover:bg-[#1C1C1C] rounded-lg transition-colors"><Edit3 className="w-4 h-4" /></button>
+                    {c.status === 'draft' && <button onClick={() => handleStatus(c.id, 'sent')} className="p-2 text-[#F4EFE8]/60 hover:text-[#C89A6A] hover:bg-[#C89A6A]/10 rounded-lg transition-colors" title="Mark Sent"><Send className="w-4 h-4" /></button>}
+                    {c.status === 'sent' && <button onClick={() => handleStatus(c.id, 'signed')} className="p-2 text-[#F4EFE8]/60 hover:text-[#C89A6A] hover:bg-[#C89A6A]/10 rounded-lg transition-colors" title="Mark Signed"><CheckCircle className="w-4 h-4" /></button>}
+                    <button onClick={async () => { await deleteContract(c.id); load(); }} className="p-2 text-[#F4EFE8]/60 hover:text-[#B0614A] hover:bg-[#B0614A]/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </div>
               </motion.div>

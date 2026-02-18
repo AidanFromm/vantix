@@ -148,16 +148,16 @@ export function SimpleGlowCard({
   glowColor?: 'emerald' | 'purple' | 'blue' | 'orange';
 }) {
   const colorMap = {
-    emerald: 'hover:shadow-[#B07A45]/50/20 hover:border-[#B07A45]/50/30',
-    purple: 'hover:shadow-[#B07A45]/50/20 hover:border-[#B07A45]/50/30',
-    blue: 'hover:shadow-[#B07A45]/50/20 hover:border-[#B07A45]/50/30',
+    emerald: 'hover:shadow-[#B07A45]/20 hover:border-[#B07A45]/30',
+    purple: 'hover:shadow-[#B07A45]/20 hover:border-[#B07A45]/30',
+    blue: 'hover:shadow-[#B07A45]/20 hover:border-[#B07A45]/30',
     orange: 'hover:shadow-[#B07A45]/20 hover:border-[#B07A45]/30',
   };
 
   return (
     <motion.div
       whileHover={{ scale: 1.02, y: -4 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
       className={cn(
         'relative overflow-hidden rounded-2xl',
         'bg-black/40 backdrop-blur-xl',
@@ -206,7 +206,7 @@ export function HolographicCard({
         rotateX: rotation.x,
         rotateY: rotation.y,
       }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
       style={{ perspective: 1000, transformStyle: 'preserve-3d' }}
       className={cn('group relative', className)}
     >

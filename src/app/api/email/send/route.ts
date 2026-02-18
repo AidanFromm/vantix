@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_TJNHAFRB_A66nrWk5st1W4RAFyn2z4eQs';
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const DEFAULT_FROM = 'Vantix <onboarding@resend.dev>';
 
 export async function POST(request: Request) {
@@ -9,6 +9,11 @@ export async function POST(request: Request) {
 
     if (!to || !subject || !html) {
       return NextResponse.json({ error: 'Missing required fields: to, subject, html' }, { status: 400 });
+    }
+
+    if (!RESEND_API_KEY) {
+      console.error('RESEND_API_KEY not configured');
+      return NextResponse.json({ error: 'Email service not configured' }, { status: 503 });
     }
 
     const res = await fetch('https://api.resend.com/emails', {

@@ -73,7 +73,7 @@ export function GlowingText({
     <span className={cn('relative inline-block', className)}>
       <span className="relative z-10">{children}</span>
       <motion.span
-        className="absolute inset-0 bg-gradient-to-r from-[#B07A45]/50/0 via-[#B07A45]/50/50 to-[#B07A45]/50/0 blur-xl"
+        className="absolute inset-0 bg-gradient-to-r from-[#B07A45]/0 via-[#B07A45]/50 to-[#B07A45]/0 blur-xl"
         animate={{
           x: ['-100%', '100%'],
         }}
@@ -113,7 +113,7 @@ export function SplitRevealText({
             transition={{
               duration: 0.5,
               delay: delay + i * stagger,
-              ease: [0.25, 0.1, 0.25, 1],
+              ease: [0.25, 0.1, 0.25, 1] as const,
             }}
           >
             {word}

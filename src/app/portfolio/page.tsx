@@ -18,7 +18,7 @@ const fadeUp = {
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.5, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] as const },
   }),
 };
 
@@ -89,7 +89,7 @@ export default function PortfolioPage() {
 
           <motion.div
             initial="hidden" animate="visible" variants={fadeUp} custom={3}
-            className="flex flex-wrap items-center gap-4 text-sm text-[#F4EFE8]0"
+            className="flex flex-wrap items-center gap-4 text-sm text-[#F4EFE8]/60"
           >
             <span className="flex items-center gap-1.5"><MapPin size={14} /> Tampa Premium Outlets, FL</span>
             <span className="w-1 h-1 rounded-full bg-[#1C1C1C]" />
@@ -107,11 +107,11 @@ export default function PortfolioPage() {
             <motion.div
               key={m.label}
               initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i}
-              className="relative p-6 rounded-2xl bg-[#EEE6DC]/[0.02] border border-[#1C1C1C] text-center group hover:border-[#B07A45]/50/30 transition-colors"
+              className="relative p-6 rounded-2xl bg-[#EEE6DC]/[0.02] border border-[#1C1C1C] text-center group hover:border-[#B07A45]/30 transition-colors"
             >
               <m.icon size={20} className="mx-auto mb-3 text-[#C89A6A] opacity-60" />
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">{m.value}</div>
-              <div className="text-sm text-[#F4EFE8]0">{m.label}</div>
+              <div className="text-sm text-[#F4EFE8]/60">{m.label}</div>
             </motion.div>
           ))}
         </div>
@@ -127,7 +127,7 @@ export default function PortfolioPage() {
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               A Growing Business<br />
-              <span className="text-[#F4EFE8]0">Held Back by Its Tools</span>
+              <span className="text-[#F4EFE8]/60">Held Back by Its Tools</span>
             </h2>
             <p className="text-[#A39B90] leading-relaxed mb-6">
               Dave built Secured Tampa into a thriving sneaker and Pokemon card business at Tampa Premium Outlets, growing to 7,200+ Instagram followers. But his tech stack was working against him.
@@ -142,9 +142,9 @@ export default function PortfolioPage() {
                 { title: 'No Website', desc: 'Thousands of followers with no place to send them. Every sale required manual DMs and payment coordination.' },
                 { title: 'Inventory Chaos', desc: 'No unified system to track stock across online and in-store. Manual spreadsheets and guesswork.' },
               ].map((item, i) => (
-                <div key={i} className="p-4 rounded-xl bg-[#B0614A]/50/[0.04] border border-[#B0614A]/50/10">
+                <div key={i} className="p-4 rounded-xl bg-[#B0614A]/[0.04] border border-[#B0614A]/10">
                   <h4 className="font-semibold text-[#B0614A] mb-1">{item.title}</h4>
-                  <p className="text-sm text-[#F4EFE8]0">{item.desc}</p>
+                  <p className="text-sm text-[#F4EFE8]/60">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -162,7 +162,7 @@ export default function PortfolioPage() {
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               One Platform<br />
-              <span className="text-[#F4EFE8]0">To Run Everything</span>
+              <span className="text-[#F4EFE8]/60">To Run Everything</span>
             </h2>
             <p className="text-[#A39B90] leading-relaxed mb-6">
               We built securedtampa.com — a fully custom e-commerce platform with integrated inventory management, POS system, shipping, and admin dashboard. No third-party platform dependencies. Dave owns his entire stack.
@@ -185,9 +185,9 @@ export default function PortfolioPage() {
                 { title: 'Built-in POS', desc: 'iPad kiosk for walk-in purchases. Process sales, generate receipts, and update inventory in real-time.' },
                 { title: 'Complete Admin Suite', desc: 'Dashboard with sales analytics, staff management, shipping labels, email campaigns, and more.' },
               ].map((item, i) => (
-                <div key={i} className="p-4 rounded-xl bg-[#B07A45]/50/[0.04] border border-[#B07A45]/50/10">
+                <div key={i} className="p-4 rounded-xl bg-[#B07A45]/[0.04] border border-[#B07A45]/10">
                   <h4 className="font-semibold text-[#C89A6A] mb-1">{item.title}</h4>
-                  <p className="text-sm text-[#F4EFE8]0">{item.desc}</p>
+                  <p className="text-sm text-[#F4EFE8]/60">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -200,13 +200,13 @@ export default function PortfolioPage() {
         <div className="max-w-6xl mx-auto">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">
-              Before <span className="text-[#F4EFE8]0">&</span> After
+              Before <span className="text-[#F4EFE8]/60">&</span> After
             </h2>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
-              className="p-6 md:p-8 rounded-2xl bg-[#B0614A]/50/[0.03] border border-[#B0614A]/50/10"
+              className="p-6 md:p-8 rounded-2xl bg-[#B0614A]/[0.03] border border-[#B0614A]/10"
             >
               <h3 className="text-lg font-bold text-[#B0614A] mb-5 flex items-center gap-2">
                 <AlertTriangle size={18} /> Before Vantix
@@ -222,7 +222,7 @@ export default function PortfolioPage() {
                   'Paying $200-800/mo for disconnected tools',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm text-[#A39B90]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#B0614A]/50/50 mt-1.5 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#B0614A]/50 mt-1.5 shrink-0" />
                     {item}
                   </li>
                 ))}
@@ -230,7 +230,7 @@ export default function PortfolioPage() {
             </motion.div>
 
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1}
-              className="p-6 md:p-8 rounded-2xl bg-[#B07A45]/50/[0.03] border border-[#B07A45]/50/10"
+              className="p-6 md:p-8 rounded-2xl bg-[#B07A45]/[0.03] border border-[#B07A45]/10"
             >
               <h3 className="text-lg font-bold text-[#C89A6A] mb-5 flex items-center gap-2">
                 <CheckCircle2 size={18} /> After Vantix
@@ -246,7 +246,7 @@ export default function PortfolioPage() {
                   '$100/mo maintenance — saving hundreds monthly',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm text-[#A39B90]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#B07A45]/50/50 mt-1.5 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#B07A45] mt-1.5 shrink-0" />
                     {item}
                   </li>
                 ))}
@@ -271,11 +271,11 @@ export default function PortfolioPage() {
               <motion.div
                 key={f.title}
                 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i % 6}
-                className="p-5 rounded-xl bg-[#EEE6DC]/[0.02] border border-[#1C1C1C] hover:border-[#B07A45]/50/20 transition-colors group"
+                className="p-5 rounded-xl bg-[#EEE6DC]/[0.02] border border-[#1C1C1C] hover:border-[#B07A45]/20 transition-colors group"
               >
                 <f.icon size={20} className="text-[#C89A6A] mb-3 opacity-70 group-hover:opacity-100 transition-opacity" />
                 <h3 className="font-semibold mb-1.5">{f.title}</h3>
-                <p className="text-sm text-[#F4EFE8]0 leading-relaxed">{f.desc}</p>
+                <p className="text-sm text-[#F4EFE8]/60 leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -297,7 +297,7 @@ export default function PortfolioPage() {
             {techStack.map((tech) => (
               <span
                 key={tech}
-                className="px-4 py-2 rounded-full text-sm font-medium bg-[#B07A45]/50/[0.08] text-[#C89A6A] border border-[#B07A45]/50/15 hover:border-[#B07A45]/50/30 transition-colors"
+                className="px-4 py-2 rounded-full text-sm font-medium bg-[#B07A45]/[0.08] text-[#C89A6A] border border-[#B07A45]/15 hover:border-[#B07A45]/30 transition-colors"
               >
                 {tech}
               </span>
@@ -319,7 +319,7 @@ export default function PortfolioPage() {
               initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i}
               className="p-6 rounded-2xl bg-[#EEE6DC]/[0.02] border border-[#1C1C1C] text-center"
             >
-              <p className="text-sm text-[#F4EFE8]0 mb-2">{item.label}</p>
+              <p className="text-sm text-[#F4EFE8]/60 mb-2">{item.label}</p>
               <p className="text-3xl font-bold text-[#C89A6A] mb-1">{item.value}</p>
               <p className="text-xs text-[#4B4B4B]">{item.sub}</p>
             </motion.div>
@@ -342,14 +342,14 @@ export default function PortfolioPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/#contact"
-                className="inline-flex items-center justify-center gap-2 bg-[#B07A45]/50 text-black px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#C89A6A] transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-[#B07A45] text-black px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#C89A6A] transition-colors"
               >
                 Book a Free Consultation
                 <ArrowRight size={20} />
               </Link>
               <Link
                 href="/"
-                className="inline-flex items-center justify-center gap-2 border border-[#1C1C1C] text-[#A39B90] px-8 py-4 rounded-xl font-medium hover:border-[#B07A45]/50/30 hover:text-white transition-all"
+                className="inline-flex items-center justify-center gap-2 border border-[#1C1C1C] text-[#A39B90] px-8 py-4 rounded-xl font-medium hover:border-[#B07A45]/30 hover:text-white transition-all"
               >
                 Back to Home
               </Link>

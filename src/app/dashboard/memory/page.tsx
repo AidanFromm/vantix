@@ -75,11 +75,11 @@ const defaultMemories: Memory[] = [
 ];
 
 const typeColors: Record<string, string> = {
-  decision: 'bg-[#B07A45]/50/20 text-[#C89A6A]',
-  learning: 'bg-[#B07A45]/50/20 text-[#C89A6A]',
-  context: 'bg-[#B07A45]/50/20 text-[#C89A6A]',
+  decision: 'bg-[#B07A45]/20 text-[#C89A6A]',
+  learning: 'bg-[#B07A45]/20 text-[#C89A6A]',
+  context: 'bg-[#B07A45]/20 text-[#C89A6A]',
   note: 'bg-[#B07A45]/20 text-[#C89A6A]',
-  milestone: 'bg-[#B07A45]/50/20 text-[#C89A6A]',
+  milestone: 'bg-[#B07A45]/20 text-[#C89A6A]',
 };
 
 function loadMemories(): Memory[] {

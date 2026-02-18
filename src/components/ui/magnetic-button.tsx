@@ -51,7 +51,7 @@ export function MagneticButton({
         href={href}
         onClick={onClick}
         animate={{ x: position.x, y: position.y }}
-        transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
+        transition={{ type: 'spring' as const, stiffness: 150, damping: 15, mass: 0.1 }}
         className={cn(
           'relative inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 font-semibold rounded-full transition-all duration-300',
           glow && 'shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:shadow-[0_0_50px_rgba(16,185,129,0.6)]',
@@ -60,7 +60,7 @@ export function MagneticButton({
       >
         {glow && (
           <motion.div
-            className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B07A45]/50/20 to-[#B07A45]/20 blur-xl"
+            className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B07A45]/20 to-[#B07A45]/20 blur-xl"
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -113,7 +113,7 @@ export function MagneticArrowButton({
       <motion.a
         href={href}
         animate={{ x: position.x, y: position.y }}
-        transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
+        transition={{ type: 'spring' as const, stiffness: 150, damping: 15, mass: 0.1 }}
         className={cn(
           'group relative inline-flex items-center gap-2 text-base sm:text-lg font-medium text-white transition-colors hover:text-[#C89A6A] py-3 sm:py-0',
           className
@@ -122,7 +122,7 @@ export function MagneticArrowButton({
         <span>{children}</span>
         <motion.span
           animate={{ x: isHovered ? 5 : 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
         >
           →
         </motion.span>

@@ -79,10 +79,10 @@ export default function FinancesPage() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-            <div className="p-2 bg-[#B07A45]/50/10 rounded-xl"><Wallet className="w-6 h-6 text-[#C89A6A]" /></div>
+            <div className="p-2 bg-[#B07A45]/10 rounded-xl"><Wallet className="w-6 h-6 text-[#C89A6A]" /></div>
             Finances
           </h1>
-          <p className="text-[#F4EFE8]0 mt-1 text-sm">Revenue, expenses, and profit tracking</p>
+          <p className="text-[#F4EFE8]/60 mt-1 text-sm">Revenue, expenses, and profit tracking</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex bg-[#1C1C1C] rounded-xl p-1">
@@ -113,10 +113,10 @@ export default function FinancesPage() {
             ].map((kpi, i) => (
               <motion.div key={i} variants={fadeUp} className="bg-[#1C1C1C] border border-[#1C1C1C] rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className={`p-2 rounded-lg ${kpi.color === 'text-[#C89A6A]' ? 'bg-[#B07A45]/50/10' : kpi.color === 'text-[#B0614A]' ? 'bg-[#B0614A]/50/10' : 'bg-[#B07A45]/10'}`}>
+                  <div className={`p-2 rounded-lg ${kpi.color === 'text-[#C89A6A]' ? 'bg-[#B07A45]/10' : kpi.color === 'text-[#B0614A]' ? 'bg-[#B0614A]/10' : 'bg-[#B07A45]/10'}`}>
                     <kpi.icon className={`w-4 h-4 ${kpi.color}`} />
                   </div>
-                  <span className="text-xs text-[#F4EFE8]0">{kpi.label}</span>
+                  <span className="text-xs text-[#F4EFE8]/60">{kpi.label}</span>
                 </div>
                 <p className={`text-2xl font-bold ${kpi.color}`}>{kpi.prefix}{Math.abs(kpi.value).toLocaleString()}</p>
               </motion.div>
@@ -139,10 +139,10 @@ export default function FinancesPage() {
                 {monthlyData.map((m, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1">
                     <div className="flex gap-0.5 items-end w-full justify-center h-40">
-                      <div className="w-[40%] bg-[#B07A45]/50/80 rounded-t-sm transition-all hover:bg-[#C89A6A]" style={{ height: `${(m.revenue / maxBar) * 100}%`, minHeight: m.revenue > 0 ? '4px' : '0' }} title={`$${m.revenue.toLocaleString()}`} />
-                      <div className="w-[40%] bg-[#B0614A]/50/60 rounded-t-sm transition-all hover:bg-[#B0614A]" style={{ height: `${(m.expenses / maxBar) * 100}%`, minHeight: m.expenses > 0 ? '4px' : '0' }} title={`$${m.expenses.toLocaleString()}`} />
+                      <div className="w-[40%] bg-[#B07A45]/80 rounded-t-sm transition-all hover:bg-[#C89A6A]" style={{ height: `${(m.revenue / maxBar) * 100}%`, minHeight: m.revenue > 0 ? '4px' : '0' }} title={`$${m.revenue.toLocaleString()}`} />
+                      <div className="w-[40%] bg-[#B0614A]/60 rounded-t-sm transition-all hover:bg-[#B0614A]" style={{ height: `${(m.expenses / maxBar) * 100}%`, minHeight: m.expenses > 0 ? '4px' : '0' }} title={`$${m.expenses.toLocaleString()}`} />
                     </div>
-                    <span className="text-[10px] text-[#F4EFE8]0">{m.month}</span>
+                    <span className="text-[10px] text-[#F4EFE8]/60">{m.month}</span>
                   </div>
                 ))}
               </div>
@@ -194,16 +194,16 @@ export default function FinancesPage() {
                 ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 15).map(t => (
                   <div key={t.id} className="flex items-center justify-between py-2.5 border-b border-[#1C1C1C] last:border-0">
                     <div className="flex items-center gap-3">
-                      <div className={`p-1.5 rounded-lg ${t.type === 'income' ? 'bg-[#B07A45]/50/10' : 'bg-[#B0614A]/50/10'}`}>
+                      <div className={`p-1.5 rounded-lg ${t.type === 'income' ? 'bg-[#B07A45]/10' : 'bg-[#B0614A]/10'}`}>
                         {t.type === 'income' ? <ArrowUpRight className="w-3.5 h-3.5 text-[#C89A6A]" /> : <ArrowDownRight className="w-3.5 h-3.5 text-[#B0614A]" />}
                       </div>
                       <div>
                         <p className="text-sm text-white">{t.desc}</p>
-                        <p className="text-xs text-[#F4EFE8]0">{new Date(t.date).toLocaleDateString()}</p>
+                        <p className="text-xs text-[#F4EFE8]/60">{new Date(t.date).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <span className={`text-sm font-medium ${t.type === 'income' ? 'text-[#C89A6A]' : 'text-[#B0614A]'}`}>
-                      {t.type === 'income' ? '+' : '-'}${t.amount.toLocaleString()}
+                      {t.type === 'income' ? '+' : '-'}${(t.amount || 0).toLocaleString()}
                     </span>
                   </div>
                 ))}
@@ -224,10 +224,10 @@ export default function FinancesPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[#1C1C1C]">
-                      <th className="text-left text-[#F4EFE8]0 font-medium py-2 pr-4">Month</th>
-                      <th className="text-right text-[#F4EFE8]0 font-medium py-2 px-4">Revenue</th>
-                      <th className="text-right text-[#F4EFE8]0 font-medium py-2 px-4">Expenses</th>
-                      <th className="text-right text-[#F4EFE8]0 font-medium py-2 pl-4">Profit</th>
+                      <th className="text-left text-[#F4EFE8]/60 font-medium py-2 pr-4">Month</th>
+                      <th className="text-right text-[#F4EFE8]/60 font-medium py-2 px-4">Revenue</th>
+                      <th className="text-right text-[#F4EFE8]/60 font-medium py-2 px-4">Expenses</th>
+                      <th className="text-right text-[#F4EFE8]/60 font-medium py-2 pl-4">Profit</th>
                     </tr>
                   </thead>
                   <tbody>

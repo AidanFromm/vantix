@@ -95,7 +95,7 @@ export function FloatingStat({
     >
       <div className="flex items-center gap-3">
         {Icon && (
-          <div className="p-2 rounded-lg bg-[#B07A45]/50/20">
+          <div className="p-2 rounded-lg bg-[#B07A45]/20">
             <Icon size={18} className="text-[#C89A6A]" />
           </div>
         )}
@@ -172,7 +172,7 @@ export function HeroFloatingElements() {
 
       {/* Animated orbs */}
       <motion.div
-        className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#B07A45]/50/10 blur-[100px]"
+        className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#B07A45]/10 blur-[100px]"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.5, 0.3],
@@ -210,7 +210,7 @@ export function HeroFloatingElements() {
           ease: 'easeInOut',
         }}
       >
-        <Code2 size={32} className="text-[#B07A45]/50/30" />
+        <Code2 size={32} className="text-[#B07A45]/30" />
       </motion.div>
 
       <motion.div
@@ -244,7 +244,7 @@ export function GlassCard({
   return (
     <motion.div
       whileHover={hover ? { y: -5, scale: 1.02 } : undefined}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
       className={cn(
         'relative overflow-hidden rounded-2xl',
         'bg-gradient-to-br from-white/10 to-white/5',

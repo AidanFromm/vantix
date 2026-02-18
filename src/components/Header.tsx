@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Menu, X, ArrowRight, LayoutDashboard, Sparkles } from 'lucide-react';
+import { Menu, X, ArrowRight, LayoutDashboard } from 'lucide-react';
 
 const navLinks = [
   { href: '/services', label: 'Services' },
@@ -47,7 +47,7 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-3 group">
           <motion.div 
             whileHover={{ scale: 1.1, rotate: 5 }}
-            className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B07A45]/50 to-[#B07A45] flex items-center justify-center text-black font-bold text-xl shadow-lg shadow-[#B07A45]/50/25"
+            className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B07A45] to-[#B07A45] flex items-center justify-center text-black font-bold text-xl shadow-lg shadow-[#B07A45]/25"
           >
             V
           </motion.div>
@@ -98,7 +98,7 @@ export default function Header() {
             onClick={handleContactClick}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45] text-black px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-[#B07A45]/50/25 hover:shadow-[#B07A45]/50/40 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B07A45] to-[#B07A45] text-black px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-[#B07A45]/25 hover:shadow-[#B07A45]/40 transition-all cursor-pointer"
           >
             Start Project
             <ArrowRight size={16} />
@@ -171,7 +171,7 @@ export default function Header() {
                 <a
                   href="#contact"
                   onClick={(e) => { setMobileOpen(false); handleContactClick(e); }}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#B07A45]/50 to-[#B07A45] text-black px-5 py-3.5 rounded-xl font-semibold text-base cursor-pointer"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#B07A45] to-[#B07A45] text-black px-5 py-3.5 rounded-xl font-semibold text-base cursor-pointer"
                 >
                   Start Your Project
                   <ArrowRight size={18} />

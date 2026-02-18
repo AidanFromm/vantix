@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obprrtqyzpaudfeyftyd.supabase.co'
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'missing-key'
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-const REPLICATE_TOKEN = process.env.REPLICATE_API_TOKEN || ''
+const REPLICATE_TOKEN = process.env.REPLICATE_API_TOKEN || process.env.REPLICATE_TOKEN || ''
 
 export async function POST(req: NextRequest) {
   try {

@@ -139,7 +139,7 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
       transition={{ 
         delay: index * 0.15, 
         duration: 0.6,
-        ease: [0.22, 1, 0.36, 1]
+        ease: [0.22, 1, 0.36, 1] as const
       }}
       className="group"
       style={{ perspective: '1200px' }}
@@ -198,9 +198,9 @@ function PortfolioCard({ project, index }: { project: Project; index: number }) 
                   {/* Browser chrome */}
                   <div className="bg-[#1C1C1C]/90 backdrop-blur rounded-t-xl px-4 py-2.5 flex items-center gap-2">
                     <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-[#B0614A]/50/80" />
+                      <div className="w-3 h-3 rounded-full bg-[#B0614A]/80" />
                       <div className="w-3 h-3 rounded-full bg-[#B07A45]/80" />
-                      <div className="w-3 h-3 rounded-full bg-[#B07A45]/50/80" />
+                      <div className="w-3 h-3 rounded-full bg-[#B07A45]/80" />
                     </div>
                     <div className="flex-1 mx-3">
                       <div className="bg-[#1C1C1C] rounded-md px-3 py-1 text-xs text-white/60 truncate">
@@ -390,7 +390,7 @@ function FeaturedProjectCard({ project }: { project: Project }) {
       ref={ref}
       initial={{ opacity: 0, y: 80 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative"
@@ -402,7 +402,7 @@ function FeaturedProjectCard({ project }: { project: Project }) {
         'border border-white/[0.08]',
         'shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
         'transition-all duration-500',
-        isHovered && 'border-[#B07A45]/50/30 shadow-[0_20px_60px_rgba(16,185,129,0.15)]'
+        isHovered && 'border-[#B07A45]/30 shadow-[0_20px_60px_rgba(16,185,129,0.15)]'
       )}>
         {/* Featured badge */}
         <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
@@ -410,7 +410,7 @@ function FeaturedProjectCard({ project }: { project: Project }) {
             initial={{ opacity: 0, x: -20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.3 }}
-            className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#B07A45]/50/20 border border-[#B07A45]/50/30 backdrop-blur-xl"
+            className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#B07A45]/20 border border-[#B07A45]/30 backdrop-blur-xl"
           >
             <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C89A6A] opacity-75"></span>
@@ -468,7 +468,7 @@ function FeaturedProjectCard({ project }: { project: Project }) {
                       {/* Placeholder UI elements */}
                       <div className="absolute inset-0 p-4">
                         <div className="flex justify-between items-center mb-4">
-                          <div className="h-4 w-28 bg-[#B07A45]/50/30 rounded" />
+                          <div className="h-4 w-28 bg-[#B07A45]/30 rounded" />
                           <div className="flex gap-2">
                             <div className="h-3 w-16 bg-[#EEE6DC]/10 rounded" />
                             <div className="h-3 w-16 bg-[#EEE6DC]/10 rounded" />
@@ -587,7 +587,7 @@ function FeaturedProjectCard({ project }: { project: Project }) {
               {project.tech.map((tech, i) => (
                 <span
                   key={i}
-                  className="px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-full bg-[#B07A45]/50/10 text-[#C89A6A] border border-[#B07A45]/50/20"
+                  className="px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-full bg-[#B07A45]/10 text-[#C89A6A] border border-[#B07A45]/20"
                 >
                   {tech}
                 </span>
@@ -605,7 +605,7 @@ function FeaturedProjectCard({ project }: { project: Project }) {
               className="inline-flex items-center gap-2 sm:gap-3 text-[#C89A6A] font-semibold text-sm sm:text-base md:text-lg group/cta"
             >
               <span>View Live Project</span>
-              <span className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-[#B07A45]/50/10 border border-[#B07A45]/50/20 group-hover/cta:bg-[#B07A45]/50/20 group-hover/cta:border-[#B07A45]/50/40 transition-all">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-[#B07A45]/10 border border-[#B07A45]/20 group-hover/cta:bg-[#B07A45]/20 group-hover/cta:border-[#B07A45]/40 transition-all">
                 <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5 transition-transform" />
               </span>
             </motion.a>
@@ -651,7 +651,7 @@ export function PortfolioSection() {
             y: [0, -50, 0],
           }}
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          className="absolute top-1/4 -left-40 w-80 h-80 bg-[#B07A45]/50/10 rounded-full blur-[100px]"
+          className="absolute top-1/4 -left-40 w-80 h-80 bg-[#B07A45]/10 rounded-full blur-[100px]"
         />
         <motion.div
           animate={{

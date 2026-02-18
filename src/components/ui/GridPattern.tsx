@@ -99,7 +99,7 @@ export function GridPattern({
                   repeat: Infinity,
                   repeatDelay: Math.random() * 3,
                 }}
-                className="fill-[#B07A45]/50/30"
+                className="fill-[#B07A45]/30"
               />
             ))}
           </svg>

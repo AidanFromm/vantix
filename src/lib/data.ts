@@ -1,6 +1,6 @@
 // Universal Data Access Layer
 // Tries Supabase first, falls back to localStorage gracefully
-import { supabase } from './supabase';
+import { supabase } from './supabase-client';
 import type {
   Client, Lead, Project, Invoice, Expense, Activity,
   ScrapedLead, TeamMember, DashboardStats, SubscriptionMeta, MediaItem,
@@ -82,7 +82,7 @@ export async function createRecord<T extends { id: string }>(table: string, reco
   }
 }
 
-export async function updateRecord<T extends { id: string }>(table: string, id: string, updates: Partial<T>): Promise<T> {
+export async function updateRecord<T extends { id: string }>(table: string, id: string, updates: Partial<T> & Record<string, unknown>): Promise<T> {
   const patched = { ...updates, updated_at: new Date().toISOString() } as Partial<T>;
 
   try {

@@ -85,8 +85,8 @@ export function MagneticButton({
   const variantClasses = {
     default: 'bg-[#B07A45]/50 text-white hover:bg-[#C89A6A]',
     outline:
-      'bg-transparent border-2 border-[#B07A45]/50 text-[#C89A6A] hover:bg-[#B07A45]/50/10',
-    ghost: 'bg-transparent text-[#C89A6A] hover:bg-[#B07A45]/50/10',
+      'bg-transparent border-2 border-[#B07A45]/50 text-[#C89A6A] hover:bg-[#B07A45]/10',
+    ghost: 'bg-transparent text-[#C89A6A] hover:bg-[#B07A45]/10',
     gradient:
       'bg-gradient-to-r from-[#B07A45]/50 via-[#B07A45] to-[#B07A45] text-white',
   };
@@ -263,7 +263,7 @@ export function MagneticArrowButton({
       <motion.a
         href={href}
         animate={{ x: position.x, y: position.y }}
-        transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
+        transition={{ type: 'spring' as const, stiffness: 150, damping: 15, mass: 0.1 }}
         className={cn(
           'group relative inline-flex items-center gap-2 text-lg font-medium text-white transition-colors hover:text-[#C89A6A]',
           className
@@ -272,7 +272,7 @@ export function MagneticArrowButton({
         <span>{children}</span>
         <motion.span
           animate={{ x: isHovered ? 5 : 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
         >
           →
         </motion.span>

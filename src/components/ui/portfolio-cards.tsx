@@ -76,8 +76,8 @@ export function Portfolio3DCard({
           rotateY: isHovered ? rotateY : 0,
           transformStyle: 'preserve-3d',
         }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 hover:border-[#B07A45]/50/30"
+        transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 hover:border-[#B07A45]/30"
       >
         {/* Image/Preview area */}
         <div className={cn(
@@ -197,7 +197,7 @@ export function FeaturedCaseStudy({
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
         'relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/10 to-white/5',
-        'backdrop-blur-xl border border-white/10 hover:border-[#B07A45]/50/30 transition-colors',
+        'backdrop-blur-xl border border-white/10 hover:border-[#B07A45]/30 transition-colors',
         className
       )}
     >
@@ -238,7 +238,7 @@ export function FeaturedCaseStudy({
             {item.tags.map((tag, i) => (
               <span
                 key={i}
-                className="px-3 py-1 text-sm rounded-full bg-[#B07A45]/50/10 text-[#C89A6A] border border-[#B07A45]/50/20"
+                className="px-3 py-1 text-sm rounded-full bg-[#B07A45]/10 text-[#C89A6A] border border-[#B07A45]/20"
               >
                 {tag}
               </span>

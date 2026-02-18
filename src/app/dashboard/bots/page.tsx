@@ -14,8 +14,8 @@ const bots = [
     capabilities: ['Full-stack Development', 'Code Review', 'Automation', 'Memory System', 'Voice Transcription', 'File Management'],
     channels: ['Telegram', 'CLI'],
     color: 'from-[#B07A45]/50 to-[#B07A45]',
-    borderColor: 'border-[#B07A45]/50/30',
-    bgColor: 'bg-[#B07A45]/50/10',
+    borderColor: 'border-[#B07A45]/30',
+    bgColor: 'bg-[#B07A45]/10',
   },
   {
     id: 'botskii',
@@ -27,8 +27,8 @@ const bots = [
     capabilities: ['Research', 'Competitive Analysis', 'Coding', 'GitHub Collaboration', 'Documentation', 'Bug Fixing'],
     channels: ['Telegram', 'CLI'],
     color: 'from-[#B07A45]/50 to-[#B07A45]',
-    borderColor: 'border-[#B07A45]/50/30',
-    bgColor: 'bg-[#B07A45]/50/10',
+    borderColor: 'border-[#B07A45]/30',
+    bgColor: 'bg-[#B07A45]/10',
   },
 ];
 

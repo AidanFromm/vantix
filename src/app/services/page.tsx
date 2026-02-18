@@ -4,13 +4,12 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   ArrowRight, ArrowLeft, Bot, Zap, Brain, Wrench,
-  CheckCircle2, Calendar, Phone, MessageSquare, BarChart3,
-  Cpu, Settings, Workflow
+  CheckCircle2, Calendar, Phone
 } from 'lucide-react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const } },
 };
 
 

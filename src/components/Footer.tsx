@@ -26,14 +26,14 @@ export default function Footer() {
   return (
     <footer className="relative border-t border-white/10 bg-[#1C1C1C]">
       {/* Gradient accent */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-[#B07A45]/50/50 to-transparent" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-[#B07A45]/50 to-transparent" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-24 py-12 sm:py-16 md:py-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-8">
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B07A45]/50 to-[#B07A45] flex items-center justify-center text-black font-bold text-xl group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B07A45] to-[#B07A45] flex items-center justify-center text-black font-bold text-xl group-hover:scale-110 transition-transform">
                 V
               </div>
               <span className="text-xl font-bold text-white">Vantix</span>
@@ -51,7 +51,7 @@ export default function Footer() {
                   key={i}
                   href={href}
                   whileHover={{ y: -3 }}
-                  className="w-10 h-10 rounded-lg bg-[#EEE6DC]/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-[#C89A6A] hover:border-[#B07A45]/50/30 transition-colors"
+                  className="w-10 h-10 rounded-lg bg-[#EEE6DC]/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-[#C89A6A] hover:border-[#B07A45]/30 transition-colors"
                 >
                   <Icon size={18} />
                 </motion.a>
@@ -104,7 +104,7 @@ export default function Footer() {
                   href="tel:+19084987753" 
                   className="flex items-center gap-3 text-sm text-white/60 hover:text-[#C89A6A] transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-[#B07A45]/50/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-[#B07A45]/10 flex items-center justify-center flex-shrink-0">
                     <Phone size={16} className="text-[#C89A6A]" />
                   </div>
                   (908) 498-7753
@@ -115,7 +115,7 @@ export default function Footer() {
                   href="mailto:hello@vantix.dev" 
                   className="flex items-center gap-3 text-sm text-white/60 hover:text-[#C89A6A] transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-[#B07A45]/50/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-[#B07A45]/10 flex items-center justify-center flex-shrink-0">
                     <Mail size={16} className="text-[#C89A6A]" />
                   </div>
                   hello@vantix.dev
@@ -123,7 +123,7 @@ export default function Footer() {
               </li>
               <li>
                 <div className="flex items-center gap-3 text-sm text-white/60">
-                  <div className="w-10 h-10 rounded-lg bg-[#B07A45]/50/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-[#B07A45]/10 flex items-center justify-center flex-shrink-0">
                     <MapPin size={16} className="text-[#C89A6A]" />
                   </div>
                   Remote — Worldwide

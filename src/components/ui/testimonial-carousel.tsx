@@ -89,7 +89,7 @@ export function TestimonialCarousel({
         onTouchEnd={handleTouchEnd}
       >
         {/* Quote icon */}
-        <Quote className="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 sm:w-12 sm:h-12 text-[#B07A45]/50/20" />
+        <Quote className="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 sm:w-12 sm:h-12 text-[#B07A45]/20" />
         
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
@@ -100,7 +100,7 @@ export function TestimonialCarousel({
             animate="center"
             exit="exit"
             transition={{
-              x: { type: 'spring', stiffness: 300, damping: 30 },
+              x: { type: 'spring' as const, stiffness: 300, damping: 30 },
               opacity: { duration: 0.3 },
             }}
             className="relative z-10"
@@ -130,7 +130,7 @@ export function TestimonialCarousel({
                 <img
                   src={testimonials[current].avatar}
                   alt={testimonials[current].name}
-                  className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#B07A45]/50/30"
+                  className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#B07A45]/30"
                 />
               ) : (
                 <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-[#B07A45]/50 to-[#B07A45] flex items-center justify-center text-base sm:text-lg md:text-xl font-bold text-white flex-shrink-0">
@@ -213,10 +213,10 @@ export function TestimonialGrid({
           viewport={{ once: true }}
           transition={{ delay: i * 0.1 }}
           whileHover={{ y: -5, scale: 1.02 }}
-          className="group relative p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 hover:border-[#B07A45]/50/30 transition-colors"
+          className="group relative p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 hover:border-[#B07A45]/30 transition-colors"
         >
           {/* Glow effect on hover */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#B07A45]/50/0 to-[#B07A45]/0 group-hover:from-[#B07A45]/50/5 group-hover:to-[#B07A45]/5 transition-all duration-500" />
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#B07A45]/0 to-[#B07A45]/0 group-hover:from-[#B07A45]/5 group-hover:to-[#B07A45]/5 transition-all duration-500" />
           
           <div className="relative z-10">
             {/* Stars */}

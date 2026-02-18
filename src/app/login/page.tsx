@@ -53,7 +53,7 @@ export default function LoginPage() {
           <p className="text-[var(--color-muted)] mb-8">Sign in to your dashboard</p>
 
           {error && (
-            <div className="flex items-center gap-2 p-4 mb-6 bg-[#B0614A]/50/10 border border-[#B0614A]/50/20 rounded-lg text-[#B0614A]">
+            <div className="flex items-center gap-2 p-4 mb-6 bg-[#B0614A]/10 border border-[#B0614A]/20 rounded-lg text-[#B0614A]">
               <AlertCircle size={20} />
               <span>{error}</span>
             </div>

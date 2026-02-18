@@ -222,7 +222,7 @@ export default function AIAssessmentPage() {
       {/* Hero */}
       <div className="relative pt-28 pb-12 px-4 sm:px-6 md:px-12 lg:px-24 max-w-4xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#B07A45]/50/10 border border-[#B07A45]/50/20 text-[#C89A6A] text-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#B07A45]/10 border border-[#B07A45]/20 text-[#C89A6A] text-sm mb-6">
             <ClipboardCheck className="w-4 h-4" />
             AI Readiness Assessment
           </div>
@@ -272,7 +272,7 @@ export default function AIAssessmentPage() {
                     onClick={() => handleSelectOption(opt.score, idx)}
                     className={`w-full text-left px-5 py-4 rounded-xl text-sm font-medium transition-all duration-200 border ${
                       selectedOption === idx
-                        ? 'bg-[#B07A45]/50/20 border-[#B07A45]/50/40 text-[#C89A6A]'
+                        ? 'bg-[#B07A45]/20 border-[#B07A45]/40 text-[#C89A6A]'
                         : 'bg-[#EEE6DC]/[0.03] border-white/10 text-white/70 hover:bg-[#EEE6DC]/[0.06] hover:border-white/20'
                     }`}
                   >
@@ -312,7 +312,7 @@ export default function AIAssessmentPage() {
             >
               {/* Score */}
               <div className="bg-[#EEE6DC]/[0.03] border border-white/10 rounded-2xl p-6 sm:p-10 mb-6 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-[#B07A45]/50/20 flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-[#B07A45]/20 flex items-center justify-center mx-auto mb-4">
                   <RatingIcon className="w-8 h-8 text-[#C89A6A]" />
                 </div>
                 <p className="text-white/40 text-sm uppercase tracking-wider mb-2">Your Score</p>
@@ -336,7 +336,7 @@ export default function AIAssessmentPage() {
                       transition={{ delay: 0.3 + i * 0.15 }}
                       className="flex items-start gap-3 text-white/70 text-sm"
                     >
-                      <div className="w-6 h-6 rounded-lg bg-[#B07A45]/50/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-6 h-6 rounded-lg bg-[#B07A45]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <ArrowRight className="w-3 h-3 text-[#C89A6A]" />
                       </div>
                       {rec}
@@ -366,7 +366,7 @@ export default function AIAssessmentPage() {
                         placeholder="Your name"
                         value={leadName}
                         onChange={(e) => setLeadName(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/50/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/40 transition"
                       />
                     </div>
                     <div className="relative">
@@ -377,7 +377,7 @@ export default function AIAssessmentPage() {
                         placeholder="your@email.com"
                         value={leadEmail}
                         onChange={(e) => setLeadEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/50/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/40 transition"
                       />
                     </div>
                     <div className="relative">
@@ -388,7 +388,7 @@ export default function AIAssessmentPage() {
                         placeholder="Company name"
                         value={leadCompany}
                         onChange={(e) => setLeadCompany(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/50/40 transition"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#EEE6DC]/[0.05] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#B07A45]/40 transition"
                       />
                     </div>
                     <button
@@ -403,7 +403,7 @@ export default function AIAssessmentPage() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-[#B07A45]/50/10 border border-[#B07A45]/50/20 rounded-2xl p-6 sm:p-10 text-center mb-6"
+                  className="bg-[#B07A45]/10 border border-[#B07A45]/20 rounded-2xl p-6 sm:p-10 text-center mb-6"
                 >
                   <Sparkles className="w-8 h-8 text-[#C89A6A] mx-auto mb-3" />
                   <h3 className="text-lg font-semibold mb-2">Report on its way!</h3>

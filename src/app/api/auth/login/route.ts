@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 
+const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'vantix2024';
+
 const USERS = [
-  { email: 'aidan@vantix.com', password: 'vantix2024', name: 'Aidan', role: 'admin' },
-  { email: 'kyle@vantix.com', password: 'vantix2024', name: 'Kyle', role: 'admin' },
-  { email: 'botskii@vantix.com', password: 'vantix2024', name: 'Botskii', role: 'bot' },
-  { email: 'kylebot@vantix.com', password: 'vantix2024', name: "Kyle's Bot", role: 'bot' },
+  { email: 'aidan@vantix.com', password: DASHBOARD_PASSWORD, name: 'Aidan', role: 'admin' },
+  { email: 'kyle@vantix.com', password: DASHBOARD_PASSWORD, name: 'Kyle', role: 'admin' },
+  { email: 'botskii@vantix.com', password: DASHBOARD_PASSWORD, name: 'Botskii', role: 'bot' },
+  { email: 'kylebot@vantix.com', password: DASHBOARD_PASSWORD, name: "Kyle's Bot", role: 'bot' },
 ];
 
 export async function POST(request: Request) {
