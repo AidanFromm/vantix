@@ -1397,20 +1397,20 @@ function FinalCTA() {
 // ============================================
 function Footer() {
   return (
-    <footer className="py-16 bg-[#B07A45] text-white mt-4">
+    <footer className="py-16 bg-[#EEE6DC] border-t border-[#E3D9CD] mt-4">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-14">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#EEE6DC]/10 flex items-center justify-center text-white font-extrabold text-sm">V</div>
-              <span className="text-2xl font-extrabold text-white tracking-tight">vantix<span className="text-[#8E5E34]">.</span></span>
+              <div className="w-8 h-8 rounded-lg bg-[#B07A45]/10 flex items-center justify-center text-[#B07A45] font-extrabold text-sm">V</div>
+              <span className="text-2xl font-extrabold text-[#1C1C1C] tracking-tight">vantix<span className="text-[#B07A45]">.</span></span>
             </div>
-            <p className="text-white/60 mt-4 max-w-sm leading-relaxed">
+            <p className="text-[#7A746C] mt-4 max-w-sm leading-relaxed">
               AI systems that generate revenue, eliminate busywork, and scale your operations — deployed in weeks, not months.
             </p>
           </div>
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Pages</h4>
+            <h4 className="text-[#1C1C1C] font-semibold text-sm mb-4">Pages</h4>
             <ul className="space-y-2">
               {[
                 { label: 'Services', href: '/services' },
@@ -1422,19 +1422,19 @@ function Footer() {
                 { label: 'Terms', href: '/terms' },
               ].map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className="text-white/60 hover:text-white text-sm transition-colors">{l.label}</a>
+                  <a href={l.href} className="text-[#7A746C] hover:text-[#B07A45] text-sm transition-colors">{l.label}</a>
                 </li>
               ))}
             </ul>
           </div>
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Contact</h4>
-            <ul className="space-y-2 text-sm text-white/60">
+            <h4 className="text-[#1C1C1C] font-semibold text-sm mb-4">Contact</h4>
+            <ul className="space-y-2 text-sm text-[#7A746C]">
               <li>
-                <a href="tel:9084987753" className="hover:text-white transition-colors">(908) 498-7753</a>
+                <a href="tel:9084987753" className="hover:text-[#B07A45] transition-colors">(908) 498-7753</a>
               </li>
               <li>
-                <a href="mailto:usevantix@gmail.com" className="hover:text-white transition-colors">usevantix@gmail.com</a>
+                <a href="mailto:usevantix@gmail.com" className="hover:text-[#B07A45] transition-colors">usevantix@gmail.com</a>
               </li>
             </ul>
             <div className="flex gap-4 mt-4">
@@ -1443,15 +1443,15 @@ function Footer() {
                 { icon: Linkedin, href: '#' },
                 { icon: Instagram, href: '#' },
               ].map((s, i) => (
-                <a key={i} href={s.href} className="text-white/40 hover:text-white transition-colors">
+                <a key={i} href={s.href} className="text-[#A39B90] hover:text-[#B07A45] transition-colors">
                   <s.icon size={18} />
                 </a>
               ))}
             </div>
           </div>
         </div>
-        <div className="pt-8 border-t border-white/10 text-center">
-          <p className="text-white/40 text-sm">
+        <div className="pt-8 border-t border-[#E3D9CD] text-center">
+          <p className="text-[#A39B90] text-sm">
             {new Date().getFullYear()} Vantix. All rights reserved.
           </p>
         </div>
