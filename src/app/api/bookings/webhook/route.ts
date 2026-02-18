@@ -40,6 +40,20 @@ export async function POST(req: NextRequest) {
       bookings.unshift(booking);
       saveBookings(bookings);
 
+      // Append to activities
+      try {
+        const activitiesFile = join(process.cwd(), 'data', 'activities.json');
+        const activities = existsSync(activitiesFile) ? JSON.parse(readFileSync(activitiesFile, 'utf-8')) : [];
+        activities.unshift({
+          id: `act-booking-${Date.now()}`,
+          type: 'booking',
+          title: `New booking from ${booking.name}`,
+          description: `${booking.date} at ${booking.time}`,
+          created_at: new Date().toISOString(),
+        });
+        writeFileSync(activitiesFile, JSON.stringify(activities, null, 2));
+      } catch (e) { console.error('Failed to log booking activity:', e); }
+
       return NextResponse.json({ ok: true, booking });
     }
 
