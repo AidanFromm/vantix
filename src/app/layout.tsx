@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     siteName: "Vantix",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Vantix — AI-Powered Business Automation",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "Vantix — AI-Powered Business Automation",
     description:
       "We deploy AI systems that generate revenue, cut costs, and automate operations.",
-    images: ["/og-image.png"],
+    images: ["/og-image.jpg"],
   },
   metadataBase: new URL("https://usevantix.com"),
   alternates: {
@@ -53,7 +53,7 @@ export default function RootLayout({
     "@type": "Organization",
     name: "Vantix",
     url: "https://usevantix.com",
-    logo: "https://usevantix.com/og-image.png",
+    logo: "https://usevantix.com/og-image.jpg",
     telephone: "(908) 498-7753",
     email: "usevantix@gmail.com",
     description:
