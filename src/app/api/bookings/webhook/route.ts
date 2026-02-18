@@ -1,23 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-const BOOKINGS_FILE = join(process.cwd(), 'data', 'bookings.json');
+// Use /tmp on Vercel (writable in serverless), fallback to data/ locally
+const TMP_DIR = join('/tmp', 'vantix-data');
+const LOCAL_DIR = join(process.cwd(), 'data');
+const isVercel = !!process.env.VERCEL;
+const DATA_DIR = isVercel ? TMP_DIR : LOCAL_DIR;
 
-function getBookings() {
+function ensureDir() {
+  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
+}
+
+function getBookings(): unknown[] {
   try {
-    if (existsSync(BOOKINGS_FILE)) return JSON.parse(readFileSync(BOOKINGS_FILE, 'utf-8'));
+    ensureDir();
+    const f = join(DATA_DIR, 'bookings.json');
+    if (existsSync(f)) return JSON.parse(readFileSync(f, 'utf-8'));
   } catch { /* */ }
   return [];
 }
 
 function saveBookings(bookings: unknown[]) {
-  const dir = join(process.cwd(), 'data');
-  if (!existsSync(dir)) { const { mkdirSync } = require('fs'); mkdirSync(dir, { recursive: true }); }
-  writeFileSync(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
+  ensureDir();
+  writeFileSync(join(DATA_DIR, 'bookings.json'), JSON.stringify(bookings, null, 2));
 }
 
-// Cal.com webhook handler
+function getActivities(): unknown[] {
+  try {
+    ensureDir();
+    const f = join(DATA_DIR, 'activities.json');
+    if (existsSync(f)) return JSON.parse(readFileSync(f, 'utf-8'));
+  } catch { /* */ }
+  return [];
+}
+
+function saveActivities(activities: unknown[]) {
+  ensureDir();
+  writeFileSync(join(DATA_DIR, 'activities.json'), JSON.stringify(activities, null, 2));
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -29,9 +51,13 @@ export async function POST(req: NextRequest) {
         name: payload.attendees?.[0]?.name || payload.name || 'Unknown',
         email: payload.attendees?.[0]?.email || payload.email || '',
         phone: payload.attendees?.[0]?.phone || payload.phone || '',
-        date: payload.startTime ? new Date(payload.startTime).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '',
-        time: payload.startTime ? new Date(payload.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '',
-        notes: payload.responses?.notes || payload.additionalNotes || '',
+        date: payload.startTime
+          ? new Date(payload.startTime).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/New_York' })
+          : payload.date || '',
+        time: payload.startTime
+          ? new Date(payload.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' })
+          : payload.time || '',
+        notes: payload.responses?.notes || payload.additionalNotes || payload.notes || '',
         created_at: new Date().toISOString(),
         dismissed: false,
       };
@@ -42,8 +68,7 @@ export async function POST(req: NextRequest) {
 
       // Append to activities
       try {
-        const activitiesFile = join(process.cwd(), 'data', 'activities.json');
-        const activities = existsSync(activitiesFile) ? JSON.parse(readFileSync(activitiesFile, 'utf-8')) : [];
+        const activities = getActivities();
         activities.unshift({
           id: `act-booking-${Date.now()}`,
           type: 'booking',
@@ -51,19 +76,46 @@ export async function POST(req: NextRequest) {
           description: `${booking.date} at ${booking.time}`,
           created_at: new Date().toISOString(),
         });
-        writeFileSync(activitiesFile, JSON.stringify(activities, null, 2));
+        saveActivities(activities);
       } catch (e) { console.error('Failed to log booking activity:', e); }
+
+      // Send email notification to team
+      try {
+        const RESEND_KEY = process.env.RESEND_API_KEY;
+        if (RESEND_KEY) {
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from: 'Vantix <onboarding@resend.dev>',
+              to: ['kyle.ventura@gmail.com'],
+              subject: `New Booking: ${booking.name} — ${booking.date} at ${booking.time}`,
+              html: `<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#F0DFD1;border-radius:12px;">
+                <h2 style="color:#4A2112;margin:0 0 16px;">New Consultation Booking</h2>
+                <p style="color:#6B3A1F;margin:4px 0;"><strong>Name:</strong> ${booking.name}</p>
+                <p style="color:#6B3A1F;margin:4px 0;"><strong>Email:</strong> ${booking.email}</p>
+                ${booking.phone ? `<p style="color:#6B3A1F;margin:4px 0;"><strong>Phone:</strong> ${booking.phone}</p>` : ''}
+                <p style="color:#6B3A1F;margin:4px 0;"><strong>Date:</strong> ${booking.date}</p>
+                <p style="color:#6B3A1F;margin:4px 0;"><strong>Time:</strong> ${booking.time}</p>
+                ${booking.notes ? `<p style="color:#6B3A1F;margin:4px 0;"><strong>Notes:</strong> ${booking.notes}</p>` : ''}
+                <hr style="border:1px solid #E0CCBA;margin:16px 0;"/>
+                <p style="color:#8B6B56;font-size:13px;">View all bookings on your <a href="https://usevantix.com/dashboard" style="color:#4A2112;">dashboard</a></p>
+              </div>`,
+            }),
+          });
+        }
+      } catch { /* email is best-effort */ }
 
       return NextResponse.json({ ok: true, booking });
     }
 
     return NextResponse.json({ ok: true, skipped: true });
   } catch (e) {
+    console.error('Booking webhook error:', e);
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }
 
-// GET: fetch all bookings (for dashboard sync)
 export async function GET() {
   return NextResponse.json(getBookings());
 }
