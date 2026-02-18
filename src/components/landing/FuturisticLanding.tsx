@@ -1170,47 +1170,31 @@ function BookingSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !selectedDate || !selectedTime) return;
+    const dateStr = formatDateStr(selectedDate);
     const booking = {
-      id: 'booking-' + Date.now(),
       name: form.name,
       email: form.email,
       phone: form.phone,
-      date: formatDateStr(selectedDate),
+      date: dateStr,
       time: selectedTime,
       notes: '',
-      created_at: new Date().toISOString(),
-      dismissed: false,
     };
+    // POST to API (handles Supabase insert + emails + notifications)
     try {
+      await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(booking),
+      });
+    } catch { /* noop */ }
+    // localStorage fallback
+    try {
+      const full = { id: 'booking-' + Date.now(), ...booking, created_at: new Date().toISOString(), dismissed: false };
       const existing = JSON.parse(localStorage.getItem('vantix_bookings') || '[]');
-      existing.push(booking);
+      existing.push(full);
       localStorage.setItem('vantix_bookings', JSON.stringify(existing));
     } catch { /* noop */ }
-    // Send confirmation + notification emails via Resend
-    try {
-      const { bookingConfirmationEmail, bookingNotificationEmail } = await import('@/lib/email-templates');
-      const dateStr = formatDateStr(selectedDate);
-      // Confirmation to the person who booked
-      fetch('/api/email/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: form.email,
-          subject: `Your Vantix consultation is confirmed — ${dateStr}`,
-          html: bookingConfirmationEmail(form.name, dateStr, selectedTime),
-        }),
-      }).catch(() => {});
-      // Notification to the team
-      fetch('/api/email/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: 'usevantix@gmail.com',
-          subject: `New booking: ${form.name} — ${dateStr} at ${selectedTime}`,
-          html: bookingNotificationEmail(form.name, form.email, form.phone, dateStr, selectedTime),
-        }),
-      }).catch(() => {});
-    } catch { /* never block booking flow */ }
+    // Cal.com webhook (non-blocking)
     fetch('/api/bookings/webhook', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

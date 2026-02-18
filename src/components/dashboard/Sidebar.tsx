@@ -57,6 +57,7 @@ const navSections: { label?: string; items: NavItem[] }[] = [
           { href: '/dashboard/finances/invoices', label: 'Invoices' },
           { href: '/dashboard/finances/payments', label: 'Payments' },
           { href: '/dashboard/finances/revenue', label: 'Revenue' },
+          { href: '/dashboard/finances/expenses', label: 'Expenses' },
         ],
       },
     ],
@@ -72,6 +73,11 @@ const navSections: { label?: string; items: NavItem[] }[] = [
           { href: '/dashboard/communications/templates', label: 'Templates' },
         ],
       },
+    ],
+  },
+  {
+    items: [
+      { href: '/dashboard/bookings', label: 'Bookings', icon: Calendar },
     ],
   },
   {
@@ -138,6 +144,29 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
   const { isCollapsed, setIsCollapsed } = useSidebar();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [pendingBookings, setPendingBookings] = useState(0);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('vantix_bookings');
+      if (raw) {
+        const bookings = JSON.parse(raw);
+        setPendingBookings(bookings.filter((b: { status: string }) => b.status === 'Pending').length);
+      }
+    } catch {}
+    const handler = () => {
+      try {
+        const raw = localStorage.getItem('vantix_bookings');
+        if (raw) {
+          const bookings = JSON.parse(raw);
+          setPendingBookings(bookings.filter((b: { status: string }) => b.status === 'Pending').length);
+        }
+      } catch {}
+    };
+    window.addEventListener('storage', handler);
+    const interval = setInterval(handler, 5000);
+    return () => { window.removeEventListener('storage', handler); clearInterval(interval); };
+  }, []);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -218,6 +247,9 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
           >
             <Icon size={18} className="flex-shrink-0" />
             {!isCollapsed && <span className="text-sm">{item.label}</span>}
+            {item.href === '/dashboard/bookings' && pendingBookings > 0 && (
+              <span className="ml-auto w-2 h-2 rounded-full bg-[#B07A45] flex-shrink-0" />
+            )}
             {isCollapsed && (
               <div className="absolute left-full ml-3 px-2 py-1 bg-[#1C1C1C] text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-nowrap shadow-lg">
                 {item.label}

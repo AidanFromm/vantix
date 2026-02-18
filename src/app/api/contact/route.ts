@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obprrtqyzpaudfeyftyd.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    
+
+    // Store contact submission
     const { error } = await supabase
       .from('contact_submissions')
       .insert([{
@@ -20,18 +22,41 @@ export async function POST(request: Request) {
       }]);
 
     if (error) {
-      console.error('Supabase error:', error);
-      return NextResponse.json({ success: true, note: 'Stored locally' });
+      console.error('Supabase contact error:', error);
     }
 
-    // Log lead creation (filesystem writes removed for serverless compatibility)
-    console.log('Contact lead created:', { name: data.name, email: data.email });
+    // Create lead in leads table (non-blocking)
+    try {
+      await supabase.from('leads').insert({
+        name: data.name || 'Unknown',
+        email: data.email || null,
+        phone: data.phone || null,
+        source: 'Website Form',
+        status: 'new',
+        score: 0,
+        notes: data.message || null,
+        tags: ['website-contact'],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    } catch { /* table may not exist yet */ }
+
+    // Create notification (non-blocking)
+    try {
+      await supabase.from('notifications').insert({
+        title: 'New Contact Form',
+        message: `${data.name || 'Someone'} submitted a contact form${data.email ? ` (${data.email})` : ''}`,
+        type: 'info',
+        read: false,
+        created_at: new Date().toISOString(),
+      });
+    } catch { /* noop */ }
 
     // Send emails via Resend (non-blocking)
     try {
       const { sendEmail } = await import('@/lib/email');
       const { contactConfirmationEmail, contactNotificationEmail } = await import('@/lib/email-templates');
-      // Confirmation to submitter
+
       if (data.email) {
         sendEmail(
           data.email,
@@ -39,7 +64,7 @@ export async function POST(request: Request) {
           contactConfirmationEmail(data.name || 'there')
         ).catch(() => {});
       }
-      // Notification to team
+
       sendEmail(
         'usevantix@gmail.com',
         `New contact: ${data.name || 'Unknown'}`,
