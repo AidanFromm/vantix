@@ -8,7 +8,7 @@
   --color-accent-light: #8E5E34;
   --color-accent-hover: #8E5E34;
   --color-border: #E3D9CD;
-  --color-card: #FFFFFF;
+  --color-card: #EEE6DC;
   --color-surface: #EEE6DC;
   --color-sage: #7A746C;
   --color-primary: #B07A45;
@@ -24,7 +24,11 @@ html {
 }
 
 body {
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image: url('/paper-texture.png');
+  background-size: 600px 600px;
+  background-repeat: repeat;
+  background-blend-mode: soft-light;
   color: var(--color-text);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;

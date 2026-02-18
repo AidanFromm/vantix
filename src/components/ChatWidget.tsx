@@ -425,7 +425,7 @@ export default function ChatWidget() {
               <button
                 type="submit"
                 disabled={!input.trim()}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#B07A45] hover:bg-[#8E5E34] text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-b from-[#C89A6A] to-[#B07A45] hover:from-[#B07A45] hover:to-[#8E5E34] text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
                 aria-label="Send message"
               >
                 <Send className="h-4 w-4" />

@@ -44,7 +44,7 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const bronzeButtonClass = "bg-[#B07A45] hover:bg-[#8E5E34] text-white font-semibold rounded-xl px-8 py-4 shadow-sm hover:shadow transition-all";
+const bronzeButtonClass = "bg-gradient-to-b from-[#C89A6A] to-[#B07A45] hover:from-[#B07A45] hover:to-[#8E5E34] text-white font-semibold rounded-full px-8 py-4 shadow-md hover:shadow-lg transition-all duration-200";
 
 function useAnimateInView(threshold = 0.15) {
   const ref = useRef(null);
@@ -556,6 +556,83 @@ function ServicesSection() {
               <p className="text-[#7A746C] text-sm leading-relaxed">{s.desc}</p>
             </motion.div>
           ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// PRODUCT SHOWCASE (AI Dashboard + Workflow)
+// ============================================
+function ProductShowcase() {
+  return (
+    <section className="py-16 lg:py-24 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* AI Dashboard Mockup */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="flex flex-col lg:flex-row items-center gap-12 mb-20"
+        >
+          <motion.div variants={fadeLeft} className="lg:w-5/12">
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">AI Dashboards</p>
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C] leading-tight mb-4">
+              See everything your AI is doing. In real time.
+            </h3>
+            <p className="text-[#7A746C] leading-relaxed mb-6">
+              Monitor active AI agents, track automation performance, and measure revenue impact — all from one unified command center.
+            </p>
+            <a href="#booking" className={bronzeButtonClass + " inline-flex items-center gap-2 text-sm px-6 py-3"}>
+              Explore Platform <ArrowRight size={16} />
+            </a>
+          </motion.div>
+          <motion.div variants={fadeRight} className="lg:w-7/12">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#C89A6A]/20 to-transparent rounded-2xl blur-2xl" />
+              <img
+                src="/mockup-1.png"
+                alt="Vantix AI Dashboard"
+                className="relative rounded-2xl shadow-2xl border border-[#E3D9CD]"
+                loading="lazy"
+              />
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Workflow Builder Mockup */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="flex flex-col lg:flex-row-reverse items-center gap-12"
+        >
+          <motion.div variants={fadeRight} className="lg:w-5/12">
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#8E5E34] mb-4">Workflow Automation</p>
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C] leading-tight mb-4">
+              Automate mission-critical workflows with AI
+            </h3>
+            <p className="text-[#7A746C] leading-relaxed mb-6">
+              AI agents that handle calls, live chats, outreach, and customer operations — connected in intelligent workflows that run 24/7.
+            </p>
+            <a href="#booking" className="inline-flex items-center gap-2 text-sm px-6 py-3 rounded-full border border-[#D8C2A8] text-[#1C1C1C] font-medium hover:bg-[#EEE6DC] transition-colors">
+              Explore Infrastructure <ArrowRight size={16} />
+            </a>
+          </motion.div>
+          <motion.div variants={fadeLeft} className="lg:w-7/12">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-bl from-[#C89A6A]/20 to-transparent rounded-2xl blur-2xl" />
+              <img
+                src="/mockup-2.png"
+                alt="Vantix Workflow Automation"
+                className="relative rounded-2xl shadow-2xl border border-[#E3D9CD]"
+                loading="lazy"
+              />
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
@@ -1399,6 +1476,7 @@ export function FuturisticLanding() {
       <BeforeAfterSection />
       <ProblemSection />
       <ServicesSection />
+      <ProductShowcase />
       <TechStackSection />
       <ProcessTimeline />
       <CaseStudyHighlight />
