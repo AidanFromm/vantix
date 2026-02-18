@@ -75,7 +75,7 @@ export default function TasksPage() {
       if (filterStatus !== 'All' && t.status !== filterStatus) return false
       if (filterPriority !== 'All' && t.priority !== filterPriority) return false
       if (filterAssignee !== 'All' && t.assignee !== filterAssignee) return false
-      if (search && !t.title.toLowerCase().includes(search.toLowerCase())) return false
+      if (search && !(t.title || '').toLowerCase().includes(search.toLowerCase())) return false
       return true
     })
   }, [tasks, filterStatus, filterPriority, filterAssignee, search])
@@ -180,7 +180,7 @@ export default function TasksPage() {
                   <p className="text-xs text-[#7A746C]">{task.project}</p>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-b from-[#C89A6A] to-[#B07A45] flex items-center justify-center text-white text-xs font-medium" title={task.assignee}>{task.assignee[0]}</div>
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-b from-[#C89A6A] to-[#B07A45] flex items-center justify-center text-white text-xs font-medium" title={task.assignee || ''}>{(task.assignee || '?')[0]}</div>
                   <span className={`px-2 py-0.5 rounded-lg text-xs font-medium border ${PRIORITY_COLORS[task.priority]}`}>{task.priority}</span>
                   <span className="text-xs text-[#7A746C] flex items-center gap-1"><Calendar size={12} /> {task.dueDate}</span>
                   <button onClick={() => { setEditingTask(task); setModalOpen(true) }} className="p-1 rounded-lg hover:bg-[#E3D9CD] text-[#7A746C]"><Edit3 size={14} /></button>
@@ -211,7 +211,7 @@ export default function TasksPage() {
                         <span className={`px-2 py-0.5 rounded-lg text-xs font-medium border ${PRIORITY_COLORS[task.priority]}`}>{task.priority}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-[#7A746C]">{task.dueDate}</span>
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-b from-[#C89A6A] to-[#B07A45] flex items-center justify-center text-white text-[10px] font-medium">{task.assignee[0]}</div>
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-b from-[#C89A6A] to-[#B07A45] flex items-center justify-center text-white text-[10px] font-medium">{(task.assignee || '?')[0]}</div>
                         </div>
                       </div>
                     </div>

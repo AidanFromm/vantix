@@ -55,7 +55,7 @@ export default function FinancesPage() {
     return months;
   }, [invoices, expenses]);
 
-  const maxBar = Math.max(...monthlyData.map(m => Math.max(m.revenue, m.expenses)), 1);
+  const maxBar = Math.max(...monthlyData.map(m => Math.max(m.revenue || 0, m.expenses || 0)), 1);
 
   // Expense categories
   const categoryBreakdown = useMemo(() => {

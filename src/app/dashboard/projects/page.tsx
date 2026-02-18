@@ -56,10 +56,15 @@ function load(): Project[] {
 }
 function save(p: Project[]) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch {} }
 
+const defaultStatusMeta = { label: 'Unknown', style: 'bg-gray-100 text-gray-600', icon: Circle };
 const statusMeta: Record<string, { label: string; style: string; icon: typeof Circle }> = {
   active: { label: 'Active', style: 'bg-green-100 text-green-700', icon: CheckCircle2 },
   completed: { label: 'Completed', style: 'bg-[#B07A45]/20 text-[#8E5E34]', icon: Target },
   'on-hold': { label: 'On Hold', style: 'bg-[#D6D2CD] text-[#4B4B4B]', icon: Pause },
+  planning: { label: 'Planning', style: 'bg-blue-100 text-blue-700', icon: Circle },
+  in_progress: { label: 'In Progress', style: 'bg-green-100 text-green-700', icon: CheckCircle2 },
+  review: { label: 'Review', style: 'bg-amber-100 text-amber-700', icon: Clock },
+  delivered: { label: 'Delivered', style: 'bg-[#B07A45]/20 text-[#8E5E34]', icon: Target },
 };
 
 const fmt = (n: number | undefined | null) => '$' + (n || 0).toLocaleString('en-US');
@@ -116,8 +121,8 @@ export default function ProjectsPage() {
   function toggleMilestone(projId: string, msIdx: number) {
     setProjects(prev => prev.map(p => {
       if (p.id !== projId) return p;
-      const ms = p.milestones.map((m, i) => i === msIdx ? { ...m, done: !m.done } : m);
-      const progress = ms.length ? Math.round(ms.filter(m => m.done).length / ms.length * 100) : p.progress;
+      const ms = (p.milestones || []).map((m, i) => i === msIdx ? { ...m, done: !m.done } : m);
+      const progress = ms.length ? Math.round(ms.filter(m => m.done).length / ms.length * 100) : (p.progress || 0);
       const updated = { ...p, milestones: ms, progress };
       if (selected?.id === projId) setSelected(updated);
       return updated;
@@ -133,7 +138,7 @@ export default function ProjectsPage() {
   if (selected) {
     const p = projects.find(pr => pr.id === selected.id) || selected;
     const pct = p.budget ? Math.min(100, Math.round(p.spent / p.budget * 100)) : 0;
-    const sm = statusMeta[p.status];
+    const sm = statusMeta[p.status] || defaultStatusMeta;
     return (
       <div className="min-h-screen bg-[#F4EFE8] p-6 md:p-10">
         <button onClick={() => setSelected(null)} className="flex items-center gap-1 text-sm text-[#B07A45] mb-6 hover:underline">
@@ -174,9 +179,9 @@ export default function ProjectsPage() {
         {/* Milestones */}
         <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5">
           <h3 className="text-xs text-[#7A746C] uppercase tracking-wide mb-4 flex items-center gap-1"><Target size={14} /> Milestones</h3>
-          {p.milestones.length === 0 && <p className="text-sm text-[#7A746C]">No milestones yet.</p>}
+          {(p.milestones || []).length === 0 && <p className="text-sm text-[#7A746C]">No milestones yet.</p>}
           <div className="space-y-2">
-            {p.milestones.map((m, i) => (
+            {(p.milestones || []).map((m, i) => (
               <button key={i} onClick={() => toggleMilestone(p.id, i)}
                 className="flex items-center gap-3 w-full text-left p-2 rounded-lg hover:bg-[#E3D9CD]/60 transition text-sm">
                 {m.done
@@ -218,7 +223,7 @@ export default function ProjectsPage() {
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
         {filtered.map(p => {
           const pct = p.budget ? Math.min(100, Math.round(p.spent / p.budget * 100)) : 0;
-          const sm = statusMeta[p.status];
+          const sm = statusMeta[p.status] || defaultStatusMeta;
           return (
             <div key={p.id} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 hover:shadow-md transition cursor-pointer group"
               onClick={() => setSelected(p)}>

@@ -57,9 +57,9 @@ export default function PaymentsPage() {
     if (!searchQuery.trim()) return payments;
     const q = searchQuery.toLowerCase();
     return payments.filter(p =>
-      p.client.toLowerCase().includes(q) ||
-      p.invoiceNumber.toLowerCase().includes(q) ||
-      p.method.toLowerCase().includes(q)
+      (p.client || '').toLowerCase().includes(q) ||
+      (p.invoiceNumber || '').toLowerCase().includes(q) ||
+      (p.method || '').toLowerCase().includes(q)
     );
   }, [payments, searchQuery]);
 
@@ -72,11 +72,11 @@ export default function PaymentsPage() {
       const d = new Date(p.date);
       return p.status === 'completed' && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     })
-    .reduce((s, p) => s + p.amount, 0);
+    .reduce((s, p) => s + (p.amount || 0), 0);
 
   const totalPending = payments
     .filter(p => p.status === 'pending')
-    .reduce((s, p) => s + p.amount, 0);
+    .reduce((s, p) => s + (p.amount || 0), 0);
 
   const completedPayments = payments.filter(p => p.status === 'completed');
   const avgPaymentTime = completedPayments.length > 0 ? Math.round(completedPayments.length > 1 ? 4.2 : 3) : 0;
@@ -177,7 +177,7 @@ export default function PaymentsPage() {
                 </tr>
               ) : (
                 filtered.map(payment => {
-                  const statusCfg = STATUS_CONFIG[payment.status];
+                  const statusCfg = STATUS_CONFIG[payment.status] || STATUS_CONFIG.pending;
                   const StatusIcon = statusCfg.icon;
                   return (
                     <tr key={payment.id} className="border-b border-[#E3D9CD] last:border-0 hover:bg-[#E3D9CD]/30 transition-colors">
@@ -192,8 +192,8 @@ export default function PaymentsPage() {
                           {payment.invoiceNumber}
                         </button>
                       </td>
-                      <td className="px-5 py-4 text-sm font-semibold text-[#1C1C1C]">${payment.amount.toLocaleString()}</td>
-                      <td className="px-5 py-4 text-sm text-[#4B4B4B]">{METHOD_LABELS[payment.method]}</td>
+                      <td className="px-5 py-4 text-sm font-semibold text-[#1C1C1C]">${(payment.amount || 0).toLocaleString()}</td>
+                      <td className="px-5 py-4 text-sm text-[#4B4B4B]">{METHOD_LABELS[payment.method] || payment.method || ''}</td>
                       <td className="px-5 py-4">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${statusCfg.color}`}>
                           <StatusIcon className="w-3.5 h-3.5" />

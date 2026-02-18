@@ -71,9 +71,9 @@ export default function RevenuePage() {
 
   if (!data) return <div className="min-h-screen bg-[#F4EFE8]" />;
 
-  const maxMonthly = Math.max(...data.monthlyRevenue.map(m => m.amount));
-  const maxClient = Math.max(...data.revenueByClient.map(c => c.amount));
-  const totalSource = data.revenueBySource.reduce((s, r) => s + r.amount, 0);
+  const maxMonthly = data.monthlyRevenue.length > 0 ? Math.max(...data.monthlyRevenue.map(m => m.amount)) : 1;
+  const maxClient = data.revenueByClient.length > 0 ? Math.max(...data.revenueByClient.map(c => c.amount)) : 1;
+  const totalSource = data.revenueBySource.reduce((s, r) => s + r.amount, 0) || 1;
 
   return (
     <div className="min-h-screen bg-[#F4EFE8] p-6">
@@ -106,6 +106,9 @@ export default function RevenuePage() {
         {/* Monthly Revenue Chart */}
         <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6 mb-6">
           <h2 className="text-lg font-semibold text-[#1C1C1C] mb-6">Monthly Revenue</h2>
+          {data.monthlyRevenue.length === 0 ? (
+            <div className="h-56 flex items-center justify-center text-[#7A746C] text-sm">No revenue data yet</div>
+          ) : (
           <div className="flex items-end gap-3 h-56">
             {data.monthlyRevenue.map((m, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-2">
@@ -118,6 +121,7 @@ export default function RevenuePage() {
               </div>
             ))}
           </div>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-6 mb-6">

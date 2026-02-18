@@ -152,7 +152,7 @@ function LeadCard({ lead, onMove, onClick }: { lead: Lead; onMove: (s: Stage) =>
 }
 
 function LeadDetailPanel({ lead, onClose, onEdit, onDelete }: { lead: Lead; onClose: () => void; onEdit: () => void; onDelete: () => void }) {
-  const stage = STAGES.find(s => s.key === lead.stage)!;
+  const stage = STAGES.find(s => s.key === lead.stage) || STAGES[0];
   const prob = conversionProbability(lead.score, lead.stage);
   return (
     <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
@@ -219,7 +219,7 @@ function LeadDetailPanel({ lead, onClose, onEdit, onDelete }: { lead: Lead; onCl
                 <Activity size={14} /> Activity Log
               </div>
               <div className="space-y-3">
-                {lead.activities.slice().reverse().map(a => (
+                {(lead.activities || []).slice().reverse().map(a => (
                   <div key={a.id} className="flex gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#B07A45] mt-1.5 shrink-0" />
                     <div>
@@ -326,7 +326,7 @@ export default function LeadsPage() {
   const persist = useCallback((updated: Lead[]) => { setLeads(updated); saveLeads(updated); }, []);
 
   const moveLead = useCallback((id: string, stage: Stage) => {
-    persist(leads.map(l => l.id === id ? { ...l, stage, stageChangedAt: new Date().toISOString(), activities: [...l.activities, { id: uid(), date: new Date().toISOString(), text: `Moved to ${STAGES.find(s => s.key === stage)!.label}` }] } : l));
+    persist(leads.map(l => l.id === id ? { ...l, stage, stageChangedAt: new Date().toISOString(), activities: [...(l.activities || []), { id: uid(), date: new Date().toISOString(), text: `Moved to ${(STAGES.find(s => s.key === stage) || { label: stage }).label}` }] } : l));
   }, [leads, persist]);
 
   const saveLead = useCallback((data: Partial<Lead>) => {
@@ -341,7 +341,7 @@ export default function LeadsPage() {
         const updated = { ...l, ...data };
         if (data.stage && data.stage !== oldStage) {
           updated.stageChangedAt = new Date().toISOString();
-          updated.activities = [...updated.activities, { id: uid(), date: new Date().toISOString(), text: `Moved to ${STAGES.find(s => s.key === data.stage)!.label}` }];
+          updated.activities = [...(updated.activities || []), { id: uid(), date: new Date().toISOString(), text: `Moved to ${(STAGES.find(s => s.key === data.stage) || { label: data.stage }).label}` }];
         }
         return updated;
       }));
@@ -355,7 +355,7 @@ export default function LeadsPage() {
   }, [leads, persist]);
 
   const filtered = leads.filter(l =>
-    !search || [l.name, l.company, l.source].some(f => f.toLowerCase().includes(search.toLowerCase()))
+    !search || [l.name, l.company, l.source].some(f => (f || '').toLowerCase().includes(search.toLowerCase()))
   );
 
   if (!mounted) return <div className="min-h-screen bg-[#F4EFE8]" />;
@@ -446,7 +446,7 @@ export default function LeadsPage() {
               </thead>
               <tbody className="divide-y divide-[#E3D9CD]">
                 {filtered.map(l => {
-                  const stage = STAGES.find(s => s.key === l.stage)!;
+                  const stage = STAGES.find(s => s.key === l.stage) || STAGES[0];
                   return (
                     <tr key={l.id} className="hover:bg-[#F4EFE8]/50 cursor-pointer transition-colors" onClick={() => setDetailLead(l)}>
                       <td className="px-4 py-3 font-medium text-[#1C1C1C]">{l.name}</td>

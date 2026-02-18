@@ -181,7 +181,7 @@ function MetricCard({
 }
 
 function RevenueChart({ data }: { data: { month: string; amount: number }[] }) {
-  const max = Math.max(...data.map((d) => d.amount));
+  const max = data.length > 0 ? Math.max(...data.map((d) => d.amount)) : 1;
   return (
     <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm">
       <div className="flex items-center justify-between mb-5">

@@ -54,7 +54,7 @@ function StatusBadge({ status }: { status: Client['status'] }) {
     Churned: { bg: 'bg-red-100 text-red-700', icon: XCircle },
     prospect: { bg: 'bg-blue-100 text-blue-700', icon: CheckCircle2 },
   };
-  const { bg, icon: Icon } = map[status] || map['active'];
+  const { bg, icon: Icon } = map[status] || map[(status || '').toLowerCase()] || map['active'] || { bg: 'bg-gray-100 text-gray-600', icon: CheckCircle2 };
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bg}`}>
       <Icon size={12} /> {status}
@@ -62,7 +62,8 @@ function StatusBadge({ status }: { status: Client['status'] }) {
   );
 }
 
-function HealthBar({ score }: { score: number }) {
+function HealthBar({ score: rawScore }: { score: number }) {
+  const score = rawScore || 0;
   const color = score >= 80 ? 'bg-emerald-500' : score >= 50 ? 'bg-amber-500' : 'bg-red-500';
   return (
     <div className="flex items-center gap-2">
@@ -143,16 +144,16 @@ function ClientForm({ initial, onSave, onCancel }: {
       <div>
         <label className="block text-xs text-[#7A746C] mb-1">Tags</label>
         <div className="flex flex-wrap gap-1 mb-1">
-          {form.tags.map(t => (
+          {(form.tags || []).map(t => (
             <span key={t} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#B07A45]/10 text-[#B07A45] text-xs">
-              {t} <button onClick={() => set('tags', form.tags.filter(x => x !== t))}><X size={10} /></button>
+              {t} <button onClick={() => set('tags', (form.tags || []).filter(x => x !== t))}><X size={10} /></button>
             </span>
           ))}
         </div>
         <div className="flex gap-1">
           <input className="flex-1 px-3 py-1.5 rounded-xl border border-[#E3D9CD] bg-[#EEE6DC] text-sm"
             value={tagInput} onChange={e => setTagInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && tagInput.trim()) { set('tags', [...form.tags, tagInput.trim()]); setTagInput(''); e.preventDefault(); } }}
+            onKeyDown={e => { if (e.key === 'Enter' && tagInput.trim()) { set('tags', [...(form.tags || []), tagInput.trim()]); setTagInput(''); e.preventDefault(); } }}
             placeholder="Add tag + Enter" />
         </div>
       </div>
@@ -190,9 +191,9 @@ function DetailPanel({ client, onClose }: { client: Client; onClose: () => void 
         <div className="flex items-center gap-2 text-[#4B4B4B]"><BarChart3 size={14} className="text-[#B07A45]" /> Health: {client.healthScore}</div>
       </div>
 
-      {client.tags.length > 0 && (
+      {(client.tags || []).length > 0 && (
         <div className="flex flex-wrap gap-1">
-          {client.tags.map(t => (
+          {(client.tags || []).map(t => (
             <span key={t} className="px-2 py-0.5 rounded-full bg-[#B07A45]/10 text-[#B07A45] text-xs flex items-center gap-1"><Tag size={10} />{t}</span>
           ))}
         </div>
@@ -201,9 +202,9 @@ function DetailPanel({ client, onClose }: { client: Client; onClose: () => void 
       {/* Projects */}
       <div>
         <h4 className="text-sm font-medium text-[#1C1C1C] mb-2 flex items-center gap-1"><FileText size={14} className="text-[#B07A45]" /> Projects</h4>
-        {client.projects.length === 0 ? <p className="text-xs text-[#7A746C]">No projects</p> : (
+        {(client.projects || []).length === 0 ? <p className="text-xs text-[#7A746C]">No projects</p> : (
           <div className="space-y-1">
-            {client.projects.map((p, i) => (
+            {(client.projects || []).map((p, i) => (
               <div key={i} className="flex items-center justify-between bg-[#F4EFE8] rounded-lg px-3 py-2 text-sm">
                 <span className="text-[#1C1C1C]">{p.name}</span>
                 <span className="text-xs text-[#7A746C]">{p.status}</span>
@@ -216,12 +217,12 @@ function DetailPanel({ client, onClose }: { client: Client; onClose: () => void 
       {/* Invoices */}
       <div>
         <h4 className="text-sm font-medium text-[#1C1C1C] mb-2 flex items-center gap-1"><DollarSign size={14} className="text-[#B07A45]" /> Invoices</h4>
-        {client.invoices.length === 0 ? <p className="text-xs text-[#7A746C]">No invoices</p> : (
+        {(client.invoices || []).length === 0 ? <p className="text-xs text-[#7A746C]">No invoices</p> : (
           <div className="space-y-1">
-            {client.invoices.map((inv, i) => (
+            {(client.invoices || []).map((inv, i) => (
               <div key={i} className="flex items-center justify-between bg-[#F4EFE8] rounded-lg px-3 py-2 text-sm">
                 <span className="text-[#1C1C1C]">{inv.id}</span>
-                <span className="text-[#4B4B4B]">${inv.amount.toLocaleString()}</span>
+                <span className="text-[#4B4B4B]">${(inv.amount || 0).toLocaleString()}</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${inv.status === 'Paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{inv.status}</span>
               </div>
             ))}
@@ -232,9 +233,9 @@ function DetailPanel({ client, onClose }: { client: Client; onClose: () => void 
       {/* Activity */}
       <div>
         <h4 className="text-sm font-medium text-[#1C1C1C] mb-2 flex items-center gap-1"><Activity size={14} className="text-[#B07A45]" /> Activity</h4>
-        {client.activity.length === 0 ? <p className="text-xs text-[#7A746C]">No activity</p> : (
+        {(client.activity || []).length === 0 ? <p className="text-xs text-[#7A746C]">No activity</p> : (
           <div className="space-y-1">
-            {client.activity.map((a, i) => (
+            {(client.activity || []).map((a, i) => (
               <div key={i} className="flex items-center gap-2 text-sm text-[#4B4B4B]">
                 <Clock size={12} className="text-[#7A746C]" />
                 <span>{a.action}</span>
@@ -278,7 +279,7 @@ export default function ClientsPage() {
 
   const filtered = useMemo(() => {
     return clients.filter(c => {
-      const matchSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.company.toLowerCase().includes(search.toLowerCase());
+      const matchSearch = !search || (c.name || '').toLowerCase().includes(search.toLowerCase()) || (c.company || '').toLowerCase().includes(search.toLowerCase());
       const matchStatus = filterStatus === 'All' || c.status === filterStatus;
       return matchSearch && matchStatus;
     });
@@ -288,7 +289,7 @@ export default function ClientsPage() {
     total: clients.length,
     active: clients.filter(c => c.status === 'Active').length,
     atRisk: clients.filter(c => c.status === 'At Risk').length,
-    revenue: clients.reduce((s, c) => s + c.revenue, 0),
+    revenue: clients.reduce((s, c) => s + (c.revenue || 0), 0),
   }), [clients]);
 
   const handleSave = (data: typeof emptyClient & { id?: string }) => {
@@ -412,7 +413,7 @@ export default function ClientsPage() {
       {/* Add/Edit Modal */}
       <Modal open={modalOpen} onClose={() => { setModalOpen(false); setEditing(null); }} title={editing ? 'Edit Client' : 'Add Client'}>
         <ClientForm
-          initial={editing ? { name: editing.name, email: editing.email, phone: editing.phone, company: editing.company, status: editing.status, healthScore: editing.healthScore, revenue: editing.revenue, tags: editing.tags, notes: editing.notes, lastContact: editing.lastContact, id: editing.id } : { ...emptyClient }}
+          initial={editing ? { name: editing.name || '', email: editing.email || '', phone: editing.phone || '', company: editing.company || '', status: editing.status || 'Active', healthScore: editing.healthScore || 0, revenue: editing.revenue || 0, tags: editing.tags || [], notes: editing.notes || '', lastContact: editing.lastContact || '', id: editing.id } : { ...emptyClient }}
           onSave={handleSave}
           onCancel={() => { setModalOpen(false); setEditing(null); }}
         />
