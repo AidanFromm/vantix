@@ -44,12 +44,17 @@ const emptyClient: Omit<Client, 'id' | 'createdAt' | 'projects' | 'invoices' | '
 // --- Components ---
 
 function StatusBadge({ status }: { status: Client['status'] }) {
-  const map = {
+  const map: Record<string, { bg: string; icon: typeof CheckCircle2 }> = {
+    active: { bg: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
     Active: { bg: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
+    inactive: { bg: 'bg-gray-100 text-gray-600', icon: XCircle },
+    'at risk': { bg: 'bg-amber-100 text-amber-700', icon: AlertTriangle },
     'At Risk': { bg: 'bg-amber-100 text-amber-700', icon: AlertTriangle },
+    churned: { bg: 'bg-red-100 text-red-700', icon: XCircle },
     Churned: { bg: 'bg-red-100 text-red-700', icon: XCircle },
+    prospect: { bg: 'bg-blue-100 text-blue-700', icon: CheckCircle2 },
   };
-  const { bg, icon: Icon } = map[status];
+  const { bg, icon: Icon } = map[status] || map['active'];
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bg}`}>
       <Icon size={12} /> {status}
