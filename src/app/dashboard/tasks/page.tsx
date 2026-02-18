@@ -156,7 +156,7 @@ export default function TasksPage() {
             <option value="all">All Projects</option>
             {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
-          <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-5 py-2.5 bg-[#8E5E34] hover:bg-[#B07A45] text-white rounded-xl font-medium transition-colors text-sm"><Plus className="w-4 h-4" /> New Task</button>
+          <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-5 py-2.5 bronze-btn hover:brightness-110 text-white rounded-xl font-medium transition-colors text-sm"><Plus className="w-4 h-4" /> New Task</button>
         </div>
       </motion.div>
 
@@ -296,7 +296,7 @@ export default function TasksPage() {
               </div>
               <div className="flex justify-end gap-3 mt-8">
                 <button onClick={resetForm} className="px-5 py-2.5 text-[#7A746C] hover:text-[#1C1C1C]">Cancel</button>
-                <button onClick={handleSubmit} disabled={!form.title} className="px-6 py-2.5 bg-[#8E5E34] hover:bg-[#B07A45] disabled:opacity-40 text-white rounded-xl font-medium transition-colors">{editId ? 'Update' : 'Create'}</button>
+                <button onClick={handleSubmit} disabled={!form.title} className="px-6 py-2.5 bronze-btn hover:brightness-110 disabled:opacity-40 text-white rounded-xl font-medium transition-colors">{editId ? 'Update' : 'Create'}</button>
               </div>
             </motion.div>
           </motion.div>

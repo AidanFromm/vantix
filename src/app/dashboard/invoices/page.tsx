@@ -173,7 +173,7 @@ export default function InvoicesPage() {
     <div className="space-y-6 pb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div><h1 className="text-2xl font-bold text-[#1C1C1C]">Invoices</h1><p className="text-sm text-[#7A746C] mt-0.5">Manage invoices and track payments</p></div>
-        <button onClick={() => { setEditingInvoice(null); setShowForm(true); }} className="flex items-center gap-2 px-4 py-2.5 bg-[#8E5E34] hover:bg-[#B07A45] text-white rounded-xl font-medium text-sm transition-colors"><Plus size={16} /> New Invoice</button>
+        <button onClick={() => { setEditingInvoice(null); setShowForm(true); }} className="flex items-center gap-2 px-4 py-2.5 bronze-btn hover:brightness-110 text-white rounded-xl font-medium text-sm transition-colors"><Plus size={16} /> New Invoice</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

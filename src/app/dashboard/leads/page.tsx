@@ -317,7 +317,7 @@ export default function LeadsPage() {
     <div className="space-y-6 pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C]">Leads</h1><p className="text-sm text-[#7A746C] mt-1">Manage your sales pipeline</p></div>
-        <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#8E5E34] hover:bg-[#B07A45] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> Add Lead</button>
+        <button onClick={() => { setEditingLead(null); setShowModal(true); }} className="flex items-center gap-2 bronze-btn hover:brightness-110 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> Add Lead</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

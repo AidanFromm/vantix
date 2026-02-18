@@ -316,7 +316,7 @@ export default function DashboardPage() {
               </div>
               <div className="flex items-center gap-2 sm:flex-shrink-0">
                 {booking.phone && (
-                  <a href={`tel:${booking.phone}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-b from-[#C89A6A] to-[#B07A45] hover:from-[#B07A45] hover:to-[#8E5E34] text-white text-sm font-medium shadow-sm hover:shadow transition-all">
+                  <a href={`tel:${booking.phone}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bronze-btn hover:brightness-110 text-white text-sm font-medium shadow-sm hover:shadow transition-all">
                     <Phone size={14} /> Call
                   </a>
                 )}

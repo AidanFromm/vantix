@@ -158,9 +158,9 @@ export default function KPICard({
         group relative overflow-hidden
         bg-[#EEE6DC]
         border border-[#E3D9CD] rounded-2xl
-        shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff]
+        shadow-sm
         p-5 transition-all duration-300
-        hover:shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]
+        hover:shadow-sm
         hover:scale-[1.01]
         ${className}
       `}

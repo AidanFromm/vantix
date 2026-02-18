@@ -133,7 +133,7 @@ export default function ClientsPage() {
     <div className="space-y-6 pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div><h1 className="text-2xl sm:text-3xl font-bold text-[#1C1C1C]">Clients</h1><p className="text-sm text-[#7A746C] mt-1">Manage your client relationships</p></div>
-        <button onClick={() => { setEditingClient(null); setShowModal(true); }} className="flex items-center gap-2 bg-[#8E5E34] hover:bg-[#B07A45] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> Add Client</button>
+        <button onClick={() => { setEditingClient(null); setShowModal(true); }} className="flex items-center gap-2 bronze-btn hover:brightness-110 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-[#8E5E34]/20 text-sm"><Plus size={18} /> Add Client</button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

@@ -67,7 +67,7 @@ export default function SettingsPage() {
                   <div className="border-t border-[#E3D9CD] p-4 bg-[#EEE6DC]">
                     <h4 className="text-sm font-medium text-[#1C1C1C] mb-3">What you&apos;ll get:</h4>
                     <ul className="space-y-2">{integration.benefits.map((b, i) => <li key={i} className="flex items-center gap-2 text-sm text-[#7A746C]"><CheckCircle2 size={14} className="text-[#B07A45]/50" /> {b}</li>)}</ul>
-                    <button className="mt-4 w-full bg-[#8E5E34] hover:bg-[#B07A45] text-white py-3 rounded-xl font-medium transition-all">Connect {integration.name}</button>
+                    <button className="mt-4 w-full bronze-btn hover:brightness-110 text-white py-3 rounded-xl font-medium transition-all">Connect {integration.name}</button>
                   </div>
                 )}
               </div>
@@ -90,7 +90,7 @@ export default function SettingsPage() {
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex justify-end">
-        <button onClick={handleSave} className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${saved ? 'bg-[#B07A45]/50 text-white' : 'bg-[#8E5E34] hover:bg-[#B07A45] text-white'}`}><Save size={20} />{saved ? 'Saved!' : 'Save Changes'}</button>
+        <button onClick={handleSave} className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${saved ? 'bg-[#B07A45]/50 text-white' : 'bronze-btn hover:brightness-110 text-white'}`}><Save size={20} />{saved ? 'Saved!' : 'Save Changes'}</button>
       </motion.div>
     </div>
   );

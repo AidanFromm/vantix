@@ -162,7 +162,7 @@ export default function CalendarPage() {
     <div className="min-h-screen bg-[#F4EFE8] p-4 md:p-8">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#C89A6A] to-[#B07A45] shadow-[3px_3px_8px_#E3D9CD,-3px_-3px_8px_#ffffff]">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#C89A6A] to-[#B07A45] shadow-sm">
             <CalendarIcon size={22} className="text-[#8E5E34]" />
           </div>
           <div><h1 className="text-2xl font-bold text-[#1C1C1C]">Calendar</h1><p className="text-sm text-[#7A746C]">Schedule and manage events</p></div>
@@ -189,7 +189,7 @@ export default function CalendarPage() {
 
       <div className="flex flex-col lg:flex-row gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex-1">
-          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff]">
+          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-sm">
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3D9CD]">
               <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-[#EEE6DC] text-[#7A746C]"><ChevronLeft size={20} /></button>
               <h2 className="text-lg font-bold text-[#1C1C1C]">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
@@ -252,7 +252,7 @@ export default function CalendarPage() {
 
         {/* Sidebar */}
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="lg:w-80 xl:w-96">
-          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff]">
+          <div className="bg-[#EEE6DC] rounded-2xl overflow-hidden shadow-sm">
             <div className="px-5 py-4 border-b border-[#E3D9CD] flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-[#1C1C1C]">{new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h3>

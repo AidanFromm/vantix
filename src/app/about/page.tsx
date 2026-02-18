@@ -12,10 +12,6 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
 };
 
-const woodButtonStyle = {
-  background: `repeating-linear-gradient(95deg, transparent, transparent 3px, rgba(139,90,43,0.04) 3px, rgba(139,90,43,0.04) 5px), repeating-linear-gradient(85deg, transparent, transparent 7px, rgba(160,120,60,0.03) 7px, rgba(160,120,60,0.03) 9px), linear-gradient(to right, #C89A6A, #C89A6A, #C89A6A, #C89A6A, #C89A6A)`,
-  border: '1px solid rgba(139,90,43,0.2)',
-};
 
 const values = [
   { icon: Zap, title: 'Ship Fast, Ship Right', description: 'We built a 122-page platform in 3 weeks. Speed without sacrifice is our standard — not our exception.' },
@@ -39,8 +35,8 @@ export default function AboutPage() {
           </Link>
           <Link
             href="/#booking"
-            className="px-5 py-2 text-sm font-semibold rounded-full text-[#8E5E34] shadow-sm hover:shadow-[inset_3px_3px_6px_#B07A45,inset_-3px_-3px_6px_#D8C2A8] transition-all"
-            style={woodButtonStyle}
+            className="px-5 py-2 text-sm font-semibold rounded-full text-[#8E5E34] shadow-sm hover:shadow-inner transition-all"
+            
           >
             Work With Us
           </Link>
@@ -63,7 +59,7 @@ export default function AboutPage() {
       {/* Origin Story */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm">
           <h2 className="text-2xl font-bold mb-4">Why We Exist</h2>
           <div className="space-y-4 text-[#4B4B4B] leading-relaxed">
             <p>We started Vantix because we watched business after business get sold overpriced AI "consulting" that never actually shipped anything. Decks without deployments. Strategies without systems. Six-figure invoices for PowerPoints.</p>
@@ -82,8 +78,8 @@ export default function AboutPage() {
           {team.map((m, i) => (
             <motion.div key={m.name} initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
-              className="rounded-2xl p-8 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff] hover:border-[#8E5E34]/20 transition-all">
-              <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-[inset_4px_4px_8px_#E3D9CD,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-5">
+              className="rounded-2xl p-8 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm hover:border-[#8E5E34]/20 transition-all">
+              <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-sm flex items-center justify-center mb-5">
                 <m.icon className="w-7 h-7 text-[#8E5E34]" />
               </div>
               <h3 className="text-xl font-bold">{m.name}</h3>
@@ -95,10 +91,10 @@ export default function AboutPage() {
 
         {/* AI Team */}
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#8E5E34]/20 shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#8E5E34]/20 shadow-sm">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left">
-              <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-[inset_4px_4px_8px_#E3D9CD,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-5 mx-auto md:mx-0">
+              <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-sm flex items-center justify-center mb-5 mx-auto md:mx-0">
                 <Bot className="w-7 h-7 text-[#8E5E34]" />
               </div>
               <h3 className="text-xl font-bold mb-2">The AI Team Members</h3>
@@ -133,7 +129,7 @@ export default function AboutPage() {
           {values.map((v, i) => (
             <motion.div key={v.title} initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.08 } } }}
-              className="rounded-2xl p-6 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff] hover:border-[#8E5E34]/20 transition-all">
+              className="rounded-2xl p-6 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm hover:border-[#8E5E34]/20 transition-all">
               <v.icon className="w-6 h-6 text-[#8E5E34] mb-3" />
               <h3 className="font-bold mb-1">{v.title}</h3>
               <p className="text-sm text-[#7A746C] leading-relaxed">{v.description}</p>
@@ -145,15 +141,15 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-12 bg-[#EEE6DC] border border-[#E3D9CD] shadow-[8px_8px_20px_#E3D9CD,-8px_-8px_20px_#ffffff]">
+          className="rounded-2xl p-12 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm">
           <h2 className="text-3xl font-bold mb-4">Ready to See What 4 of Us Can Do?</h2>
           <p className="text-[#7A746C] mb-8 max-w-lg mx-auto">
             We take on 3 new clients per month. If you&apos;re serious about automating your business, let&apos;s talk before the spots fill.
           </p>
           <Link
             href="/#booking"
-            className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#8E5E34] font-semibold rounded-full shadow-[6px_6px_14px_#E3D9CD,-6px_-6px_14px_#ffffff] hover:shadow-[inset_3px_3px_6px_#B07A45,inset_-3px_-3px_6px_#D8C2A8] transition-all"
-            style={woodButtonStyle}
+            className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#8E5E34] font-semibold rounded-full shadow-sm hover:shadow-inner transition-all"
+            
           >
             Book Your Free AI Audit <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>

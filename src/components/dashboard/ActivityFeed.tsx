@@ -146,7 +146,7 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
 
   if (activities.length === 0) {
     return (
-      <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff] p-6 ${className}`}>
+      <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-sm p-6 ${className}`}>
         <div className="text-center py-8">
           <div className="w-12 h-12 rounded-full bg-[#EEE6DC] flex items-center justify-center mx-auto mb-3">
             <AlertCircle size={20} className="text-[#7A746C]" />
@@ -158,7 +158,7 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
   }
 
   return (
-    <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-[6px_6px_16px_#E3D9CD,-6px_-6px_16px_#ffffff] overflow-hidden ${className}`}>
+    <div className={`bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl shadow-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-5 py-4 border-b border-[#E3D9CD]">
         <div className="flex items-center justify-between">
