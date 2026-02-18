@@ -1473,10 +1473,10 @@ export function FuturisticLanding() {
       <Navigation />
       <HeroSection />
       <AnimatedCounterSection />
+      <ProductShowcase />
       <BeforeAfterSection />
       <ProblemSection />
       <ServicesSection />
-      <ProductShowcase />
       <TechStackSection />
       <ProcessTimeline />
       <CaseStudyHighlight />
