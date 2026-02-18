@@ -98,7 +98,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       <div className="relative px-4 py-5 border-b border-[#D8CFC4]">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <img src="/logo-v.png" alt="Vantix" className="w-9 h-9 rounded-xl object-cover shadow-sm" />
+            <img src="/logo-nav.png" alt="Vantix" className="w-9 h-9 object-contain" />
             <AnimatePresence>
               {!isCollapsed && (
                 <motion.span

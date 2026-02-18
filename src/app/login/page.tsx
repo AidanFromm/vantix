@@ -48,7 +48,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <Link href="/" className="flex items-center justify-center gap-3 mb-8">
-          <img src="/logo-v.png" alt="Vantix" className="w-10 h-10 rounded-xl object-cover" />
+          <img src="/logo-nav.png" alt="Vantix" className="w-10 h-10 object-contain" />
           <span className="text-3xl font-bold text-[#1E1E1E]">vantix<span className="text-[#9B6C3C]">.</span></span>
         </Link>
 
