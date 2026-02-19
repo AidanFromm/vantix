@@ -5,6 +5,7 @@ import {
   FolderOpen, Plus, X, ChevronDown, ArrowLeft, CheckCircle2,
   Circle, Clock, Pause, Calendar, DollarSign, Target, Edit2, Trash2
 } from 'lucide-react';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 interface Milestone {
   name: string;
@@ -25,36 +26,9 @@ interface Project {
   milestones: Milestone[];
 }
 
-const STORAGE_KEY = 'vantix_projects';
-
-const SEED: Project[] = [
-  {
-    id: '1', name: 'SecuredTampa Build-Out', client: 'SecuredTampa', status: 'active',
-    budget: 4500, spent: 4050, progress: 90, startDate: '2025-11-01', endDate: '2026-03-01',
-    description: 'Full security system design, installation, and monitoring setup for SecuredTampa HQ.',
-    milestones: [
-      { name: 'Site Survey', done: true }, { name: 'Equipment Order', done: true },
-      { name: 'Installation', done: true }, { name: 'Testing & Handoff', done: false },
-    ],
-  },
-  {
-    id: '2', name: 'JFK Maintenance', client: 'JFK Maintenance', status: 'active',
-    budget: 6000, spent: 3000, progress: 50, startDate: '2025-07-01', endDate: '2026-07-01',
-    description: 'Ongoing monthly maintenance contract at $500/mo for JFK facility systems.',
-    milestones: [
-      { name: 'Q1 Maintenance', done: true }, { name: 'Q2 Maintenance', done: true },
-      { name: 'Q3 Maintenance', done: false }, { name: 'Q4 Maintenance', done: false },
-    ],
-  },
-];
+const SEED: Project[] = [];
 
 const CLIENTS = ['SecuredTampa', 'JFK Maintenance', 'Vantix Internal'];
-
-function load(): Project[] {
-  try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch {}
-  return SEED;
-}
-function save(p: Project[]) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch {} }
 
 const defaultStatusMeta = { label: 'Unknown', style: 'bg-gray-100 text-gray-600', icon: Circle };
 const statusMeta: Record<string, { label: string; style: string; icon: typeof Circle }> = {
@@ -85,8 +59,14 @@ export default function ProjectsPage() {
   const [fEnd, setFEnd] = useState('');
   const [fDesc, setFDesc] = useState('');
 
-  useEffect(() => { setProjects(load()); }, []);
-  useEffect(() => { if (projects.length) save(projects); }, [projects]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getData<Project>('projects');
+        setProjects(data.length ? data : SEED);
+      } catch { setProjects(SEED); }
+    })();
+  }, []);
 
   const filtered = filter === 'all' ? projects : projects.filter(p => p.status === filter);
 
@@ -101,19 +81,20 @@ export default function ProjectsPage() {
     setModalOpen(true);
   }
 
-  function saveProject() {
+  async function saveProject() {
+    const updates = { name: fName, client: fClient, status: fStatus, budget: fBudget, startDate: fStart, endDate: fEnd, description: fDesc };
     if (editing) {
-      setProjects(prev => prev.map(p => p.id === editing.id ? {
-        ...p, name: fName, client: fClient, status: fStatus, budget: fBudget,
-        startDate: fStart, endDate: fEnd, description: fDesc,
-      } : p));
+      try { await updateRecord('projects', editing.id, updates); } catch {}
+      setProjects(prev => prev.map(p => p.id === editing.id ? { ...p, ...updates } : p));
     } else {
-      const np: Project = {
-        id: crypto.randomUUID(), name: fName, client: fClient, status: fStatus,
-        budget: fBudget, spent: 0, progress: 0, startDate: fStart, endDate: fEnd,
-        description: fDesc, milestones: [],
-      };
-      setProjects(prev => [...prev, np]);
+      const rec = { ...updates, spent: 0, progress: 0, milestones: [] };
+      try {
+        const created = await createRecord<Project>('projects', rec);
+        setProjects(prev => [created, ...prev]);
+      } catch {
+        const np: Project = { id: crypto.randomUUID(), ...rec } as Project;
+        setProjects(prev => [np, ...prev]);
+      }
     }
     setModalOpen(false);
   }
@@ -129,7 +110,8 @@ export default function ProjectsPage() {
     }));
   }
 
-  function deleteProject(id: string) {
+  async function deleteProject(id: string) {
+    try { await deleteRecord('projects', id); } catch {}
     setProjects(prev => prev.filter(p => p.id !== id));
     if (selected?.id === id) setSelected(null);
   }

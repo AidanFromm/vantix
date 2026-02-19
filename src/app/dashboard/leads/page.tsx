@@ -6,6 +6,7 @@ import {
   Globe, Users, Megaphone, MessageSquare, MoreVertical, ArrowRight,
   TrendingUp, Clock, Search, Edit2, Trash2, Eye, Activity
 } from 'lucide-react';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 /* ─── Types ─── */
 interface Lead {
@@ -43,7 +44,6 @@ const STAGES: { key: Stage; label: string; color: string; bg: string; border: st
 ];
 
 const SOURCES: Source[] = ['Website', 'Referral', 'Cold Email', 'Social', 'Other'];
-const STORAGE_KEY = 'vantix_leads';
 
 const sourceIcon = (s: Source) => {
   switch (s) {
@@ -77,17 +77,6 @@ function scoreBadgeColor(score: number) {
 }
 
 /* ─── No seed data — starts empty, fully editable ─── */
-
-function loadLeads(): Lead[] {
-  if (typeof window === 'undefined') return [];
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return [];
-  return JSON.parse(raw);
-}
-
-function saveLeads(leads: Lead[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
-}
 
 /* ─── Components ─── */
 
@@ -321,23 +310,43 @@ export default function LeadsPage() {
   const [detailLead, setDetailLead] = useState<Lead | null>(null);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setLeads(loadLeads()); setMounted(true); }, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getData<Lead>('leads');
+        setLeads(data);
+      } catch { setLeads([]); }
+      setMounted(true);
+    })();
+  }, []);
 
-  const persist = useCallback((updated: Lead[]) => { setLeads(updated); saveLeads(updated); }, []);
+  const moveLead = useCallback(async (id: string, stage: Stage) => {
+    const updates = { stage, stageChangedAt: new Date().toISOString() };
+    try { await updateRecord('leads', id, updates); } catch {}
+    setLeads(prev => prev.map(l => l.id === id ? { ...l, ...updates, activities: [...(l.activities || []), { id: uid(), date: new Date().toISOString(), text: `Moved to ${(STAGES.find(s => s.key === stage) || { label: stage }).label}` }] } : l));
+  }, []);
 
-  const moveLead = useCallback((id: string, stage: Stage) => {
-    persist(leads.map(l => l.id === id ? { ...l, stage, stageChangedAt: new Date().toISOString(), activities: [...(l.activities || []), { id: uid(), date: new Date().toISOString(), text: `Moved to ${(STAGES.find(s => s.key === stage) || { label: stage }).label}` }] } : l));
-  }, [leads, persist]);
-
-  const saveLead = useCallback((data: Partial<Lead>) => {
+  const saveLead = useCallback(async (data: Partial<Lead>) => {
     if (modalLead === 'new') {
       const now = new Date().toISOString();
-      const newLead: Lead = { id: uid(), name: '', email: '', phone: '', company: '', source: 'Website', stage: 'new', score: 50, notes: '', createdAt: now, stageChangedAt: now, activities: [{ id: uid(), date: now, text: 'Lead created' }], ...data };
-      persist([...leads, newLead]);
+      const rec = { name: '', email: '', phone: '', company: '', source: 'Website' as Source, stage: 'new' as Stage, score: 50, notes: '', createdAt: now, stageChangedAt: now, activities: [{ id: uid(), date: now, text: 'Lead created' }], ...data };
+      try {
+        const created = await createRecord<Lead>('leads', rec);
+        setLeads(prev => [created, ...prev]);
+      } catch {
+        const newLead: Lead = { id: uid(), ...rec } as Lead;
+        setLeads(prev => [newLead, ...prev]);
+      }
     } else if (modalLead) {
       const oldStage = (modalLead as Lead).stage;
-      persist(leads.map(l => {
-        if (l.id !== (modalLead as Lead).id) return l;
+      const id = (modalLead as Lead).id;
+      const updates = { ...data } as Partial<Lead> & Record<string, unknown>;
+      if (data.stage && data.stage !== oldStage) {
+        updates.stageChangedAt = new Date().toISOString();
+      }
+      try { await updateRecord('leads', id, updates); } catch {}
+      setLeads(prev => prev.map(l => {
+        if (l.id !== id) return l;
         const updated = { ...l, ...data };
         if (data.stage && data.stage !== oldStage) {
           updated.stageChangedAt = new Date().toISOString();
@@ -347,12 +356,13 @@ export default function LeadsPage() {
       }));
     }
     setModalLead(null);
-  }, [modalLead, leads, persist]);
+  }, [modalLead]);
 
-  const deleteLead = useCallback((id: string) => {
-    persist(leads.filter(l => l.id !== id));
+  const deleteLead = useCallback(async (id: string) => {
+    try { await deleteRecord('leads', id); } catch {}
+    setLeads(prev => prev.filter(l => l.id !== id));
     setDetailLead(null);
-  }, [leads, persist]);
+  }, []);
 
   const filtered = leads.filter(l =>
     !search || [l.name, l.company, l.source].some(f => (f || '').toLowerCase().includes(search.toLowerCase()))

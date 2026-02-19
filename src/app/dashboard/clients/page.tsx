@@ -6,6 +6,7 @@ import {
   Building2, Mail, Phone, Tag, FileText, DollarSign, Activity, Clock, AlertTriangle,
   CheckCircle2, XCircle, BarChart3, Plus, MessageSquare
 } from 'lucide-react';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 // --- Types ---
 interface Client {
@@ -25,16 +26,6 @@ interface Client {
   invoices: { id: string; amount: number; status: string; date: string }[];
   activity: { action: string; date: string }[];
 }
-
-// --- localStorage helpers ---
-function lsGet<T>(key: string, fallback: T): T {
-  try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; } catch { return fallback; }
-}
-function lsSet(key: string, data: unknown) {
-  try { localStorage.setItem(key, JSON.stringify(data)); } catch {}
-}
-
-const SEED_CLIENTS: Client[] = [];
 
 const emptyClient: Omit<Client, 'id' | 'createdAt' | 'projects' | 'invoices' | 'activity'> = {
   name: '', email: '', phone: '', company: '', status: 'Active', healthScore: 50,
@@ -268,14 +259,14 @@ export default function ClientsPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const stored = lsGet<Client[]>('vantix_clients', []);
-    setClients(stored.length > 0 ? stored : SEED_CLIENTS);
-    setMounted(true);
+    (async () => {
+      try {
+        const data = await getData<Client>('clients');
+        setClients(data);
+      } catch { setClients([]); }
+      setMounted(true);
+    })();
   }, []);
-
-  useEffect(() => {
-    if (mounted) lsSet('vantix_clients', clients);
-  }, [clients, mounted]);
 
   const filtered = useMemo(() => {
     return clients.filter(c => {
@@ -292,21 +283,29 @@ export default function ClientsPage() {
     revenue: clients.reduce((s, c) => s + (c.revenue || 0), 0),
   }), [clients]);
 
-  const handleSave = (data: typeof emptyClient & { id?: string }) => {
+  const handleSave = async (data: typeof emptyClient & { id?: string }) => {
     if (data.id) {
+      try { await updateRecord('clients', data.id, data); } catch {}
       setClients(prev => prev.map(c => c.id === data.id ? { ...c, ...data } : c));
     } else {
-      const newClient: Client = {
-        ...data, id: Date.now().toString(), createdAt: new Date().toISOString().split('T')[0],
+      const rec = {
+        ...data, createdAt: new Date().toISOString().split('T')[0],
         projects: [], invoices: [], activity: [{ action: 'Client created', date: new Date().toISOString().split('T')[0] }],
-      } as Client;
-      setClients(prev => [...prev, newClient]);
+      };
+      try {
+        const created = await createRecord<Client>('clients', rec);
+        setClients(prev => [created, ...prev]);
+      } catch {
+        const newClient: Client = { ...rec, id: Date.now().toString() } as Client;
+        setClients(prev => [newClient, ...prev]);
+      }
     }
     setModalOpen(false);
     setEditing(null);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    try { await deleteRecord('clients', id); } catch {}
     setClients(prev => prev.filter(c => c.id !== id));
     if (selectedId === id) setSelectedId(null);
   };

@@ -45,10 +45,7 @@ const INTERVALS = ['Weekly', 'Monthly', 'Quarterly', 'Yearly'];
 
 const SEED: Expense[] = [];
 
-function lsGet<T>(key: string, fallback: T[]): T[] {
-  try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
-}
-function lsSet<T>(key: string, d: T[]) { try { localStorage.setItem(key, JSON.stringify(d)); } catch {} }
+// localStorage helpers removed — using data.ts layer
 
 export default function ExpensesPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -68,16 +65,14 @@ export default function ExpensesPage() {
     (async () => {
       try {
         const d = await getData<Expense>('expenses');
-        setExpenses(d.length ? d : lsGet('vantix_expenses', SEED));
-      } catch { setExpenses(lsGet('vantix_expenses', SEED)); }
+        setExpenses(d.length ? d : SEED);
+      } catch { setExpenses(SEED); }
       try {
         const p = await getData<Payment>('payments');
-        setPayments(p.length ? p : lsGet('vantix_payments', []));
-      } catch { setPayments(lsGet('vantix_payments', [])); }
+        setPayments(p);
+      } catch { setPayments([]); }
     })();
   }, []);
-
-  useEffect(() => { lsSet('vantix_expenses', expenses); }, [expenses]);
 
   const now = new Date();
   const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;

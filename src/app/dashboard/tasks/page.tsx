@@ -7,6 +7,7 @@ import {
   Calendar, User, Search, MoreHorizontal, GripVertical,
   Edit3, Trash2, Users
 } from 'lucide-react'
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data'
 
 interface Task {
   id: string
@@ -40,20 +41,7 @@ const PRIORITIES = ['Low', 'Medium', 'High', 'Urgent'] as const
 const ASSIGNEES = ['Kyle', 'Aidan']
 const PROJECTS = ['SecuredTampa', 'JFK']
 
-function loadTasks(): Task[] {
-  try {
-    const raw = localStorage.getItem('vantix_tasks')
-    if (raw) {
-      const parsed = JSON.parse(raw)
-      return Array.isArray(parsed) ? parsed : []
-    }
-  } catch {}
-  return []
-}
-
-function saveTasks(tasks: Task[]) {
-  try { localStorage.setItem('vantix_tasks', JSON.stringify(tasks)) } catch {}
-}
+// Tasks loaded via getData from @/lib/data
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
@@ -67,8 +55,14 @@ export default function TasksPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [bulkMenu, setBulkMenu] = useState(false)
 
-  useEffect(() => { setTasks(loadTasks()) }, [])
-  useEffect(() => { if (tasks.length) saveTasks(tasks) }, [tasks])
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getData<Task>('tasks')
+        setTasks(data)
+      } catch { setTasks([]) }
+    })()
+  }, [])
 
   const filtered = useMemo(() => {
     return tasks.filter(t => {
@@ -80,36 +74,50 @@ export default function TasksPage() {
     })
   }, [tasks, filterStatus, filterPriority, filterAssignee, search])
 
-  const toggleComplete = (id: string) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed, status: !t.completed ? 'Done' : 'To Do' } : t))
+  const toggleComplete = async (id: string) => {
+    const task = tasks.find(t => t.id === id)
+    if (!task) return
+    const updates = { completed: !task.completed, status: (!task.completed ? 'Done' : 'To Do') as Task['status'] }
+    try { await updateRecord('tasks', id, updates) } catch {}
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t))
   }
 
   const toggleSelect = (id: string) => {
     setSelected(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
   }
 
-  const bulkComplete = () => {
-    setTasks(prev => prev.map(t => selected.has(t.id) ? { ...t, completed: true, status: 'Done' } : t))
+  const bulkComplete = async () => {
+    for (const id of selected) { try { await updateRecord('tasks', id, { completed: true, status: 'Done' }) } catch {} }
+    setTasks(prev => prev.map(t => selected.has(t.id) ? { ...t, completed: true, status: 'Done' as Task['status'] } : t))
     setSelected(new Set())
     setBulkMenu(false)
   }
 
-  const bulkAssign = (assignee: string) => {
+  const bulkAssign = async (assignee: string) => {
+    for (const id of selected) { try { await updateRecord('tasks', id, { assignee }) } catch {} }
     setTasks(prev => prev.map(t => selected.has(t.id) ? { ...t, assignee } : t))
     setSelected(new Set())
     setBulkMenu(false)
   }
 
-  const deleteTask = (id: string) => {
+  const deleteTask = async (id: string) => {
+    try { await deleteRecord('tasks', id) } catch {}
     setTasks(prev => prev.filter(t => t.id !== id))
   }
 
-  const saveTask = (task: Task) => {
-    setTasks(prev => {
-      const exists = prev.find(t => t.id === task.id)
-      if (exists) return prev.map(t => t.id === task.id ? task : t)
-      return [...prev, task]
-    })
+  const saveTask = async (task: Task) => {
+    const exists = tasks.find(t => t.id === task.id)
+    if (exists) {
+      try { await updateRecord('tasks', task.id, { ...task } as Partial<Task> & Record<string, unknown>) } catch {}
+      setTasks(prev => prev.map(t => t.id === task.id ? task : t))
+    } else {
+      try {
+        const created = await createRecord<Task>('tasks', task)
+        setTasks(prev => [created, ...prev])
+      } catch {
+        setTasks(prev => [task, ...prev])
+      }
+    }
     setModalOpen(false)
     setEditingTask(null)
   }

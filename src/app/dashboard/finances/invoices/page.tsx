@@ -5,6 +5,7 @@ import {
   FileText, Plus, DollarSign, AlertTriangle, CheckCircle, Clock,
   Trash2, Send, Download, Edit2, X, ChevronDown
 } from 'lucide-react';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 interface LineItem {
   description: string;
@@ -24,23 +25,7 @@ interface Invoice {
   notes: string;
 }
 
-const STORAGE_KEY = 'vantix_invoices';
-
-const SEED: Invoice[] = [];
-
 const CLIENTS = ['SecuredTampa', 'JFK Maintenance', 'Vantix Internal'];
-
-function loadInvoices(): Invoice[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return SEED;
-}
-
-function saveInvoices(inv: Invoice[]) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(inv)); } catch {}
-}
 
 const statusStyle: Record<string, string> = {
   draft: 'bg-[#D6D2CD] text-[#4B4B4B]',
@@ -60,8 +45,14 @@ export default function InvoicesPage() {
   const [dueDate, setDueDate] = useState('');
   const [notes, setNotes] = useState('');
 
-  useEffect(() => { setInvoices(loadInvoices()); }, []);
-  useEffect(() => { if (invoices.length) saveInvoices(invoices); }, [invoices]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getData<Invoice>('invoices');
+        setInvoices(data);
+      } catch { setInvoices([]); }
+    })();
+  }, []);
 
   const stats = useMemo(() => {
     const outstanding = invoices.filter(i => i.status === 'sent').reduce((s, i) => s + i.total, 0);
@@ -84,26 +75,32 @@ export default function InvoicesPage() {
     setDueDate(inv.dueDate); setNotes(inv.notes); setModalOpen(true);
   }
 
-  function save() {
+  async function save() {
     const total = calcTotal(items);
     if (editing) {
+      try { await updateRecord('invoices', editing.id, { client, items, total, dueDate, notes }); } catch {}
       setInvoices(prev => prev.map(i => i.id === editing.id ? { ...i, client, items, total, dueDate, notes } : i));
     } else {
       const num = `INV-${String(invoices.length + 1).padStart(3, '0')}`;
-      const inv: Invoice = {
-        id: crypto.randomUUID(), number: num, client, items, total,
-        status: 'draft', dueDate, createdAt: new Date().toISOString().slice(0, 10), notes,
-      };
-      setInvoices(prev => [...prev, inv]);
+      const rec = { number: num, client, items, total, status: 'draft' as const, dueDate, createdAt: new Date().toISOString().slice(0, 10), notes };
+      try {
+        const created = await createRecord<Invoice>('invoices', rec);
+        setInvoices(prev => [created, ...prev]);
+      } catch {
+        const inv: Invoice = { id: crypto.randomUUID(), ...rec };
+        setInvoices(prev => [inv, ...prev]);
+      }
     }
     setModalOpen(false);
   }
 
-  function markPaid(id: string) {
+  async function markPaid(id: string) {
+    try { await updateRecord('invoices', id, { status: 'paid', paid_date: new Date().toISOString() }); } catch {}
     setInvoices(prev => prev.map(i => i.id === id ? { ...i, status: 'paid' as const } : i));
   }
 
-  function deleteInv(id: string) {
+  async function deleteInv(id: string) {
+    try { await deleteRecord('invoices', id); } catch {}
     setInvoices(prev => prev.filter(i => i.id !== id));
   }
 
