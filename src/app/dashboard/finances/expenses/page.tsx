@@ -77,16 +77,15 @@ export default function ExpensesPage() {
   const now = new Date();
   const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-  const totalAll = useMemo(() => expenses.reduce((s, e) => s + e.amount, 0), [expenses]);
-  const subsAll = useMemo(() => expenses.filter(e => e.type === 'Subscription').reduce((s, e) => s + e.amount, 0), [expenses]);
-  const oneTimeAll = useMemo(() => expenses.filter(e => e.type === 'One-Time').reduce((s, e) => s + e.amount, 0), [expenses]);
+  const monthExpenses = useMemo(() => expenses.filter(e => (e.date || '').startsWith(thisMonth)), [expenses, thisMonth]);
+  const totalMonth = useMemo(() => monthExpenses.reduce((s, e) => s + e.amount, 0), [monthExpenses]);
+  const subsMonth = useMemo(() => monthExpenses.filter(e => e.type === 'Subscription').reduce((s, e) => s + e.amount, 0), [monthExpenses]);
+  const oneTimeMonth = useMemo(() => monthExpenses.filter(e => e.type === 'One-Time').reduce((s, e) => s + e.amount, 0), [monthExpenses]);
   const byProject = useMemo(() => {
     const m: Record<string, number> = {};
-    expenses.forEach(e => { const k = e.project || 'Unassigned'; m[k] = (m[k] || 0) + e.amount; });
+    monthExpenses.forEach(e => { const k = e.project || 'Unassigned'; m[k] = (m[k] || 0) + e.amount; });
     return m;
-  }, [expenses]);
-  const monthExpenses = useMemo(() => expenses.filter(e => e.date.startsWith(thisMonth)), [expenses, thisMonth]);
-  const totalMonth = useMemo(() => monthExpenses.reduce((s, e) => s + e.amount, 0), [monthExpenses]);
+  }, [monthExpenses]);
 
   const revenue = useMemo(() => payments.filter(p => p.date?.startsWith(thisMonth) && p.status === 'completed').reduce((s, p) => s + p.amount, 0), [payments, thisMonth]);
   const profit = revenue - totalMonth;
@@ -148,9 +147,9 @@ export default function ExpensesPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Expenses', value: totalAll, icon: Receipt, color: 'text-red-500' },
-          { label: 'Subscriptions', value: subsAll, icon: Repeat, color: 'text-[#B07A45]' },
-          { label: 'One-Time', value: oneTimeAll, icon: ShoppingBag, color: 'text-blue-500' },
+          { label: 'This Month', value: totalMonth, icon: Receipt, color: 'text-red-500' },
+          { label: 'Subscriptions (Month)', value: subsMonth, icon: Repeat, color: 'text-[#B07A45]' },
+          { label: 'One-Time (Month)', value: oneTimeMonth, icon: ShoppingBag, color: 'text-blue-500' },
         ].map((s) => (
           <div key={s.label} className="bg-[#EEE6DC] rounded-xl p-5 border border-[#E3D9CD]">
             <div className="flex items-center justify-between mb-2">

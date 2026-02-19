@@ -53,8 +53,8 @@ export default function ContractsPage() {
   useEffect(() => { load(); }, [load]);
 
   const filtered = filter === 'all' ? contracts : contracts.filter(c => c.status === filter);
-  const totalValue = contracts.filter(c => c.status === 'signed').reduce((s, c) => s + c.value, 0);
-  const pendingValue = contracts.filter(c => c.status !== 'signed').reduce((s, c) => s + c.value, 0);
+  const totalValue = contracts.filter(c => c.status === 'signed').reduce((s, c) => s + (c.value || 0), 0);
+  const pendingValue = contracts.filter(c => c.status !== 'signed').reduce((s, c) => s + (c.value || 0), 0);
 
   const resetForm = () => { setForm({ title: '', client_name: '', value: 0, type: 'project', documenso_url: '', start_date: '', end_date: '' }); setEditId(null); setShowForm(false); };
 
@@ -152,7 +152,7 @@ export default function ContractsPage() {
                     </div>
                     <div className="flex items-center gap-4 text-sm text-[#F4EFE8]/60 flex-wrap">
                       <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" />{c.client_name}</span>
-                      <span className="flex items-center gap-1"><DollarSign className="w-3.5 h-3.5" />${c.value.toLocaleString()}</span>
+                      <span className="flex items-center gap-1"><DollarSign className="w-3.5 h-3.5" />${(c.value || 0).toLocaleString()}</span>
                       {c.signed_date && <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-[#C89A6A]" />Signed {new Date(c.signed_date).toLocaleDateString()}</span>}
                       {c.start_date && <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{new Date(c.start_date).toLocaleDateString()}</span>}
                     </div>
