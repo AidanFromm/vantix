@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Users2, Bot, User, Activity, CheckCircle, Clock, MessageSquare, Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users2, Bot, User, Activity, CheckCircle, Clock, MessageSquare, Zap, Loader2 } from 'lucide-react';
+import { getData } from '@/lib/data';
 
 interface TeamMember {
   id: string;
@@ -14,47 +15,17 @@ interface TeamMember {
   lastActive: string;
 }
 
-const mockTeam: TeamMember[] = [
-  { 
-    id: '1', 
-    name: 'Kyle', 
-    role: 'Co-Founder', 
-    type: 'human', 
-    status: 'online',
-    tasks: { completed: 8, pending: 2 },
-    lastActive: 'Now'
-  },
-  { 
-    id: '2', 
-    name: 'Aidan', 
-    role: 'Co-Founder', 
-    type: 'human', 
-    status: 'online',
-    tasks: { completed: 12, pending: 3 },
-    lastActive: 'Now'
-  },
-  { 
-    id: '3', 
-    name: 'Vantix', 
-    role: 'AI Assistant', 
-    type: 'bot', 
-    status: 'online',
-    tasks: { completed: 34, pending: 2 },
-    lastActive: 'Now'
-  },
-  { 
-    id: '4', 
-    name: 'Botskii', 
-    role: 'AI Assistant', 
-    type: 'bot', 
-    status: 'online',
-    tasks: { completed: 47, pending: 5 },
-    lastActive: 'Now'
-  },
-];
-
 export default function TeamHubPage() {
-  const [team] = useState<TeamMember[]>(mockTeam);
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const d = await getData<TeamMember>('team_members');
+      setTeam(d);
+      setLoading(false);
+    })();
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -65,8 +36,33 @@ export default function TeamHubPage() {
     }
   };
 
-  const totalCompleted = team.reduce((s, m) => s + m.tasks.completed, 0);
-  const totalPending = team.reduce((s, m) => s + m.tasks.pending, 0);
+  const totalCompleted = team.reduce((s, m) => s + (m.tasks?.completed || 0), 0);
+  const totalPending = team.reduce((s, m) => s + (m.tasks?.pending || 0), 0);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 size={24} className="animate-spin text-[#B07A45]" />
+      </div>
+    );
+  }
+
+  if (team.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Team Hub</h1>
+            <p className="text-sm text-[var(--color-muted)] mt-1">Humans + bots working together</p>
+          </div>
+        </div>
+        <div className="text-center py-16 text-[var(--color-muted)]">
+          <Users2 size={32} className="mx-auto mb-3 opacity-50" />
+          <p className="text-sm font-medium">No team members yet</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -143,11 +139,11 @@ export default function TeamHubPage() {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1.5">
                     <CheckCircle size={14} className="text-[#C89A6A]" />
-                    <span>{member.tasks.completed}</span>
+                    <span>{member.tasks?.completed || 0}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Clock size={14} className="text-[#C89A6A]" />
-                    <span>{member.tasks.pending}</span>
+                    <span>{member.tasks?.pending || 0}</span>
                   </div>
                 </div>
                 <button className="p-1.5 hover:bg-[#EEE6DC]/10 rounded-lg transition-colors">
@@ -157,27 +153,6 @@ export default function TeamHubPage() {
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Activity feed placeholder */}
-      <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-5">
-        <h3 className="font-semibold mb-4">Recent Activity</h3>
-        <div className="space-y-3">
-          {[
-            { name: 'Botskii', action: 'completed task', target: 'Fix Vantix 404 pages', time: 'Just now' },
-            { name: 'Aidan', action: 'assigned task to', target: 'Botskii', time: '5 min ago' },
-            { name: 'Botskii', action: 'deployed', target: 'Heavy Favorite Bot', time: '2 hours ago' },
-            { name: 'Kyle', action: 'closed deal', target: 'Secured Tampa', time: 'Yesterday' },
-          ].map((activity, i) => (
-            <div key={i} className="flex items-center gap-3 text-sm">
-              <span className="w-2 h-2 rounded-full bg-[#B07A45]" />
-              <span className="font-medium">{activity.name}</span>
-              <span className="text-[var(--color-muted)]">{activity.action}</span>
-              <span className="text-[#B07A45]">{activity.target}</span>
-              <span className="text-[var(--color-muted)] ml-auto text-xs">{activity.time}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );

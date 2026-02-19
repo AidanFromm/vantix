@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Phone, PhoneIncoming, PhoneOutgoing, PhoneMissed, Clock, User, Calendar } from 'lucide-react';
+import { Phone, PhoneIncoming, PhoneOutgoing, PhoneMissed, Clock, User, Calendar, Plus, Trash2 } from 'lucide-react';
+import { getData, createRecord, deleteRecord } from '@/lib/data';
 
 interface Call {
   id: string;
@@ -13,15 +14,12 @@ interface Call {
   notes?: string;
 }
 
-const mockCalls: Call[] = [
-  { id: '1', type: 'incoming', name: 'Dave (Secured Tampa)', phone: '+1 (813) 555-0123', date: '2026-02-12 14:30', duration: '12:34', notes: 'Discussed inventory system updates' },
-  { id: '2', type: 'outgoing', name: 'New Lead - Mike', phone: '+1 (720) 555-0456', date: '2026-02-12 11:15', duration: '5:22', notes: 'Initial consultation call' },
-  { id: '3', type: 'missed', name: 'Unknown', phone: '+1 (303) 555-0789', date: '2026-02-11 16:45', duration: '0:00' },
-  { id: '4', type: 'incoming', name: 'Kyle', phone: '+1 (908) 555-1234', date: '2026-02-11 10:00', duration: '23:15', notes: 'Vantix planning session' },
-];
-
 export default function CallsPage() {
-  const [calls, setCalls] = useState<Call[]>(mockCalls);
+  const [calls, setCalls] = useState<Call[]>([]);
+
+  useEffect(() => {
+    getData<Call>('calls').then(setCalls).catch(() => setCalls([]));
+  }, []);
   const [filter, setFilter] = useState<'all' | 'incoming' | 'outgoing' | 'missed'>('all');
 
   const filteredCalls = filter === 'all' ? calls : calls.filter(c => c.type === filter);
@@ -89,9 +87,9 @@ export default function CallsPage() {
       {/* Call list */}
       <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl overflow-hidden">
         {filteredCalls.length === 0 ? (
-          <div className="p-8 text-center text-[var(--color-muted)]">
-            <Phone size={32} className="mx-auto mb-2 opacity-50" />
-            <p>No calls to display</p>
+          <div className="p-12 text-center text-[var(--color-muted)]">
+            <Phone size={32} className="mx-auto mb-3 opacity-50" />
+            <p className="mb-3">No calls logged yet</p>
           </div>
         ) : (
           <div className="divide-y divide-[var(--color-border)]">
@@ -127,9 +125,6 @@ export default function CallsPage() {
         )}
       </div>
 
-      <p className="text-xs text-[var(--color-muted)] text-center">
-        💡 Tip: Connect with a VoIP service to auto-log calls
-      </p>
     </div>
   );
 }

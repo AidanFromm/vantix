@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Handshake, FileText, Calendar, DollarSign, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { getData } from '@/lib/data';
 
 interface Deal {
   id: string;
@@ -13,13 +14,6 @@ interface Deal {
   closeDate?: string;
 }
 
-const mockDeals: Deal[] = [
-  { id: '1', name: 'E-commerce Platform', client: 'Sneaker Store NYC', value: 8500, stage: 'proposal', lastActivity: '2026-02-11' },
-  { id: '2', name: 'Mobile App MVP', client: 'Fitness Startup', value: 12000, stage: 'negotiation', lastActivity: '2026-02-10' },
-  { id: '3', name: 'Website Redesign', client: 'Local Restaurant', value: 3500, stage: 'discovery', lastActivity: '2026-02-12' },
-  { id: '4', name: 'Secured Tampa', client: 'Dave', value: 4500, stage: 'won', lastActivity: '2026-02-08', closeDate: '2026-02-10' },
-];
-
 const stageColors: Record<string, string> = {
   discovery: 'bg-[#B07A45]/20 text-[#C89A6A] border-[#B07A45]/30',
   proposal: 'bg-[#B07A45]/20 text-[#C89A6A] border-[#B07A45]/30',
@@ -30,7 +24,11 @@ const stageColors: Record<string, string> = {
 };
 
 export default function DealRoomPage() {
-  const [deals] = useState<Deal[]>(mockDeals);
+  const [deals, setDeals] = useState<Deal[]>([]);
+
+  useEffect(() => {
+    getData<Deal>('deals').then(setDeals).catch(() => setDeals([]));
+  }, []);
 
   const totalPipeline = deals.filter(d => !['won', 'lost'].includes(d.stage)).reduce((s, d) => s + d.value, 0);
   const wonDeals = deals.filter(d => d.stage === 'won').reduce((s, d) => s + d.value, 0);
@@ -77,6 +75,12 @@ export default function DealRoomPage() {
       </div>
 
       {/* Kanban-style stages */}
+      {deals.length === 0 ? (
+        <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-12 text-center">
+          <Handshake size={32} className="mx-auto mb-3 text-[var(--color-muted)] opacity-50" />
+          <p className="text-[var(--color-muted)]">No active deals</p>
+        </div>
+      ) : (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {['discovery', 'proposal', 'negotiation', 'closing', 'won', 'lost'].map(stage => (
           <div key={stage} className="space-y-3">
@@ -93,6 +97,7 @@ export default function DealRoomPage() {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }

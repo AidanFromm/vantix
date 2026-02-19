@@ -38,19 +38,6 @@ const PROJECT_COLOR_MAP: Record<string, string> = Object.fromEntries(
   PROJECTS.map(p => [p.name, p.color])
 )
 
-const SEED_MEDIA: MediaItem[] = [
-  { id: '1', name: 'logo-v.png', type: 'image', size: '48 KB', date: '2026-01-15', project: 'Vantix', tags: ['logo', 'branding'], url: '/images/logo-v.png', thumbnail: '/images/logo-v.png' },
-  { id: '2', name: 'logo-nav.png', type: 'image', size: '12 KB', date: '2026-01-15', project: 'Vantix', tags: ['logo', 'navigation'], url: '/images/logo-nav.png', thumbnail: '/images/logo-nav.png' },
-  { id: '3', name: 'og-image.jpg', type: 'image', size: '320 KB', date: '2026-01-20', project: 'Vantix', tags: ['og', 'social', 'meta'], url: '/images/og-image.jpg', thumbnail: '/images/og-image.jpg' },
-  { id: '4', name: 'paper-texture.png', type: 'image', size: '1.2 MB', date: '2026-01-10', project: 'Vantix', tags: ['texture', 'background'], url: '/images/paper-texture.png', thumbnail: '/images/paper-texture.png' },
-  { id: '5', name: 'logo-icon.png', type: 'image', size: '64 KB', date: '2026-02-01', project: 'SecuredTampa', tags: ['logo', 'icon', 'branding'], url: '/images/logo-icon.png', thumbnail: '/images/logo-icon.png' },
-  { id: '6', name: 'billboard.jpg', type: 'image', size: '2.4 MB', date: '2026-02-10', project: 'Vantix', tags: ['social', 'marketing', 'billboard'], url: '/images/billboard.jpg', thumbnail: '/images/billboard.jpg' },
-  { id: '7', name: 'viral-story.jpg', type: 'image', size: '1.8 MB', date: '2026-02-12', project: 'Vantix', tags: ['social', 'story', 'viral'], url: '/images/viral-story.jpg', thumbnail: '/images/viral-story.jpg' },
-  { id: '8', name: 'carousel-slide-1.jpg', type: 'image', size: '980 KB', date: '2026-02-14', project: 'Just Four Kicks', tags: ['carousel', 'social'], url: '', thumbnail: '' },
-  { id: '9', name: 'carousel-slide-2.jpg', type: 'image', size: '1.1 MB', date: '2026-02-14', project: 'Just Four Kicks', tags: ['carousel', 'social'], url: '', thumbnail: '' },
-  { id: '10', name: 'carousel-slide-3.jpg', type: 'image', size: '920 KB', date: '2026-02-14', project: 'Just Four Kicks', tags: ['carousel', 'social'], url: '', thumbnail: '' },
-]
-
 const TYPE_ICONS: Record<string, typeof Image> = { image: Image, video: Video, document: FileText }
 const TYPE_COLORS: Record<string, string> = {
   image: 'bg-blue-100 text-blue-600',
@@ -73,9 +60,8 @@ function formatBytes(bytes: number): string {
 
 async function loadMedia(): Promise<MediaItem[]> {
   try {
-    const data = await getData<MediaItem>('media_v2')
-    return data.length ? data : SEED_MEDIA
-  } catch { return SEED_MEDIA }
+    return await getData<MediaItem>('media_v2')
+  } catch { return [] }
 }
 
 // ── Main Page ──────────────────────────────────────────────────────────────

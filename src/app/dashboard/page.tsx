@@ -379,17 +379,21 @@ export default function DashboardOverview() {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
+  const [expenses, setExpenses] = useState<{ id: string; amount?: number }[]>([]);
+  const [payments, setPayments] = useState<{ id: string; amount?: number }[]>([]);
 
   useEffect(() => {
     async function load() {
       try {
-        const [inv, proj, ld, tsk, act, cl] = await Promise.all([
+        const [inv, proj, ld, tsk, act, cl, exp, pay] = await Promise.all([
           getData('invoices').catch(() => []),
           getData('projects').catch(() => []),
           getData('leads').catch(() => []),
           getData('tasks').catch(() => []),
           getData('activities').catch(() => []),
           getData('clients').catch(() => []),
+          getData('expenses').catch(() => []),
+          getData('payments').catch(() => []),
         ]);
         setInvoices(inv);
         setProjects(proj);
@@ -397,6 +401,8 @@ export default function DashboardOverview() {
         setTasks(tsk);
         setActivities(act);
         setClients(cl);
+        setExpenses(exp);
+        setPayments(pay);
       } catch {
         // No seed fallback — leave empty
       }
@@ -418,6 +424,8 @@ export default function DashboardOverview() {
   const activeLeads = leads.filter(
     (l) => l.stage !== 'won' && l.stage !== 'lost' && l.status !== 'won' && l.status !== 'lost'
   ).length;
+  const totalExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const netProfit = totalRevenue - totalExpenses;
 
   if (loading) {
     return (

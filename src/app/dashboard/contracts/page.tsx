@@ -6,7 +6,7 @@ import {
   Scale, FileText, CheckCircle, Clock, Send, Plus, ExternalLink,
   Trash2, Edit3, Calendar, User, DollarSign, Link2, AlertCircle, ArrowRight,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 // --- Types ---
 interface Contract {
@@ -23,23 +23,6 @@ interface Contract {
   signed_date?: string;
   created_at: string;
   updated_at?: string;
-}
-
-// --- Supabase helpers ---
-async function getContracts() {
-  const { data, error } = await supabase.from('contracts').select('*').order('created_at', { ascending: false });
-  return { data: data as Contract[] | null, error };
-}
-async function createContract(c: Partial<Contract>) {
-  const { data, error } = await supabase.from('contracts').insert(c).select().single();
-  return { data: data as Contract | null, error };
-}
-async function updateContract(id: string, u: Partial<Contract>) {
-  const { data, error } = await supabase.from('contracts').update(u).eq('id', id).select().single();
-  return { data: data as Contract | null, error };
-}
-async function deleteContract(id: string) {
-  return await supabase.from('contracts').delete().eq('id', id);
 }
 
 const STATUS_CFG: Record<string, { icon: typeof Clock; color: string; bg: string }> = {
@@ -63,7 +46,7 @@ export default function ContractsPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    try { const { data } = await getContracts(); if (data) setContracts(data); } catch {}
+    try { const data = await getData<Contract>('contracts'); setContracts(data); } catch {}
     setLoading(false);
   }, []);
 
@@ -78,8 +61,8 @@ export default function ContractsPage() {
   const handleSubmit = async () => {
     try {
       const payload: Partial<Contract> = { ...form, status: 'draft' };
-      if (editId) await updateContract(editId, payload);
-      else await createContract(payload);
+      if (editId) await updateRecord('contracts', editId, payload);
+      else await createRecord('contracts', { ...payload, id: crypto.randomUUID() });
       resetForm(); load();
     } catch {}
   };
@@ -87,7 +70,7 @@ export default function ContractsPage() {
   const handleStatus = async (id: string, status: Contract['status']) => {
     const updates: Partial<Contract> = { status };
     if (status === 'signed') updates.signed_date = new Date().toISOString();
-    try { await updateContract(id, updates); load(); } catch {}
+    try { await updateRecord('contracts', id, updates); load(); } catch {}
   };
 
   const startEdit = (c: Contract) => {
@@ -183,7 +166,7 @@ export default function ContractsPage() {
                     <button onClick={() => startEdit(c)} className="p-2 text-[#F4EFE8]/60 hover:text-white hover:bg-[#1C1C1C] rounded-lg transition-colors"><Edit3 className="w-4 h-4" /></button>
                     {c.status === 'draft' && <button onClick={() => handleStatus(c.id, 'sent')} className="p-2 text-[#F4EFE8]/60 hover:text-[#C89A6A] hover:bg-[#C89A6A]/10 rounded-lg transition-colors" title="Mark Sent"><Send className="w-4 h-4" /></button>}
                     {c.status === 'sent' && <button onClick={() => handleStatus(c.id, 'signed')} className="p-2 text-[#F4EFE8]/60 hover:text-[#C89A6A] hover:bg-[#C89A6A]/10 rounded-lg transition-colors" title="Mark Signed"><CheckCircle className="w-4 h-4" /></button>}
-                    <button onClick={async () => { await deleteContract(c.id); load(); }} className="p-2 text-[#F4EFE8]/60 hover:text-[#B0614A] hover:bg-[#B0614A]/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    <button onClick={async () => { await deleteRecord('contracts', c.id); load(); }} className="p-2 text-[#F4EFE8]/60 hover:text-[#B0614A] hover:bg-[#B0614A]/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </div>
               </motion.div>

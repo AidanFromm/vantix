@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, TrendingUp, TrendingDown, Globe, ExternalLink, RefreshCw, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, TrendingUp, TrendingDown, Globe, ExternalLink, RefreshCw, Plus, Loader2 } from 'lucide-react';
+import { getData } from '@/lib/data';
 
 interface TrackedSite {
   id: string;
@@ -16,32 +17,46 @@ interface TrackedSite {
   };
 }
 
-const mockSites: TrackedSite[] = [
-  { 
-    id: '1', 
-    domain: 'usevantix.com',
-    keywords: ['agency', 'web development', 'digital solutions'],
-    lastChecked: '2026-02-12',
-    metrics: { domainAuthority: 15, backlinks: 24, organicTraffic: 150, change: 12 }
-  },
-  { 
-    id: '2', 
-    domain: 'usecardledger.com',
-    keywords: ['card tracker', 'pokemon cards', 'collectibles'],
-    lastChecked: '2026-02-12',
-    metrics: { domainAuthority: 8, backlinks: 12, organicTraffic: 89, change: 25 }
-  },
-  { 
-    id: '3', 
-    domain: 'securedtampa.com',
-    keywords: ['sneakers tampa', 'pokemon cards tampa'],
-    lastChecked: '2026-02-11',
-    metrics: { domainAuthority: 5, backlinks: 3, organicTraffic: 45, change: -5 }
-  },
-];
-
 export default function SEOTrackerPage() {
-  const [sites] = useState<TrackedSite[]>(mockSites);
+  const [sites, setSites] = useState<TrackedSite[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const d = await getData<TrackedSite>('seo_sites');
+      setSites(d);
+      setLoading(false);
+    })();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 size={24} className="animate-spin text-[#B07A45]" />
+      </div>
+    );
+  }
+
+  if (sites.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">SEO Tracker</h1>
+            <p className="text-sm text-[var(--color-muted)] mt-1">Monitor search rankings and organic traffic</p>
+          </div>
+        </div>
+        <div className="text-center py-16 text-[var(--color-muted)]">
+          <Globe size={32} className="mx-auto mb-3 opacity-50" />
+          <p className="text-sm font-medium mb-4">No sites tracked yet</p>
+          <button className="px-4 py-2 bg-[#B07A45] text-white rounded-lg text-sm flex items-center gap-2 hover:bg-[#8E5E34] transition-colors mx-auto">
+            <Plus size={16} />
+            Add Site
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -148,7 +163,7 @@ export default function SEOTrackerPage() {
       </div>
 
       <p className="text-xs text-[var(--color-muted)] text-center">
-        💡 Connect Google Search Console for real-time data
+        Connect Google Search Console for real-time data
       </p>
     </div>
   );

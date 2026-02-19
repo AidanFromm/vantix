@@ -79,7 +79,7 @@ export default function ProposalsPage() {
   useEffect(() => {
     (async () => {
       const d = await getData<Proposal>('proposals')
-      setProposals(d.length ? d : seedProposals)
+      setProposals(d)
     })()
   }, [])
 

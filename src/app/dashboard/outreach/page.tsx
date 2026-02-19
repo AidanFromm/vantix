@@ -7,8 +7,7 @@ import {
   Users, ArrowUpRight, MessageSquare, AlertCircle, Clock,
   CheckCircle, XCircle, Target, Zap, TrendingUp,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
-import { getLeads } from '@/lib/supabase';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 import type { Lead } from '@/lib/types';
 
 // --- Types ---
@@ -25,23 +24,6 @@ interface Campaign {
   lead_ids?: string[];
   created_at: string;
   updated_at?: string;
-}
-
-// --- Supabase ---
-async function getCampaigns() {
-  const { data, error } = await supabase.from('email_campaigns').select('*').order('created_at', { ascending: false });
-  return { data: data as Campaign[] | null, error };
-}
-async function createCampaign(c: Partial<Campaign>) {
-  const { data, error } = await supabase.from('email_campaigns').insert(c).select().single();
-  return { data: data as Campaign | null, error };
-}
-async function updateCampaign(id: string, u: Partial<Campaign>) {
-  const { data, error } = await supabase.from('email_campaigns').update(u).eq('id', id).select().single();
-  return { data: data as Campaign | null, error };
-}
-async function deleteCampaign(id: string) {
-  return await supabase.from('email_campaigns').delete().eq('id', id);
 }
 
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.05 } } };
@@ -66,9 +48,12 @@ export default function OutreachPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [cRes, lRes] = await Promise.all([getCampaigns(), getLeads()]);
-      if (cRes.data) setCampaigns(cRes.data);
-      if (lRes.data) setLeads(lRes.data);
+      const [cData, lData] = await Promise.all([
+        getData<Campaign>('email_campaigns'),
+        getData<Lead>('leads'),
+      ]);
+      setCampaigns(cData);
+      setLeads(lData);
     } catch {}
     setLoading(false);
   }, []);
@@ -87,8 +72,8 @@ export default function OutreachPage() {
   const handleSubmit = async () => {
     try {
       const payload: Partial<Campaign> = { ...form, sent: 0, opened: 0, replied: 0, bounced: 0 };
-      if (editId) await updateCampaign(editId, form);
-      else await createCampaign(payload);
+      if (editId) await updateRecord('email_campaigns', editId, form);
+      else await createRecord('email_campaigns', { ...payload, id: crypto.randomUUID() });
       resetForm(); load();
     } catch {}
   };
@@ -201,7 +186,7 @@ export default function OutreachPage() {
                   <div className="flex items-center gap-2">
                     <button onClick={() => startEdit(c)} className="p-2 text-[#F4EFE8]/60 hover:text-white hover:bg-[#1C1C1C] rounded-lg transition-colors"><Edit3 className="w-4 h-4" /></button>
                     <button onClick={() => setDetailId(c.id)} className="p-2 text-[#F4EFE8]/60 hover:text-white hover:bg-[#1C1C1C] rounded-lg transition-colors"><Eye className="w-4 h-4" /></button>
-                    <button onClick={async () => { await deleteCampaign(c.id); load(); }} className="p-2 text-[#F4EFE8]/60 hover:text-[#B0614A] hover:bg-[#B0614A]/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    <button onClick={async () => { await deleteRecord('email_campaigns', c.id); load(); }} className="p-2 text-[#F4EFE8]/60 hover:text-[#B0614A] hover:bg-[#B0614A]/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </div>
               </motion.div>
