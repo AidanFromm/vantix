@@ -80,7 +80,10 @@ export default function RootLayout({
       email: "hello@usevantix.com",
       description:
         "AI consulting agency that builds intelligent systems to generate revenue, cut costs, and automate operations.",
-      sameAs: [],
+      sameAs: [
+        "https://instagram.com/usevantix",
+        "https://x.com/usevantix",
+      ],
       founder: [
         { "@type": "Person", name: "Kyle Ventura", jobTitle: "Founder & AI Strategist" },
         { "@type": "Person", name: "Aidan Fromm", jobTitle: "Co-Founder & Lead Engineer" },
