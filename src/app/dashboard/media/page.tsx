@@ -7,6 +7,7 @@ import {
   Calendar, HardDrive, Tag, Eye, FolderOpen, Folder,
   Pencil, RotateCcw, Loader2, Plus
 } from 'lucide-react'
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -70,16 +71,11 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function loadMedia(): MediaItem[] {
+async function loadMedia(): Promise<MediaItem[]> {
   try {
-    const raw = localStorage.getItem('vantix_media_v2')
-    if (raw) return JSON.parse(raw)
-  } catch { /* empty */ }
-  return SEED_MEDIA
-}
-
-function saveMedia(items: MediaItem[]) {
-  try { localStorage.setItem('vantix_media_v2', JSON.stringify(items)) } catch { /* empty */ }
+    const data = await getData<MediaItem>('media_v2')
+    return data.length ? data : SEED_MEDIA
+  } catch { return SEED_MEDIA }
 }
 
 // ── Main Page ──────────────────────────────────────────────────────────────
@@ -93,8 +89,7 @@ export default function MediaPage() {
   const [detailItem, setDetailItem] = useState<MediaItem | null>(null)
   const [aiOpen, setAiOpen] = useState(false)
 
-  useEffect(() => { setMedia(loadMedia()) }, [])
-  useEffect(() => { if (media.length) saveMedia(media) }, [media])
+  useEffect(() => { loadMedia().then(setMedia) }, [])
 
   const projectCounts = useMemo(() => {
     const counts: Record<string, number> = { All: media.length }
@@ -117,17 +112,20 @@ export default function MediaPage() {
     })
   }, [media, activeProject, filterType, search])
 
-  const deleteMedia = (id: string) => {
+  const deleteMedia = async (id: string) => {
+    await deleteRecord('media_v2', id)
     setMedia(prev => prev.filter(m => m.id !== id))
     setDetailItem(null)
   }
 
-  const updateMedia = (id: string, updates: Partial<MediaItem>) => {
+  const updateMedia = async (id: string, updates: Partial<MediaItem>) => {
+    await updateRecord<MediaItem>('media_v2', id, updates as any)
     setMedia(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m))
     setDetailItem(prev => prev && prev.id === id ? { ...prev, ...updates } : prev)
   }
 
-  const addMedia = (item: MediaItem) => {
+  const addMedia = async (item: MediaItem) => {
+    await createRecord<MediaItem>('media_v2', item as any)
     setMedia(prev => [...prev, item])
     setUploadOpen(false)
   }

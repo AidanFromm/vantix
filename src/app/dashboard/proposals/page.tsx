@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, X, Send, Copy, Pencil, Trash2, ArrowLeft, FileText, Eye, Clock, CheckCircle, XCircle, AlertCircle, ChevronRight } from 'lucide-react'
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data'
 
 type ProposalStatus = 'Draft' | 'Sent' | 'Viewed' | 'Accepted' | 'Declined'
 
@@ -68,12 +69,6 @@ const seedProposals: Proposal[] = [
   }
 ]
 
-function load(): Proposal[] {
-  try { const s = localStorage.getItem(STORAGE_KEY); if (s) return JSON.parse(s) } catch {}
-  return seedProposals
-}
-function save(p: Proposal[]) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)) } catch {} }
-
 export default function ProposalsPage() {
   const [proposals, setProposals] = useState<Proposal[]>([])
   const [selected, setSelected] = useState<Proposal | null>(null)
@@ -81,8 +76,12 @@ export default function ProposalsPage() {
   const [editing, setEditing] = useState<Proposal | null>(null)
   const [form, setForm] = useState({ title: '', client: '', description: '', terms: '', lineItems: [{ service: '', price: 0 }] as LineItem[] })
 
-  useEffect(() => { setProposals(load()) }, [])
-  useEffect(() => { if (proposals.length) save(proposals) }, [proposals])
+  useEffect(() => {
+    (async () => {
+      const d = await getData<Proposal>('proposals')
+      setProposals(d.length ? d : seedProposals)
+    })()
+  }, [])
 
   function openCreate() {
     setEditing(null)
@@ -96,55 +95,55 @@ export default function ProposalsPage() {
     setShowCreate(true)
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!form.title || !form.client) return
     const items = form.lineItems.filter(i => i.service)
     const total = items.reduce((s, i) => s + i.price, 0)
     if (editing) {
-      setProposals(prev => prev.map(p => p.id === editing.id ? {
-        ...p, ...form, lineItems: items, total,
-        activity: [...p.activity, { action: 'Proposal edited', timestamp: new Date().toISOString() }]
-      } : p))
-      if (selected?.id === editing.id) setSelected(prev => prev ? { ...prev, ...form, lineItems: items, total } : null)
+      const updates = { ...form, lineItems: items, total, activity: [...editing.activity, { action: 'Proposal edited', timestamp: new Date().toISOString() }] }
+      await updateRecord<Proposal>('proposals', editing.id, updates as any)
+      setProposals(prev => prev.map(p => p.id === editing.id ? { ...p, ...updates } : p))
+      if (selected?.id === editing.id) setSelected(prev => prev ? { ...prev, ...updates } : null)
     } else {
-      const np: Proposal = {
-        id: Date.now().toString(), ...form, lineItems: items, total,
+      const np = await createRecord<Proposal>('proposals', {
+        ...form, lineItems: items, total,
         status: 'Draft', date: new Date().toISOString().split('T')[0],
         activity: [{ action: 'Proposal created', timestamp: new Date().toISOString() }]
-      }
+      } as any)
       setProposals(prev => [np, ...prev])
     }
     setShowCreate(false)
   }
 
-  function handleSend(p: Proposal) {
-    setProposals(prev => prev.map(pr => pr.id === p.id ? {
-      ...pr, status: 'Sent' as ProposalStatus,
-      activity: [...pr.activity, { action: 'Sent to client', timestamp: new Date().toISOString() }]
-    } : pr))
-    if (selected?.id === p.id) setSelected(prev => prev ? { ...prev, status: 'Sent', activity: [...prev.activity, { action: 'Sent to client', timestamp: new Date().toISOString() }] } : null)
+  async function handleSend(p: Proposal) {
+    const updates = { status: 'Sent' as ProposalStatus, activity: [...p.activity, { action: 'Sent to client', timestamp: new Date().toISOString() }] }
+    await updateRecord<Proposal>('proposals', p.id, updates as any)
+    setProposals(prev => prev.map(pr => pr.id === p.id ? { ...pr, ...updates } : pr))
+    if (selected?.id === p.id) setSelected(prev => prev ? { ...prev, ...updates } : null)
   }
 
-  function handleDuplicate(p: Proposal) {
-    const dup: Proposal = {
-      ...p, id: Date.now().toString(), title: `${p.title} (Copy)`, status: 'Draft',
+  async function handleDuplicate(p: Proposal) {
+    const dup = await createRecord<Proposal>('proposals', {
+      title: `${p.title} (Copy)`, client: p.client, description: p.description, terms: p.terms,
+      lineItems: [...p.lineItems], total: p.total, status: 'Draft',
       date: new Date().toISOString().split('T')[0],
       activity: [{ action: 'Duplicated from existing proposal', timestamp: new Date().toISOString() }]
-    }
+    } as any)
     setProposals(prev => [dup, ...prev])
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
+    await deleteRecord('proposals', id)
     setProposals(prev => prev.filter(p => p.id !== id))
     if (selected?.id === id) setSelected(null)
   }
 
-  function handleStatusChange(p: Proposal, status: ProposalStatus) {
+  async function handleStatusChange(p: Proposal, status: ProposalStatus) {
     const actionMap: Record<string, string> = { 'Accepted': 'Accepted by client', 'Declined': 'Declined by client', 'Viewed': 'Viewed by client' }
-    setProposals(prev => prev.map(pr => pr.id === p.id ? {
-      ...pr, status, activity: [...pr.activity, { action: actionMap[status] || `Status changed to ${status}`, timestamp: new Date().toISOString() }]
-    } : pr))
-    setSelected(prev => prev?.id === p.id ? { ...prev, status, activity: [...prev.activity, { action: actionMap[status] || `Status changed to ${status}`, timestamp: new Date().toISOString() }] } : prev)
+    const updates = { status, activity: [...p.activity, { action: actionMap[status] || `Status changed to ${status}`, timestamp: new Date().toISOString() }] }
+    await updateRecord<Proposal>('proposals', p.id, updates as any)
+    setProposals(prev => prev.map(pr => pr.id === p.id ? { ...pr, ...updates } : pr))
+    setSelected(prev => prev?.id === p.id ? { ...prev, ...updates } : prev)
   }
 
   function addLineItem() { setForm(f => ({ ...f, lineItems: [...f.lineItems, { service: '', price: 0 }] })) }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Book, Search, Plus, Edit3, Trash2, ArrowLeft, Tag, Clock, User, FolderOpen, FileText, ChevronRight, X, Save } from 'lucide-react';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 interface Article {
   id: string;
@@ -128,20 +129,11 @@ For consulting and ad-hoc work.
   },
 ];
 
-const STORAGE_KEY = 'vantix_knowledge_articles';
-
-function loadArticles(): Article[] {
+async function loadArticles(): Promise<Article[]> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return SEED_ARTICLES;
-}
-
-function saveArticles(articles: Article[]) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(articles));
-  } catch {}
+    const data = await getData<Article>('knowledge_articles');
+    return data.length ? data : SEED_ARTICLES;
+  } catch { return SEED_ARTICLES; }
 }
 
 function renderMarkdown(text: string) {
@@ -227,7 +219,7 @@ export default function KnowledgePage() {
   const [editForm, setEditForm] = useState({ title: '', category: CATEGORIES[0], body: '', tags: '' });
 
   useEffect(() => {
-    setArticles(loadArticles());
+    loadArticles().then(setArticles);
   }, []);
 
   const filtered = useMemo(() => {
@@ -257,43 +249,31 @@ export default function KnowledgePage() {
     setCreating(false);
   }
 
-  function handleSave() {
+  async function handleSave() {
     const now = new Date().toISOString();
     const tags = editForm.tags.split(',').map(t => t.trim()).filter(Boolean);
-    let updated: Article[];
 
     if (creating) {
-      const newArticle: Article = {
-        id: Date.now().toString(),
-        title: editForm.title,
-        category: editForm.category,
-        body: editForm.body,
-        tags,
-        author: 'Kyle',
-        createdAt: now,
-        updatedAt: now,
-      };
-      updated = [...articles, newArticle];
+      const newArticle = await createRecord<Article>('knowledge_articles', {
+        title: editForm.title, category: editForm.category, body: editForm.body,
+        tags, author: 'Kyle', createdAt: now, updatedAt: now,
+      } as any);
+      setArticles(prev => [...prev, newArticle]);
       setSelectedArticle(newArticle);
     } else if (editing && selectedArticle) {
-      updated = articles.map(a =>
-        a.id === selectedArticle.id
-          ? { ...a, title: editForm.title, category: editForm.category, body: editForm.body, tags, updatedAt: now }
-          : a
-      );
-      setSelectedArticle({ ...selectedArticle, title: editForm.title, category: editForm.category, body: editForm.body, tags, updatedAt: now });
+      const updates = { title: editForm.title, category: editForm.category, body: editForm.body, tags, updatedAt: now };
+      await updateRecord<Article>('knowledge_articles', selectedArticle.id, updates as any);
+      setArticles(prev => prev.map(a => a.id === selectedArticle.id ? { ...a, ...updates } : a));
+      setSelectedArticle({ ...selectedArticle, ...updates });
     } else return;
 
-    setArticles(updated);
-    saveArticles(updated);
     setEditing(false);
     setCreating(false);
   }
 
-  function handleDelete(id: string) {
-    const updated = articles.filter(a => a.id !== id);
-    setArticles(updated);
-    saveArticles(updated);
+  async function handleDelete(id: string) {
+    await deleteRecord('knowledge_articles', id);
+    setArticles(prev => prev.filter(a => a.id !== id));
     setSelectedArticle(null);
     setEditing(false);
   }

@@ -32,9 +32,6 @@ const SEED: Booking[] = [
   { id: '4', name: 'Lisa Ramirez', email: 'lisa@gmail.com', phone: '954-555-0404', date: '2026-02-12', time: '15:30', status: 'Cancelled', notes: 'Rescheduled to next month', created_at: '2026-02-08T14:00:00Z' },
 ];
 
-function lsGet<T>(key: string, fb: T[]): T[] { try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : fb; } catch { return fb; } }
-function lsSet<T>(key: string, d: T[]) { try { localStorage.setItem(key, JSON.stringify(d)); } catch {} }
-
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -44,12 +41,10 @@ export default function BookingsPage() {
     (async () => {
       try {
         const d = await getData<Booking>('bookings');
-        setBookings(d.length ? d : lsGet('vantix_bookings', SEED));
-      } catch { setBookings(lsGet('vantix_bookings', SEED)); }
+        setBookings(d.length ? d : SEED);
+      } catch { setBookings(SEED); }
     })();
   }, []);
-
-  useEffect(() => { lsSet('vantix_bookings', bookings); }, [bookings]);
 
   const now = new Date();
   const weekEnd = new Date(now); weekEnd.setDate(now.getDate() + 7);

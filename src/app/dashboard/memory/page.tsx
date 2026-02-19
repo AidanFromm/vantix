@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Calendar, Tag, User, Plus, X } from 'lucide-react';
+import { getData, createRecord, deleteRecord } from '@/lib/data';
 
 interface Memory {
   id: string;
@@ -12,8 +13,6 @@ interface Memory {
   tags: string[];
   author: string;
 }
-
-const STORAGE_KEY = 'vantix_memories';
 
 const defaultMemories: Memory[] = [
   {
@@ -82,14 +81,6 @@ const typeColors: Record<string, string> = {
   milestone: 'bg-[#B07A45]/20 text-[#C89A6A]',
 };
 
-function loadMemories(): Memory[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch { /* fallback */ }
-  return defaultMemories;
-}
-
 export default function MemoryPage() {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,31 +89,29 @@ export default function MemoryPage() {
   const [newMemory, setNewMemory] = useState({ content: '', type: 'note' as Memory['type'], tags: '' });
 
   useEffect(() => {
-    setMemories(loadMemories());
+    (async () => {
+      const data = await getData<Memory>('memories');
+      setMemories(data.length ? data : defaultMemories);
+    })();
   }, []);
 
-  const saveMemories = useCallback((updated: Memory[]) => {
-    setMemories(updated);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(updated)); } catch { /* ignore */ }
-  }, []);
-
-  const addMemory = () => {
+  const addMemory = async () => {
     if (!newMemory.content.trim()) return;
-    const mem: Memory = {
-      id: Date.now().toString(),
+    const mem = await createRecord<Memory>('memories', {
       date: new Date().toISOString().split('T')[0],
       type: newMemory.type,
       content: newMemory.content,
       tags: newMemory.tags.split(',').map(t => t.trim()).filter(Boolean),
       author: 'You',
-    };
-    saveMemories([mem, ...memories]);
+    } as any);
+    setMemories(prev => [mem, ...prev]);
     setNewMemory({ content: '', type: 'note', tags: '' });
     setShowAddForm(false);
   };
 
-  const deleteMemory = (id: string) => {
-    saveMemories(memories.filter(m => m.id !== id));
+  const deleteMemory = async (id: string) => {
+    await deleteRecord('memories', id);
+    setMemories(prev => prev.filter(m => m.id !== id));
   };
 
   const filteredMemories = memories.filter((m) => {

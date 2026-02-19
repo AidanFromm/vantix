@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Bell, Check, Trash2, CheckCheck } from 'lucide-react';
+import { getData, updateRecord, deleteRecord } from '@/lib/data';
 
 interface Notification {
   id: string;
@@ -16,31 +17,35 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('vantix_notifications') || '[]');
-    setNotifications(saved);
+    (async () => {
+      const data = await getData<Notification>('notifications');
+      setNotifications(data);
+    })();
   }, []);
 
-  const markAllRead = () => {
+  const markAllRead = async () => {
     const updated = notifications.map(n => ({ ...n, read: true }));
     setNotifications(updated);
-    localStorage.setItem('vantix_notifications', JSON.stringify(updated));
+    for (const n of notifications.filter(n => !n.read)) {
+      await updateRecord<Notification>('notifications', n.id, { read: true } as any);
+    }
   };
 
-  const clearAll = () => {
+  const clearAll = async () => {
+    for (const n of notifications) {
+      await deleteRecord('notifications', n.id);
+    }
     setNotifications([]);
-    localStorage.setItem('vantix_notifications', '[]');
   };
 
-  const markRead = (id: string) => {
-    const updated = notifications.map(n => n.id === id ? { ...n, read: true } : n);
-    setNotifications(updated);
-    localStorage.setItem('vantix_notifications', JSON.stringify(updated));
+  const markRead = async (id: string) => {
+    await updateRecord<Notification>('notifications', id, { read: true } as any);
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
   };
 
-  const deleteNotification = (id: string) => {
-    const updated = notifications.filter(n => n.id !== id);
-    setNotifications(updated);
-    localStorage.setItem('vantix_notifications', JSON.stringify(updated));
+  const deleteNotification = async (id: string) => {
+    await deleteRecord('notifications', id);
+    setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, X, Copy, Send, FileText, Eye, Pencil, Trash2, Tag } from 'lucide-react'
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data'
 
 type Category = 'Welcome' | 'Follow-up' | 'Proposal' | 'Invoice' | 'Custom'
 
@@ -53,18 +54,6 @@ const seedTemplates: Template[] = [
   }
 ]
 
-function loadTemplates(): Template[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) return JSON.parse(stored)
-  } catch {}
-  return seedTemplates
-}
-
-function saveTemplates(t: Template[]) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(t)) } catch {}
-}
-
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([])
   const [filterCat, setFilterCat] = useState<Category | 'All'>('All')
@@ -74,8 +63,12 @@ export default function TemplatesPage() {
   const [form, setForm] = useState({ name: '', category: 'Welcome' as Category, subject: '', body: '' })
   const [copied, setCopied] = useState<string | null>(null)
 
-  useEffect(() => { setTemplates(loadTemplates()) }, [])
-  useEffect(() => { if (templates.length) saveTemplates(templates) }, [templates])
+  useEffect(() => {
+    (async () => {
+      const data = await getData<Template>('email_templates')
+      setTemplates(data.length ? data : seedTemplates)
+    })()
+  }, [])
 
   const filtered = filterCat === 'All' ? templates : templates.filter(t => t.category === filterCat)
 
@@ -91,17 +84,20 @@ export default function TemplatesPage() {
     setShowModal(true)
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!form.name || !form.subject) return
     if (editing) {
+      await updateRecord<Template>('email_templates', editing.id, form as any)
       setTemplates(prev => prev.map(t => t.id === editing.id ? { ...t, ...form } : t))
     } else {
-      setTemplates(prev => [...prev, { id: Date.now().toString(), ...form }])
+      const nt = await createRecord<Template>('email_templates', form as any)
+      setTemplates(prev => [...prev, nt])
     }
     setShowModal(false)
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
+    await deleteRecord('email_templates', id)
     setTemplates(prev => prev.filter(t => t.id !== id))
     if (preview?.id === id) setPreview(null)
   }

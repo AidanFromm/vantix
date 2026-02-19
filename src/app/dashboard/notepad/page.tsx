@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Trash2, FileText } from 'lucide-react';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 interface Note {
   id: string;
@@ -9,8 +10,6 @@ interface Note {
   content: string;
   updatedAt: string;
 }
-
-const STORAGE_KEY = 'vantix_notes';
 
 const defaultNotes: Note[] = [
   {
@@ -27,56 +26,45 @@ const defaultNotes: Note[] = [
   },
 ];
 
-function loadNotes(): Note[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch { /* fallback */ }
-  return defaultNotes;
-}
-
 export default function NotepadPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [activeNote, setActiveNote] = useState<Note | null>(null);
 
   useEffect(() => {
-    const loaded = loadNotes();
-    setNotes(loaded);
-    setActiveNote(loaded[0] || null);
+    (async () => {
+      const loaded = await getData<Note>('notes');
+      const data = loaded.length ? loaded : defaultNotes;
+      setNotes(data);
+      setActiveNote(data[0] || null);
+    })();
   }, []);
 
-  const saveNotes = useCallback((updated: Note[]) => {
-    setNotes(updated);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(updated)); } catch { /* ignore */ }
-  }, []);
-
-  const createNote = () => {
-    const newNote: Note = {
-      id: Date.now().toString(),
+  const createNote = async () => {
+    const newNote = await createRecord<Note>('notes', {
       title: 'Untitled Note',
       content: '',
       updatedAt: new Date().toISOString(),
-    };
-    const updated = [newNote, ...notes];
-    saveNotes(updated);
+    } as any);
+    setNotes(prev => [newNote, ...prev]);
     setActiveNote(newNote);
   };
 
-  const updateNote = (id: string, updates: Partial<Note>) => {
+  const updateNote = async (id: string, updates: Partial<Note>) => {
     const now = new Date().toISOString();
-    const updated = notes.map(n => n.id === id ? { ...n, ...updates, updatedAt: now } : n);
-    saveNotes(updated);
+    await updateRecord<Note>('notes', id, { ...updates, updatedAt: now } as any);
+    setNotes(prev => prev.map(n => n.id === id ? { ...n, ...updates, updatedAt: now } : n));
     if (activeNote?.id === id) {
       setActiveNote({ ...activeNote, ...updates, updatedAt: now });
     }
   };
 
-  const deleteNote = (id: string) => {
-    const updated = notes.filter(n => n.id !== id);
-    saveNotes(updated);
-    if (activeNote?.id === id) {
-      setActiveNote(updated[0] || null);
-    }
+  const deleteNote = async (id: string) => {
+    await deleteRecord('notes', id);
+    setNotes(prev => {
+      const updated = prev.filter(n => n.id !== id);
+      if (activeNote?.id === id) setActiveNote(updated[0] || null);
+      return updated;
+    });
   };
 
   const formatDate = (iso: string) => {

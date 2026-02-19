@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { CalendarDays, ChevronLeft, ChevronRight, Plus, X, Clock, MapPin } from 'lucide-react';
+import { getData, createRecord, deleteRecord } from '@/lib/data';
 
 type EventType = 'meeting' | 'deadline' | 'task' | 'followup';
 
@@ -47,18 +48,11 @@ function seedEvents(): CalEvent[] {
   ];
 }
 
-function loadEvents(): CalEvent[] {
+async function loadEvents(): Promise<CalEvent[]> {
   try {
-    const raw = localStorage.getItem('vantix_calendar_events');
-    if (raw) return JSON.parse(raw);
-  } catch { /* noop */ }
-  const seeded = seedEvents();
-  try { localStorage.setItem('vantix_calendar_events', JSON.stringify(seeded)); } catch {}
-  return seeded;
-}
-
-function saveEvents(events: CalEvent[]) {
-  try { localStorage.setItem('vantix_calendar_events', JSON.stringify(events)); } catch {}
+    const data = await getData<CalEvent>('calendar_events');
+    return data.length ? data : seedEvents();
+  } catch { return seedEvents(); }
 }
 
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -71,7 +65,7 @@ export default function CalendarPage() {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ title: '', type: 'meeting' as EventType, date: '', time: '09:00', notes: '', client: '' });
 
-  useEffect(() => { setEvents(loadEvents()); }, []);
+  useEffect(() => { loadEvents().then(setEvents); }, []);
 
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
@@ -101,20 +95,17 @@ export default function CalendarPage() {
   const prevMonth = () => setViewDate(new Date(year, month - 1, 1));
   const nextMonth = () => setViewDate(new Date(year, month + 1, 1));
 
-  const addEvent = () => {
+  const addEvent = async () => {
     if (!form.title || !form.date) return;
-    const ev: CalEvent = { ...form, id: Date.now().toString() };
-    const updated = [...events, ev];
-    setEvents(updated);
-    saveEvents(updated);
+    const ev = await createRecord<CalEvent>('calendar_events', { ...form });
+    setEvents(prev => [...prev, ev]);
     setShowModal(false);
     setForm({ title: '', type: 'meeting', date: '', time: '09:00', notes: '', client: '' });
   };
 
-  const deleteEvent = (id: string) => {
-    const updated = events.filter(e => e.id !== id);
-    setEvents(updated);
-    saveEvents(updated);
+  const deleteEvent = async (id: string) => {
+    await deleteRecord('calendar_events', id);
+    setEvents(prev => prev.filter(e => e.id !== id));
   };
 
   const selectedEvents = selectedDate ? eventsForDate(selectedDate) : [];

@@ -36,17 +36,31 @@ function lsKey(table: string): string {
 }
 
 // ============================================
+// MERGE HELPER — dedup by id, prefer Supabase
+// ============================================
+function mergeById<T extends { id: string }>(supabaseData: T[], localData: T[]): T[] {
+  const map = new Map<string, T>();
+  // Local first so Supabase overwrites
+  for (const item of localData) map.set(item.id, item);
+  for (const item of supabaseData) map.set(item.id, item);
+  return Array.from(map.values());
+}
+
+// ============================================
 // GENERIC CRUD
 // ============================================
 
 export async function getData<T extends { id: string }>(table: string): Promise<T[]> {
+  const local = lsGet<T>(lsKey(table));
   try {
     const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending: false });
     if (error) throw error;
-    if (data && data.length > 0) lsSet(lsKey(table), data);
-    return (data as T[]) || [];
+    const supaData = (data as T[]) || [];
+    const merged = mergeById(supaData, local);
+    if (merged.length > 0) lsSet(lsKey(table), merged);
+    return merged;
   } catch {
-    return lsGet<T>(lsKey(table));
+    return local;
   }
 }
 
@@ -70,14 +84,19 @@ export async function createRecord<T extends { id: string }>(table: string, reco
     ...record,
   } as unknown as T;
 
+  // Always save to localStorage as backup
+  const items = lsGet<T>(lsKey(table));
+  items.unshift(full);
+  lsSet(lsKey(table), items);
+
   try {
     const { data, error } = await supabase.from(table).insert(full).select().single();
     if (error) throw error;
+    // Update localStorage with Supabase version (may have server defaults)
+    const updated = items.map(i => (i as { id: string }).id === (data as { id: string }).id ? data as T : i);
+    lsSet(lsKey(table), updated);
     return data as T;
   } catch {
-    const items = lsGet<T>(lsKey(table));
-    items.unshift(full);
-    lsSet(lsKey(table), items);
     return full;
   }
 }
@@ -85,30 +104,33 @@ export async function createRecord<T extends { id: string }>(table: string, reco
 export async function updateRecord<T extends { id: string }>(table: string, id: string, updates: Partial<T> & Record<string, unknown>): Promise<T> {
   const patched = { ...updates, updated_at: new Date().toISOString() } as Partial<T>;
 
+  // Always update localStorage
+  const items = lsGet<T>(lsKey(table));
+  const idx = items.findIndex((item) => item.id === id);
+  if (idx >= 0) {
+    items[idx] = { ...items[idx], ...patched } as T;
+    lsSet(lsKey(table), items);
+  }
+
   try {
     const { data, error } = await supabase.from(table).update(patched).eq('id', id).select().single();
     if (error) throw error;
     return data as T;
   } catch {
-    const items = lsGet<T>(lsKey(table));
-    const idx = items.findIndex((item) => item.id === id);
-    if (idx >= 0) {
-      items[idx] = { ...items[idx], ...patched } as T;
-      lsSet(lsKey(table), items);
-      return items[idx];
-    }
+    if (idx >= 0) return items[idx];
     throw new Error(`Record ${id} not found in ${table}`);
   }
 }
 
 export async function deleteRecord(table: string, id: string): Promise<void> {
+  // Always remove from localStorage
+  const items = lsGet<{ id: string }>(lsKey(table)).filter((item) => item.id !== id);
+  lsSet(lsKey(table), items);
+
   try {
     const { error } = await supabase.from(table).delete().eq('id', id);
     if (error) throw error;
-  } catch {
-    const items = lsGet<{ id: string }>(lsKey(table)).filter((item) => item.id !== id);
-    lsSet(lsKey(table), items);
-  }
+  } catch { /* localStorage already updated */ }
 }
 
 export async function getWhere<T extends { id: string }>(
@@ -130,16 +152,27 @@ export async function getWhere<T extends { id: string }>(
 // CLIENTS
 // ============================================
 export async function getClients(filters?: { status?: string; search?: string }) {
+  const local = lsGet<Client>(lsKey('clients'));
   try {
     let query = supabase.from('clients').select('*').order('created_at', { ascending: false });
     if (filters?.status) query = query.eq('status', filters.status);
     if (filters?.search) query = query.or(`name.ilike.%${filters.search}%,contact_email.ilike.%${filters.search}%`);
     const { data, error } = await query;
     if (error) throw error;
-    if (data && data.length > 0) lsSet(lsKey('clients'), data);
-    return { data: data as Client[] | null, error: null };
+    const supaData = (data as Client[]) || [];
+    // If filtered query, we can't simply merge all local — filter local too then merge
+    let filteredLocal = local;
+    if (filters?.status) filteredLocal = filteredLocal.filter(c => c.status === filters.status);
+    if (filters?.search) {
+      const s = filters.search.toLowerCase();
+      filteredLocal = filteredLocal.filter(c => c.name?.toLowerCase().includes(s) || c.contact_email?.toLowerCase().includes(s));
+    }
+    const merged = mergeById(supaData, filteredLocal);
+    // Update full cache with unfiltered merge
+    if (!filters?.status && !filters?.search) lsSet(lsKey('clients'), merged);
+    return { data: merged, error: null };
   } catch {
-    let items = lsGet<Client>(lsKey('clients'));
+    let items = local;
     if (filters?.status) items = items.filter(c => c.status === filters.status);
     if (filters?.search) {
       const s = filters.search.toLowerCase();
@@ -161,58 +194,66 @@ export async function getClient(id: string) {
 }
 
 export async function createClient(client: Partial<Client>) {
+  const now = new Date().toISOString();
+  const newClient: Client = {
+    id: generateId(), name: client.name || '', type: client.type || 'company',
+    status: client.status || 'lead', contract_value: client.contract_value || 0,
+    lifetime_value: client.lifetime_value || 0, tags: client.tags || [],
+    created_at: now, updated_at: now, ...client,
+  } as Client;
+
+  // Always save to localStorage as backup
+  const items = lsGet<Client>(lsKey('clients'));
+  items.unshift(newClient);
+  lsSet(lsKey('clients'), items);
+
   try {
-    const { data, error } = await supabase.from('clients').insert(client).select().single();
+    const { data, error } = await supabase.from('clients').insert(newClient).select().single();
     if (error) throw error;
+    // Update localStorage with Supabase version
+    const updated = items.map(c => c.id === (data as Client).id ? data as Client : c);
+    lsSet(lsKey('clients'), updated);
     return { data: data as Client | null, error: null };
   } catch {
-    const now = new Date().toISOString();
-    const newClient: Client = {
-      id: generateId(), name: client.name || '', type: client.type || 'company',
-      status: client.status || 'lead', contract_value: client.contract_value || 0,
-      lifetime_value: client.lifetime_value || 0, tags: client.tags || [],
-      created_at: now, updated_at: now, ...client,
-    } as Client;
-    const items = lsGet<Client>(lsKey('clients'));
-    items.unshift(newClient);
-    lsSet(lsKey('clients'), items);
     return { data: newClient, error: null };
   }
 }
 
 export async function updateClient(id: string, updates: Partial<Client>) {
+  // Always update localStorage
+  const items = lsGet<Client>(lsKey('clients'));
+  const idx = items.findIndex(c => c.id === id);
+  if (idx >= 0) {
+    items[idx] = { ...items[idx], ...updates, updated_at: new Date().toISOString() };
+    lsSet(lsKey('clients'), items);
+  }
+
   try {
     const { data, error } = await supabase.from('clients').update(updates).eq('id', id).select().single();
     if (error) throw error;
     return { data: data as Client | null, error: null };
   } catch {
-    const items = lsGet<Client>(lsKey('clients'));
-    const idx = items.findIndex(c => c.id === id);
-    if (idx >= 0) {
-      items[idx] = { ...items[idx], ...updates, updated_at: new Date().toISOString() };
-      lsSet(lsKey('clients'), items);
-      return { data: items[idx], error: null };
-    }
-    return { data: null, error: null };
+    return { data: idx >= 0 ? items[idx] : null, error: null };
   }
 }
 
 export async function deleteClient(id: string) {
+  // Always remove from localStorage
+  const items = lsGet<Client>(lsKey('clients')).filter(c => c.id !== id);
+  lsSet(lsKey('clients'), items);
+
   try {
     const { error } = await supabase.from('clients').delete().eq('id', id);
     if (error) throw error;
-    return { error: null };
-  } catch {
-    const items = lsGet<Client>(lsKey('clients')).filter(c => c.id !== id);
-    lsSet(lsKey('clients'), items);
-    return { error: null };
-  }
+  } catch { /* localStorage already updated */ }
+  return { error: null };
 }
 
 // ============================================
 // LEADS
 // ============================================
 export async function getLeads(filters?: { status?: string; source?: string; search?: string }) {
+  const local = lsGet<Lead>(lsKey('leads'));
   try {
     let query = supabase.from('leads').select('*').order('created_at', { ascending: false });
     if (filters?.status) query = query.eq('status', filters.status);
@@ -220,10 +261,18 @@ export async function getLeads(filters?: { status?: string; source?: string; sea
     if (filters?.search) query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,company.ilike.%${filters.search}%`);
     const { data, error } = await query;
     if (error) throw error;
-    if (data && data.length > 0) lsSet(lsKey('leads'), data);
-    return { data: data as Lead[] | null, error: null };
+    let filteredLocal = local;
+    if (filters?.status) filteredLocal = filteredLocal.filter(l => l.status === filters.status);
+    if (filters?.source) filteredLocal = filteredLocal.filter(l => l.source === filters.source);
+    if (filters?.search) {
+      const s = filters.search.toLowerCase();
+      filteredLocal = filteredLocal.filter(l => l.name?.toLowerCase().includes(s) || l.email?.toLowerCase().includes(s) || l.company?.toLowerCase().includes(s));
+    }
+    const merged = mergeById((data as Lead[]) || [], filteredLocal);
+    if (!filters?.status && !filters?.source && !filters?.search) lsSet(lsKey('leads'), merged);
+    return { data: merged, error: null };
   } catch {
-    let items = lsGet<Lead>(lsKey('leads'));
+    let items = local;
     if (filters?.status) items = items.filter(l => l.status === filters.status);
     if (filters?.source) items = items.filter(l => l.source === filters.source);
     if (filters?.search) {
@@ -246,51 +295,54 @@ export async function getLead(id: string) {
 }
 
 export async function createLead(lead: Partial<Lead>) {
+  const now = new Date().toISOString();
+  const newLead: Lead = {
+    id: generateId(), name: lead.name || '', status: lead.status || 'new',
+    score: lead.score || 0, tags: lead.tags || [],
+    created_at: now, updated_at: now, ...lead,
+  } as Lead;
+
+  const items = lsGet<Lead>(lsKey('leads'));
+  items.unshift(newLead);
+  lsSet(lsKey('leads'), items);
+
   try {
-    const { data, error } = await supabase.from('leads').insert(lead).select().single();
+    const { data, error } = await supabase.from('leads').insert(newLead).select().single();
     if (error) throw error;
+    const updated = items.map(l => l.id === (data as Lead).id ? data as Lead : l);
+    lsSet(lsKey('leads'), updated);
     return { data: data as Lead | null, error: null };
   } catch {
-    const now = new Date().toISOString();
-    const newLead: Lead = {
-      id: generateId(), name: lead.name || '', status: lead.status || 'new',
-      score: lead.score || 0, tags: lead.tags || [],
-      created_at: now, updated_at: now, ...lead,
-    } as Lead;
-    const items = lsGet<Lead>(lsKey('leads'));
-    items.unshift(newLead);
-    lsSet(lsKey('leads'), items);
     return { data: newLead, error: null };
   }
 }
 
 export async function updateLead(id: string, updates: Partial<Lead>) {
+  const items = lsGet<Lead>(lsKey('leads'));
+  const idx = items.findIndex(l => l.id === id);
+  if (idx >= 0) {
+    items[idx] = { ...items[idx], ...updates, updated_at: new Date().toISOString() };
+    lsSet(lsKey('leads'), items);
+  }
+
   try {
     const { data, error } = await supabase.from('leads').update(updates).eq('id', id).select().single();
     if (error) throw error;
     return { data: data as Lead | null, error: null };
   } catch {
-    const items = lsGet<Lead>(lsKey('leads'));
-    const idx = items.findIndex(l => l.id === id);
-    if (idx >= 0) {
-      items[idx] = { ...items[idx], ...updates, updated_at: new Date().toISOString() };
-      lsSet(lsKey('leads'), items);
-      return { data: items[idx], error: null };
-    }
-    return { data: null, error: null };
+    return { data: idx >= 0 ? items[idx] : null, error: null };
   }
 }
 
 export async function deleteLead(id: string) {
+  const items = lsGet<Lead>(lsKey('leads')).filter(l => l.id !== id);
+  lsSet(lsKey('leads'), items);
+
   try {
     const { error } = await supabase.from('leads').delete().eq('id', id);
     if (error) throw error;
-    return { error: null };
-  } catch {
-    const items = lsGet<Lead>(lsKey('leads')).filter(l => l.id !== id);
-    lsSet(lsKey('leads'), items);
-    return { error: null };
-  }
+  } catch { /* localStorage already updated */ }
+  return { error: null };
 }
 
 // ============================================
@@ -325,63 +377,68 @@ export async function getProject(id: string) {
 }
 
 export async function createProject(project: Partial<Project>) {
+  const now = new Date().toISOString();
+  const newProject = { id: generateId(), created_at: now, updated_at: now, spent: 0, progress: 0, health: 'green' as const, tags: [], ...project } as Project;
+  const items = lsGet<Project>(lsKey('projects'));
+  items.unshift(newProject);
+  lsSet(lsKey('projects'), items);
+
   try {
-    const { data, error } = await supabase.from('projects').insert(project).select().single();
+    const { data, error } = await supabase.from('projects').insert(newProject).select().single();
     if (error) throw error;
     return { data: data as Project | null, error: null };
   } catch {
-    const now = new Date().toISOString();
-    const newProject = { id: generateId(), created_at: now, updated_at: now, spent: 0, progress: 0, health: 'green' as const, tags: [], ...project } as Project;
-    const items = lsGet<Project>(lsKey('projects'));
-    items.unshift(newProject);
-    lsSet(lsKey('projects'), items);
     return { data: newProject, error: null };
   }
 }
 
 export async function updateProject(id: string, updates: Partial<Project>) {
+  const items = lsGet<Project>(lsKey('projects'));
+  const idx = items.findIndex(p => p.id === id);
+  if (idx >= 0) {
+    items[idx] = { ...items[idx], ...updates, updated_at: new Date().toISOString() };
+    lsSet(lsKey('projects'), items);
+  }
+
   try {
     const { data, error } = await supabase.from('projects').update(updates).eq('id', id).select().single();
     if (error) throw error;
     return { data: data as Project | null, error: null };
   } catch {
-    const items = lsGet<Project>(lsKey('projects'));
-    const idx = items.findIndex(p => p.id === id);
-    if (idx >= 0) {
-      items[idx] = { ...items[idx], ...updates, updated_at: new Date().toISOString() };
-      lsSet(lsKey('projects'), items);
-      return { data: items[idx], error: null };
-    }
-    return { data: null, error: null };
+    return { data: idx >= 0 ? items[idx] : null, error: null };
   }
 }
 
 export async function deleteProject(id: string) {
+  const items = lsGet<Project>(lsKey('projects')).filter(p => p.id !== id);
+  lsSet(lsKey('projects'), items);
+
   try {
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) throw error;
-    return { error: null };
-  } catch {
-    const items = lsGet<Project>(lsKey('projects')).filter(p => p.id !== id);
-    lsSet(lsKey('projects'), items);
-    return { error: null };
-  }
+  } catch { /* localStorage already updated */ }
+  return { error: null };
 }
 
 // ============================================
 // INVOICES
 // ============================================
 export async function getInvoices(filters?: { status?: string; client_id?: string }) {
+  const local = lsGet<Invoice>(lsKey('invoices'));
   try {
     let query = supabase.from('invoices').select('*, client:clients(*), project:projects(*)').order('created_at', { ascending: false });
     if (filters?.status) query = query.eq('status', filters.status);
     if (filters?.client_id) query = query.eq('client_id', filters.client_id);
     const { data, error } = await query;
     if (error) throw error;
-    if (data && data.length > 0) lsSet(lsKey('invoices'), data);
-    return { data: data as Invoice[] | null, error: null };
+    let filteredLocal = local;
+    if (filters?.status) filteredLocal = filteredLocal.filter(i => i.status === filters.status);
+    if (filters?.client_id) filteredLocal = filteredLocal.filter(i => i.client_id === filters.client_id);
+    const merged = mergeById((data as Invoice[]) || [], filteredLocal);
+    if (!filters?.status && !filters?.client_id) lsSet(lsKey('invoices'), merged);
+    return { data: merged, error: null };
   } catch {
-    let items = lsGet<Invoice>(lsKey('invoices'));
+    let items = local;
     if (filters?.status) items = items.filter(i => i.status === filters.status);
     if (filters?.client_id) items = items.filter(i => i.client_id === filters.client_id);
     return { data: items, error: null };
@@ -389,53 +446,54 @@ export async function getInvoices(filters?: { status?: string; client_id?: strin
 }
 
 export async function createInvoice(invoice: Partial<Invoice>) {
+  const now = new Date().toISOString();
+  const newInvoice = { id: generateId(), created_at: now, status: 'draft' as const, total: 0, ...invoice } as Invoice;
+  const items = lsGet<Invoice>(lsKey('invoices'));
+  items.unshift(newInvoice);
+  lsSet(lsKey('invoices'), items);
+
   try {
-    const { data, error } = await supabase.from('invoices').insert(invoice).select().single();
+    const { data, error } = await supabase.from('invoices').insert(newInvoice).select().single();
     if (error) throw error;
     return { data: data as Invoice | null, error: null };
   } catch {
-    const now = new Date().toISOString();
-    const newInvoice = { id: generateId(), created_at: now, status: 'draft' as const, total: 0, ...invoice } as Invoice;
-    const items = lsGet<Invoice>(lsKey('invoices'));
-    items.unshift(newInvoice);
-    lsSet(lsKey('invoices'), items);
     return { data: newInvoice, error: null };
   }
 }
 
 export async function updateInvoice(id: string, updates: Partial<Invoice>) {
+  const items = lsGet<Invoice>(lsKey('invoices'));
+  const idx = items.findIndex(i => i.id === id);
+  if (idx >= 0) {
+    items[idx] = { ...items[idx], ...updates };
+    lsSet(lsKey('invoices'), items);
+  }
+
   try {
     const { data, error } = await supabase.from('invoices').update(updates).eq('id', id).select().single();
     if (error) throw error;
     return { data: data as Invoice | null, error: null };
   } catch {
-    const items = lsGet<Invoice>(lsKey('invoices'));
-    const idx = items.findIndex(i => i.id === id);
-    if (idx >= 0) {
-      items[idx] = { ...items[idx], ...updates };
-      lsSet(lsKey('invoices'), items);
-      return { data: items[idx], error: null };
-    }
-    return { data: null, error: null };
+    return { data: idx >= 0 ? items[idx] : null, error: null };
   }
 }
 
 export async function deleteInvoice(id: string) {
+  const items = lsGet<Invoice>(lsKey('invoices')).filter(i => i.id !== id);
+  lsSet(lsKey('invoices'), items);
+
   try {
     const { error } = await supabase.from('invoices').delete().eq('id', id);
     if (error) throw error;
-    return { error: null };
-  } catch {
-    const items = lsGet<Invoice>(lsKey('invoices')).filter(i => i.id !== id);
-    lsSet(lsKey('invoices'), items);
-    return { error: null };
-  }
+  } catch { /* localStorage already updated */ }
+  return { error: null };
 }
 
 // ============================================
 // EXPENSES
 // ============================================
 export async function getExpenses(filters?: { category?: string; from?: string; to?: string }) {
+  const local = lsGet<Expense>(lsKey('expenses'));
   try {
     let query = supabase.from('expenses').select('*').order('expense_date', { ascending: false });
     if (filters?.category) query = query.eq('category', filters.category);
@@ -443,10 +501,15 @@ export async function getExpenses(filters?: { category?: string; from?: string; 
     if (filters?.to) query = query.lte('expense_date', filters.to);
     const { data, error } = await query;
     if (error) throw error;
-    if (data && data.length > 0) lsSet(lsKey('expenses'), data);
-    return { data: data as Expense[] | null, error: null };
+    let filteredLocal = local;
+    if (filters?.category) filteredLocal = filteredLocal.filter(e => e.category === filters.category);
+    if (filters?.from) filteredLocal = filteredLocal.filter(e => e.expense_date >= filters.from!);
+    if (filters?.to) filteredLocal = filteredLocal.filter(e => e.expense_date <= filters.to!);
+    const merged = mergeById((data as Expense[]) || [], filteredLocal);
+    if (!filters?.category && !filters?.from && !filters?.to) lsSet(lsKey('expenses'), merged);
+    return { data: merged, error: null };
   } catch {
-    let items = lsGet<Expense>(lsKey('expenses'));
+    let items = local;
     if (filters?.category) items = items.filter(e => e.category === filters.category);
     if (filters?.from) items = items.filter(e => e.expense_date >= filters.from!);
     if (filters?.to) items = items.filter(e => e.expense_date <= filters.to!);
@@ -455,34 +518,34 @@ export async function getExpenses(filters?: { category?: string; from?: string; 
 }
 
 export async function createExpense(expense: Partial<Expense>) {
+  const now = new Date().toISOString();
+  const newExpense: Expense = {
+    id: generateId(), amount: expense.amount || 0,
+    expense_date: expense.expense_date || now.split('T')[0],
+    created_at: now, ...expense,
+  } as Expense;
+  const items = lsGet<Expense>(lsKey('expenses'));
+  items.unshift(newExpense);
+  lsSet(lsKey('expenses'), items);
+
   try {
-    const { data, error } = await supabase.from('expenses').insert(expense).select().single();
+    const { data, error } = await supabase.from('expenses').insert(newExpense).select().single();
     if (error) throw error;
     return { data: data as Expense | null, error: null };
   } catch {
-    const now = new Date().toISOString();
-    const newExpense: Expense = {
-      id: generateId(), amount: expense.amount || 0,
-      expense_date: expense.expense_date || now.split('T')[0],
-      created_at: now, ...expense,
-    } as Expense;
-    const items = lsGet<Expense>(lsKey('expenses'));
-    items.unshift(newExpense);
-    lsSet(lsKey('expenses'), items);
     return { data: newExpense, error: null };
   }
 }
 
 export async function deleteExpense(id: string) {
+  const items = lsGet<Expense>(lsKey('expenses')).filter(e => e.id !== id);
+  lsSet(lsKey('expenses'), items);
+
   try {
     const { error } = await supabase.from('expenses').delete().eq('id', id);
     if (error) throw error;
-    return { error: null };
-  } catch {
-    const items = lsGet<Expense>(lsKey('expenses')).filter(e => e.id !== id);
-    lsSet(lsKey('expenses'), items);
-    return { error: null };
-  }
+  } catch { /* localStorage already updated */ }
+  return { error: null };
 }
 
 export async function getExpensesByProject(projectId: string): Promise<{ data: Expense[] | null; error: null }> {
@@ -646,13 +709,15 @@ export interface Booking {
 }
 
 export async function getBookings(): Promise<{ data: Booking[] | null; error: null }> {
+  const local = lsGet<Booking>(lsKey('bookings'));
   try {
     const { data, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
     if (error) throw error;
-    if (data && data.length > 0) lsSet(lsKey('bookings'), data);
-    return { data: data as Booking[], error: null };
+    const merged = mergeById((data as Booking[]) || [], local);
+    if (merged.length > 0) lsSet(lsKey('bookings'), merged);
+    return { data: merged, error: null };
   } catch {
-    return { data: lsGet<Booking>(lsKey('bookings')), error: null };
+    return { data: local, error: null };
   }
 }
 
@@ -664,14 +729,15 @@ export async function createBooking(booking: Partial<Booking>): Promise<{ data: 
     notes: booking.notes || '', dismissed: false, created_at: now, ...booking,
   } as Booking;
 
+  const items = lsGet<Booking>(lsKey('bookings'));
+  items.unshift(full);
+  lsSet(lsKey('bookings'), items);
+
   try {
     const { data, error } = await supabase.from('bookings').insert(full).select().single();
     if (error) throw error;
     return { data: data as Booking, error: null };
   } catch {
-    const items = lsGet<Booking>(lsKey('bookings'));
-    items.unshift(full);
-    lsSet(lsKey('bookings'), items);
     return { data: full, error: null };
   }
 }

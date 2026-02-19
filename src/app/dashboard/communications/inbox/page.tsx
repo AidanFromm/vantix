@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Mail, Search, Plus, X, Send, Filter, ChevronDown, ChevronUp, RefreshCw, CheckCircle2, XCircle, Clock, AlertTriangle, FileText, BarChart3, ArrowUpRight } from 'lucide-react'
+import { getData } from '@/lib/data'
 import { supabase } from '@/lib/supabase-client'
 
 // Types
@@ -69,23 +70,10 @@ export default function EmailLogPage() {
   const fetchEmails = useCallback(async () => {
     setLoading(true)
     try {
-      const { data, error: sbError } = await supabase
-        .from('emails')
-        .select('*')
-        .eq('direction', 'outbound')
-        .order('created_at', { ascending: false })
-
-      if (sbError) throw sbError
-      if (data) {
-        setEmails(data as EmailRecord[])
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)) } catch {}
-      }
+      const data = await getData<EmailRecord>('email_log')
+      setEmails(data)
     } catch {
-      // Fallback to localStorage
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        if (stored) setEmails(JSON.parse(stored))
-      } catch {}
+      setEmails([])
     } finally {
       setLoading(false)
     }
