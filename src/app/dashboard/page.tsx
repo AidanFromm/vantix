@@ -460,13 +460,27 @@ export default function DashboardOverview() {
       </div>
 
       {/* Row 1 — Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <MetricCard
           icon={<DollarSign size={18} />}
           label="Total Revenue"
           value={formatMoney(totalRevenue)}
           trend={`${invoices.filter((i) => i.status === 'paid').length} paid invoices`}
           trendUp={totalRevenue > 0}
+        />
+        <MetricCard
+          icon={<TrendingDown size={18} />}
+          label="Total Expenses"
+          value={formatMoney(totalExpenses)}
+          trend={`${expenses.length} expenses tracked`}
+          trendUp={false}
+        />
+        <MetricCard
+          icon={<TrendingUp size={18} />}
+          label="Net Profit"
+          value={formatMoney(netProfit)}
+          trend={totalRevenue > 0 ? `${((netProfit / totalRevenue) * 100).toFixed(0)}% margin` : 'No revenue yet'}
+          trendUp={netProfit > 0}
         />
         <MetricCard
           icon={<Clock size={18} />}

@@ -86,7 +86,7 @@ export default function FinancesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1C1C1C] p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>

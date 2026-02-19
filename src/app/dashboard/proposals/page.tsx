@@ -33,42 +33,6 @@ const statusConfig: Record<ProposalStatus, { color: string; icon: typeof Clock }
   'Declined': { color: 'bg-[#B54B4B]/15 text-[#B54B4B]', icon: XCircle },
 }
 
-const seedProposals: Proposal[] = [
-  {
-    id: '1', title: 'Security System Installation - SecuredTampa', client: 'SecuredTampa',
-    description: 'Complete security camera and access control installation for commercial property including 8 exterior cameras, 4 interior cameras, and keycard access system.',
-    lineItems: [
-      { service: 'Security Cameras (12x)', price: 2400 },
-      { service: 'Access Control System', price: 1200 },
-      { service: 'Installation & Wiring', price: 600 },
-      { service: 'Monitoring Setup (1yr)', price: 300 },
-    ],
-    total: 4500, terms: 'Net 30. 50% deposit required to begin installation. Includes 2-year warranty on all equipment.',
-    status: 'Accepted', date: '2026-02-10',
-    activity: [
-      { action: 'Proposal created', timestamp: '2026-02-10T10:00:00' },
-      { action: 'Sent to client', timestamp: '2026-02-10T10:15:00' },
-      { action: 'Viewed by client', timestamp: '2026-02-11T09:30:00' },
-      { action: 'Accepted by client', timestamp: '2026-02-12T14:00:00' },
-    ]
-  },
-  {
-    id: '2', title: 'Warehouse Monitoring Package', client: 'Robert Simmons',
-    description: 'Comprehensive warehouse security monitoring with AI-powered threat detection, access control for 3 entry points, and biometric server room access.',
-    lineItems: [
-      { service: 'AI Security Cameras (6x)', price: 3600 },
-      { service: 'Biometric Access Control', price: 2200 },
-      { service: 'Keycard System (3 doors)', price: 900 },
-      { service: 'Installation & Configuration', price: 1300 },
-    ],
-    total: 8000, terms: 'Net 45. Payment plan available: 3 installments. Equipment warranty: 2 years. Monitoring contract: 12 months minimum.',
-    status: 'Draft', date: '2026-02-17',
-    activity: [
-      { action: 'Proposal created', timestamp: '2026-02-17T16:00:00' },
-    ]
-  }
-]
-
 export default function ProposalsPage() {
   const [proposals, setProposals] = useState<Proposal[]>([])
   const [selected, setSelected] = useState<Proposal | null>(null)
