@@ -298,9 +298,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       <div className="px-4 py-5 border-b border-[#E3D9CD]">
         <div className="flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#B07A45] to-[#8E5E34] flex items-center justify-center">
-              <span className="text-white font-bold text-sm">V</span>
-            </div>
+            <img src="/logo-nav.png" alt="Vantix" className="w-8 h-8 rounded-lg" />
             {!isCollapsed && (
               <span className="text-lg font-bold text-[#1C1C1C] tracking-tight">
                 vantix.
