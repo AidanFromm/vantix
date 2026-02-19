@@ -270,7 +270,7 @@ function HeroSection() {
           </div>
           <div className="w-px h-8 bg-[#E3D9CD]" />
           <div className="text-center">
-            <p className="text-2xl sm:text-3xl font-bold text-[#B07A45]">3 wks</p>
+            <p className="text-2xl sm:text-3xl font-bold text-[#B07A45]">3 Weeks</p>
             <p className="text-[10px] sm:text-xs text-[#7A746C] uppercase tracking-wider mt-1">Delivery</p>
           </div>
           <div className="w-px h-8 bg-[#E3D9CD]" />
@@ -755,7 +755,7 @@ function CaseStudyHighlight() {
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { value: '122', label: 'Pages Built' },
-                  { value: '3 wks', label: 'Concept to Launch' },
+                  { value: '3 Weeks', label: 'Concept to Launch' },
                   { value: '50+', label: 'API Routes' },
                   { value: '24/7', label: 'AI Operations Live' },
                 ].map((m, i) => (
