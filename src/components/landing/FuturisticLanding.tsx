@@ -605,7 +605,7 @@ function ProductShowcase() {
               Monitor active AI agents, track automation performance, and measure revenue impact — all from one unified command center.
             </p>
             <a href="#booking" className={bronzeButtonClass + " inline-flex items-center gap-2 text-sm px-6 py-3"}>
-              Explore Platform <ArrowRight size={16} />
+              Book a Demo <ArrowRight size={16} />
             </a>
           </motion.div>
           <motion.div variants={fadeRight} className="lg:w-7/12">
@@ -640,7 +640,7 @@ function ProductShowcase() {
               AI agents that handle calls, live chats, outreach, and customer operations — connected in intelligent workflows that run 24/7.
             </p>
             <a href="#booking" className="inline-flex items-center gap-2 text-sm px-6 py-3 rounded-full border border-[#D8C2A8] text-[#1C1C1C] font-medium hover:bg-[#EEE6DC] transition-colors">
-              Explore Infrastructure <ArrowRight size={16} />
+              Schedule a Call <ArrowRight size={16} />
             </a>
           </motion.div>
           <motion.div variants={fadeLeft} className="lg:w-7/12">
@@ -1276,7 +1276,7 @@ function BookingSection() {
                 <AnimatePresence mode="wait">
                   {step >= 1 && (
                     <motion.div key="times" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-6 overflow-hidden">
-                      <p className="text-sm font-medium text-[#B07A45] mb-3">Select a time <span className="text-[#A39B90] font-normal">(EST)</span></p>
+                      <p className="text-sm font-medium text-[#B07A45] mb-3">Select a time <span className="text-[#A39B90] font-normal">(Eastern Time)</span></p>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {TIME_SLOTS.map((t) => {
                           const active = selectedTime === t;
@@ -1492,7 +1492,7 @@ function Footer() {
                 <a href="tel:9084987753" className="hover:text-[#B07A45] transition-colors">(908) 498-7753</a>
               </li>
               <li>
-                <a href="mailto:usevantix@gmail.com" className="hover:text-[#B07A45] transition-colors">usevantix@gmail.com</a>
+                <a href="mailto:hello@usevantix.com" className="hover:text-[#B07A45] transition-colors">hello@usevantix.com</a>
               </li>
             </ul>
           </div>

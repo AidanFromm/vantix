@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Github, Twitter, Linkedin, ArrowUpRight } from 'lucide-react';
+import { Phone, Mail, MapPin, ArrowUpRight } from 'lucide-react';
 
 const quickLinks = [
   { href: '/', label: 'Home' },
@@ -41,22 +41,7 @@ export default function Footer() {
             <p className="text-sm text-white/60 leading-relaxed mb-6">
               Full-service digital agency. Websites, apps, automation, and systems for businesses worldwide.
             </p>
-            <div className="flex items-center gap-4">
-              {[
-                { icon: Twitter, href: '#' },
-                { icon: Linkedin, href: '#' },
-                { icon: Github, href: '#' },
-              ].map(({ icon: Icon, href }, i) => (
-                <motion.a
-                  key={i}
-                  href={href}
-                  whileHover={{ y: -3 }}
-                  className="w-10 h-10 rounded-lg bg-[#EEE6DC]/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-[#C89A6A] hover:border-[#B07A45]/30 transition-colors"
-                >
-                  <Icon size={18} />
-                </motion.a>
-              ))}
-            </div>
+            {/* Social links coming soon */}
           </div>
 
           {/* Quick Links */}
@@ -112,13 +97,13 @@ export default function Footer() {
               </li>
               <li>
                 <a 
-                  href="mailto:hello@vantix.dev" 
+                  href="mailto:hello@usevantix.com" 
                   className="flex items-center gap-3 text-sm text-white/60 hover:text-[#C89A6A] transition-colors"
                 >
                   <div className="w-10 h-10 rounded-lg bg-[#B07A45]/10 flex items-center justify-center flex-shrink-0">
                     <Mail size={16} className="text-[#C89A6A]" />
                   </div>
-                  hello@vantix.dev
+                  hello@usevantix.com
                 </a>
               </li>
               <li>

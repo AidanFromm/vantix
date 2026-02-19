@@ -86,7 +86,7 @@ export default function TermsPage() {
         <h2 className="text-xl font-bold mt-8 mb-3">11. Contact</h2>
         <p>For questions about these Terms, contact us at:</p>
         <ul className="list-none pl-0 space-y-1 text-[#4B4B4B]">
-          <li>Email: usevantix@gmail.com</li>
+          <li>Email: hello@usevantix.com</li>
           <li>Phone: (908) 498-7753</li>
           <li>Website: <Link href="/contact" className="text-[#8E5E34] hover:underline">usevantix.com/contact</Link></li>
         </ul>

@@ -80,7 +80,7 @@ export async function GET(request: Request) {
     <div class="party">
       <h4>From</h4>
       <strong>Vantix</strong><br>
-      usevantix@gmail.com
+      hello@usevantix.com
     </div>
     <div class="party" style="text-align:right">
       <h4>Bill To</h4>

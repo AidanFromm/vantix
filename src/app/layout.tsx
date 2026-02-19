@@ -77,7 +77,7 @@ export default function RootLayout({
       url: "https://www.usevantix.com",
       logo: "https://www.usevantix.com/og-image.jpg",
       telephone: "(908) 498-7753",
-      email: "usevantix@gmail.com",
+      email: "hello@usevantix.com",
       description:
         "AI consulting agency that builds intelligent systems to generate revenue, cut costs, and automate operations.",
       sameAs: [],
@@ -92,7 +92,7 @@ export default function RootLayout({
       name: "Vantix",
       url: "https://www.usevantix.com",
       telephone: "(908) 498-7753",
-      email: "usevantix@gmail.com",
+      email: "hello@usevantix.com",
       description: "AI-powered business automation consulting agency.",
       priceRange: "$$$$",
       image: "https://www.usevantix.com/og-image.jpg",

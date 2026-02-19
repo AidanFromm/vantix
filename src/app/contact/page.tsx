@@ -110,8 +110,8 @@ export default function ContactPage() {
                 <a href="tel:+19084987753" className="flex items-center gap-3 text-sm text-[#4B4B4B] hover:text-[#B07A45] transition-colors">
                   <Phone className="w-4 h-4 text-[#B07A45]" /> (908) 498-7753
                 </a>
-                <a href="mailto:usevantix@gmail.com" className="flex items-center gap-3 text-sm text-[#4B4B4B] hover:text-[#B07A45] transition-colors">
-                  <Mail className="w-4 h-4 text-[#B07A45]" /> usevantix@gmail.com
+                <a href="mailto:hello@usevantix.com" className="flex items-center gap-3 text-sm text-[#4B4B4B] hover:text-[#B07A45] transition-colors">
+                  <Mail className="w-4 h-4 text-[#B07A45]" /> hello@usevantix.com
                 </a>
               </div>
             </div>

@@ -2,21 +2,20 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-[#F4EFE8] flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center bg-[#F4EFE8] px-6">
       <div className="text-center max-w-md">
-        <h1 className="text-8xl font-bold text-[#B07A45] mb-4">404</h1>
-        <h2 className="text-2xl font-semibold text-[#1C1C1C] mb-4">Page not found</h2>
-        <p className="text-[#1C1C1C]/60 mb-8">
-          The page you are looking for does not exist or has been moved.
+        <div className="w-16 h-16 rounded-2xl bg-[#B07A45]/10 flex items-center justify-center mx-auto mb-8">
+          <span className="text-3xl font-bold text-[#B07A45]">404</span>
+        </div>
+        <h1 className="text-3xl font-bold text-[#1C1C1C] mb-4">Page Not Found</h1>
+        <p className="text-[#7A746C] leading-relaxed mb-8">
+          The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
         <Link
           href="/"
-          className="inline-block px-8 py-3 rounded-lg font-medium text-white transition-all shadow-md hover:shadow-lg"
-          style={{
-            background: 'linear-gradient(135deg, #B07A45, #8E5E34)',
-          }}
+          className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#B07A45] text-white font-semibold hover:bg-[#8E5E34] transition-colors"
         >
-          Back to Home
+          Go Home
         </Link>
       </div>
     </div>
