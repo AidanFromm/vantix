@@ -5,7 +5,7 @@
   --color-text: #1C1C1C;
   --color-muted: #7A746C;
   --color-accent: #8E5E34;
-  --color-accent-light: #8E5E34;
+  --color-accent-light: #C89A6A;
   --color-accent-hover: #8E5E34;
   --color-border: #E3D9CD;
   --color-card: #EEE6DC;
@@ -38,6 +38,7 @@ body {
 
 /* Bronze button texture */
 .bronze-btn {
+  background-color: #B07A45;
   background-image: url('/btn-texture.png');
   background-size: cover;
   background-position: center;
@@ -155,18 +156,18 @@ body {
 }
 
 /* ========================================
-   NEUMORPHIC UTILITIES
+   SUBTLE SHADOW UTILITIES (renamed from neumorphic)
    ======================================== */
 
-.neu-raised {
+.shadow-raised {
   box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
 }
 
-.neu-pressed {
+.shadow-pressed {
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
 }
 
-.neu-subtle {
+.shadow-subtle {
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 

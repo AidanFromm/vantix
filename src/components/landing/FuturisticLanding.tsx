@@ -826,7 +826,7 @@ function ProcessTimeline() {
               {/* Timeline dot */}
               <motion.div
                 variants={popIn}
-                className="absolute left-6 w-3 h-3 rounded-full bg-[#8E5E34] border-4 border-white shadow-md -translate-x-1.5 mt-6 z-10"
+                className="absolute left-6 w-3 h-3 rounded-full bg-[#8E5E34] border-4 border-[#F4EFE8] shadow-md -translate-x-1.5 mt-6 z-10"
               />
 
               <div className="ml-12 flex-1">
@@ -1011,7 +1011,7 @@ function TeamSection() {
               variants={i === 0 ? fadeLeft : fadeRight}
               className="p-6 rounded-xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD] text-center"
             >
-              <div className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-sm border-2 border-white/80">
+              <div className="w-28 h-28 rounded-full mx-auto mb-6 overflow-hidden shadow-sm border-2 border-[#E3D9CD]">
                 <Image src={t.photo} alt={`${t.name}, ${t.role} at Vantix`} width={112} height={112} className="w-full h-full object-cover" loading="lazy" />
               </div>
               <h3 className="text-xl font-bold text-[#B07A45]">{t.name}</h3>
