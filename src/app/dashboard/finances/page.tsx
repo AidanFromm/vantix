@@ -7,7 +7,7 @@ import {
   Calendar, Plus, Trash2, ArrowUpRight, ArrowDownRight,
   BarChart3, PieChart, Wallet, AlertCircle,
 } from 'lucide-react';
-import { getInvoices, getExpenses, createExpense } from '@/lib/supabase';
+import { getData, createRecord } from '@/lib/data';
 import type { Invoice, Expense } from '@/lib/types';
 
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.05 } } };
@@ -26,9 +26,12 @@ export default function FinancesPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [iRes, eRes] = await Promise.all([getInvoices(), getExpenses()]);
-      if (iRes.data) setInvoices(iRes.data);
-      if (eRes.data) setExpenses(eRes.data);
+      const [inv, exp] = await Promise.all([
+        getData<Invoice>('invoices').catch(() => []),
+        getData<Expense>('expenses').catch(() => []),
+      ]);
+      setInvoices(inv);
+      setExpenses(exp);
     } catch {}
     setLoading(false);
   }, []);
@@ -49,7 +52,7 @@ export default function FinancesPage() {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       const rev = invoices.filter(inv => inv.status === 'paid' && inv.paid_date?.startsWith(key)).reduce((s, inv) => s + (inv.amount || 0), 0);
-      const exp = expenses.filter(e => e.expense_date?.startsWith(key)).reduce((s, e) => s + (e.amount || 0), 0);
+      const exp = expenses.filter(e => (e.expense_date || (e as any).date || '')?.startsWith(key)).reduce((s, e) => s + (e.amount || 0), 0);
       months.push({ month: MONTHS[d.getMonth()], revenue: rev, expenses: exp, profit: rev - exp });
     }
     return months;
@@ -66,7 +69,16 @@ export default function FinancesPage() {
 
   const handleExpense = async () => {
     try {
-      await createExpense(expForm);
+      const id = crypto.randomUUID();
+      await createRecord('expenses', {
+        id,
+        amount: expForm.amount,
+        category: expForm.category,
+        vendor: expForm.vendor,
+        description: expForm.description,
+        expense_date: expForm.expense_date,
+        date: expForm.expense_date,
+      });
       setExpForm({ amount: 0, category: '', vendor: '', description: '', expense_date: '' });
       setShowExpenseForm(false);
       load();
