@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { CalendarDays, Clock, CheckCircle2, XCircle, ChevronDown, ChevronUp, Mail, Phone, User, Plus, X, MessageSquare } from 'lucide-react';
+import { CalendarDays, Clock, CheckCircle2, XCircle, ChevronDown, ChevronUp, Mail, Phone, User, Plus, X, MessageSquare, Trash2 } from 'lucide-react';
 import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 type BookingStatus = 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
@@ -25,12 +25,7 @@ const STATUS_STYLES: Record<BookingStatus, string> = {
   Cancelled: 'bg-red-50 text-red-600 border-red-200',
 };
 
-const SEED: Booking[] = [
-  { id: '1', name: 'Marcus Johnson', email: 'marcus@example.com', phone: '813-555-0101', date: '2026-02-20', time: '10:00', status: 'Pending', notes: 'Interested in web app development', created_at: '2026-02-15T09:00:00Z' },
-  { id: '2', name: 'Sarah Chen', email: 'sarah@startup.io', phone: '727-555-0202', date: '2026-02-19', time: '14:00', status: 'Confirmed', notes: 'AI chatbot integration', created_at: '2026-02-13T11:30:00Z' },
-  { id: '3', name: 'David Park', email: 'david@corp.com', phone: '407-555-0303', date: '2026-02-14', time: '11:00', status: 'Completed', notes: 'E-commerce consultation', created_at: '2026-02-10T08:00:00Z' },
-  { id: '4', name: 'Lisa Ramirez', email: 'lisa@gmail.com', phone: '954-555-0404', date: '2026-02-12', time: '15:30', status: 'Cancelled', notes: 'Rescheduled to next month', created_at: '2026-02-08T14:00:00Z' },
-];
+// No seed data - start empty
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -41,8 +36,8 @@ export default function BookingsPage() {
     (async () => {
       try {
         const d = await getData<Booking>('bookings');
-        setBookings(d.length ? d : SEED);
-      } catch { setBookings(SEED); }
+        setBookings(d);
+      } catch { setBookings([]); }
     })();
   }, []);
 
@@ -71,6 +66,11 @@ export default function BookingsPage() {
   };
 
   const sendEmail = (email: string) => { window.open(`mailto:${email}`, '_blank'); };
+
+  const handleDelete = async (id: string) => {
+    try { await deleteRecord('bookings', id); } catch {}
+    setBookings(prev => prev.filter(b => b.id !== id));
+  };
 
   return (
     <div className="p-6 space-y-6 min-h-screen bg-[#F4EFE8]">
@@ -138,6 +138,7 @@ export default function BookingsPage() {
                           <button onClick={() => updateStatus(b.id, 'Cancelled')} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-red-50 text-red-500 hover:bg-red-100 transition-colors">Cancel</button>
                         )}
                         <button onClick={() => sendEmail(b.email)} className="p-1.5 rounded-lg hover:bg-[#E3D9CD] text-[#7A746C] hover:text-[#B07A45] transition-colors"><Mail size={14} /></button>
+                        <button onClick={() => handleDelete(b.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-[#7A746C] hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
                       </div>
                     </td>
                   </tr>

@@ -1,79 +1,92 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { DollarSign, TrendingUp, BarChart3, PieChart, Target, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { getInvoices } from '@/lib/supabase';
+import { useState, useEffect, useMemo } from 'react';
+import { DollarSign, TrendingUp, BarChart3, PieChart, Target, ArrowUpRight, ArrowDownRight, Plus, X } from 'lucide-react';
+import { getData } from '@/lib/data';
 
-interface RevenueData {
-  mrr: number;
-  totalRevenue: number;
-  avgDealSize: number;
-  revenueGrowth: number;
-  monthlyRevenue: { month: string; amount: number }[];
-  revenueByClient: { client: string; amount: number }[];
-  revenueBySource: { source: string; amount: number; color: string }[];
-  projections: { month: string; amount: number; confidence: number }[];
+interface Payment {
+  id: string;
+  amount: number;
+  client: string;
+  date: string;
+  status: string;
+}
+
+interface Invoice {
+  id: string;
+  amount?: number;
+  total?: number;
+  client?: string | { name?: string };
+  status: string;
+  paid_date?: string;
+  paid_at?: string;
+  created_at?: string;
 }
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 export default function RevenuePage() {
-  const [data, setData] = useState<RevenueData | null>(null);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const { data: invoices } = await getInvoices();
-        const paid = (invoices || []).filter((i: any) => i.status === 'paid');
-        const totalRevenue = paid.reduce((s: number, i: any) => s + (i.amount || i.total || 0), 0);
-        const avgDealSize = paid.length > 0 ? Math.round(totalRevenue / paid.length) : 0;
-
-        // Monthly revenue (last 12 months)
-        const now = new Date();
-        const monthlyRevenue: { month: string; amount: number }[] = [];
-        for (let i = 11; i >= 0; i--) {
-          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-          const prefix = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-          const amt = paid.filter((inv: any) => (inv.paid_date || inv.paid_at || inv.created_at || '').startsWith(prefix)).reduce((s: number, inv: any) => s + (inv.amount || inv.total || 0), 0);
-          monthlyRevenue.push({ month: MONTHS[d.getMonth()], amount: amt });
-        }
-
-        // Revenue by client
-        const byClient: Record<string, number> = {};
-        paid.forEach((inv: any) => {
-          const name = inv.client?.name || 'Unknown';
-          byClient[name] = (byClient[name] || 0) + (inv.amount || inv.total || 0);
-        });
-        const revenueByClient = Object.entries(byClient).sort((a, b) => b[1] - a[1]).map(([client, amount]) => ({ client, amount }));
-
-        // Simple MRR estimate (last 3 months avg)
-        const last3 = monthlyRevenue.slice(-3);
-        const mrr = last3.length > 0 ? Math.round(last3.reduce((s, m) => s + m.amount, 0) / last3.length) : 0;
-
-        setData({
-          mrr,
-          totalRevenue,
-          avgDealSize,
-          revenueGrowth: 0,
-          monthlyRevenue,
-          revenueByClient,
-          revenueBySource: totalRevenue > 0 ? [{ source: 'Projects', amount: totalRevenue, color: '#B07A45' }] : [],
-          projections: [],
-        });
+        const [p, i] = await Promise.all([
+          getData<Payment>('payments'),
+          getData<Invoice>('invoices'),
+        ]);
+        setPayments(p || []);
+        setInvoices(i || []);
       } catch {
-        setData({
-          mrr: 0, totalRevenue: 0, avgDealSize: 0, revenueGrowth: 0,
-          monthlyRevenue: [], revenueByClient: [], revenueBySource: [], projections: [],
-        });
+        setPayments([]);
+        setInvoices([]);
       }
+      setLoading(false);
     })();
   }, []);
 
-  if (!data) return <div className="min-h-screen bg-[#F4EFE8]" />;
+  // Completed payments = actual revenue received
+  const completedPayments = useMemo(() => payments.filter(p => p.status === 'completed'), [payments]);
+  const totalRevenue = useMemo(() => completedPayments.reduce((s, p) => s + (p.amount || 0), 0), [completedPayments]);
 
-  const maxMonthly = data.monthlyRevenue.length > 0 ? Math.max(...data.monthlyRevenue.map(m => m.amount)) : 1;
-  const maxClient = data.revenueByClient.length > 0 ? Math.max(...data.revenueByClient.map(c => c.amount)) : 1;
-  const totalSource = data.revenueBySource.reduce((s, r) => s + r.amount, 0) || 1;
+  // Outstanding = unpaid invoices
+  const outstandingInvoices = useMemo(() => invoices.filter(i => i.status === 'sent' || i.status === 'overdue' || i.status === 'draft'), [invoices]);
+  const outstandingAmount = useMemo(() => outstandingInvoices.reduce((s, i) => s + (i.total || i.amount || 0), 0), [outstandingInvoices]);
+
+  // Average deal size from completed payments
+  const avgDealSize = useMemo(() => completedPayments.length > 0 ? Math.round(totalRevenue / completedPayments.length) : 0, [completedPayments, totalRevenue]);
+
+  // Monthly revenue from payments (last 12 months)
+  const monthlyRevenue = useMemo(() => {
+    const now = new Date();
+    const months: { month: string; amount: number }[] = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const prefix = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const amt = completedPayments
+        .filter(p => (p.date || '').startsWith(prefix))
+        .reduce((s, p) => s + (p.amount || 0), 0);
+      months.push({ month: MONTHS[d.getMonth()], amount: amt });
+    }
+    return months;
+  }, [completedPayments]);
+
+  // Revenue by client from payments
+  const revenueByClient = useMemo(() => {
+    const byClient: Record<string, number> = {};
+    completedPayments.forEach(p => {
+      const name = p.client || 'Unknown';
+      byClient[name] = (byClient[name] || 0) + (p.amount || 0);
+    });
+    return Object.entries(byClient).sort((a, b) => b[1] - a[1]).map(([client, amount]) => ({ client, amount }));
+  }, [completedPayments]);
+
+  if (loading) return <div className="min-h-screen bg-[#F4EFE8]" />;
+
+  const maxMonthly = monthlyRevenue.length > 0 ? Math.max(...monthlyRevenue.map(m => m.amount), 1) : 1;
+  const maxClient = revenueByClient.length > 0 ? Math.max(...revenueByClient.map(c => c.amount), 1) : 1;
 
   return (
     <div className="min-h-screen bg-[#F4EFE8] p-6">
@@ -85,142 +98,109 @@ export default function RevenuePage() {
         </div>
 
         {/* Overview Cards */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          {[
-            { label: 'Monthly Recurring', value: `$${data.mrr.toLocaleString()}`, icon: DollarSign, sub: 'MRR' },
-            { label: 'Total Revenue', value: `$${data.totalRevenue.toLocaleString()}`, icon: TrendingUp, sub: 'All time' },
-            { label: 'Avg Deal Size', value: `$${data.avgDealSize.toLocaleString()}`, icon: Target, sub: 'Per project' },
-            { label: 'Revenue Growth', value: `${data.revenueGrowth}%`, icon: data.revenueGrowth >= 0 ? ArrowUpRight : ArrowDownRight, sub: 'vs last quarter', positive: data.revenueGrowth >= 0 },
-          ].map((card, i) => (
-            <div key={i} className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-5">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-[#7A746C]">{card.label}</span>
-                <card.icon className="w-5 h-5 text-[#B07A45]" />
-              </div>
-              <div className="text-2xl font-bold text-[#1C1C1C]">{card.value}</div>
-              <div className={`text-xs mt-1 ${(card as any).positive === false ? 'text-red-500' : 'text-[#7A746C]'}`}>{card.sub}</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-[#7A746C]">Total Revenue</span>
+              <DollarSign className="w-5 h-5 text-[#B07A45]" />
             </div>
-          ))}
+            <div className="text-2xl font-bold text-[#1C1C1C]">${totalRevenue.toLocaleString()}</div>
+            <div className="text-xs mt-1 text-[#7A746C]">From {completedPayments.length} payment{completedPayments.length !== 1 ? 's' : ''}</div>
+          </div>
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-[#7A746C]">Outstanding</span>
+              <Target className="w-5 h-5 text-[#B07A45]" />
+            </div>
+            <div className="text-2xl font-bold text-[#1C1C1C]">${outstandingAmount.toLocaleString()}</div>
+            <div className="text-xs mt-1 text-[#7A746C]">{outstandingInvoices.length} unpaid invoice{outstandingInvoices.length !== 1 ? 's' : ''}</div>
+          </div>
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-[#7A746C]">Avg Payment</span>
+              <TrendingUp className="w-5 h-5 text-[#B07A45]" />
+            </div>
+            <div className="text-2xl font-bold text-[#1C1C1C]">${avgDealSize.toLocaleString()}</div>
+            <div className="text-xs mt-1 text-[#7A746C]">Per payment</div>
+          </div>
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-[#7A746C]">Pipeline</span>
+              <ArrowUpRight className="w-5 h-5 text-[#B07A45]" />
+            </div>
+            <div className="text-2xl font-bold text-[#1C1C1C]">${(totalRevenue + outstandingAmount).toLocaleString()}</div>
+            <div className="text-xs mt-1 text-[#7A746C]">Revenue + outstanding</div>
+          </div>
         </div>
 
         {/* Monthly Revenue Chart */}
         <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6 mb-6">
-          <h2 className="text-lg font-semibold text-[#1C1C1C] mb-6">Monthly Revenue</h2>
-          {data.monthlyRevenue.length === 0 ? (
-            <div className="h-56 flex items-center justify-center text-[#7A746C] text-sm">No revenue data yet</div>
+          <h2 className="text-lg font-semibold text-[#1C1C1C] mb-6">Monthly Revenue (from Payments)</h2>
+          {monthlyRevenue.every(m => m.amount === 0) ? (
+            <div className="h-56 flex items-center justify-center text-[#7A746C] text-sm">No payment data yet</div>
           ) : (
-          <div className="flex items-end gap-3 h-56">
-            {data.monthlyRevenue.map((m, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                <span className="text-xs text-[#7A746C] font-medium">${(m.amount / 1000).toFixed(1)}k</span>
-                <div
-                  className="w-full bg-gradient-to-t from-[#B07A45] to-[#C89A6A] rounded-t-lg transition-all hover:from-[#8E5E34] hover:to-[#B07A45]"
-                  style={{ height: `${(m.amount / maxMonthly) * 100}%`, minHeight: 8 }}
-                />
-                <span className="text-xs text-[#7A746C]">{m.month}</span>
-              </div>
-            ))}
-          </div>
+            <div className="flex items-end gap-3 h-56">
+              {monthlyRevenue.map((m, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                  <span className="text-xs text-[#7A746C] font-medium">${m.amount > 0 ? (m.amount / 1000).toFixed(1) + 'k' : '0'}</span>
+                  <div
+                    className="w-full bg-gradient-to-t from-[#B07A45] to-[#C89A6A] rounded-t-lg transition-all hover:from-[#8E5E34] hover:to-[#B07A45]"
+                    style={{ height: `${(m.amount / maxMonthly) * 100}%`, minHeight: m.amount > 0 ? 8 : 2 }}
+                  />
+                  <span className="text-xs text-[#7A746C]">{m.month}</span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Revenue by Client */}
           <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-[#1C1C1C] mb-5">Revenue by Client</h2>
-            <div className="space-y-4">
-              {data.revenueByClient.map((c, i) => (
-                <div key={i}>
-                  <div className="flex justify-between text-sm mb-1.5">
-                    <span className="text-[#4B4B4B] font-medium">{c.client}</span>
-                    <span className="text-[#1C1C1C] font-semibold">${c.amount.toLocaleString()}</span>
+            <h2 className="text-lg font-semibold text-[#1C1C1C] mb-5">Revenue by Client (Payments Received)</h2>
+            {revenueByClient.length === 0 ? (
+              <p className="text-sm text-[#7A746C]">No payments recorded yet</p>
+            ) : (
+              <div className="space-y-4">
+                {revenueByClient.map((c, i) => (
+                  <div key={i}>
+                    <div className="flex justify-between text-sm mb-1.5">
+                      <span className="text-[#4B4B4B] font-medium">{c.client}</span>
+                      <span className="text-[#1C1C1C] font-semibold">${c.amount.toLocaleString()}</span>
+                    </div>
+                    <div className="w-full h-3 bg-[#E3D9CD] rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-[#B07A45] to-[#C89A6A] rounded-full transition-all"
+                        style={{ width: `${(c.amount / maxClient) * 100}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full h-3 bg-[#E3D9CD] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-[#B07A45] to-[#C89A6A] rounded-full transition-all"
-                      style={{ width: `${(c.amount / maxClient) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Revenue by Source */}
+          {/* Outstanding Invoices */}
           <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-[#1C1C1C] mb-5">Revenue by Source</h2>
-            {/* Donut Chart */}
-            <div className="flex items-center justify-center mb-6">
-              <div className="relative w-44 h-44">
-                <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                  {(() => {
-                    let offset = 0;
-                    return data.revenueBySource.map((s, i) => {
-                      const pct = (s.amount / totalSource) * 100;
-                      const dashArray = `${pct} ${100 - pct}`;
-                      const el = (
-                        <circle
-                          key={i}
-                          cx="18" cy="18" r="14"
-                          fill="none"
-                          stroke={s.color}
-                          strokeWidth="5"
-                          strokeDasharray={dashArray}
-                          strokeDashoffset={-offset}
-                          className="transition-all"
-                        />
-                      );
-                      offset += pct;
-                      return el;
-                    });
-                  })()}
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xl font-bold text-[#1C1C1C]">${(totalSource / 1000).toFixed(0)}k</span>
-                  <span className="text-xs text-[#7A746C]">Total</span>
-                </div>
+            <h2 className="text-lg font-semibold text-[#1C1C1C] mb-5">Outstanding Invoices</h2>
+            {outstandingInvoices.length === 0 ? (
+              <p className="text-sm text-[#7A746C]">All invoices paid</p>
+            ) : (
+              <div className="space-y-3">
+                {outstandingInvoices.map((inv, i) => {
+                  const clientName = typeof inv.client === 'object' ? inv.client?.name || 'Unknown' : inv.client || 'Unknown';
+                  return (
+                    <div key={i} className="flex items-center justify-between bg-[#F4EFE8] rounded-xl px-4 py-3 border border-[#E3D9CD]">
+                      <div>
+                        <p className="text-sm font-medium text-[#1C1C1C]">{clientName}</p>
+                        <p className="text-xs text-[#7A746C] capitalize">{inv.status}</p>
+                      </div>
+                      <span className="text-sm font-semibold text-[#1C1C1C]">${(inv.total || inv.amount || 0).toLocaleString()}</span>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-            <div className="space-y-3">
-              {data.revenueBySource.map((s, i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: s.color }} />
-                    <span className="text-sm text-[#4B4B4B]">{s.source}</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm font-semibold text-[#1C1C1C]">${s.amount.toLocaleString()}</span>
-                    <span className="text-xs text-[#7A746C] ml-2">{((s.amount / totalSource) * 100).toFixed(0)}%</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Projections */}
-        <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-5">
-            <Target className="w-5 h-5 text-[#B07A45]" />
-            <h2 className="text-lg font-semibold text-[#1C1C1C]">3-Month Forecast</h2>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            {data.projections.map((p, i) => (
-              <div key={i} className="bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl p-5">
-                <div className="text-sm text-[#7A746C] mb-1">{p.month}</div>
-                <div className="text-2xl font-bold text-[#1C1C1C] mb-3">${p.amount.toLocaleString()}</div>
-                <div className="w-full h-2 bg-[#E3D9CD] rounded-full overflow-hidden mb-1.5">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{
-                      width: `${p.confidence}%`,
-                      background: p.confidence > 75 ? '#B07A45' : p.confidence > 60 ? '#C89A6A' : '#E3D9CD',
-                    }}
-                  />
-                </div>
-                <div className="text-xs text-[#7A746C]">{p.confidence}% confidence</div>
-              </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

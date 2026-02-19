@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { CalendarDays, ChevronLeft, ChevronRight, Plus, X, Clock, MapPin } from 'lucide-react';
-import { getData, createRecord, deleteRecord } from '@/lib/data';
+import { CalendarDays, ChevronLeft, ChevronRight, Plus, X, Clock, MapPin, Edit3, Trash2 } from 'lucide-react';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 type EventType = 'meeting' | 'deadline' | 'task' | 'followup';
 
@@ -34,25 +34,10 @@ function getToday() { return new Date(); }
 function fmt(d: Date) { return d.toISOString().split('T')[0]; }
 function addDays(d: Date, n: number) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
 
-function seedEvents(): CalEvent[] {
-  const today = getToday();
-  const dow = today.getDay();
-  const monday = addDays(today, -dow + 1);
-  return [
-    { id: '1', title: 'Client Strategy Call', type: 'meeting', date: fmt(addDays(monday, 0)), time: '10:00', notes: 'Q1 review', client: 'Apex Holdings' },
-    { id: '2', title: 'Design Review', type: 'meeting', date: fmt(addDays(monday, 2)), time: '14:00', notes: 'Website mockups', client: 'Summit Digital' },
-    { id: '3', title: 'Sprint Planning', type: 'meeting', date: fmt(addDays(monday, 4)), time: '09:00', notes: 'Next sprint scope', client: '' },
-    { id: '4', title: 'Proposal Due', type: 'deadline', date: fmt(addDays(monday, 1)), time: '17:00', notes: 'Metro Finance proposal', client: 'Metro Finance' },
-    { id: '5', title: 'Invoice Submission', type: 'deadline', date: fmt(addDays(monday, 3)), time: '12:00', notes: 'Monthly invoices', client: '' },
-    { id: '6', title: 'Follow up with lead', type: 'followup', date: fmt(addDays(monday, 2)), time: '11:00', notes: 'Check interest level', client: 'Peak Industries' },
-  ];
-}
-
 async function loadEvents(): Promise<CalEvent[]> {
   try {
-    const data = await getData<CalEvent>('calendar_events');
-    return data.length ? data : seedEvents();
-  } catch { return seedEvents(); }
+    return await getData<CalEvent>('calendar_events');
+  } catch { return []; }
 }
 
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -63,6 +48,7 @@ export default function CalendarPage() {
   const [viewDate, setViewDate] = useState(getToday());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({ title: '', type: 'meeting' as EventType, date: '', time: '09:00', notes: '', client: '' });
 
   useEffect(() => { loadEvents().then(setEvents); }, []);
@@ -95,12 +81,25 @@ export default function CalendarPage() {
   const prevMonth = () => setViewDate(new Date(year, month - 1, 1));
   const nextMonth = () => setViewDate(new Date(year, month + 1, 1));
 
-  const addEvent = async () => {
+  const resetForm = () => { setForm({ title: '', type: 'meeting', date: '', time: '09:00', notes: '', client: '' }); setEditId(null); };
+
+  const openEdit = (e: CalEvent) => {
+    setEditId(e.id);
+    setForm({ title: e.title, type: e.type, date: e.date, time: e.time, notes: e.notes, client: e.client });
+    setShowModal(true);
+  };
+
+  const saveEvent = async () => {
     if (!form.title || !form.date) return;
-    const ev = await createRecord<CalEvent>('calendar_events', { ...form });
-    setEvents(prev => [...prev, ev]);
+    if (editId) {
+      try { await updateRecord('calendar_events', editId, { ...form }); } catch {}
+      setEvents(prev => prev.map(e => e.id === editId ? { ...e, ...form } : e));
+    } else {
+      const ev = await createRecord<CalEvent>('calendar_events', { ...form });
+      setEvents(prev => [...prev, ev]);
+    }
     setShowModal(false);
-    setForm({ title: '', type: 'meeting', date: '', time: '09:00', notes: '', client: '' });
+    resetForm();
   };
 
   const deleteEvent = async (id: string) => {
@@ -119,7 +118,7 @@ export default function CalendarPage() {
           </h1>
           <p className="text-[#7A746C] text-sm mt-1">Schedule, deadlines, and follow-ups</p>
         </div>
-        <button onClick={() => { setForm({ ...form, date: selectedDate || todayStr }); setShowModal(true); }}
+        <button onClick={() => { resetForm(); setForm(f => ({ ...f, date: selectedDate || todayStr })); setShowModal(true); }}
           className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium hover:opacity-90 transition">
           <Plus className="w-4 h-4" /> Add Event
         </button>
@@ -221,9 +220,10 @@ export default function CalendarPage() {
                             </p>
                           </div>
                         </div>
-                        <button onClick={() => deleteEvent(e.id)} className="text-[#7A746C] hover:text-red-600 transition">
-                          <X className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex gap-1">
+                          <button onClick={() => openEdit(e)} className="text-[#7A746C] hover:text-[#B07A45] transition"><Edit3 className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => deleteEvent(e.id)} className="text-[#7A746C] hover:text-red-600 transition"><Trash2 className="w-3.5 h-3.5" /></button>
+                        </div>
                       </div>
                       {e.client && <p className="text-xs text-[#7A746C] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" /> {e.client}</p>}
                       {e.notes && <p className="text-xs text-[#4B4B4B] mt-1">{e.notes}</p>}
@@ -243,7 +243,7 @@ export default function CalendarPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
           <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-[#1C1C1C]">Add Event</h3>
+              <h3 className="text-lg font-semibold text-[#1C1C1C]">{editId ? 'Edit Event' : 'Add Event'}</h3>
               <button onClick={() => setShowModal(false)} className="text-[#7A746C] hover:text-[#1C1C1C]"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3">
@@ -263,8 +263,8 @@ export default function CalendarPage() {
                 className="w-full px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] outline-none focus:border-[#B07A45]" />
               <textarea placeholder="Notes" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} rows={3}
                 className="w-full px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] outline-none focus:border-[#B07A45] resize-none" />
-              <button onClick={addEvent} className="w-full py-2 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium hover:opacity-90 transition">
-                Add Event
+              <button onClick={saveEvent} className="w-full py-2 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium hover:opacity-90 transition">
+                {editId ? 'Update Event' : 'Add Event'}
               </button>
             </div>
           </div>

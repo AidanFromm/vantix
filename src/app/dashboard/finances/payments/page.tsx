@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { CreditCard, Plus, X, Clock, CheckCircle2, AlertCircle, DollarSign, Timer, FileText, Search } from 'lucide-react';
+import { CreditCard, Plus, X, Clock, CheckCircle2, AlertCircle, DollarSign, Timer, FileText, Search, Edit3, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getData, createRecord } from '@/lib/data';
+import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 type PaymentMethod = 'Zelle' | 'Wire' | 'Card' | 'Cash';
 type PaymentStatus = 'completed' | 'pending' | 'failed';
@@ -32,6 +32,7 @@ export default function PaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({
     invoiceNumber: '',
     amount: '',
@@ -81,6 +82,22 @@ export default function PaymentsPage() {
   const completedPayments = payments.filter(p => p.status === 'completed');
   const avgPaymentTime = completedPayments.length > 0 ? Math.round(completedPayments.length > 1 ? 4.2 : 3) : 0;
 
+  const resetForm = () => {
+    setForm({ invoiceNumber: '', amount: '', client: '', method: 'Zelle', date: new Date().toISOString().split('T')[0], notes: '', status: 'completed' });
+    setEditId(null);
+  };
+
+  const openEdit = (p: Payment) => {
+    setEditId(p.id);
+    setForm({ invoiceNumber: p.invoiceNumber, amount: String(p.amount), client: p.client, method: p.method, date: p.date, notes: p.notes, status: p.status });
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    try { await deleteRecord('payments', id); } catch {}
+    setPayments(prev => prev.filter(p => p.id !== id));
+  };
+
   async function handleRecord() {
     const rec = {
       date: form.date,
@@ -91,15 +108,20 @@ export default function PaymentsPage() {
       status: form.status,
       notes: form.notes,
     };
-    try {
-      const created = await createRecord<Payment>('payments', rec);
-      setPayments(prev => [created, ...prev]);
-    } catch {
-      const newPayment: Payment = { id: Date.now().toString(), ...rec };
-      setPayments(prev => [newPayment, ...prev]);
+    if (editId) {
+      try { await updateRecord('payments', editId, rec); } catch {}
+      setPayments(prev => prev.map(p => p.id === editId ? { ...p, ...rec } : p));
+    } else {
+      try {
+        const created = await createRecord<Payment>('payments', rec);
+        setPayments(prev => [created, ...prev]);
+      } catch {
+        const newPayment: Payment = { id: Date.now().toString(), ...rec };
+        setPayments(prev => [newPayment, ...prev]);
+      }
     }
     setShowModal(false);
-    setForm({ invoiceNumber: '', amount: '', client: '', method: 'Zelle', date: new Date().toISOString().split('T')[0], notes: '', status: 'completed' });
+    resetForm();
   }
 
   return (
@@ -112,7 +134,7 @@ export default function PaymentsPage() {
             <h1 className="text-2xl font-bold text-[#1C1C1C]">Payments</h1>
           </div>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => { resetForm(); setShowModal(true); }}
             className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-shadow"
           >
             <Plus className="w-4 h-4" />
@@ -165,7 +187,7 @@ export default function PaymentsPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#E3D9CD]">
-                {['Date', 'Client', 'Invoice', 'Amount', 'Method', 'Status'].map(h => (
+                {['Date', 'Client', 'Invoice', 'Amount', 'Method', 'Status', 'Actions'].map(h => (
                   <th key={h} className="text-left px-5 py-3.5 text-xs font-semibold text-[#7A746C] uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -173,7 +195,7 @@ export default function PaymentsPage() {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-[#7A746C]">No payments found</td>
+                  <td colSpan={7} className="px-5 py-12 text-center text-[#7A746C]">No payments found</td>
                 </tr>
               ) : (
                 filtered.map(payment => {
@@ -200,6 +222,12 @@ export default function PaymentsPage() {
                           {statusCfg.label}
                         </span>
                       </td>
+                      <td className="px-5 py-4">
+                        <div className="flex gap-1">
+                          <button onClick={() => openEdit(payment)} className="p-1.5 rounded-lg hover:bg-[#E3D9CD] text-[#7A746C] hover:text-[#B07A45] transition-colors"><Edit3 className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => handleDelete(payment.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-[#7A746C] hover:text-red-500 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                        </div>
+                      </td>
                     </tr>
                   );
                 })
@@ -213,8 +241,8 @@ export default function PaymentsPage() {
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
             <div className="bg-[#F4EFE8] border border-[#E3D9CD] rounded-2xl w-full max-w-lg p-6 shadow-xl">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-[#1C1C1C]">Record Payment</h2>
-                <button onClick={() => setShowModal(false)} className="text-[#7A746C] hover:text-[#1C1C1C]">
+                <h2 className="text-lg font-semibold text-[#1C1C1C]">{editId ? 'Edit Payment' : 'Record Payment'}</h2>
+                <button onClick={() => { setShowModal(false); resetForm(); }} className="text-[#7A746C] hover:text-[#1C1C1C]">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -298,7 +326,7 @@ export default function PaymentsPage() {
                   />
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
-                  <button onClick={() => setShowModal(false)} className="px-4 py-2.5 text-[#4B4B4B] hover:text-[#1C1C1C] text-sm font-medium">
+                  <button onClick={() => { setShowModal(false); resetForm(); }} className="px-4 py-2.5 text-[#4B4B4B] hover:text-[#1C1C1C] text-sm font-medium">
                     Cancel
                   </button>
                   <button
@@ -307,7 +335,7 @@ export default function PaymentsPage() {
                     className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-shadow disabled:opacity-50"
                   >
                     <Plus className="w-4 h-4" />
-                    Record Payment
+                    {editId ? 'Update Payment' : 'Record Payment'}
                   </button>
                 </div>
               </div>
