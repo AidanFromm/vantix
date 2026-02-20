@@ -27,6 +27,9 @@ import {
   Zap,
 } from 'lucide-react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const LiveGlobe = dynamic(() => import('@/components/dashboard/LiveGlobe'), { ssr: false });
 
 // ─── Types ───────────────────────────────────────────────────────────
 interface Invoice {
@@ -458,6 +461,9 @@ export default function DashboardOverview() {
           {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
         </p>
       </div>
+
+      {/* Live Globe */}
+      <LiveGlobe />
 
       {/* Row 1 — Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
