@@ -127,7 +127,7 @@ export default function LiveGlobe() {
       </div>
 
       {/* Globe Container */}
-      <div className="relative w-full" style={{ height: '420px', background: 'radial-gradient(ellipse at center, #1a1a2e 0%, #0d0d1a 70%, #000 100%)', borderRadius: '0' }}>
+      <div className="relative w-full" style={{ height: '420px', background: 'radial-gradient(ellipse at center, #0f172a 0%, #020617 70%)', borderRadius: '0' }}>
         {visitors.length === 0 && (
           <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
             <p className="text-white/40 text-sm font-medium">No visitors yet</p>
@@ -136,11 +136,12 @@ export default function LiveGlobe() {
         <Globe
           ref={globeRef}
           onGlobeReady={() => setGlobeReady(true)}
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
+          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
           backgroundImageUrl=""
           backgroundColor="rgba(0,0,0,0)"
-          atmosphereColor="rgba(0, 210, 230, 0.15)"
-          atmosphereAltitude={0.2}
+          atmosphereColor="#B07A45"
+          atmosphereAltitude={0.18}
           pointsData={pointsData}
           pointLat="lat"
           pointLng="lng"
@@ -154,45 +155,32 @@ export default function LiveGlobe() {
           arcEndLat="endLat"
           arcEndLng="endLng"
           arcColor="color"
-          arcDashLength={0.4}
-          arcDashGap={0.2}
-          arcDashAnimateTime={3000}
-          arcStroke={0.5}
+          arcDashLength={0.6}
+          arcDashGap={0.15}
+          arcDashAnimateTime={2000}
+          arcStroke={0.8}
           width={typeof window !== 'undefined' ? Math.min(window.innerWidth - 80, 900) : 800}
           height={420}
         />
       </div>
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-3 divide-x divide-[#E3D9CD] px-5 py-4">
-        <div className="text-center">
-          <p className="text-[#1C1C1C] text-lg font-bold">{stats.totalToday}</p>
-          <p className="text-[#7A746C] text-xs">Today</p>
+      {/* Clean Stats Row */}
+      <div className="flex items-center justify-around px-5 py-3">
+        <div className="flex items-center gap-2">
+          <span className="text-[#1C1C1C] text-base font-bold">{stats.totalToday}</span>
+          <span className="text-[#7A746C] text-xs">today</span>
         </div>
-        <div className="text-center">
-          <p className="text-[#1C1C1C] text-lg font-bold">{stats.uniqueCountries}</p>
-          <p className="text-[#7A746C] text-xs">Countries</p>
+        <div className="w-px h-4 bg-[#E3D9CD]" />
+        <div className="flex items-center gap-2">
+          <span className="text-[#1C1C1C] text-base font-bold">{stats.uniqueCountries}</span>
+          <span className="text-[#7A746C] text-xs">countries</span>
         </div>
-        <div className="text-center">
-          <p className="text-[#1C1C1C] text-lg font-bold">{stats.totalWeek}</p>
-          <p className="text-[#7A746C] text-xs">This Week</p>
+        <div className="w-px h-4 bg-[#E3D9CD]" />
+        <div className="flex items-center gap-2">
+          <span className="text-[#1C1C1C] text-base font-bold">{stats.totalWeek}</span>
+          <span className="text-[#7A746C] text-xs">this week</span>
         </div>
       </div>
-
-      {/* Top Pages */}
-      {stats.topPages.length > 0 && (
-        <div className="px-5 pb-4 pt-0">
-          <p className="text-[#7A746C] text-xs font-medium mb-2">Top Pages</p>
-          <div className="space-y-1">
-            {stats.topPages.slice(0, 3).map((p) => (
-              <div key={p.page} className="flex items-center justify-between">
-                <span className="text-[#1C1C1C] text-xs truncate max-w-[70%]">{p.page}</span>
-                <span className="text-[#7A746C] text-xs">{p.count}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
