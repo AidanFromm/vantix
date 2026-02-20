@@ -66,7 +66,7 @@ export async function POST(request: Request) {
       }
 
       sendEmail(
-        'usevantix@gmail.com',
+        'hello@usevantix.com',
         `New contact: ${data.name || 'Unknown'}`,
         contactNotificationEmail(data.name || 'Unknown', data.email || 'No email', data.message || '')
       ).catch(() => {});

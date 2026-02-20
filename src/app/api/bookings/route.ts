@@ -62,7 +62,7 @@ export async function POST(request: Request) {
       }
 
       sendEmail(
-        'usevantix@gmail.com',
+        'hello@usevantix.com',
         `New booking: ${booking.name} — ${booking.date} at ${booking.time}`,
         bookingNotificationEmail(booking.name, booking.email, booking.phone || '', booking.date, booking.time)
       ).catch(() => {});

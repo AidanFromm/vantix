@@ -1495,6 +1495,18 @@ function Footer() {
                 <a href="mailto:hello@usevantix.com" className="hover:text-[#B07A45] transition-colors">hello@usevantix.com</a>
               </li>
             </ul>
+            <h4 className="text-[#1C1C1C] font-semibold text-sm mt-6 mb-4">Follow</h4>
+            <ul className="space-y-2 text-sm text-[#7A746C]">
+              <li>
+                <a href="https://instagram.com/usevantix" target="_blank" rel="noopener noreferrer" className="hover:text-[#B07A45] transition-colors">Instagram</a>
+              </li>
+              <li>
+                <a href="https://x.com/usevantix" target="_blank" rel="noopener noreferrer" className="hover:text-[#B07A45] transition-colors">X / Twitter</a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/company/usevantix" target="_blank" rel="noopener noreferrer" className="hover:text-[#B07A45] transition-colors">LinkedIn</a>
+              </li>
+            </ul>
           </div>
         </div>
         <div className="pt-8 border-t border-[#E3D9CD] text-center">

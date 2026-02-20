@@ -1,7 +1,7 @@
 // Resend email client wrapper
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
-const DEFAULT_FROM = 'Vantix <onboarding@resend.dev>'; // Switch to usevantix@gmail.com after domain verification
+const DEFAULT_FROM = 'Vantix <onboarding@resend.dev>'; // Switch to hello@usevantix.com after domain verification
 
 export async function sendEmail(
   to: string,

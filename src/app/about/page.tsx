@@ -21,8 +21,8 @@ const values = [
 ];
 
 const team = [
-  { name: 'Kyle Ventura', role: 'Co-Founder · Operations & Strategy', icon: Settings, description: 'Kyle doesn\'t just plan AI strategies — he obsesses over your P&L until AI is making you money. Drives client relationships, scopes every project, and won\'t sign off until the ROI is undeniable. Background in business operations and a genuine obsession with making things work better.' },
-  { name: 'Aidan Fromm', role: 'Co-Founder · Engineering & Design', icon: Code, description: 'Aidan turns "that sounds impossible" into "it shipped Tuesday." Architects and builds every technical solution from full-stack applications to deep AI integrations. Built a complete e-commerce platform in 3 weeks. When he\'s not coding, he\'s coding something else.' },
+  { name: 'Kyle Ventura', role: 'Co-Founder · Operations & Strategy', icon: Settings, photo: '/team-kyle.jpg', description: 'Kyle doesn\'t just plan AI strategies — he obsesses over your P&L until AI is making you money. Drives client relationships, scopes every project, and won\'t sign off until the ROI is undeniable. Background in business operations and a genuine obsession with making things work better.' },
+  { name: 'Aidan Fromm', role: 'Co-Founder · Engineering & Design', icon: Code, photo: '/team-aidan.jpg', description: 'Aidan turns "that sounds impossible" into "it shipped Tuesday." Architects and builds every technical solution from full-stack applications to deep AI integrations. Built a complete e-commerce platform in 3 weeks. When he\'s not coding, he\'s coding something else.' },
 ];
 
 export default function AboutPage() {
@@ -79,9 +79,13 @@ export default function AboutPage() {
             <motion.div key={m.name} initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
               className="rounded-2xl p-8 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm hover:border-[#8E5E34]/20 transition-all">
-              <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-sm flex items-center justify-center mb-5">
-                <m.icon className="w-7 h-7 text-[#8E5E34]" />
-              </div>
+              {m.photo ? (
+                <img src={m.photo} alt={m.name} className="w-20 h-20 rounded-xl object-cover shadow-sm mb-5" />
+              ) : (
+                <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-sm flex items-center justify-center mb-5">
+                  <m.icon className="w-7 h-7 text-[#8E5E34]" />
+                </div>
+              )}
               <h3 className="text-xl font-bold">{m.name}</h3>
               <p className="text-sm text-[#8E5E34] font-medium mb-3">{m.role}</p>
               <p className="text-[#7A746C] text-sm leading-relaxed">{m.description}</p>

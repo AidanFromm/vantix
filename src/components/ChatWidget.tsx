@@ -52,7 +52,7 @@ async function sendLeadEmailNotification(lead: Lead) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        to: 'usevantix@gmail.com',
+        to: 'hello@usevantix.com',
         subject: `Chat lead: ${lead.name || 'Anonymous'} — ${lead.interest || 'General'}`,
         html: chatLeadNotificationEmail(lead.name || '', lead.email || '', lead.phone || '', lead.interest || ''),
       }),

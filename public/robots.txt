@@ -2,4 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /dashboard
 Disallow: /login
-Sitemap: https://usevantix.com/sitemap.xml
+Disallow: /api
+
+Sitemap: https://www.usevantix.com/sitemap.xml
