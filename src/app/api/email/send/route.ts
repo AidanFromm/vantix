@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
-const DEFAULT_FROM = 'Vantix <onboarding@resend.dev>';
+const DEFAULT_FROM = 'Aidan from Vantix <hello@usevantix.com>';
 
 export async function POST(request: Request) {
   try {
