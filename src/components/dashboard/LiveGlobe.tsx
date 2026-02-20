@@ -87,7 +87,9 @@ export default function LiveGlobe() {
       const globe = globeRef.current;
       globe.controls().autoRotate = true;
       globe.controls().autoRotateSpeed = 0.4;
-      globe.controls().enableZoom = false;
+      globe.controls().enableZoom = true;
+      globe.controls().minDistance = 180;
+      globe.controls().maxDistance = 500;
       globe.pointOfView({ lat: 30, lng: -40, altitude: 2.0 }, 1000);
     }
   }, [globeReady]);
@@ -143,7 +145,7 @@ export default function LiveGlobe() {
           <Globe
             ref={globeRef}
             onGlobeReady={() => setGlobeReady(true)}
-            globeImageUrl="//unpkg.com/three-globe/example/img/earth-day.jpg"
+            globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
             bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
             backgroundImageUrl=""
             backgroundColor="rgba(0,0,0,0)"
@@ -165,7 +167,7 @@ export default function LiveGlobe() {
             arcDashLength={0.5}
             arcDashGap={0.2}
             arcDashAnimateTime={2000}
-            arcStroke={1.0}
+            arcStroke={1.5}
             width={300}
             height={260}
           />
