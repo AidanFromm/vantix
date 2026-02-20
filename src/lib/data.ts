@@ -685,7 +685,16 @@ export async function getTeamMembers() {
 // ============================================
 export async function createChatLead(lead: { visitor_name: string; email?: string; phone?: string; interested_in?: string }) {
   try {
-    const { data, error } = await supabase.from('chat_leads').insert(lead).select().single();
+    const { data, error } = await supabase.from('leads').insert({
+      ...lead,
+      name: lead.visitor_name,
+      source: 'Chat Widget',
+      status: 'new',
+      score: 0,
+      tags: ['chat-lead'],
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }).select().single();
     if (error) throw error;
     return { data, error: null };
   } catch (error) {

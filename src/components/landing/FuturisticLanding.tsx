@@ -220,7 +220,7 @@ function HeroSection() {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#D8C2A8]/60 bg-[#EEE6DC]/80 mb-6 sm:mb-8 shadow-sm backdrop-blur-sm"
         >
           <span className="w-2 h-2 rounded-full bg-[#8E5E34] animate-pulse" />
-          <span className="text-xs sm:text-sm text-[#7A746C] font-medium">2 Humans + 2 AI Assistants — Building 24/7</span>
+          <span className="text-xs sm:text-sm text-[#7A746C] font-medium">2 Humans + 2 AI Assistants - Building 24/7</span>
         </motion.div>
 
         <motion.h1
@@ -455,7 +455,7 @@ function ProblemSection() {
   ];
 
   const after = [
-    'AI handles 90% of inquiries instantly — day and night',
+    'AI handles 90% of inquiries instantly - day and night',
     'Every lead captured, qualified, and followed up in seconds',
     'Personalized emails written, sent, and optimized automatically',
     'Real-time analytics telling you exactly what to do next',
@@ -526,9 +526,9 @@ function ProblemSection() {
 // SERVICES
 // ============================================
 const services = [
-  { icon: Bot, title: 'AI Chatbots & Agents', desc: 'Your best salesperson — never sleeps, never calls in sick, qualifies every lead and books every appointment. 24/7.' },
+  { icon: Bot, title: 'AI Chatbots & Agents', desc: 'Your best salesperson - never sleeps, never calls in sick, qualifies every lead and books every appointment. 24/7.' },
   { icon: Globe, title: 'AI-Powered Websites', desc: 'Self-optimizing platforms that learn from every visitor. More conversions. More revenue. Zero guesswork.' },
-  { icon: Search, title: 'Automated Lead Gen', desc: 'Find, qualify, and nurture prospects across every channel — while you focus on closing deals.' },
+  { icon: Search, title: 'Automated Lead Gen', desc: 'Find, qualify, and nurture prospects across every channel - while you focus on closing deals.' },
   { icon: BarChart3, title: 'AI Analytics', desc: 'Know exactly what\u2019s happening, why it\u2019s happening, and what to do next. Decisions powered by data, not hunches.' },
   { icon: Mail, title: 'AI Email & Outreach', desc: 'Personalized at scale. Every email tailored, timed, and optimized for maximum response rates.' },
   { icon: Package, title: 'Smart Inventory', desc: 'Demand prediction meets auto-reorder. Never overstock. Never run out. Never miss a sale.' },
@@ -605,7 +605,7 @@ function ProductShowcase() {
               See everything your AI is doing. In real time.
             </h3>
             <p className="text-[#7A746C] leading-relaxed mb-6">
-              Monitor active AI agents, track automation performance, and measure revenue impact — all from one unified command center.
+              Monitor active AI agents, track automation performance, and measure revenue impact - all from one unified command center.
             </p>
             <a href="#booking" className={bronzeButtonClass + " inline-flex items-center gap-2 text-sm px-6 py-3"}>
               Book a Demo <ArrowRight size={16} />
@@ -640,7 +640,7 @@ function ProductShowcase() {
               Automate mission-critical workflows with AI
             </h3>
             <p className="text-[#7A746C] leading-relaxed mb-6">
-              AI agents that handle calls, live chats, outreach, and customer operations — connected in intelligent workflows that run 24/7.
+              AI agents that handle calls, live chats, outreach, and customer operations - connected in intelligent workflows that run 24/7.
             </p>
             <a href="#booking" className="inline-flex items-center gap-2 text-sm px-6 py-3 rounded-full border border-[#D8C2A8] text-[#1C1C1C] font-medium hover:bg-[#EEE6DC] transition-colors">
               Schedule a Call <ArrowRight size={16} />
@@ -735,10 +735,10 @@ function CaseStudyHighlight() {
               <motion.div variants={fadeLeft}>
                 <h3 className="text-2xl md:text-3xl font-bold text-[#B07A45] mb-2">Secured Tampa</h3>
                 <p className="text-[#8E5E34] text-sm font-medium mb-6">
-                  From Instagram DMs to a 122-page e-commerce empire — in 3 weeks.
+                  From Instagram DMs to a 122-page e-commerce empire - in 3 weeks.
                 </p>
                 <p className="text-[#7A746C] text-base leading-relaxed mb-6">
-                  Shopify shut them down. They were running a growing sneaker business through Instagram DMs. We built a complete AI-powered e-commerce platform with automated inventory, POS integration, and intelligent customer service — replacing everything Shopify couldn&apos;t handle.
+                  Shopify shut them down. They were running a growing sneaker business through Instagram DMs. We built a complete AI-powered e-commerce platform with automated inventory, POS integration, and intelligent customer service - replacing everything Shopify couldn&apos;t handle.
                 </p>
                 <div className="flex flex-wrap gap-3 mb-8">
                   {['E-Commerce', 'POS Integration', 'AI Automation', 'Custom Platform'].map((tag) => (
@@ -784,15 +784,15 @@ function CaseStudyHighlight() {
 }
 
 // ============================================
-// ANIMATED PROCESS TIMELINE — ALL LEFT
+// ANIMATED PROCESS TIMELINE - ALL LEFT
 // ============================================
 function ProcessTimeline() {
   const steps = [
     { icon: Search, title: 'Discovery', desc: 'We map every bottleneck, manual process, and missed opportunity in your business. You get a clear picture of what AI can fix.', timeline: 'Week 1' },
     { icon: Target, title: 'Strategy', desc: 'A tailored blueprint with projected savings, implementation timeline, and exactly what your AI systems will do.', timeline: 'Week 1-2' },
-    { icon: Layers, title: 'Build', desc: 'We build your AI systems in weeks, not months. Half our team works while you sleep — speed is in our DNA.', timeline: 'Week 2-4' },
+    { icon: Layers, title: 'Build', desc: 'We build your AI systems in weeks, not months. Half our team works while you sleep - speed is in our DNA.', timeline: 'Week 2-4' },
     { icon: Rocket, title: 'Deploy', desc: 'Systems go live with monitoring, failsafes, and human escalation paths. Launch day is a non-event because everything is tested.', timeline: 'Week 4' },
-    { icon: TrendingUp, title: 'Optimize', desc: 'Your AI gets smarter every day. We monitor, optimize, and scale what works — so results compound over time.', timeline: 'Ongoing' },
+    { icon: TrendingUp, title: 'Optimize', desc: 'Your AI gets smarter every day. We monitor, optimize, and scale what works - so results compound over time.', timeline: 'Ongoing' },
   ];
 
   return (
@@ -889,7 +889,7 @@ function TestimonialSection() {
             </div>
 
             <blockquote className="text-xl md:text-2xl text-[#B07A45] font-medium leading-relaxed mb-8">
-              Shopify shut us down and we were stuck selling through Instagram DMs. Vantix built us a complete custom platform — 122 pages, POS integration, shipping, everything — in 3 weeks. It&apos;s better than anything Shopify could have done.
+              Shopify shut us down and we were stuck selling through Instagram DMs. Vantix built us a complete custom platform - 122 pages, POS integration, shipping, everything - in 3 weeks. It&apos;s better than anything Shopify could have done.
             </blockquote>
 
             <div className="flex items-center justify-center gap-4">
@@ -969,7 +969,7 @@ function TeamSection() {
     {
       name: 'Kyle Ventura',
       role: 'Founder & AI Strategist',
-      desc: 'Obsessed with one question: what would your business look like if it ran itself? Kyle architects AI systems that answer that — with measurable ROI on every project.',
+      desc: 'Obsessed with one question: what would your business look like if it ran itself? Kyle architects AI systems that answer that - with measurable ROI on every project.',
       photo: '/team-kyle.jpg',
     },
     {
@@ -1062,12 +1062,12 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 function FAQSection() {
   const faqs = [
-    { q: 'How fast can you deploy an AI system?', a: 'Most systems go live in 2-4 weeks. Simple automations and chatbots can launch in under a week. We built a 122-page e-commerce platform with POS integration in just 3 weeks — speed is built into our DNA because half our team works 24/7.' },
-    { q: 'What if AI makes mistakes with my customers?', a: 'Every system includes human oversight and escalation paths. AI handles the volume — edge cases route to your team. We continuously train and optimize, so accuracy improves over time. You stay in control.' },
+    { q: 'How fast can you deploy an AI system?', a: 'Most systems go live in 2-4 weeks. Simple automations and chatbots can launch in under a week. We built a 122-page e-commerce platform with POS integration in just 3 weeks - speed is built into our DNA because half our team works 24/7.' },
+    { q: 'What if AI makes mistakes with my customers?', a: 'Every system includes human oversight and escalation paths. AI handles the volume - edge cases route to your team. We continuously train and optimize, so accuracy improves over time. You stay in control.' },
     { q: 'Do I need technical knowledge?', a: 'None. We build everything with simple dashboards you can manage from your phone. Full training included. Ongoing support included. If you can send an email, you can run your AI systems.' },
-    { q: 'What does it cost?', a: 'Projects typically start at $4,500 for focused automations and scale based on complexity. Every quote includes projected ROI so you can see the payback before you commit. Book a free audit — we\'ll give you real numbers, not a range.' },
-    { q: 'Can AI really replace hiring more staff?', a: 'It augments and eliminates the need. One AI system can handle the workload of 3-5 employees for specific functions — customer service, lead qualification, data entry, scheduling. Your existing team gets freed up for high-value work that actually grows the business.' },
-    { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. Issues get caught before you notice them. All clients get priority support with guaranteed response times. We treat your downtime like our emergency — because it is.' },
+    { q: 'What does it cost?', a: 'Every project is custom-priced based on scope and complexity. We provide a detailed quote with projected ROI so you can see the payback before you commit. Book a free audit - we\'ll give you real numbers, not a range.' },
+    { q: 'Can AI really replace hiring more staff?', a: 'It augments and eliminates the need. One AI system can handle the workload of 3-5 employees for specific functions - customer service, lead qualification, data entry, scheduling. Your existing team gets freed up for high-value work that actually grows the business.' },
+    { q: 'What happens if something breaks?', a: 'We monitor every system 24/7. Issues get caught before you notice them. All clients get priority support with guaranteed response times. We treat your downtime like our emergency - because it is.' },
   ];
 
   return (
@@ -1311,7 +1311,7 @@ function BookingSection() {
                           className="px-4 py-2.5 rounded-lg border border-[#E3D9CD] bg-[#F4EFE8] text-[#B07A45] placeholder-[#7A746C] text-sm focus:outline-none focus:ring-2 focus:ring-[#8E5E34]/30" />
                       </div>
                       <button type="submit" className={`${bronzeButtonClass} w-full`}>
-                        Confirm Booking — {selectedDate && selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} at {selectedTime}
+                        Confirm Booking - {selectedDate && selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} at {selectedTime}
                       </button>
                     </motion.form>
                   )}
@@ -1445,7 +1445,7 @@ function FinalCTA() {
             </a>
           </motion.div>
           <motion.p variants={fadeUp} className="text-[#8E5E34]/60 text-sm mt-6 font-medium">
-            Limited availability — we take on 3 new clients per month.
+            Limited availability — book your spot before we fill up.
           </motion.p>
         </motion.div>
       </div>
@@ -1467,7 +1467,7 @@ function Footer() {
               <span className="text-2xl font-extrabold text-[#1C1C1C] tracking-tight">vantix<span className="text-[#B07A45]">.</span></span>
             </div>
             <p className="text-[#7A746C] mt-4 max-w-sm leading-relaxed">
-              AI systems that generate revenue, eliminate busywork, and scale your operations — deployed in weeks, not months.
+              AI systems that generate revenue, eliminate busywork, and scale your operations - deployed in weeks, not months.
             </p>
           </div>
           <div>

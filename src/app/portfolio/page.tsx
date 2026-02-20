@@ -23,7 +23,7 @@ const fadeUp = {
 };
 
 const metrics = [
-  { value: '122', label: 'Pages Built', icon: Layers },
+  { value: '100+', label: 'Projects Delivered', icon: Layers },
   { value: '50+', label: 'API Routes', icon: Code2 },
   { value: '20+', label: 'Admin Features', icon: LayoutDashboard },
   { value: '<2', label: 'Weeks to Launch', icon: Clock },
