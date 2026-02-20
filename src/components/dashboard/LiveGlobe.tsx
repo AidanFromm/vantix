@@ -1,17 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import createGlobe from 'cobe';
 import { Globe as GlobeIcon } from 'lucide-react';
-
-const Globe = dynamic(() => import('react-globe.gl'), { ssr: false });
 
 interface Visitor {
   latitude: number;
   longitude: number;
   city: string | null;
   country: string | null;
-  page: string | null;
   visited_at: string;
 }
 
@@ -19,68 +16,39 @@ interface VisitorStats {
   totalToday: number;
   totalWeek: number;
   uniqueCountries: number;
-  topPages: { page: string; count: number }[];
 }
-
-interface PointData {
-  lat: number;
-  lng: number;
-  size: number;
-  color: string;
-  city: string;
-  country: string;
-}
-
-interface ArcData {
-  startLat: number;
-  startLng: number;
-  endLat: number;
-  endLng: number;
-  color: [string, string];
-}
-
-const HQ_LAT = 40.0583;
-const HQ_LNG = -74.4057;
 
 export default function LiveGlobe() {
-  const globeRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pointerInteracting = useRef<number | null>(null);
+  const pointerInteractionMovement = useRef(0);
+  const phiRef = useRef(0);
+  const globeRef = useRef<ReturnType<typeof createGlobe> | null>(null);
+  const markersRef = useRef<{ location: [number, number]; size: number }[]>([]);
   const [visitors, setVisitors] = useState<Visitor[]>([]);
-  const [stats, setStats] = useState<VisitorStats>({
-    totalToday: 0,
-    totalWeek: 0,
-    uniqueCountries: 0,
-    topPages: [],
-  });
-  const [globeReady, setGlobeReady] = useState(false);
-  const [dimensions, setDimensions] = useState({ width: 400, height: 350 });
-
-  // Responsive sizing
-  useEffect(() => {
-    const updateSize = () => {
-      if (containerRef.current) {
-        const w = containerRef.current.offsetWidth;
-        const isMobile = w < 500;
-        setDimensions({
-          width: w,
-          height: isMobile ? Math.min(w, 320) : 400,
-        });
-      }
-    };
-    updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
+  const [stats, setStats] = useState<VisitorStats>({ totalToday: 0, totalWeek: 0, uniqueCountries: 0 });
 
   const fetchVisitors = useCallback(async () => {
     try {
       const res = await fetch('/api/visitors');
       if (!res.ok) return;
       const data = await res.json();
-      setVisitors(data.visitors || []);
-      setStats(data.stats || { totalToday: 0, totalWeek: 0, uniqueCountries: 0, topPages: [] });
+      const v = data.visitors || [];
+      setVisitors(v);
+      setStats(data.stats || { totalToday: 0, totalWeek: 0, uniqueCountries: 0 });
+      
+      // Update markers for cobe
+      const now = Date.now();
+      markersRef.current = v.map((vis: Visitor) => {
+        const age = now - new Date(vis.visited_at).getTime();
+        const recency = Math.max(0.03, (1 - age / (3600000)) * 0.12);
+        return { location: [vis.latitude, vis.longitude] as [number, number], size: recency };
+      });
+
+      // Add HQ marker
+      markersRef.current.push({ location: [40.0583, -74.4057], size: 0.06 });
     } catch {
-      // Silently fail
+      // silently fail
     }
   }, []);
 
@@ -91,109 +59,127 @@ export default function LiveGlobe() {
   }, [fetchVisitors]);
 
   useEffect(() => {
-    if (globeRef.current && globeReady) {
-      const globe = globeRef.current;
-      globe.controls().autoRotate = true;
-      globe.controls().autoRotateSpeed = 0.3;
-      globe.controls().enableZoom = false;
-      globe.pointOfView({ lat: 25, lng: -40, altitude: 2.5 }, 1000);
-    }
-  }, [globeReady]);
+    if (!canvasRef.current) return;
 
-  const pointsData: PointData[] = useMemo(() => {
-    const now = Date.now();
-    return visitors.map((v) => {
-      const age = now - new Date(v.visited_at).getTime();
-      const recency = Math.max(0, 1 - age / (60 * 60 * 1000));
-      return {
-        lat: v.latitude,
-        lng: v.longitude,
-        size: 0.4 + recency * 0.6,
-        color: `rgba(176, 122, 69, ${0.5 + recency * 0.5})`,
-        city: v.city || 'Unknown',
-        country: v.country || '',
-      };
+    let width = 0;
+    const onResize = () => {
+      if (canvasRef.current) {
+        width = canvasRef.current.offsetWidth;
+      }
+    };
+    window.addEventListener('resize', onResize);
+    onResize();
+
+    const globe = createGlobe(canvasRef.current, {
+      devicePixelRatio: 2,
+      width: width * 2,
+      height: width * 2,
+      phi: 0,
+      theta: 0.25,
+      dark: 1,
+      diffuse: 1.2,
+      mapSamples: 20000,
+      mapBrightness: 6,
+      baseColor: [0.15, 0.12, 0.1],
+      markerColor: [0.69, 0.48, 0.27],
+      glowColor: [0.18, 0.15, 0.12],
+      markers: markersRef.current,
+      scale: 1.05,
+      offset: [0, 0],
+      onRender: (state) => {
+        // Auto rotate unless user is dragging
+        if (!pointerInteracting.current) {
+          phiRef.current += 0.003;
+        }
+        state.phi = phiRef.current + pointerInteractionMovement.current;
+        state.markers = markersRef.current;
+        state.width = width * 2;
+        state.height = width * 2;
+      },
     });
-  }, [visitors]);
 
-  const arcsData: ArcData[] = useMemo(() => {
-    return visitors.slice(0, 20).map((v) => ({
-      startLat: v.latitude,
-      startLng: v.longitude,
-      endLat: HQ_LAT,
-      endLng: HQ_LNG,
-      color: ['rgba(176, 122, 69, 0.8)', 'rgba(176, 122, 69, 0.05)'] as [string, string],
-    }));
-  }, [visitors]);
+    globeRef.current = globe;
+
+    // Fade in
+    if (canvasRef.current) {
+      canvasRef.current.style.opacity = '0';
+      canvasRef.current.style.transition = 'opacity 1s ease';
+      setTimeout(() => {
+        if (canvasRef.current) canvasRef.current.style.opacity = '1';
+      }, 100);
+    }
+
+    return () => {
+      globe.destroy();
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
 
   return (
-    <div className="rounded-xl overflow-hidden">
-      {/* Globe with blended background */}
-      <div
-        ref={containerRef}
-        className="relative w-full flex items-center justify-center"
-        style={{
-          height: dimensions.height + 'px',
-          background: 'radial-gradient(ellipse at 50% 50%, #2a1f14 0%, #1a1510 40%, #EEE6DC 85%)',
-        }}
-      >
-        {/* Live indicator overlay */}
-        <div className="absolute top-3 left-4 z-10 flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-white/60 text-[10px] font-medium tracking-wider uppercase">
-            {visitors.length > 0
-              ? `${visitors.length} live`
-              : 'Live'}
+    <div className="rounded-xl overflow-hidden bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 pt-4 pb-2">
+        <div className="flex items-center gap-2">
+          <GlobeIcon size={14} className="text-[#B07A45]" />
+          <span className="text-[#1C1C1C] font-semibold text-sm">Live Visitors</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-[#7A746C] text-[11px]">
+            {visitors.length > 0 ? `${visitors.length} active` : 'Monitoring'}
           </span>
         </div>
+      </div>
 
-        {visitors.length === 0 && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-            <p className="text-white/30 text-xs font-medium">Waiting for visitors...</p>
-          </div>
-        )}
-
-        <Globe
-          ref={globeRef}
-          onGlobeReady={() => setGlobeReady(true)}
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
-          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
-          backgroundImageUrl=""
-          backgroundColor="rgba(0,0,0,0)"
-          atmosphereColor="#B07A45"
-          atmosphereAltitude={0.15}
-          pointsData={pointsData}
-          pointLat="lat"
-          pointLng="lng"
-          pointRadius="size"
-          pointColor="color"
-          pointAltitude={0.01}
-          pointsMerge={false}
-          arcsData={arcsData}
-          arcStartLat="startLat"
-          arcStartLng="startLng"
-          arcEndLat="endLat"
-          arcEndLng="endLng"
-          arcColor="color"
-          arcDashLength={0.5}
-          arcDashGap={0.2}
-          arcDashAnimateTime={2500}
-          arcStroke={0.6}
-          width={dimensions.width}
-          height={dimensions.height}
+      {/* Globe */}
+      <div className="relative flex items-center justify-center mx-4" style={{ aspectRatio: '1' }}>
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full cursor-grab active:cursor-grabbing"
+          style={{ maxWidth: '100%', contain: 'layout paint size' }}
+          onPointerDown={(e) => {
+            pointerInteracting.current = e.clientX - pointerInteractionMovement.current;
+            if (canvasRef.current) canvasRef.current.style.cursor = 'grabbing';
+          }}
+          onPointerUp={() => {
+            pointerInteracting.current = null;
+            if (canvasRef.current) canvasRef.current.style.cursor = 'grab';
+          }}
+          onPointerOut={() => {
+            pointerInteracting.current = null;
+            if (canvasRef.current) canvasRef.current.style.cursor = 'grab';
+          }}
+          onMouseMove={(e) => {
+            if (pointerInteracting.current !== null) {
+              const delta = e.clientX - pointerInteracting.current;
+              pointerInteractionMovement.current = delta / 200;
+            }
+          }}
+          onTouchMove={(e) => {
+            if (pointerInteracting.current !== null && e.touches[0]) {
+              const delta = e.touches[0].clientX - pointerInteracting.current;
+              pointerInteractionMovement.current = delta / 100;
+            }
+          }}
         />
       </div>
 
-      {/* Minimal stats — seamlessly below */}
-      <div className="flex items-center justify-center gap-6 py-3 bg-[#EEE6DC]">
+      {/* Stats */}
+      <div className="flex items-center justify-center gap-5 px-4 py-3 text-[11px]">
         <div className="flex items-center gap-1.5">
-          <GlobeIcon size={12} className="text-[#B07A45]" />
-          <span className="text-[#4B4B4B] text-xs font-medium">{stats.totalToday} today</span>
+          <span className="font-bold text-sm text-[#1C1C1C]">{stats.totalToday}</span>
+          <span className="text-[#7A746C]">today</span>
         </div>
-        <span className="text-[#E3D9CD]">|</span>
-        <span className="text-[#4B4B4B] text-xs font-medium">{stats.uniqueCountries} countries</span>
-        <span className="text-[#E3D9CD]">|</span>
-        <span className="text-[#4B4B4B] text-xs font-medium">{stats.totalWeek} this week</span>
+        <div className="w-px h-3 bg-[#D8C2A8]" />
+        <div className="flex items-center gap-1.5">
+          <span className="font-bold text-sm text-[#1C1C1C]">{stats.uniqueCountries}</span>
+          <span className="text-[#7A746C]">countries</span>
+        </div>
+        <div className="w-px h-3 bg-[#D8C2A8]" />
+        <div className="flex items-center gap-1.5">
+          <span className="font-bold text-sm text-[#1C1C1C]">{stats.totalWeek}</span>
+          <span className="text-[#7A746C]">this week</span>
+        </div>
       </div>
     </div>
   );
