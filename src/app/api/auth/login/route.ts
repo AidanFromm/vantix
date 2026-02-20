@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 
-const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'vantix2024';
+// Password MUST be set via environment variable - no fallback for security
+const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD;
+
+if (!DASHBOARD_PASSWORD) {
+  console.error('CRITICAL: DASHBOARD_PASSWORD environment variable is not set');
+}
 
 const USERS = [
   { email: 'aidan@vantix.com', password: DASHBOARD_PASSWORD, name: 'Aidan', role: 'admin' },
@@ -11,6 +16,12 @@ const USERS = [
 
 export async function POST(request: Request) {
   try {
+    // Security check: ensure password is configured
+    if (!DASHBOARD_PASSWORD) {
+      console.error('Login attempted but DASHBOARD_PASSWORD not configured');
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    }
+
     const { email, password } = await request.json();
 
     const user = USERS.find(
