@@ -135,7 +135,7 @@ export default function ServicesPage() {
                   </li>
                 ))}
               </ul>
-              <Link href="/#booking" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#8E5E34] hover:text-[#B07A45] transition-colors">
+              <Link href="/#booking" className="group inline-flex items-center gap-1.5 text-sm font-semibold bg-[#B07A45] hover:bg-[#8E5E34] text-white px-5 py-2.5 rounded-lg transition-colors">
                 Get Started <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>

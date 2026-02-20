@@ -24,17 +24,21 @@ export function AnimatedCounter({
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   
-  const spring = useSpring(direction === 'up' ? 0 : value, {
+  const spring = useSpring(direction === 'up' ? value : value, {
     stiffness: 50,
     damping: 20,
     duration: duration * 1000,
   });
   
   const display = useTransform(spring, (current) => Math.round(current));
-  const [displayValue, setDisplayValue] = useState(direction === 'up' ? 0 : value);
+  const [displayValue, setDisplayValue] = useState(value);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (isInView) {
+    if (isInView && !hasAnimated.current) {
+      hasAnimated.current = true;
+      // Reset to starting position then animate to target
+      spring.jump(direction === 'up' ? 0 : value);
       spring.set(direction === 'up' ? value : 0);
     }
   }, [isInView, spring, value, direction]);

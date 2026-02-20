@@ -68,9 +68,12 @@ function useIsMobile() {
 // ANIMATED COUNTER HOOK
 // ============================================
 function useCounter(target: number, inView: boolean, duration = 2000) {
-  const [count, setCount] = useState(0);
+  const hasAnimated = useRef(false);
+  const [count, setCount] = useState(target);
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || hasAnimated.current) return;
+    hasAnimated.current = true;
+    setCount(0);
     let start = 0;
     const step = Math.ceil(target / (duration / 30));
     const interval = setInterval(() => {
@@ -1229,7 +1232,7 @@ function BookingSection() {
               <motion.div key="done" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-center py-12">
                 <CheckCircle2 className="mx-auto mb-4 text-[#8E5E34]" size={48} />
                 <h3 className="text-2xl font-bold text-[#B07A45] mb-2">You&apos;re booked!</h3>
-                <p className="text-[#7A746C]">We&apos;ll call you at {selectedTime} on {selectedDate ? formatDateStr(selectedDate) : ''}.</p>
+                <p className="text-[#7A746C]">We&apos;ll email you to confirm your {selectedTime} slot on {selectedDate ? formatDateStr(selectedDate) : ''}.</p>
               </motion.div>
             ) : (
               <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
