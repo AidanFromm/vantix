@@ -47,17 +47,21 @@ type ViewMode = 'kanban' | 'list';
 type SortField = 'company_name' | 'contact_name' | 'email' | 'score' | 'stage' | 'source' | 'last_contacted';
 type SortDir = 'asc' | 'desc';
 
-const STAGES = ['New', 'Contacted', 'Replied', 'Call Booked', 'Proposal Sent', 'Won', 'Lost'] as const;
-const SOURCES = ['Apollo', 'Brave', 'Manual'] as const;
+const STAGES = ['new', 'contacted', 'replied', 'call_booked', 'proposal_sent', 'won', 'lost'] as const;
+const STAGE_LABELS: Record<string, string> = {
+  'new': 'New', 'contacted': 'Contacted', 'replied': 'Replied',
+  'call_booked': 'Call Booked', 'proposal_sent': 'Proposal Sent', 'won': 'Won', 'lost': 'Lost',
+};
+const SOURCES = ['cold_outreach', 'website', 'referral', 'social_media', 'other'] as const;
 
 const STAGE_COLORS: Record<string, { dot: string; bg: string; text: string }> = {
-  'New':           { dot: '#7A746C', bg: '#E3D9CD', text: '#7A746C' },
-  'Contacted':     { dot: '#B07A45', bg: '#E8DDD0', text: '#B07A45' },
-  'Replied':       { dot: '#8E5E34', bg: '#E4D5C4', text: '#8E5E34' },
-  'Call Booked':   { dot: '#6B4226', bg: '#DCC9B4', text: '#6B4226' },
-  'Proposal Sent': { dot: '#4A6741', bg: '#D8E4D4', text: '#4A6741' },
-  'Won':           { dot: '#2D7A4F', bg: '#D4E8DC', text: '#2D7A4F' },
-  'Lost':          { dot: '#A0403C', bg: '#EADADA', text: '#A0403C' },
+  'new':             { dot: '#7A746C', bg: '#E3D9CD', text: '#7A746C' },
+  'contacted':       { dot: '#B07A45', bg: '#E8DDD0', text: '#B07A45' },
+  'replied':         { dot: '#8E5E34', bg: '#E4D5C4', text: '#8E5E34' },
+  'call_booked':     { dot: '#6B4226', bg: '#DCC9B4', text: '#6B4226' },
+  'proposal_sent':   { dot: '#4A6741', bg: '#D8E4D4', text: '#4A6741' },
+  'won':             { dot: '#2D7A4F', bg: '#D4E8DC', text: '#2D7A4F' },
+  'lost':            { dot: '#A0403C', bg: '#EADADA', text: '#A0403C' },
 };
 
 function scoreColor(score: number) {
@@ -96,12 +100,12 @@ function StatsBar({ leads }: { leads: Lead[] }) {
   });
 
   const count = (arr: Lead[], stage?: string) => stage ? arr.filter(l => l.stage === stage).length : arr.length;
-  const inSequence = (arr: Lead[]) => arr.filter(l => ['Contacted', 'Replied'].includes(l.stage)).length;
-  const replied = (arr: Lead[]) => arr.filter(l => l.stage === 'Replied').length;
-  const booked = (arr: Lead[]) => arr.filter(l => l.stage === 'Call Booked').length;
-  const won = (arr: Lead[]) => arr.filter(l => l.stage === 'Won').length;
+  const inSequence = (arr: Lead[]) => arr.filter(l => ['contacted', 'replied'].includes(l.stage)).length;
+  const replied = (arr: Lead[]) => arr.filter(l => l.stage === 'replied').length;
+  const booked = (arr: Lead[]) => arr.filter(l => l.stage === 'call_booked').length;
+  const won = (arr: Lead[]) => arr.filter(l => l.stage === 'won').length;
 
-  const totalWon = leads.filter(l => l.stage === 'Won').length;
+  const totalWon = leads.filter(l => l.stage === 'won').length;
   const convRate = leads.length > 0 ? Math.round((totalWon / leads.length) * 100) : 0;
 
   const change = (curr: number, prev: number) => {
@@ -165,10 +169,10 @@ function SourceBadge({ source }: { source: string }) {
 
 /* ─── Stage Badge ─── */
 function StageBadge({ stage }: { stage: string }) {
-  const c = STAGE_COLORS[stage] || STAGE_COLORS['New'];
+  const c = STAGE_COLORS[stage] || STAGE_COLORS['new'];
   return (
     <span style={{ background: c.bg, color: c.text }} className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap">
-      {stage}
+      {STAGE_LABELS[stage] || stage}
     </span>
   );
 }
@@ -247,7 +251,7 @@ function KanbanView({ leads, onOpenDetail, onMoveLead }: {
             <div className="flex items-center justify-between mb-3 px-1">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ background: STAGE_COLORS[stage]?.dot || '#7A746C' }} />
-                <span className="text-sm font-semibold text-[#1C1C1C]">{stage}</span>
+                <span className="text-sm font-semibold text-[#1C1C1C]">{STAGE_LABELS[stage] || stage}</span>
               </div>
               <span className="text-xs text-[#7A746C] bg-[#EEE6DC] px-2 py-0.5 rounded-full">{colLeads.length}</span>
             </div>
