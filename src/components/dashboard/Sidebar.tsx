@@ -81,8 +81,14 @@ const navSections: { label?: string; items: NavItem[] }[] = [
     ],
   },
   {
+    label: 'Growth',
     items: [
-      { href: '/dashboard/media', label: 'Media Library', icon: Image },
+      { href: '/dashboard/outreach', label: 'Outreach', icon: Target },
+    ],
+  },
+  {
+    items: [
+      { href: '/dashboard/media', label: 'Media & Social', icon: Image },
       { href: '/dashboard/proposals', label: 'Proposals', icon: FileText },
       { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar },
       { href: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
@@ -328,6 +334,11 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
           <div key={sIdx}>
             {sIdx > 0 && (
               <div className="my-3 border-t border-[#E3D9CD]" />
+            )}
+            {section.label && !isCollapsed && (
+              <p className="px-3 mb-1 text-[10px] uppercase tracking-widest text-[#A39B90] font-semibold">
+                {section.label}
+              </p>
             )}
             <div className="space-y-0.5">
               {section.items.map(renderNavItem)}

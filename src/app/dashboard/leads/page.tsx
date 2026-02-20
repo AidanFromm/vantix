@@ -1,224 +1,608 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   Plus, LayoutGrid, List, X, ChevronDown, Phone, Mail, Building2,
-  Globe, Users, Megaphone, MessageSquare, MoreVertical, ArrowRight,
-  TrendingUp, Clock, Search, Edit2, Trash2, Eye, Activity
+  Globe, Users, TrendingUp, TrendingDown, Clock, Search, Trash2,
+  Target, Trophy, PhoneCall, Send, MessageSquare, Filter,
+  GripVertical, ExternalLink, FileText, ChevronRight, Check,
+  ArrowUpDown, Download, MoreHorizontal, Zap, Eye, Calendar,
+  User, Hash, StickyNote, Activity, AlertCircle
 } from 'lucide-react';
 import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
 
 /* ─── Types ─── */
-interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  source: Source;
-  stage: Stage;
-  score: number;
-  notes: string;
-  createdAt: string;
-  stageChangedAt: string;
-  activities: ActivityEntry[];
+interface EmailEntry {
+  date: string;
+  subject: string;
+  status?: string;
 }
 
 interface ActivityEntry {
-  id: string;
   date: string;
+  type: string;
   text: string;
 }
 
-type Stage = 'new' | 'contacted' | 'qualified' | 'proposal' | 'won' | 'lost';
-type Source = 'Website' | 'Referral' | 'Cold Email' | 'Social' | 'Other';
+interface Lead {
+  id: string;
+  company_name: string;
+  contact_name: string;
+  email: string;
+  phone: string;
+  website: string;
+  score: number;
+  stage: string;
+  source: string;
+  ai_audit: string;
+  notes: string;
+  last_contacted: string;
+  email_history: EmailEntry[];
+  activity: ActivityEntry[];
+  created_at: string;
+  updated_at: string;
+}
+
 type ViewMode = 'kanban' | 'list';
+type SortField = 'company_name' | 'contact_name' | 'email' | 'score' | 'stage' | 'source' | 'last_contacted';
+type SortDir = 'asc' | 'desc';
 
-const STAGES: { key: Stage; label: string; color: string; bg: string; border: string }[] = [
-  { key: 'new', label: 'New', color: '#7A746C', bg: '#E3D9CD', border: '#CFC5B8' },
-  { key: 'contacted', label: 'Contacted', color: '#B07A45', bg: '#E8DDD0', border: '#D4C4B0' },
-  { key: 'qualified', label: 'Qualified', color: '#8E5E34', bg: '#E4D5C4', border: '#CEBC A6' },
-  { key: 'proposal', label: 'Proposal Sent', color: '#6B4226', bg: '#DCC9B4', border: '#C4AD94' },
-  { key: 'won', label: 'Won', color: '#2D7A4F', bg: '#D4E8DC', border: '#B4D4C0' },
-  { key: 'lost', label: 'Lost', color: '#A0403C', bg: '#EADADA', border: '#D4BABA' },
-];
+const STAGES = ['New', 'Contacted', 'Replied', 'Call Booked', 'Proposal Sent', 'Won', 'Lost'] as const;
+const SOURCES = ['Apollo', 'Brave', 'Manual'] as const;
 
-const SOURCES: Source[] = ['Website', 'Referral', 'Cold Email', 'Social', 'Other'];
-
-const sourceIcon = (s: Source) => {
-  switch (s) {
-    case 'Website': return <Globe size={14} />;
-    case 'Referral': return <Users size={14} />;
-    case 'Cold Email': return <Mail size={14} />;
-    case 'Social': return <Megaphone size={14} />;
-    default: return <MessageSquare size={14} />;
-  }
+const STAGE_COLORS: Record<string, { dot: string; bg: string; text: string }> = {
+  'New':           { dot: '#7A746C', bg: '#E3D9CD', text: '#7A746C' },
+  'Contacted':     { dot: '#B07A45', bg: '#E8DDD0', text: '#B07A45' },
+  'Replied':       { dot: '#8E5E34', bg: '#E4D5C4', text: '#8E5E34' },
+  'Call Booked':   { dot: '#6B4226', bg: '#DCC9B4', text: '#6B4226' },
+  'Proposal Sent': { dot: '#4A6741', bg: '#D8E4D4', text: '#4A6741' },
+  'Won':           { dot: '#2D7A4F', bg: '#D4E8DC', text: '#2D7A4F' },
+  'Lost':          { dot: '#A0403C', bg: '#EADADA', text: '#A0403C' },
 };
 
-function uid() {
-  return Math.random().toString(36).slice(2, 10);
+function scoreColor(score: number) {
+  if (score <= 3) return { bg: '#EADADA', text: '#A0403C' };
+  if (score <= 6) return { bg: '#E8DDD0', text: '#B07A45' };
+  return { bg: '#D4E8DC', text: '#2D7A4F' };
 }
 
-function daysBetween(a: string, b: string) {
-  return Math.max(0, Math.round((new Date(b).getTime() - new Date(a).getTime()) / 86400000));
+function sourceIcon(s: string) {
+  switch (s) {
+    case 'Apollo': return <Zap size={12} />;
+    case 'Brave': return <Search size={12} />;
+    default: return <User size={12} />;
+  }
 }
 
-function conversionProbability(score: number, stage: Stage): number {
-  const stageMultiplier: Record<Stage, number> = {
-    new: 0.15, contacted: 0.30, qualified: 0.55, proposal: 0.75, won: 1.0, lost: 0.0,
+function formatDate(d: string | undefined) {
+  if (!d) return '--';
+  try { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); } catch { return '--'; }
+}
+
+function generateId() {
+  return crypto?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
+/* ─── Stats Bar ─── */
+function StatsBar({ leads }: { leads: Lead[] }) {
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 86400000);
+  const twoWeeksAgo = new Date(now.getTime() - 14 * 86400000);
+
+  const thisWeek = leads.filter(l => new Date(l.created_at) >= weekAgo);
+  const lastWeek = leads.filter(l => {
+    const d = new Date(l.created_at);
+    return d >= twoWeeksAgo && d < weekAgo;
+  });
+
+  const count = (arr: Lead[], stage?: string) => stage ? arr.filter(l => l.stage === stage).length : arr.length;
+  const inSequence = (arr: Lead[]) => arr.filter(l => ['Contacted', 'Replied'].includes(l.stage)).length;
+  const replied = (arr: Lead[]) => arr.filter(l => l.stage === 'Replied').length;
+  const booked = (arr: Lead[]) => arr.filter(l => l.stage === 'Call Booked').length;
+  const won = (arr: Lead[]) => arr.filter(l => l.stage === 'Won').length;
+
+  const totalWon = leads.filter(l => l.stage === 'Won').length;
+  const convRate = leads.length > 0 ? Math.round((totalWon / leads.length) * 100) : 0;
+
+  const change = (curr: number, prev: number) => {
+    if (prev === 0) return curr > 0 ? 100 : 0;
+    return Math.round(((curr - prev) / prev) * 100);
   };
-  return Math.round(score * stageMultiplier[stage]);
-}
 
-function scoreBadgeColor(score: number) {
-  if (score >= 80) return { bg: '#D4E8DC', text: '#2D7A4F' };
-  if (score >= 50) return { bg: '#E8DDD0', text: '#8E5E34' };
-  return { bg: '#EADADA', text: '#A0403C' };
-}
+  const stats = [
+    { label: 'Total Leads', value: leads.length, delta: change(thisWeek.length, lastWeek.length), icon: Target },
+    { label: 'In Sequence', value: inSequence(leads), delta: change(inSequence(thisWeek), inSequence(lastWeek)), icon: Send },
+    { label: 'Replied', value: replied(leads), delta: change(replied(thisWeek), replied(lastWeek)), icon: MessageSquare },
+    { label: 'Calls Booked', value: booked(leads), delta: change(booked(thisWeek), booked(lastWeek)), icon: PhoneCall },
+    { label: 'Won', value: totalWon, delta: change(won(thisWeek), won(lastWeek)), icon: Trophy },
+    { label: 'Conversion Rate', value: `${convRate}%`, delta: 0, icon: TrendingUp },
+  ];
 
-/* ─── No seed data — starts empty, fully editable ─── */
-
-/* ─── Components ─── */
-
-function ScoreBadge({ score }: { score: number }) {
-  const c = scoreBadgeColor(score);
   return (
-    <span style={{ background: c.bg, color: c.text }} className="text-xs font-semibold px-2 py-0.5 rounded-full">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+      {stats.map((s) => {
+        const Icon = s.icon;
+        return (
+          <div key={s.label} className="bg-[#EEE6DC] rounded-xl p-4 border border-[#E3D9CD]">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-lg bg-[#F4EFE8] flex items-center justify-center">
+                <Icon size={16} className="text-[#B07A45]" />
+              </div>
+              {typeof s.delta === 'number' && s.delta !== 0 && (
+                <span className={`text-[10px] font-semibold flex items-center gap-0.5 ${s.delta > 0 ? 'text-[#2D7A4F]' : 'text-[#A0403C]'}`}>
+                  {s.delta > 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                  {Math.abs(s.delta)}%
+                </span>
+              )}
+            </div>
+            <div className="text-xl font-bold text-[#1C1C1C]">{s.value}</div>
+            <div className="text-[11px] text-[#7A746C] mt-0.5">{s.label}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ─── Score Badge ─── */
+function ScoreBadge({ score }: { score: number }) {
+  const c = scoreColor(score);
+  return (
+    <span style={{ background: c.bg, color: c.text }} className="text-xs font-bold px-2 py-0.5 rounded-full tabular-nums">
       {score}
     </span>
   );
 }
 
-function StageDropdown({ current, onMove }: { current: Stage; onMove: (s: Stage) => void }) {
-  const [open, setOpen] = useState(false);
-  const targets = STAGES.filter(s => s.key !== current);
+/* ─── Source Badge ─── */
+function SourceBadge({ source }: { source: string }) {
   return (
-    <div className="relative">
-      <button onClick={(e) => { e.stopPropagation(); setOpen(!open); }} className="p-1 rounded hover:bg-black/5 transition-colors">
-        <MoreVertical size={16} className="text-[#7A746C]" />
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-7 z-50 bg-white rounded-xl shadow-lg border border-[#E3D9CD] py-1 min-w-[160px]">
-            <div className="px-3 py-1.5 text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider">Move to</div>
-            {targets.map(s => (
-              <button key={s.key} onClick={(e) => { e.stopPropagation(); onMove(s.key); setOpen(false); }}
-                className="w-full text-left px-3 py-2 text-sm hover:bg-[#F4EFE8] flex items-center gap-2 text-[#4B4B4B]">
-                <ArrowRight size={12} style={{ color: s.color }} /> {s.label}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#7A746C] bg-[#F4EFE8] px-2 py-0.5 rounded-full border border-[#E3D9CD]">
+      {sourceIcon(source)} {source}
+    </span>
   );
 }
 
-function LeadCard({ lead, onMove, onClick }: { lead: Lead; onMove: (s: Stage) => void; onClick: () => void }) {
-  const days = daysBetween(lead.stageChangedAt, new Date().toISOString());
+/* ─── Stage Badge ─── */
+function StageBadge({ stage }: { stage: string }) {
+  const c = STAGE_COLORS[stage] || STAGE_COLORS['New'];
   return (
-    <div onClick={onClick}
-      className="bg-white rounded-xl p-3.5 border border-[#E3D9CD] hover:shadow-md transition-all cursor-pointer group">
+    <span style={{ background: c.bg, color: c.text }} className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap">
+      {stage}
+    </span>
+  );
+}
+
+/* ─── Kanban Card ─── */
+function KanbanCard({ lead, onClick, onDragStart }: { lead: Lead; onClick: () => void; onDragStart: (e: React.DragEvent) => void }) {
+  return (
+    <div
+      draggable
+      onDragStart={onDragStart}
+      onClick={onClick}
+      className="bg-white rounded-xl p-3.5 border border-[#E3D9CD] hover:shadow-md transition-all cursor-grab active:cursor-grabbing group"
+    >
       <div className="flex items-start justify-between mb-2">
-        <div className="font-semibold text-sm text-[#1C1C1C] truncate flex-1">{lead.name}</div>
-        <StageDropdown current={lead.stage} onMove={onMove} />
+        <div className="font-semibold text-sm text-[#1C1C1C] truncate flex-1">{lead.company_name || 'Unnamed'}</div>
+        <ScoreBadge score={lead.score} />
       </div>
-      <div className="text-xs text-[#4B4B4B] flex items-center gap-1.5 mb-1.5">
-        <Building2 size={12} className="text-[#7A746C] shrink-0" /> <span className="truncate">{lead.company}</span>
+      <div className="text-xs text-[#4B4B4B] flex items-center gap-1.5 mb-2">
+        <User size={12} className="text-[#7A746C] shrink-0" />
+        <span className="truncate">{lead.contact_name || '--'}</span>
       </div>
-      <div className="flex items-center justify-between mt-2.5">
-        <div className="flex items-center gap-1.5 text-[10px] text-[#7A746C]">
-          {sourceIcon(lead.source)} {lead.source}
+      <div className="flex items-center justify-between">
+        <SourceBadge source={lead.source || 'Manual'} />
+        <span className="text-[10px] text-[#7A746C] flex items-center gap-1">
+          <Clock size={10} /> {formatDate(lead.last_contacted || lead.updated_at)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Kanban View ─── */
+function KanbanView({ leads, onOpenDetail, onMoveLead }: {
+  leads: Lead[];
+  onOpenDetail: (lead: Lead) => void;
+  onMoveLead: (id: string, stage: string) => void;
+}) {
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState<string | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDragId(id);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', id);
+  };
+
+  const handleDragOver = (e: React.DragEvent, stage: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOver(stage);
+  };
+
+  const handleDragLeave = () => setDragOver(null);
+
+  const handleDrop = (e: React.DragEvent, stage: string) => {
+    e.preventDefault();
+    const id = e.dataTransfer.getData('text/plain') || dragId;
+    if (id) onMoveLead(id, stage);
+    setDragId(null);
+    setDragOver(null);
+  };
+
+  return (
+    <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 lg:mx-0 lg:px-0">
+      {STAGES.map((stage) => {
+        const colLeads = leads.filter(l => l.stage === stage);
+        const isDragTarget = dragOver === stage;
+        return (
+          <div
+            key={stage}
+            className="min-w-[280px] flex-shrink-0 lg:flex-1"
+            onDragOver={(e) => handleDragOver(e, stage)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, stage)}
+          >
+            <div className="flex items-center justify-between mb-3 px-1">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: STAGE_COLORS[stage]?.dot || '#7A746C' }} />
+                <span className="text-sm font-semibold text-[#1C1C1C]">{stage}</span>
+              </div>
+              <span className="text-xs text-[#7A746C] bg-[#EEE6DC] px-2 py-0.5 rounded-full">{colLeads.length}</span>
+            </div>
+            <div className={`space-y-2.5 rounded-xl p-2.5 min-h-[120px] border transition-colors ${
+              isDragTarget ? 'bg-[#B07A45]/10 border-[#B07A45]/30' : 'bg-[#EEE6DC]/50 border-[#E3D9CD]/50'
+            }`}>
+              {colLeads.map(l => (
+                <KanbanCard
+                  key={l.id}
+                  lead={l}
+                  onClick={() => onOpenDetail(l)}
+                  onDragStart={(e) => handleDragStart(e, l.id)}
+                />
+              ))}
+              {colLeads.length === 0 && (
+                <div className="text-center py-8 text-xs text-[#7A746C]">No leads</div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ─── List View ─── */
+function ListView({ leads, onOpenDetail, onDeleteLeads, onMoveLeads }: {
+  leads: Lead[];
+  onOpenDetail: (lead: Lead) => void;
+  onDeleteLeads: (ids: string[]) => void;
+  onMoveLeads: (ids: string[], stage: string) => void;
+}) {
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [sortField, setSortField] = useState<SortField>('created_at' as SortField);
+  const [sortDir, setSortDir] = useState<SortDir>('desc');
+  const [bulkMenuOpen, setBulkMenuOpen] = useState(false);
+
+  const toggleSort = (field: SortField) => {
+    if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortField(field); setSortDir('asc'); }
+  };
+
+  const sorted = useMemo(() => {
+    return [...leads].sort((a, b) => {
+      const av = (a as unknown as Record<string, unknown>)[sortField];
+      const bv = (b as unknown as Record<string, unknown>)[sortField];
+      const cmp = typeof av === 'number' && typeof bv === 'number'
+        ? av - bv
+        : String(av || '').localeCompare(String(bv || ''));
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }, [leads, sortField, sortDir]);
+
+  const allSelected = leads.length > 0 && selected.size === leads.length;
+  const toggleAll = () => {
+    if (allSelected) setSelected(new Set());
+    else setSelected(new Set(leads.map(l => l.id)));
+  };
+  const toggle = (id: string) => {
+    const next = new Set(selected);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setSelected(next);
+  };
+
+  const exportCSV = () => {
+    const ids = Array.from(selected);
+    const rows = leads.filter(l => ids.includes(l.id));
+    const headers = ['Company', 'Contact', 'Email', 'Score', 'Stage', 'Source', 'Last Contact'];
+    const csv = [headers.join(','), ...rows.map(r =>
+      [r.company_name, r.contact_name, r.email, r.score, r.stage, r.source, r.last_contacted || ''].map(v => `"${v}"`).join(',')
+    )].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'leads-export.csv'; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const SortHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
+    <th
+      className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer hover:text-[#B07A45] select-none"
+      onClick={() => toggleSort(field)}
+    >
+      <span className="inline-flex items-center gap-1">
+        {children}
+        <ArrowUpDown size={10} className={sortField === field ? 'text-[#B07A45]' : 'opacity-30'} />
+      </span>
+    </th>
+  );
+
+  return (
+    <div>
+      {/* Bulk Actions */}
+      {selected.size > 0 && (
+        <div className="flex items-center gap-3 mb-3 p-3 bg-[#EEE6DC] rounded-xl border border-[#E3D9CD]">
+          <span className="text-sm font-medium text-[#1C1C1C]">{selected.size} selected</span>
+          <div className="relative">
+            <button
+              onClick={() => setBulkMenuOpen(!bulkMenuOpen)}
+              className="text-xs px-3 py-1.5 rounded-lg bg-white border border-[#E3D9CD] text-[#4B4B4B] hover:bg-[#F4EFE8] flex items-center gap-1"
+            >
+              Move to stage <ChevronDown size={12} />
+            </button>
+            {bulkMenuOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setBulkMenuOpen(false)} />
+                <div className="absolute left-0 top-9 z-50 bg-white rounded-xl shadow-lg border border-[#E3D9CD] py-1 min-w-[160px]">
+                  {STAGES.map(s => (
+                    <button key={s} onClick={() => { onMoveLeads(Array.from(selected), s); setSelected(new Set()); setBulkMenuOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-[#F4EFE8] text-[#4B4B4B] flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ background: STAGE_COLORS[s]?.dot }} /> {s}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+          <button
+            onClick={() => { onDeleteLeads(Array.from(selected)); setSelected(new Set()); }}
+            className="text-xs px-3 py-1.5 rounded-lg bg-[#EADADA] text-[#A0403C] hover:bg-[#DFC8C8] flex items-center gap-1"
+          >
+            <Trash2 size={12} /> Delete
+          </button>
+          <button
+            onClick={exportCSV}
+            className="text-xs px-3 py-1.5 rounded-lg bg-white border border-[#E3D9CD] text-[#4B4B4B] hover:bg-[#F4EFE8] flex items-center gap-1"
+          >
+            <Download size={12} /> Export CSV
+          </button>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] text-[#7A746C] flex items-center gap-1"><Clock size={10} />{days}d</span>
-          <ScoreBadge score={lead.score} />
+      )}
+
+      <div className="bg-white rounded-2xl border border-[#E3D9CD] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-[#EEE6DC] text-[#7A746C]">
+                <th className="px-4 py-3 w-10">
+                  <button onClick={toggleAll} className={`w-4 h-4 rounded border flex items-center justify-center ${allSelected ? 'bg-[#B07A45] border-[#B07A45]' : 'border-[#E3D9CD] bg-white'}`}>
+                    {allSelected && <Check size={10} className="text-white" />}
+                  </button>
+                </th>
+                <SortHeader field="company_name">Company</SortHeader>
+                <SortHeader field="contact_name">Contact</SortHeader>
+                <SortHeader field="email">Email</SortHeader>
+                <SortHeader field="score">Score</SortHeader>
+                <SortHeader field="stage">Stage</SortHeader>
+                <SortHeader field="source">Source</SortHeader>
+                <SortHeader field="last_contacted">Last Contact</SortHeader>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E3D9CD]">
+              {sorted.map(l => (
+                <tr key={l.id} className="hover:bg-[#F4EFE8]/50 cursor-pointer transition-colors" onClick={() => onOpenDetail(l)}>
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                    <button onClick={() => toggle(l.id)} className={`w-4 h-4 rounded border flex items-center justify-center ${selected.has(l.id) ? 'bg-[#B07A45] border-[#B07A45]' : 'border-[#E3D9CD] bg-white'}`}>
+                      {selected.has(l.id) && <Check size={10} className="text-white" />}
+                    </button>
+                  </td>
+                  <td className="px-4 py-3 font-medium text-[#1C1C1C]">{l.company_name || '--'}</td>
+                  <td className="px-4 py-3 text-[#4B4B4B]">{l.contact_name || '--'}</td>
+                  <td className="px-4 py-3 text-[#4B4B4B]">{l.email || '--'}</td>
+                  <td className="px-4 py-3"><ScoreBadge score={l.score} /></td>
+                  <td className="px-4 py-3"><StageBadge stage={l.stage} /></td>
+                  <td className="px-4 py-3"><SourceBadge source={l.source || 'Manual'} /></td>
+                  <td className="px-4 py-3 text-[#7A746C]">{formatDate(l.last_contacted)}</td>
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                    <button onClick={() => onOpenDetail(l)} className="p-1.5 rounded-lg hover:bg-[#EEE6DC]">
+                      <Eye size={14} className="text-[#7A746C]" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {sorted.length === 0 && (
+                <tr><td colSpan={9} className="px-4 py-12 text-center text-sm text-[#7A746C]">No leads found</td></tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 }
 
-function LeadDetailPanel({ lead, onClose, onEdit, onDelete }: { lead: Lead; onClose: () => void; onEdit: () => void; onDelete: () => void }) {
-  const stage = STAGES.find(s => s.key === lead.stage) || STAGES[0];
-  const prob = conversionProbability(lead.score, lead.stage);
+/* ─── Detail Panel ─── */
+function DetailPanel({ lead, onClose, onUpdate, onDelete }: {
+  lead: Lead;
+  onClose: () => void;
+  onUpdate: (id: string, updates: Partial<Lead>) => void;
+  onDelete: (id: string) => void;
+}) {
+  const [notes, setNotes] = useState(lead.notes || '');
+  const [stage, setStage] = useState(lead.stage);
+  const [notesDirty, setNotesDirty] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { setNotes(lead.notes || ''); setStage(lead.stage); setNotesDirty(false); }, [lead]);
+
+  const saveNotes = () => {
+    const newActivity: ActivityEntry = { date: new Date().toISOString(), type: 'note', text: 'Note updated' };
+    onUpdate(lead.id, { notes, activity: [...(lead.activity || []), newActivity] });
+    setNotesDirty(false);
+  };
+
+  const changeStage = (s: string) => {
+    setStage(s);
+    const newActivity: ActivityEntry = { date: new Date().toISOString(), type: 'stage', text: `Stage changed to ${s}` };
+    onUpdate(lead.id, { stage: s, activity: [...(lead.activity || []), newActivity] });
+  };
+
+  const sc = scoreColor(lead.score);
+  const emailHistory = lead.email_history || [];
+  const activities = lead.activity || [];
+
   return (
     <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
       <div className="absolute inset-0 bg-black/20" />
-      <div className="relative w-full max-w-md bg-[#F4EFE8] h-full overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div
+        ref={panelRef}
+        className="relative w-full max-w-lg bg-[#F4EFE8] h-full overflow-y-auto shadow-2xl animate-slide-in"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-[#1C1C1C]">{lead.name}</h2>
-            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#EEE6DC]"><X size={20} className="text-[#7A746C]" /></button>
+          {/* Header */}
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl font-bold text-[#1C1C1C] truncate">{lead.company_name || 'Unnamed Lead'}</h2>
+              {lead.website && (
+                <a href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`} target="_blank" rel="noopener noreferrer"
+                  className="text-xs text-[#B07A45] flex items-center gap-1 mt-1 hover:underline">
+                  <ExternalLink size={12} /> {lead.website}
+                </a>
+              )}
+            </div>
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#EEE6DC] ml-2">
+              <X size={20} className="text-[#7A746C]" />
+            </button>
           </div>
 
-          <div className="flex gap-2 mb-6">
-            <button onClick={onEdit} className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-[#EEE6DC] text-[#4B4B4B] hover:bg-[#E3D9CD] transition-colors">
-              <Edit2 size={12} /> Edit
-            </button>
-            <button onClick={onDelete} className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-[#EADADA] text-[#A0403C] hover:bg-[#DFC8C8] transition-colors">
-              <Trash2 size={12} /> Delete
-            </button>
+          {/* Contact Card */}
+          <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+            <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-3">Contact</div>
+            <div className="space-y-2 text-sm text-[#4B4B4B]">
+              <div className="flex items-center gap-2"><User size={14} className="text-[#B07A45]" /> {lead.contact_name || '--'}</div>
+              <div className="flex items-center gap-2"><Mail size={14} className="text-[#B07A45]" /> {lead.email || '--'}</div>
+              <div className="flex items-center gap-2"><Phone size={14} className="text-[#B07A45]" /> {lead.phone || '--'}</div>
+            </div>
           </div>
 
-          <div className="space-y-4 mb-6">
+          {/* Score + Stage */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
-              <div className="text-xs font-semibold text-[#7A746C] uppercase tracking-wider mb-3">Contact</div>
-              <div className="space-y-2 text-sm text-[#4B4B4B]">
-                <div className="flex items-center gap-2"><Mail size={14} className="text-[#B07A45]" /> {lead.email}</div>
-                <div className="flex items-center gap-2"><Phone size={14} className="text-[#B07A45]" /> {lead.phone}</div>
-                <div className="flex items-center gap-2"><Building2 size={14} className="text-[#B07A45]" /> {lead.company}</div>
+              <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-2">Lead Score</div>
+              <div className="flex items-center gap-2">
+                <span style={{ background: sc.bg, color: sc.text }} className="text-2xl font-bold px-3 py-1 rounded-lg">{lead.score}</span>
+                <span className="text-[10px] text-[#7A746C]">/10</span>
               </div>
             </div>
-
             <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
-              <div className="text-xs font-semibold text-[#7A746C] uppercase tracking-wider mb-3">Pipeline</div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <div className="text-[10px] text-[#7A746C]">Stage</div>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: stage.bg, color: stage.color }}>{stage.label}</span>
-                </div>
-                <div>
-                  <div className="text-[10px] text-[#7A746C]">Source</div>
-                  <div className="text-sm text-[#4B4B4B] flex items-center gap-1">{sourceIcon(lead.source)} {lead.source}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-[#7A746C]">Score</div>
-                  <ScoreBadge score={lead.score} />
-                </div>
-                <div>
-                  <div className="text-[10px] text-[#7A746C]">Conversion</div>
-                  <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: prob >= 60 ? '#2D7A4F' : prob >= 30 ? '#B07A45' : '#A0403C' }}>
-                    <TrendingUp size={14} /> {prob}%
-                  </div>
-                </div>
-              </div>
+              <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-2">Stage</div>
+              <select
+                value={stage}
+                onChange={e => changeStage(e.target.value)}
+                className="w-full px-2 py-1.5 rounded-lg bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30"
+              >
+                {STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
             </div>
+          </div>
 
-            {lead.notes && (
-              <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
-                <div className="text-xs font-semibold text-[#7A746C] uppercase tracking-wider mb-2">Notes</div>
-                <p className="text-sm text-[#4B4B4B]">{lead.notes}</p>
+          {/* AI Audit */}
+          {lead.ai_audit && (
+            <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+              <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-2 flex items-center gap-1">
+                <Zap size={12} /> AI Audit Summary
               </div>
+              <p className="text-sm text-[#4B4B4B]">{lead.ai_audit}</p>
+            </div>
+          )}
+
+          {/* Notes */}
+          <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+            <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-2">Notes</div>
+            <textarea
+              value={notes}
+              onChange={e => { setNotes(e.target.value); setNotesDirty(true); }}
+              rows={4}
+              className="w-full px-3 py-2 rounded-lg bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 resize-none"
+              placeholder="Add notes..."
+            />
+            {notesDirty && (
+              <button onClick={saveNotes}
+                className="mt-2 px-4 py-1.5 rounded-lg bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white text-xs font-semibold hover:shadow-md transition-all">
+                Save Notes
+              </button>
             )}
+          </div>
 
-            <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
-              <div className="text-xs font-semibold text-[#7A746C] uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <Activity size={14} /> Activity Log
+          {/* Email History */}
+          <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+            <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-3 flex items-center gap-1">
+              <Mail size={12} /> Email History
+            </div>
+            {emailHistory.length > 0 ? (
+              <div className="space-y-2">
+                {emailHistory.map((e, i) => (
+                  <div key={i} className="flex items-start gap-3 text-sm">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#B07A45] mt-1.5 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-[#7A746C]">{formatDate(e.date)}</div>
+                      <div className="text-[#4B4B4B] truncate">{e.subject}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
+            ) : (
+              <p className="text-xs text-[#7A746C]">No emails sent yet</p>
+            )}
+          </div>
+
+          {/* Activity Timeline */}
+          <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+            <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-3 flex items-center gap-1">
+              <Activity size={12} /> Activity Timeline
+            </div>
+            {activities.length > 0 ? (
               <div className="space-y-3">
-                {(lead.activities || []).slice().reverse().map(a => (
-                  <div key={a.id} className="flex gap-3">
+                {[...activities].reverse().slice(0, 10).map((a, i) => (
+                  <div key={i} className="flex gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#B07A45] mt-1.5 shrink-0" />
                     <div>
-                      <div className="text-xs text-[#7A746C]">{new Date(a.date).toLocaleDateString()}</div>
+                      <div className="text-xs text-[#7A746C]">{formatDate(a.date)}</div>
                       <div className="text-sm text-[#4B4B4B]">{a.text}</div>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            ) : (
+              <p className="text-xs text-[#7A746C]">No activity yet</p>
+            )}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex flex-wrap gap-2">
+            {lead.email && (
+              <a href={`mailto:${lead.email}`}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#EEE6DC] text-[#4B4B4B] text-xs font-medium hover:bg-[#E3D9CD] transition-colors">
+                <Mail size={12} /> Send Email
+              </a>
+            )}
+            <button onClick={() => { onDelete(lead.id); onClose(); }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#EADADA] text-[#A0403C] text-xs font-medium hover:bg-[#DFC8C8] transition-colors">
+              <Trash2 size={12} /> Delete Lead
+            </button>
           </div>
         </div>
       </div>
@@ -226,14 +610,25 @@ function LeadDetailPanel({ lead, onClose, onEdit, onDelete }: { lead: Lead; onCl
   );
 }
 
-const emptyLead = (): Omit<Lead, 'id' | 'createdAt' | 'stageChangedAt' | 'activities'> => ({
-  name: '', email: '', phone: '', company: '', source: 'Website', stage: 'new', score: 50, notes: '',
-});
+/* ─── Add Lead Modal ─── */
+function AddLeadModal({ onSave, onClose }: { onSave: (data: Partial<Lead>) => void; onClose: () => void }) {
+  const [form, setForm] = useState({
+    company_name: '', contact_name: '', email: '', phone: '', website: '', notes: '',
+  });
+  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
-function LeadModal({ lead, onSave, onClose }: { lead: Lead | null; onSave: (data: Partial<Lead>) => void; onClose: () => void }) {
-  const [form, setForm] = useState(lead ? { name: lead.name, email: lead.email, phone: lead.phone, company: lead.company, source: lead.source, stage: lead.stage, score: lead.score, notes: lead.notes } : emptyLead());
-  const set = (k: string, v: string | number) => setForm(f => ({ ...f, [k]: v }));
-  const isEdit = !!lead;
+  const handleSave = () => {
+    if (!form.company_name.trim() && !form.contact_name.trim()) return;
+    onSave({
+      ...form,
+      score: 5,
+      stage: 'New',
+      source: 'Manual',
+      ai_audit: '',
+      email_history: [],
+      activity: [{ date: new Date().toISOString(), type: 'created', text: 'Lead created manually' }],
+    });
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -241,62 +636,108 @@ function LeadModal({ lead, onSave, onClose }: { lead: Lead | null; onSave: (data
       <div className="relative bg-[#F4EFE8] rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-bold text-[#1C1C1C]">{isEdit ? 'Edit Lead' : 'Add Lead'}</h2>
+            <h2 className="text-lg font-bold text-[#1C1C1C]">Add Lead</h2>
             <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#EEE6DC]"><X size={20} className="text-[#7A746C]" /></button>
           </div>
-
           <div className="space-y-3.5">
-            {(['name', 'email', 'phone', 'company'] as const).map(field => (
+            {([
+              ['company_name', 'Company Name', Building2],
+              ['contact_name', 'Contact Name', User],
+              ['email', 'Email', Mail],
+              ['phone', 'Phone', Phone],
+              ['website', 'Website', Globe],
+            ] as const).map(([field, label, Icon]) => (
               <div key={field}>
-                <label className="text-xs font-medium text-[#7A746C] capitalize">{field}</label>
-                <input value={(form as Record<string, string | number>)[field] as string} onChange={e => set(field, e.target.value)}
+                <label className="text-xs font-medium text-[#7A746C] flex items-center gap-1"><Icon size={12} /> {label}</label>
+                <input
+                  value={(form as Record<string, string>)[field]}
+                  onChange={e => set(field, e.target.value)}
                   className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 focus:border-[#B07A45] transition-colors"
-                  placeholder={`Enter ${field}`} />
+                  placeholder={`Enter ${label.toLowerCase()}`}
+                />
               </div>
             ))}
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-medium text-[#7A746C]">Source</label>
-                <select value={form.source} onChange={e => set('source', e.target.value)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
-                  {SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-[#7A746C]">Stage</label>
-                <select value={form.stage} onChange={e => set('stage', e.target.value)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
-                  {STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
-                </select>
-              </div>
-            </div>
-
             <div>
-              <label className="text-xs font-medium text-[#7A746C]">Score (1-100)</label>
-              <div className="flex items-center gap-3 mt-1">
-                <input type="range" min={1} max={100} value={form.score} onChange={e => set('score', +e.target.value)}
-                  className="flex-1 accent-[#B07A45]" />
-                <ScoreBadge score={form.score} />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-xs font-medium text-[#7A746C]">Notes</label>
-              <textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={3}
-                className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 resize-none" />
+              <label className="text-xs font-medium text-[#7A746C] flex items-center gap-1"><StickyNote size={12} /> Notes</label>
+              <textarea
+                value={form.notes}
+                onChange={e => set('notes', e.target.value)}
+                rows={3}
+                className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 resize-none"
+              />
             </div>
           </div>
-
           <div className="flex gap-2 mt-6">
             <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-[#E3D9CD] text-sm text-[#4B4B4B] hover:bg-[#EEE6DC] transition-colors">Cancel</button>
-            <button onClick={() => onSave(form)} disabled={!form.name.trim()}
+            <button onClick={handleSave} disabled={!form.company_name.trim() && !form.contact_name.trim()}
               className="flex-1 py-2.5 rounded-xl bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white text-sm font-semibold hover:shadow-lg transition-all disabled:opacity-40">
-              {isEdit ? 'Save Changes' : 'Add Lead'}
+              Add Lead
             </button>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ─── Filter Bar ─── */
+function FilterBar({ filters, onChange }: {
+  filters: { stage: string; source: string; scoreMin: number; scoreMax: number; dateFrom: string; search: string };
+  onChange: (f: typeof filters) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const set = (k: string, v: string | number) => onChange({ ...filters, [k]: v });
+
+  return (
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-5">
+      <div className="relative flex-1 max-w-sm">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A746C]" />
+        <input
+          value={filters.search}
+          onChange={e => set('search', e.target.value)}
+          placeholder="Search company or contact..."
+          className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#EEE6DC] border border-[#E3D9CD] text-sm text-[#1C1C1C] placeholder:text-[#7A746C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30"
+        />
+      </div>
+      <button onClick={() => setOpen(!open)} className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition-colors ${
+        open || filters.stage || filters.source || filters.dateFrom
+          ? 'bg-[#B07A45]/10 border-[#B07A45]/30 text-[#B07A45]'
+          : 'bg-[#EEE6DC] border-[#E3D9CD] text-[#7A746C] hover:text-[#4B4B4B]'
+      }`}>
+        <Filter size={14} /> Filters
+        {(filters.stage || filters.source || filters.dateFrom) && (
+          <span className="w-1.5 h-1.5 rounded-full bg-[#B07A45]" />
+        )}
+      </button>
+
+      {open && (
+        <div className="w-full sm:w-auto flex flex-wrap gap-2">
+          <select value={filters.stage} onChange={e => set('stage', e.target.value)}
+            className="px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
+            <option value="">All Stages</option>
+            {STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <select value={filters.source} onChange={e => set('source', e.target.value)}
+            className="px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
+            <option value="">All Sources</option>
+            {SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <div className="flex items-center gap-1">
+            <span className="text-[10px] text-[#7A746C]">Score</span>
+            <input type="number" min={1} max={10} value={filters.scoreMin} onChange={e => set('scoreMin', +e.target.value)}
+              className="w-12 px-2 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none" />
+            <span className="text-[10px] text-[#7A746C]">-</span>
+            <input type="number" min={1} max={10} value={filters.scoreMax} onChange={e => set('scoreMax', +e.target.value)}
+              className="w-12 px-2 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none" />
+          </div>
+          <input type="date" value={filters.dateFrom} onChange={e => set('dateFrom', e.target.value)}
+            className="px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30" />
+          {(filters.stage || filters.source || filters.dateFrom || filters.scoreMin !== 1 || filters.scoreMax !== 10) && (
+            <button onClick={() => onChange({ stage: '', source: '', scoreMin: 1, scoreMax: 10, dateFrom: '', search: filters.search })}
+              className="text-xs text-[#A0403C] hover:underline">Clear</button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -305,195 +746,145 @@ function LeadModal({ lead, onSave, onClose }: { lead: Lead | null; onSave: (data
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [view, setView] = useState<ViewMode>('kanban');
-  const [search, setSearch] = useState('');
-  const [modalLead, setModalLead] = useState<Lead | null | 'new'>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [detailLead, setDetailLead] = useState<Lead | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [filters, setFilters] = useState({ stage: '', source: '', scoreMin: 1, scoreMax: 10, dateFrom: '', search: '' });
 
   useEffect(() => {
     (async () => {
       try {
         const data = await getData<Lead>('leads');
-        setLeads(data);
+        // Normalize: map old field names if needed
+        const normalized = data.map(l => ({
+          ...l,
+          company_name: l.company_name || (l as unknown as Record<string, unknown>).company as string || (l as unknown as Record<string, unknown>).name as string || '',
+          contact_name: l.contact_name || '',
+          stage: l.stage || (l as unknown as Record<string, unknown>).status as string || 'New',
+          score: typeof l.score === 'number' ? (l.score > 10 ? Math.round(l.score / 10) : l.score) : 5,
+          source: l.source || 'Manual',
+          email_history: l.email_history || [],
+          activity: l.activity || [],
+        }));
+        setLeads(normalized);
       } catch { setLeads([]); }
       setMounted(true);
     })();
   }, []);
 
-  const moveLead = useCallback(async (id: string, stage: Stage) => {
-    const updates = { stage, stageChangedAt: new Date().toISOString() };
-    try { await updateRecord('leads', id, updates); } catch {}
-    setLeads(prev => prev.map(l => l.id === id ? { ...l, ...updates, activities: [...(l.activities || []), { id: uid(), date: new Date().toISOString(), text: `Moved to ${(STAGES.find(s => s.key === stage) || { label: stage }).label}` }] } : l));
-  }, []);
+  const filtered = useMemo(() => {
+    return leads.filter(l => {
+      if (filters.stage && l.stage !== filters.stage) return false;
+      if (filters.source && l.source !== filters.source) return false;
+      if (l.score < filters.scoreMin || l.score > filters.scoreMax) return false;
+      if (filters.dateFrom && l.created_at < filters.dateFrom) return false;
+      if (filters.search) {
+        const s = filters.search.toLowerCase();
+        if (!(l.company_name || '').toLowerCase().includes(s) && !(l.contact_name || '').toLowerCase().includes(s)) return false;
+      }
+      return true;
+    });
+  }, [leads, filters]);
 
-  const saveLead = useCallback(async (data: Partial<Lead>) => {
-    if (modalLead === 'new') {
-      const now = new Date().toISOString();
-      const rec = { name: '', email: '', phone: '', company: '', source: 'Website' as Source, stage: 'new' as Stage, score: 50, notes: '', createdAt: now, stageChangedAt: now, activities: [{ id: uid(), date: now, text: 'Lead created' }], ...data };
-      try {
-        const created = await createRecord<Lead>('leads', rec);
-        setLeads(prev => [created, ...prev]);
-      } catch {
-        const newLead: Lead = { id: uid(), ...rec } as Lead;
-        setLeads(prev => [newLead, ...prev]);
-      }
-    } else if (modalLead) {
-      const oldStage = (modalLead as Lead).stage;
-      const id = (modalLead as Lead).id;
-      const updates = { ...data } as Partial<Lead> & Record<string, unknown>;
-      if (data.stage && data.stage !== oldStage) {
-        updates.stageChangedAt = new Date().toISOString();
-      }
-      try { await updateRecord('leads', id, updates); } catch {}
-      setLeads(prev => prev.map(l => {
-        if (l.id !== id) return l;
-        const updated = { ...l, ...data };
-        if (data.stage && data.stage !== oldStage) {
-          updated.stageChangedAt = new Date().toISOString();
-          updated.activities = [...(updated.activities || []), { id: uid(), date: new Date().toISOString(), text: `Moved to ${(STAGES.find(s => s.key === data.stage) || { label: data.stage }).label}` }];
-        }
-        return updated;
-      }));
+  const moveLead = useCallback(async (id: string, stage: string) => {
+    const now = new Date().toISOString();
+    const lead = leads.find(l => l.id === id);
+    if (!lead || lead.stage === stage) return;
+    const newActivity: ActivityEntry = { date: now, type: 'stage', text: `Stage changed to ${stage}` };
+    const updates: Partial<Lead> = { stage, activity: [...(lead.activity || []), newActivity], updated_at: now };
+    try { await updateRecord('leads', id, updates as Record<string, unknown>); } catch {}
+    setLeads(prev => prev.map(l => l.id === id ? { ...l, ...updates } as Lead : l));
+  }, [leads]);
+
+  const moveLeadsBulk = useCallback(async (ids: string[], stage: string) => {
+    const now = new Date().toISOString();
+    for (const id of ids) {
+      const lead = leads.find(l => l.id === id);
+      if (!lead || lead.stage === stage) continue;
+      const newActivity: ActivityEntry = { date: now, type: 'stage', text: `Stage changed to ${stage}` };
+      const updates: Partial<Lead> = { stage, activity: [...(lead.activity || []), newActivity], updated_at: now };
+      try { await updateRecord('leads', id, updates as Record<string, unknown>); } catch {}
     }
-    setModalLead(null);
-  }, [modalLead]);
+    setLeads(prev => prev.map(l => ids.includes(l.id) ? { ...l, stage, updated_at: now } : l));
+  }, [leads]);
 
-  const deleteLead = useCallback(async (id: string) => {
-    try { await deleteRecord('leads', id); } catch {}
-    setLeads(prev => prev.filter(l => l.id !== id));
-    setDetailLead(null);
+  const addLead = useCallback(async (data: Partial<Lead>) => {
+    const now = new Date().toISOString();
+    const rec = { ...data, last_contacted: '', created_at: now, updated_at: now };
+    try {
+      const created = await createRecord<Lead>('leads', rec as Record<string, unknown>);
+      setLeads(prev => [created, ...prev]);
+    } catch {
+      const newLead = { id: generateId(), ...rec } as Lead;
+      setLeads(prev => [newLead, ...prev]);
+    }
+    setShowAddModal(false);
   }, []);
 
-  const filtered = leads.filter(l =>
-    !search || [l.name, l.company, l.source].some(f => (f || '').toLowerCase().includes(search.toLowerCase()))
-  );
+  const updateLead = useCallback(async (id: string, updates: Partial<Lead>) => {
+    try { await updateRecord('leads', id, updates as Record<string, unknown>); } catch {}
+    setLeads(prev => prev.map(l => l.id === id ? { ...l, ...updates, updated_at: new Date().toISOString() } as Lead : l));
+    if (detailLead?.id === id) setDetailLead(prev => prev ? { ...prev, ...updates } as Lead : null);
+  }, [detailLead]);
+
+  const deleteLeads = useCallback(async (ids: string[]) => {
+    for (const id of ids) { try { await deleteRecord('leads', id); } catch {} }
+    setLeads(prev => prev.filter(l => !ids.includes(l.id)));
+    if (detailLead && ids.includes(detailLead.id)) setDetailLead(null);
+  }, [detailLead]);
 
   if (!mounted) return <div className="min-h-screen bg-[#F4EFE8]" />;
 
   return (
-    <div className="min-h-screen bg-[#F4EFE8] p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen bg-[#F4EFE8]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[#1C1C1C]">Lead Pipeline</h1>
           <p className="text-sm text-[#7A746C] mt-0.5">{leads.length} total leads</p>
         </div>
-        <button onClick={() => setModalLead('new')}
+        <button onClick={() => setShowAddModal(true)}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white text-sm font-semibold hover:shadow-lg transition-all">
           <Plus size={16} /> Add Lead
         </button>
       </div>
 
-      {/* Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-5">
+      {/* Stats */}
+      <StatsBar leads={leads} />
+
+      {/* View Toggle + Filters */}
+      <div className="flex items-center gap-3 mb-4">
         <div className="flex items-center bg-[#EEE6DC] rounded-xl p-1">
-          {([['kanban', LayoutGrid], ['list', List]] as [ViewMode, typeof LayoutGrid][]).map(([v, Icon]) => (
+          {([['kanban', LayoutGrid, 'Kanban'], ['list', List, 'List']] as [ViewMode, typeof LayoutGrid, string][]).map(([v, Icon, label]) => (
             <button key={v} onClick={() => setView(v)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${view === v ? 'bg-white text-[#1C1C1C] shadow-sm' : 'text-[#7A746C] hover:text-[#4B4B4B]'}`}>
-              <Icon size={14} /> {v === 'kanban' ? 'Kanban' : 'List'}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                view === v ? 'bg-white text-[#1C1C1C] shadow-sm' : 'text-[#7A746C] hover:text-[#4B4B4B]'
+              }`}>
+              <Icon size={14} /> {label}
             </button>
           ))}
         </div>
-        <div className="relative flex-1 max-w-xs">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A746C]" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search leads..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#EEE6DC] border border-[#E3D9CD] text-sm text-[#1C1C1C] placeholder:text-[#7A746C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30" />
-        </div>
       </div>
 
-      {/* Kanban View */}
-      {view === 'kanban' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 overflow-x-auto">
-          {STAGES.filter(s => s.key !== 'lost').map(stage => {
-            const colLeads = filtered.filter(l => l.stage === stage.key);
-            // Show lost leads in the Won column too
-            const lostLeads = stage.key === 'won' ? filtered.filter(l => l.stage === 'lost') : [];
-            return (
-              <div key={stage.key} className="min-w-[260px]">
-                <div className="flex items-center justify-between mb-3 px-1">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: stage.color }} />
-                    <span className="text-sm font-semibold text-[#1C1C1C]">{stage.label}</span>
-                  </div>
-                  <span className="text-xs text-[#7A746C] bg-[#EEE6DC] px-2 py-0.5 rounded-full">{colLeads.length + lostLeads.length}</span>
-                </div>
-                <div className="space-y-2.5 bg-[#EEE6DC]/50 rounded-xl p-2.5 min-h-[120px] border border-[#E3D9CD]/50">
-                  {colLeads.map(l => (
-                    <LeadCard key={l.id} lead={l} onMove={s => moveLead(l.id, s)} onClick={() => setDetailLead(l)} />
-                  ))}
-                  {lostLeads.length > 0 && (
-                    <>
-                      <div className="flex items-center gap-2 pt-2">
-                        <div className="w-2 h-2 rounded-full bg-[#A0403C]" />
-                        <span className="text-xs font-semibold text-[#A0403C]">Lost</span>
-                      </div>
-                      {lostLeads.map(l => (
-                        <LeadCard key={l.id} lead={l} onMove={s => moveLead(l.id, s)} onClick={() => setDetailLead(l)} />
-                      ))}
-                    </>
-                  )}
-                  {colLeads.length === 0 && lostLeads.length === 0 && (
-                    <div className="text-center py-6 text-xs text-[#7A746C]">No leads</div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      <FilterBar filters={filters} onChange={setFilters} />
+
+      {/* Views */}
+      {view === 'kanban' ? (
+        <KanbanView leads={filtered} onOpenDetail={setDetailLead} onMoveLead={moveLead} />
+      ) : (
+        <ListView leads={filtered} onOpenDetail={setDetailLead} onDeleteLeads={deleteLeads} onMoveLeads={moveLeadsBulk} />
       )}
 
-      {/* List View */}
-      {view === 'list' && (
-        <div className="bg-white rounded-2xl border border-[#E3D9CD] overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-[#EEE6DC] text-[#7A746C]">
-                  {['Name', 'Company', 'Source', 'Score', 'Stage', 'Created', 'Actions'].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#E3D9CD]">
-                {filtered.map(l => {
-                  const stage = STAGES.find(s => s.key === l.stage) || STAGES[0];
-                  return (
-                    <tr key={l.id} className="hover:bg-[#F4EFE8]/50 cursor-pointer transition-colors" onClick={() => setDetailLead(l)}>
-                      <td className="px-4 py-3 font-medium text-[#1C1C1C]">{l.name}</td>
-                      <td className="px-4 py-3 text-[#4B4B4B]">{l.company}</td>
-                      <td className="px-4 py-3 text-[#4B4B4B]"><span className="flex items-center gap-1.5">{sourceIcon(l.source)} {l.source}</span></td>
-                      <td className="px-4 py-3"><ScoreBadge score={l.score} /></td>
-                      <td className="px-4 py-3">
-                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: stage.bg, color: stage.color }}>{stage.label}</span>
-                      </td>
-                      <td className="px-4 py-3 text-[#7A746C]">{new Date(l.createdAt).toLocaleDateString()}</td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-1">
-                          <button onClick={e => { e.stopPropagation(); setModalLead(l); }} className="p-1.5 rounded-lg hover:bg-[#EEE6DC]"><Edit2 size={14} className="text-[#7A746C]" /></button>
-                          <button onClick={e => { e.stopPropagation(); deleteLead(l.id); }} className="p-1.5 rounded-lg hover:bg-[#EADADA]"><Trash2 size={14} className="text-[#A0403C]" /></button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Modal */}
-      {modalLead && (
-        <LeadModal lead={modalLead === 'new' ? null : modalLead} onSave={saveLead} onClose={() => setModalLead(null)} />
-      )}
+      {/* Add Modal */}
+      {showAddModal && <AddLeadModal onSave={addLead} onClose={() => setShowAddModal(false)} />}
 
       {/* Detail Panel */}
       {detailLead && (
-        <LeadDetailPanel
+        <DetailPanel
           lead={leads.find(l => l.id === detailLead.id) || detailLead}
           onClose={() => setDetailLead(null)}
-          onEdit={() => { setModalLead(detailLead); setDetailLead(null); }}
-          onDelete={() => deleteLead(detailLead.id)}
+          onUpdate={updateLead}
+          onDelete={(id) => deleteLeads([id])}
         />
       )}
     </div>
