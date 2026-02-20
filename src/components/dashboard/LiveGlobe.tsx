@@ -101,7 +101,7 @@ export default function LiveGlobe() {
         lat: v.latitude,
         lng: v.longitude,
         size: 0.3 + recency * 0.5,
-        color: `rgba(176, 122, 69, ${0.5 + recency * 0.5})`,
+        color: `rgba(255, 180, 80, ${0.6 + recency * 0.4})`,
         label: `${v.city || 'Unknown'}${v.country ? ', ' + v.country : ''}`,
       };
     });
@@ -113,7 +113,7 @@ export default function LiveGlobe() {
       startLng: v.longitude,
       endLat: HQ_LAT,
       endLng: HQ_LNG,
-      color: ['rgba(176, 122, 69, 0.7)', 'rgba(176, 122, 69, 0.1)'] as [string, string],
+      color: ['rgba(255, 200, 120, 0.9)', 'rgba(176, 122, 69, 0.2)'] as [string, string],
     }));
   }, [visitors]);
 
@@ -131,7 +131,7 @@ export default function LiveGlobe() {
     <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl shadow-sm overflow-hidden">
       <div className="flex flex-col lg:flex-row">
         {/* LEFT — Globe */}
-        <div className="relative lg:w-[280px] xl:w-[320px] shrink-0 flex items-center justify-center bg-[#0a0a12] rounded-xl lg:rounded-r-none overflow-hidden"
+        <div className="relative lg:w-[280px] xl:w-[320px] shrink-0 flex items-center justify-center bg-[#0a0a12] rounded-xl lg:m-3 overflow-hidden"
           style={{ minHeight: '260px' }}
         >
           {/* Live badge */}
@@ -143,12 +143,12 @@ export default function LiveGlobe() {
           <Globe
             ref={globeRef}
             onGlobeReady={() => setGlobeReady(true)}
-            globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+            globeImageUrl="//unpkg.com/three-globe/example/img/earth-day.jpg"
             bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
             backgroundImageUrl=""
             backgroundColor="rgba(0,0,0,0)"
             atmosphereColor="#B07A45"
-            atmosphereAltitude={0.15}
+            atmosphereAltitude={0.2}
             pointsData={pointsData}
             pointLat="lat"
             pointLng="lng"
@@ -165,7 +165,7 @@ export default function LiveGlobe() {
             arcDashLength={0.5}
             arcDashGap={0.2}
             arcDashAnimateTime={2000}
-            arcStroke={0.6}
+            arcStroke={1.0}
             width={300}
             height={260}
           />
