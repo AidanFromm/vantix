@@ -17,6 +17,7 @@ import {
   Calendar,
   BarChart3,
   BookOpen,
+  Shield,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -96,6 +97,7 @@ const navSections: { label?: string; items: NavItem[] }[] = [
   },
   {
     items: [
+      { href: '/dashboard/vault', label: 'Vault', icon: Shield },
       { href: '/dashboard/knowledge', label: 'Knowledge Base', icon: BookOpen },
       { href: '/dashboard/settings', label: 'Settings', icon: Settings },
     ],
