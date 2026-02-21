@@ -10,6 +10,10 @@ import {
   Menu, X, Target, Layers, Rocket, Settings,
   Star, Quote
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
+
+const ScrollHero = dynamic(() => import('./ScrollHero'), { ssr: false });
+const SmoothScroll = dynamic(() => import('../SmoothScroll'), { ssr: false });
 
 // ============================================
 // VANTIX AI - Clean Authority Landing Page
@@ -1573,29 +1577,31 @@ export function FuturisticLanding() {
   }, []);
 
   return (
-    <div className="bg-[#F4EFE8] text-[#B07A45] min-h-screen selection:bg-[#8E5E34]/20 selection:text-[#B07A45] scroll-smooth">
-      <header>
-        <Navigation />
-      </header>
-      <main>
-        <HeroSection />
-        <AnimatedCounterSection />
-        <ProductShowcase />
-        <BeforeAfterSection />
-        <ProblemSection />
-        <ServicesSection />
-        <TechStackSection />
-        <ProcessTimeline />
-        <CaseStudyHighlight />
-        <TestimonialSection />
-        <ROISection />
-        <TeamSection />
-        <FAQSection />
-        <BookingSection />
-        <FinalCTA />
-      </main>
-      <Footer />
-      <StickyCTABar />
-    </div>
+    <SmoothScroll>
+      <div className="bg-[#F4EFE8] text-[#B07A45] min-h-screen selection:bg-[#8E5E34]/20 selection:text-[#B07A45]">
+        <header>
+          <Navigation />
+        </header>
+        <main>
+          <ScrollHero />
+          <AnimatedCounterSection />
+          <ProductShowcase />
+          <BeforeAfterSection />
+          <ProblemSection />
+          <ServicesSection />
+          <TechStackSection />
+          <ProcessTimeline />
+          <CaseStudyHighlight />
+          <TestimonialSection />
+          <ROISection />
+          <TeamSection />
+          <FAQSection />
+          <BookingSection />
+          <FinalCTA />
+        </main>
+        <Footer />
+        <StickyCTABar />
+      </div>
+    </SmoothScroll>
   );
 }
