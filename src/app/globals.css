@@ -364,7 +364,7 @@ textarea {
 
 .dashboard-scope {
   --dash-bg: #F4EFE8;
-  --dash-card: #FFFFFF;
+  --dash-card: #EEE6DC;
   --dash-text: #1C1C1C;
   --dash-muted: #7A746C;
   --dash-accent: #8E5E34;
@@ -404,7 +404,7 @@ textarea {
 }
 
 .dashboard-scope .neu-input {
-  background: #FFFFFF;
+  background: #F4EFE8;
   border: 1px solid var(--dash-border);
   border-radius: 0.75rem;
   padding: 0.625rem 0.875rem;

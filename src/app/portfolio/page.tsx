@@ -342,7 +342,7 @@ export default function PortfolioPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/#contact"
-                className="inline-flex items-center justify-center gap-2 bg-[#B07A45] text-black px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#C89A6A] transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-[#B07A45] text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#8E5E34] transition-colors"
               >
                 Book a Free Consultation
                 <ArrowRight size={20} />

@@ -226,7 +226,7 @@ export default function EmailLogPage() {
                     {email.resend_id && <span>Resend ID: {email.resend_id}</span>}
                   </div>
                   {email.body_html ? (
-                    <div className="bg-white border border-[#E3D9CD] rounded-xl p-4 text-sm text-[#4B4B4B] max-h-80 overflow-y-auto"
+                    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-4 text-sm text-[#4B4B4B] max-h-80 overflow-y-auto"
                       dangerouslySetInnerHTML={{ __html: email.body_html }} />
                   ) : (
                     <p className="text-sm text-[#7A746C] italic">No email body available</p>

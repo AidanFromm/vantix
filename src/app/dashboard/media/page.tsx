@@ -439,12 +439,12 @@ function MediaCard({ item, onClick, onContextMenu }: { item: MediaFile; onClick:
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
-            <span className="p-2 bg-white/90 rounded-lg"><Eye size={16} className="text-[#1C1C1C]" /></span>
+            <span className="p-2 bg-[#F4EFE8]/90 rounded-lg"><Eye size={16} className="text-[#1C1C1C]" /></span>
           </div>
         </div>
         {/* Type overlay for non-images */}
         {!isVisual && (
-          <div className="absolute top-2 right-2 p-1.5 rounded-lg bg-white/80">
+          <div className="absolute top-2 right-2 p-1.5 rounded-lg bg-[#F4EFE8]/80">
             <Icon size={12} className="text-[#7A746C]" />
           </div>
         )}
@@ -622,7 +622,7 @@ function ContextMenuPopup({ item, x, y, onClose, onDownload, onCopyUrl, onDelete
   onDownload: () => void; onCopyUrl: () => void; onDelete: () => void; onEditTags: () => void
 }) {
   return (
-    <div style={{ position: 'fixed', left: x, top: y, zIndex: 100 }} className="bg-white border border-[#E3D9CD] rounded-xl shadow-lg py-1 min-w-[180px]" onClick={e => e.stopPropagation()}>
+    <div style={{ position: 'fixed', left: x, top: y, zIndex: 100 }} className="bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl shadow-lg py-1 min-w-[180px]" onClick={e => e.stopPropagation()}>
       <button onClick={onDownload} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[#4B4B4B] hover:bg-[#F4EFE8] transition-colors"><Download size={14} /> Download</button>
       <button onClick={onCopyUrl} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[#4B4B4B] hover:bg-[#F4EFE8] transition-colors"><Copy size={14} /> Copy URL</button>
       <button onClick={onEditTags} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[#4B4B4B] hover:bg-[#F4EFE8] transition-colors"><Tag size={14} /> Edit Tags</button>
@@ -1037,7 +1037,7 @@ function SocialCard({ post, mediaItem, onEdit, onDelete, onUpdate }: {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <button onClick={onEdit} className="flex-1 px-3 py-1.5 text-xs font-medium text-[#4B4B4B] bg-[#F4EFE8] border border-[#E3D9CD] rounded-lg hover:bg-white transition-colors">Edit</button>
+          <button onClick={onEdit} className="flex-1 px-3 py-1.5 text-xs font-medium text-[#4B4B4B] bg-[#F4EFE8] border border-[#E3D9CD] rounded-lg hover:bg-[#F4EFE8] transition-colors">Edit</button>
           <select
             value={post.status}
             onChange={e => onUpdate({ status: e.target.value as SocialPost['status'] })}

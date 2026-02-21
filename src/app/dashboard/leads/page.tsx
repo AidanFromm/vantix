@@ -184,7 +184,7 @@ function KanbanCard({ lead, onClick, onDragStart }: { lead: Lead; onClick: () =>
       draggable
       onDragStart={onDragStart}
       onClick={onClick}
-      className="bg-white rounded-xl p-3.5 border border-[#E3D9CD] hover:shadow-md transition-all cursor-grab active:cursor-grabbing group"
+      className="bg-[#EEE6DC] rounded-xl p-3.5 border border-[#E3D9CD] hover:shadow-md transition-all cursor-grab active:cursor-grabbing group"
     >
       <div className="flex items-start justify-between mb-2">
         <div className="font-semibold text-sm text-[#1C1C1C] truncate flex-1">{lead.company_name || 'Unnamed'}</div>
@@ -351,14 +351,14 @@ function ListView({ leads, onOpenDetail, onDeleteLeads, onMoveLeads }: {
           <div className="relative">
             <button
               onClick={() => setBulkMenuOpen(!bulkMenuOpen)}
-              className="text-xs px-3 py-1.5 rounded-lg bg-white border border-[#E3D9CD] text-[#4B4B4B] hover:bg-[#F4EFE8] flex items-center gap-1"
+              className="text-xs px-3 py-1.5 rounded-lg bg-[#EEE6DC] border border-[#E3D9CD] text-[#4B4B4B] hover:bg-[#F4EFE8] flex items-center gap-1"
             >
               Move to stage <ChevronDown size={12} />
             </button>
             {bulkMenuOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setBulkMenuOpen(false)} />
-                <div className="absolute left-0 top-9 z-50 bg-white rounded-xl shadow-lg border border-[#E3D9CD] py-1 min-w-[160px]">
+                <div className="absolute left-0 top-9 z-50 bg-[#F4EFE8] rounded-xl shadow-lg border border-[#E3D9CD] py-1 min-w-[160px]">
                   {STAGES.map(s => (
                     <button key={s} onClick={() => { onMoveLeads(Array.from(selected), s); setSelected(new Set()); setBulkMenuOpen(false); }}
                       className="w-full text-left px-3 py-2 text-sm hover:bg-[#F4EFE8] text-[#4B4B4B] flex items-center gap-2">
@@ -377,20 +377,20 @@ function ListView({ leads, onOpenDetail, onDeleteLeads, onMoveLeads }: {
           </button>
           <button
             onClick={exportCSV}
-            className="text-xs px-3 py-1.5 rounded-lg bg-white border border-[#E3D9CD] text-[#4B4B4B] hover:bg-[#F4EFE8] flex items-center gap-1"
+            className="text-xs px-3 py-1.5 rounded-lg bg-[#EEE6DC] border border-[#E3D9CD] text-[#4B4B4B] hover:bg-[#F4EFE8] flex items-center gap-1"
           >
             <Download size={12} /> Export CSV
           </button>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl border border-[#E3D9CD] overflow-hidden">
+      <div className="bg-[#EEE6DC] rounded-2xl border border-[#E3D9CD] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-[#EEE6DC] text-[#7A746C]">
                 <th className="px-4 py-3 w-10">
-                  <button onClick={toggleAll} className={`w-4 h-4 rounded border flex items-center justify-center ${allSelected ? 'bg-[#B07A45] border-[#B07A45]' : 'border-[#E3D9CD] bg-white'}`}>
+                  <button onClick={toggleAll} className={`w-4 h-4 rounded border flex items-center justify-center ${allSelected ? 'bg-[#B07A45] border-[#B07A45]' : 'border-[#E3D9CD] bg-[#F4EFE8]'}`}>
                     {allSelected && <Check size={10} className="text-white" />}
                   </button>
                 </th>
@@ -408,7 +408,7 @@ function ListView({ leads, onOpenDetail, onDeleteLeads, onMoveLeads }: {
               {sorted.map(l => (
                 <tr key={l.id} className="hover:bg-[#F4EFE8]/50 cursor-pointer transition-colors" onClick={() => onOpenDetail(l)}>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
-                    <button onClick={() => toggle(l.id)} className={`w-4 h-4 rounded border flex items-center justify-center ${selected.has(l.id) ? 'bg-[#B07A45] border-[#B07A45]' : 'border-[#E3D9CD] bg-white'}`}>
+                    <button onClick={() => toggle(l.id)} className={`w-4 h-4 rounded border flex items-center justify-center ${selected.has(l.id) ? 'bg-[#B07A45] border-[#B07A45]' : 'border-[#E3D9CD] bg-[#F4EFE8]'}`}>
                       {selected.has(l.id) && <Check size={10} className="text-white" />}
                     </button>
                   </td>
@@ -493,7 +493,7 @@ function DetailPanel({ lead, onClose, onUpdate, onDelete }: {
           </div>
 
           {/* Contact Card */}
-          <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+          <div className="bg-[#EEE6DC] rounded-xl p-4 border border-[#E3D9CD] mb-4">
             <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-3">Contact</div>
             <div className="space-y-2 text-sm text-[#4B4B4B]">
               <div className="flex items-center gap-2"><User size={14} className="text-[#B07A45]" /> {lead.contact_name || '--'}</div>
@@ -504,14 +504,14 @@ function DetailPanel({ lead, onClose, onUpdate, onDelete }: {
 
           {/* Score + Stage */}
           <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
+            <div className="bg-[#EEE6DC] rounded-xl p-4 border border-[#E3D9CD]">
               <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-2">Lead Score</div>
               <div className="flex items-center gap-2">
                 <span style={{ background: sc.bg, color: sc.text }} className="text-2xl font-bold px-3 py-1 rounded-lg">{lead.score}</span>
                 <span className="text-[10px] text-[#7A746C]">/10</span>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-[#E3D9CD]">
+            <div className="bg-[#EEE6DC] rounded-xl p-4 border border-[#E3D9CD]">
               <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-2">Stage</div>
               <select
                 value={stage}
@@ -525,7 +525,7 @@ function DetailPanel({ lead, onClose, onUpdate, onDelete }: {
 
           {/* AI Audit */}
           {lead.ai_audit && (
-            <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+            <div className="bg-[#EEE6DC] rounded-xl p-4 border border-[#E3D9CD] mb-4">
               <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-2 flex items-center gap-1">
                 <Zap size={12} /> AI Audit Summary
               </div>
@@ -534,7 +534,7 @@ function DetailPanel({ lead, onClose, onUpdate, onDelete }: {
           )}
 
           {/* Notes */}
-          <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+          <div className="bg-[#EEE6DC] rounded-xl p-4 border border-[#E3D9CD] mb-4">
             <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-2">Notes</div>
             <textarea
               value={notes}
@@ -552,7 +552,7 @@ function DetailPanel({ lead, onClose, onUpdate, onDelete }: {
           </div>
 
           {/* Email History */}
-          <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+          <div className="bg-[#EEE6DC] rounded-xl p-4 border border-[#E3D9CD] mb-4">
             <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-3 flex items-center gap-1">
               <Mail size={12} /> Email History
             </div>
@@ -574,7 +574,7 @@ function DetailPanel({ lead, onClose, onUpdate, onDelete }: {
           </div>
 
           {/* Activity Timeline */}
-          <div className="bg-white rounded-xl p-4 border border-[#E3D9CD] mb-4">
+          <div className="bg-[#EEE6DC] rounded-xl p-4 border border-[#E3D9CD] mb-4">
             <div className="text-[10px] font-semibold text-[#7A746C] uppercase tracking-wider mb-3 flex items-center gap-1">
               <Activity size={12} /> Activity Timeline
             </div>
@@ -656,7 +656,7 @@ function AddLeadModal({ onSave, onClose }: { onSave: (data: Partial<Lead>) => vo
                 <input
                   value={(form as Record<string, string>)[field]}
                   onChange={e => set(field, e.target.value)}
-                  className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 focus:border-[#B07A45] transition-colors"
+                  className="w-full mt-1 px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 focus:border-[#B07A45] transition-colors"
                   placeholder={`Enter ${label.toLowerCase()}`}
                 />
               </div>
@@ -667,7 +667,7 @@ function AddLeadModal({ onSave, onClose }: { onSave: (data: Partial<Lead>) => vo
                 value={form.notes}
                 onChange={e => set('notes', e.target.value)}
                 rows={3}
-                className="w-full mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 resize-none"
+                className="w-full mt-1 px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 resize-none"
               />
             </div>
           </div>
@@ -717,25 +717,25 @@ function FilterBar({ filters, onChange }: {
       {open && (
         <div className="w-full sm:w-auto flex flex-wrap gap-2">
           <select value={filters.stage} onChange={e => set('stage', e.target.value)}
-            className="px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
+            className="px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
             <option value="">All Stages</option>
             {STAGES.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
           <select value={filters.source} onChange={e => set('source', e.target.value)}
-            className="px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
+            className="px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30">
             <option value="">All Sources</option>
             {SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
           <div className="flex items-center gap-1">
             <span className="text-[10px] text-[#7A746C]">Score</span>
             <input type="number" min={1} max={10} value={filters.scoreMin} onChange={e => set('scoreMin', +e.target.value)}
-              className="w-12 px-2 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none" />
+              className="w-12 px-2 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none" />
             <span className="text-[10px] text-[#7A746C]">-</span>
             <input type="number" min={1} max={10} value={filters.scoreMax} onChange={e => set('scoreMax', +e.target.value)}
-              className="w-12 px-2 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none" />
+              className="w-12 px-2 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none" />
           </div>
           <input type="date" value={filters.dateFrom} onChange={e => set('dateFrom', e.target.value)}
-            className="px-3 py-2 rounded-xl bg-white border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30" />
+            className="px-3 py-2 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30" />
           {(filters.stage || filters.source || filters.dateFrom || filters.scoreMin !== 1 || filters.scoreMax !== 10) && (
             <button onClick={() => onChange({ stage: '', source: '', scoreMin: 1, scoreMax: 10, dateFrom: '', search: filters.search })}
               className="text-xs text-[#A0403C] hover:underline">Clear</button>

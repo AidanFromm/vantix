@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ArrowRight, ArrowLeft, Zap, Eye, Target, Lightbulb,
   Bot, Settings, Code, Clock, Shield
@@ -35,8 +36,7 @@ export default function AboutPage() {
           </Link>
           <Link
             href="/#booking"
-            className="px-5 py-2 text-sm font-semibold rounded-full text-[#8E5E34] shadow-sm hover:shadow-inner transition-all"
-            
+            className="px-5 py-2 text-sm font-semibold rounded-full bg-[#B07A45] hover:bg-[#8E5E34] text-white shadow-sm transition-all"
           >
             Work With Us
           </Link>
@@ -80,7 +80,7 @@ export default function AboutPage() {
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
               className="rounded-2xl p-8 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm hover:border-[#8E5E34]/20 transition-all">
               {m.photo ? (
-                <img src={m.photo} alt={m.name} className="w-20 h-20 rounded-xl object-cover shadow-sm mb-5" />
+                <Image src={m.photo} alt={m.name} width={80} height={80} className="w-20 h-20 rounded-xl object-cover shadow-sm mb-5" />
               ) : (
                 <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-sm flex items-center justify-center mb-5">
                   <m.icon className="w-7 h-7 text-[#8E5E34]" />
@@ -152,8 +152,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/#booking"
-            className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[#8E5E34] font-semibold rounded-full shadow-sm hover:shadow-inner transition-all"
-            
+            className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#B07A45] hover:bg-[#8E5E34] text-white font-semibold rounded-full shadow-md transition-all"
           >
             Book Your Free AI Audit <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>

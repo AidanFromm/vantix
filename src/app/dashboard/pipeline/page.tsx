@@ -98,7 +98,7 @@ export default function PipelinePage() {
                   {stageLeads.map(lead => (
                     <div
                       key={lead.id}
-                      className="bg-white border border-[#E3D9CD] rounded-lg p-3 hover:border-[#B07A45]/50 transition-colors"
+                      className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-lg p-3 hover:border-[#B07A45]/50 transition-colors"
                     >
                       <p className="font-medium text-sm text-[#1C1C1C]">{lead.name}</p>
                       {lead.company && <p className="text-xs text-[#7A746C] mt-1">{lead.company}</p>}

@@ -41,7 +41,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[#F4EFE8]">
       <div className="w-full max-w-md">
         <Link href="/" className="flex items-center justify-center gap-3 mb-8">
           <img src="/logo-nav.png" alt="Vantix" className="w-10 h-10 object-contain" />
@@ -100,7 +100,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#1C1C1C] hover:bg-[#8E5E34] disabled:opacity-50 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              className="w-full bg-[#B07A45] hover:bg-[#8E5E34] disabled:opacity-50 text-white py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               {loading ? 'Signing in...' : 'Sign In'}
               {!loading && <ArrowRight size={20} />}

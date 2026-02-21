@@ -158,7 +158,7 @@ export default function TasksPage() {
               <MoreHorizontal size={14} /> {selected.size} selected
             </button>
             {bulkMenu && (
-              <div className="absolute right-0 top-full mt-1 bg-white border border-[#E3D9CD] rounded-xl shadow-lg z-20 py-1 min-w-[180px]">
+              <div className="absolute right-0 top-full mt-1 bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl shadow-lg z-20 py-1 min-w-[180px]">
                 <button onClick={bulkComplete} className="w-full text-left px-4 py-2 text-sm hover:bg-[#F4EFE8] text-[#1C1C1C] flex items-center gap-2"><CheckCircle2 size={14} /> Mark Complete</button>
                 <div className="border-t border-[#E3D9CD] my-1" />
                 {ASSIGNEES.map(a => (
@@ -245,7 +245,7 @@ function FilterDropdown({ label, value, options, onChange }: { label: string; va
         {label}: {value} <ChevronDown size={12} />
       </button>
       {open && (
-        <div className="absolute top-full mt-1 bg-white border border-[#E3D9CD] rounded-xl shadow-lg z-20 py-1 min-w-[140px]">
+        <div className="absolute top-full mt-1 bg-[#F4EFE8] border border-[#E3D9CD] rounded-xl shadow-lg z-20 py-1 min-w-[140px]">
           {options.map(o => (
             <button key={o} onClick={() => { onChange(o); setOpen(false) }} className={`w-full text-left px-4 py-1.5 text-sm hover:bg-[#F4EFE8] ${o === value ? 'text-[#B07A45] font-medium' : 'text-[#1C1C1C]'}`}>{o}</button>
           ))}
