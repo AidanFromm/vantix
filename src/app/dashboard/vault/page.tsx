@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase-client';
 
-const VAULT_PASSWORD = 'AK47Money';
 const SESSION_KEY = 'vantix_vault_auth';
 
 interface Field {
@@ -56,18 +55,26 @@ function PasswordGate({ onAuth }: { onAuth: () => void }) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      if (password === VAULT_PASSWORD) {
+    try {
+      const res = await fetch('/api/vault/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      if (res.ok) {
         sessionStorage.setItem(SESSION_KEY, 'true');
         onAuth();
       } else {
         setError(true);
         setLoading(false);
       }
-    }, 300);
+    } catch {
+      setError(true);
+      setLoading(false);
+    }
   };
 
   return (
