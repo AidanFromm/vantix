@@ -169,7 +169,7 @@ function MetricCard({
   trendUp: boolean;
 }) {
   return (
-    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 cursor-default">
       <div className="flex items-center justify-between mb-3">
         <span className="text-[#7A746C] text-sm font-medium">{label}</span>
         <div className="text-[#B07A45]">{icon}</div>
@@ -376,6 +376,7 @@ function QuickActions() {
 // ─── Main Page ───────────────────────────────────────────────────────
 export default function DashboardOverview() {
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string>('');
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -384,6 +385,20 @@ export default function DashboardOverview() {
   const [clients, setClients] = useState<Client[]>([]);
   const [expenses, setExpenses] = useState<{ id: string; amount?: number }[]>([]);
   const [payments, setPayments] = useState<{ id: string; amount?: number }[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('vantix_user');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setUserName(parsed.name || parsed.username || parsed.email?.split('@')[0] || stored);
+        } catch {
+          setUserName(stored);
+        }
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     async function load() {
@@ -456,9 +471,13 @@ export default function DashboardOverview() {
     <div className="min-h-screen p-6 lg:p-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-[#1C1C1C] text-xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-[#1C1C1C] text-xl font-bold tracking-tight">
+          {userName ? `Welcome back, ${userName}` : 'Dashboard'}
+        </h1>
         <p className="text-[#7A746C] text-sm mt-0.5">
           {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+          {' — '}
+          {new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
         </p>
       </div>
 

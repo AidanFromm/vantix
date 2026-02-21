@@ -626,7 +626,7 @@ function AddLeadModal({ onSave, onClose }: { onSave: (data: Partial<Lead>) => vo
     onSave({
       ...form,
       score: 5,
-      stage: 'New',
+      stage: 'new',
       source: 'Manual',
       ai_audit: '',
       email_history: [],
