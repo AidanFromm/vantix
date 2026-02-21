@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Contact Us — Get a Free AI Consultation | Vantix',
-  description: 'Reach out to Vantix for a free AI consultation. Tell us about your business and we\'ll show you how automation can save time and increase revenue.',
+  description: 'Get in touch with Vantix for a free AI automation consultation. Tell us about your business and we will identify the highest-impact opportunities.',
   openGraph: {
     title: 'Contact Us — Get a Free AI Consultation | Vantix',
-    description: 'Reach out to Vantix for a free AI consultation. Tell us about your business challenges.',
+    description: 'Reach out for a free consultation on AI automation for your business.',
     url: 'https://www.usevantix.com/contact',
   },
 };
 
-export default function ContactLayout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return children;
 }

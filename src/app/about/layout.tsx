@@ -1,11 +1,15 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'About & Contact | Vantix',
-  description:
-    'Meet the team behind Vantix. Two founders building digital solutions that deliver real results for businesses worldwide.',
+  title: 'About Vantix — AI Automation Agency',
+  description: 'Meet the team behind Vantix. We are an AI consulting agency that builds intelligent systems to help businesses generate revenue, cut costs, and scale.',
+  openGraph: {
+    title: 'About Vantix — AI Automation Agency',
+    description: 'Meet the team behind Vantix and learn about our mission to bring AI automation to every business.',
+    url: 'https://www.usevantix.com/about',
+  },
 };
 
-export default function AboutLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return children;
 }

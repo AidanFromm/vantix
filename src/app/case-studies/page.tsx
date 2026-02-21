@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, ArrowLeft, ShoppingCart, TrendingUp } from 'lucide-react';
+import { ArrowRight, ArrowLeft, ShoppingCart, TrendingUp, UtensilsCrossed, Dumbbell } from 'lucide-react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -18,6 +18,24 @@ const caseStudies = [
     description: 'Custom e-commerce + inventory management + POS integration replacing Shopify for a Tampa-based sneaker and collectibles retailer.',
     icon: ShoppingCart,
     tags: ['E-Commerce', 'POS Integration', 'Inventory Management'],
+  },
+  {
+    slug: 'local-restaurant-chain',
+    client: 'Regional Restaurant Group',
+    industry: 'Food & Hospitality',
+    metric: '200% increase in online orders within 6 months',
+    description: 'A 3-location restaurant chain needed a unified online ordering system and brand refresh to compete with delivery apps and drive direct orders.',
+    icon: UtensilsCrossed,
+    tags: ['Online Ordering', 'Brand Refresh', 'Multi-Location'],
+  },
+  {
+    slug: 'fitness-studio',
+    client: 'Boutique Fitness Studio',
+    industry: 'Health & Fitness',
+    metric: '150% membership growth in 8 months',
+    description: 'A boutique fitness studio needed a modern booking system and member portal to reduce admin overhead and improve the member experience.',
+    icon: Dumbbell,
+    tags: ['Booking System', 'Member Portal', 'Automation'],
   },
 ];
 

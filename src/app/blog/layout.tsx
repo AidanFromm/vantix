@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Blog — AI Automation Insights & Strategy | Vantix',
-  description: 'Read actionable insights on AI automation, business strategy, and digital transformation. Learn how to cut costs and scale with AI.',
+  title: 'Blog — AI Automation Insights for Business | Vantix',
+  description: 'Practical guides, case studies, and strategies on AI automation for small and mid-size businesses. Learn how to cut costs, save time, and scale smarter.',
   openGraph: {
-    title: 'Blog — AI Automation Insights & Strategy | Vantix',
-    description: 'Actionable insights on AI automation, business strategy, and digital transformation.',
+    title: 'Blog — AI Automation Insights for Business | Vantix',
+    description: 'Practical guides and strategies on AI automation for businesses.',
     url: 'https://www.usevantix.com/blog',
   },
 };
 
-export default function BlogLayout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return children;
 }

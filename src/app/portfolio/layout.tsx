@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Portfolio — SecuredTampa E-Commerce Platform | Vantix',
-  description: 'Explore the Vantix portfolio: a 100+ page custom e-commerce platform with POS integration, inventory management, and admin dashboard built in under 2 weeks.',
+  title: 'Portfolio — Our Work | Vantix',
+  description: 'Explore the Vantix portfolio — custom AI-powered platforms, e-commerce builds, automation systems, and more built for real businesses.',
   openGraph: {
-    title: 'Portfolio — SecuredTampa E-Commerce Platform | Vantix',
-    description: 'Explore the Vantix portfolio: custom e-commerce platforms and AI-powered business tools.',
+    title: 'Portfolio — Our Work | Vantix',
+    description: 'See the custom AI platforms and automation systems we have built for businesses.',
     url: 'https://www.usevantix.com/portfolio',
   },
 };
 
-export default function PortfolioLayout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return children;
 }
