@@ -147,36 +147,154 @@ export default function ScrollHero() {
     return () => ctx.revert();
   }, [isMobile]);
 
-  // ═══ MOBILE ═══
+  // ═══ MOBILE: GSAP entrance + scroll-triggered dashboard ═══
+  const mobileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const ctx = gsap.context(() => {
+      // ── Entrance animations on load ──
+      const entrance = gsap.timeline({ delay: 0.2 });
+
+      entrance.fromTo('.shm-badge',
+        { y: -15, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
+      );
+      entrance.fromTo('.shm-h1',
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' },
+        0.15
+      );
+      entrance.fromTo('.shm-h1-bronze',
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' },
+        0.3
+      );
+      entrance.fromTo('.shm-sub',
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' },
+        0.5
+      );
+      entrance.fromTo('.shm-cta',
+        { y: 15, opacity: 0, scale: 0.9 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.5)' },
+        0.65
+      );
+
+      // ── Dashboard scroll reveal ──
+      gsap.fromTo('.shm-dashboard',
+        { y: 60, opacity: 0, scale: 0.92, rotateX: 8 },
+        {
+          y: 0, opacity: 1, scale: 1, rotateX: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.shm-dashboard',
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          }
+        }
+      );
+
+      // ── Stat pills stagger in ──
+      gsap.fromTo('.shm-pill',
+        { y: 20, opacity: 0, scale: 0.85 },
+        {
+          y: 0, opacity: 1, scale: 1,
+          duration: 0.5,
+          stagger: 0.12,
+          ease: 'back.out(1.3)',
+          scrollTrigger: {
+            trigger: '.shm-pills',
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+          }
+        }
+      );
+
+    }, mobileRef);
+
+    return () => ctx.revert();
+  }, [isMobile]);
+
   if (isMobile) {
     return (
-      <section className="relative overflow-hidden bg-[#F4EFE8] pt-24 pb-16">
+      <section ref={mobileRef} className="relative overflow-hidden bg-[#F4EFE8] pt-24 pb-16">
         <div className="absolute inset-0 bg-gradient-to-b from-[#F4EFE8] via-[#F4EFE8] to-[#EEE6DC]" />
+
+        {/* Ambient glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full bg-[#B07A45]/[0.04] blur-[80px]" />
         
         <div className="relative z-10 max-w-lg mx-auto px-5 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#D8C2A8]/60 bg-[#EEE6DC]/80 mb-6 shadow-sm">
+          {/* Badge */}
+          <div className="shm-badge opacity-0 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#D8C2A8]/60 bg-[#EEE6DC]/80 mb-6 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[#8E5E34] animate-pulse" />
             <span className="text-xs text-[#7A746C] font-medium">AI-First Agency — Building 24/7</span>
           </div>
 
-          <h1 className="text-[2.5rem] leading-[1.05] font-bold tracking-[-0.03em] text-[#1C1C1C] mb-4">
-            Your Competitors Are
-            <br />
-            <span className="text-[#B07A45]">Automating.</span>{' '}
-            <span className="text-[#8E5E34]">Are You?</span>
-          </h1>
+          {/* Headline */}
+          <div className="shm-h1 opacity-0">
+            <h1 className="text-[2.5rem] leading-[1.05] font-bold tracking-[-0.03em] text-[#1C1C1C]">
+              Your Competitors Are
+            </h1>
+          </div>
+          <div className="shm-h1-bronze opacity-0 mb-4">
+            <h1 className="text-[2.5rem] leading-[1.05] font-bold tracking-[-0.03em]">
+              <span className="text-[#B07A45]">Automating.</span>{' '}
+              <span className="text-[#8E5E34]">Are You?</span>
+            </h1>
+          </div>
 
-          <p className="text-base text-[#7A746C] max-w-md mx-auto leading-relaxed mb-6">
+          {/* Subtitle */}
+          <p className="shm-sub opacity-0 text-base text-[#7A746C] max-w-md mx-auto leading-relaxed mb-6">
             We build AI-powered platforms, dashboards, and automation systems that run your business while you sleep.
           </p>
 
-          <a href="#booking" className="bronze-btn text-white font-semibold rounded-full px-8 py-4 shadow-md inline-flex items-center gap-2">
+          {/* CTA */}
+          <a href="#booking" className="shm-cta opacity-0 bronze-btn text-white font-semibold rounded-full px-8 py-4 shadow-md inline-flex items-center gap-2">
             Book Your Free AI Audit
             <ArrowRight size={18} />
           </a>
 
-          <div className="mt-8 relative rounded-xl overflow-hidden shadow-2xl border border-[#E3D9CD]">
-            <Image src="/dash-overview.png" alt="Vantix AI Dashboard" width={600} height={400} className="w-full" priority />
+          {/* Dashboard with scroll reveal */}
+          <div className="shm-dashboard opacity-0 mt-10" style={{ perspective: '600px' }}>
+            <div className="relative rounded-xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] border border-[#E3D9CD]">
+              {/* Browser chrome */}
+              <div className="bg-[#1C1C1C] px-3 py-2 flex items-center gap-2">
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 rounded-full bg-[#FF5F57]" />
+                  <span className="w-2 h-2 rounded-full bg-[#FFBD2E]" />
+                  <span className="w-2 h-2 rounded-full bg-[#28C840]" />
+                </div>
+                <div className="flex-1 mx-2">
+                  <div className="bg-[#2A2A2A] rounded px-3 py-1 text-[10px] text-[#888] text-center font-mono">usevantix.com/dashboard</div>
+                </div>
+              </div>
+              <Image src="/dash-overview.png" alt="Vantix AI Dashboard" width={600} height={400} className="w-full block" priority />
+            </div>
+          </div>
+
+          {/* Stat pills with staggered scroll reveal */}
+          <div className="shm-pills mt-6 flex gap-2.5 justify-center flex-wrap">
+            <div className="shm-pill opacity-0 bg-[#EEE6DC] border border-[#E3D9CD] rounded-full px-4 py-2.5 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#B07A45] animate-pulse" />
+                <span className="text-xs text-[#1C1C1C] font-semibold">11 AI Agents</span>
+              </div>
+            </div>
+            <div className="shm-pill opacity-0 bg-[#EEE6DC] border border-[#E3D9CD] rounded-full px-4 py-2.5 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#B07A45]" />
+                <span className="text-xs text-[#1C1C1C] font-semibold">108 Leads</span>
+              </div>
+            </div>
+            <div className="shm-pill opacity-0 bg-[#EEE6DC] border border-[#E3D9CD] rounded-full px-4 py-2.5 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#B07A45] animate-pulse" />
+                <span className="text-xs text-[#1C1C1C] font-semibold">24/7 Live</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
