@@ -259,19 +259,8 @@ export default function ScrollHero() {
 
           {/* Dashboard with scroll reveal */}
           <div className="shm-dashboard opacity-0 mt-10" style={{ perspective: '600px' }}>
-            <div className="relative rounded-xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] border border-[#E3D9CD]">
-              {/* Browser chrome */}
-              <div className="bg-[#1C1C1C] px-3 py-2 flex items-center gap-2">
-                <div className="flex gap-1">
-                  <span className="w-2 h-2 rounded-full bg-[#FF5F57]" />
-                  <span className="w-2 h-2 rounded-full bg-[#FFBD2E]" />
-                  <span className="w-2 h-2 rounded-full bg-[#28C840]" />
-                </div>
-                <div className="flex-1 mx-2">
-                  <div className="bg-[#2A2A2A] rounded px-3 py-1 text-[10px] text-[#888] text-center font-mono">usevantix.com/dashboard</div>
-                </div>
-              </div>
-              <Image src="/dash-overview.png" alt="Vantix AI Dashboard" width={600} height={400} className="w-full block" priority />
+            <div className="relative rounded-2xl overflow-hidden shadow-[0_25px_80px_-15px_rgba(0,0,0,0.15)]">
+              <Image src="/hero-dashboard-new.jpg" alt="Vantix AI Dashboard" width={960} height={640} className="w-full block" priority />
             </div>
           </div>
 
@@ -366,21 +355,8 @@ export default function ScrollHero() {
           </div>
 
           <div className="sh-dashboard absolute opacity-0" style={{ width: 'min(78vw, 960px)', transformStyle: 'preserve-3d' }}>
-            <div className="relative rounded-2xl overflow-hidden shadow-[0_25px_80px_-15px_rgba(0,0,0,0.15)] border border-[#E3D9CD]">
-              <div className="bg-[#1C1C1C] px-4 py-2.5 flex items-center gap-3">
-                <div className="flex gap-1.5">
-                  <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
-                  <span className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-                  <span className="w-3 h-3 rounded-full bg-[#28C840]" />
-                </div>
-                <div className="flex-1 mx-4">
-                  <div className="bg-[#2A2A2A] rounded-lg px-4 py-1.5 text-xs text-[#888] max-w-sm mx-auto text-center font-mono">
-                    usevantix.com/dashboard
-                  </div>
-                </div>
-                <div className="w-12" />
-              </div>
-              <Image src="/dash-overview.png" alt="Vantix AI Command Center" width={960} height={640} className="w-full block" priority />
+            <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_100px_-20px_rgba(0,0,0,0.18)]">
+              <Image src="/hero-dashboard-new.jpg" alt="Vantix AI Command Center" width={960} height={640} className="w-full block" priority />
             </div>
           </div>
 
