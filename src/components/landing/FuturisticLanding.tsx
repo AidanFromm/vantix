@@ -135,15 +135,6 @@ function useTypewriter(phrases: string[], typingSpeed = 60, deletingSpeed = 30, 
 // ============================================
 function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 100);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
   const links = [
     { label: 'Services', href: '/services' },
     { label: 'Work', href: '/case-studies' },
@@ -157,20 +148,16 @@ function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-500 ${
-        scrolled
-          ? 'bg-[#F4EFE8]/95 border-b border-[#E3D9CD]'
-          : 'bg-transparent border-b border-transparent'
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 bg-[#F4EFE8]/95 backdrop-blur-sm border-b border-[#E3D9CD]"
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-6 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2.5">
           <Image src="/logo-nav.png" alt="Vantix logo" width={36} height={36} className="w-9 h-9 object-contain" priority />
-          <span className={`text-2xl font-extrabold tracking-tight transition-colors duration-500 ${scrolled ? 'text-[#B07A45]' : 'text-[#D4A574]'}`}>vantix<span className={scrolled ? 'text-[#8E5E34]' : 'text-[#B07A45]'}>.</span></span>
+          <span className="text-2xl font-extrabold text-[#B07A45] tracking-tight">vantix<span className="text-[#8E5E34]">.</span></span>
         </a>
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className={`text-sm transition-colors ${scrolled ? 'text-[#7A746C] hover:text-[#B07A45]' : 'text-[#999] hover:text-[#D4A574]'}`}>
+            <a key={l.href} href={l.href} className="text-sm text-[#7A746C] hover:text-[#B07A45] transition-colors">
               {l.label}
             </a>
           ))}

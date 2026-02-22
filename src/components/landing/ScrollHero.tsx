@@ -133,10 +133,6 @@ export default function ScrollHero() {
         0.59
       );
 
-      // Background transition dark → cream
-      tl.to('.sh-bg-dark', { opacity: 0, duration: 0.15 }, 0.72);
-      tl.to('.sh-bg-cream', { opacity: 1, duration: 0.15 }, 0.72);
-
       // Everything fades for seamless exit
       tl.to('.sh-stage', {
         opacity: 0,
@@ -154,61 +150,35 @@ export default function ScrollHero() {
   // ═══ MOBILE ═══
   if (isMobile) {
     return (
-      <section className="relative overflow-hidden bg-[#0C0A09] pt-24 pb-16">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] rounded-full bg-[#B07A45]/8 blur-[100px]" />
+      <section className="relative overflow-hidden bg-[#F4EFE8] pt-24 pb-16">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F4EFE8] via-[#F4EFE8] to-[#EEE6DC]" />
         
         <div className="relative z-10 max-w-lg mx-auto px-5 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#B07A45]/20 bg-[#B07A45]/5 mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#B07A45] animate-pulse" />
-            <span className="text-xs text-[#B07A45]/80 font-medium tracking-wide">AI-First Agency</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#D8C2A8]/60 bg-[#EEE6DC]/80 mb-6 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-[#8E5E34] animate-pulse" />
+            <span className="text-xs text-[#7A746C] font-medium">AI-First Agency — Building 24/7</span>
           </div>
 
-          <h1 className="text-[2.2rem] leading-[1.1] font-bold tracking-[-0.03em] text-white mb-2">
-            Your Competitors
-          </h1>
-          <h1 className="text-[2.2rem] leading-[1.1] font-bold tracking-[-0.03em] mb-5">
-            <span className="bg-gradient-to-r from-[#C89A6A] via-[#D4A574] to-[#B07A45] bg-clip-text text-transparent">
-              Are Automating.
-            </span>{' '}
-            <span className="bg-gradient-to-r from-[#B07A45] to-[#8E5E34] bg-clip-text text-transparent">
-              Are You?
-            </span>
+          <h1 className="text-[2.5rem] leading-[1.05] font-bold tracking-[-0.03em] text-[#1C1C1C] mb-4">
+            Your Competitors Are
+            <br />
+            <span className="text-[#B07A45]">Automating.</span>{' '}
+            <span className="text-[#8E5E34]">Are You?</span>
           </h1>
 
-          <p className="text-[15px] text-[#999] leading-relaxed mb-7 max-w-sm mx-auto">
-            We build AI-powered platforms and automation systems that run your business while you sleep.
+          <p className="text-base text-[#7A746C] max-w-md mx-auto leading-relaxed mb-6">
+            We build AI-powered platforms, dashboards, and automation systems that run your business while you sleep.
           </p>
 
-          <a href="#booking" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B07A45] to-[#8E5E34] text-white font-semibold rounded-full px-7 py-3.5 shadow-[0_0_30px_rgba(176,122,69,0.3)] transition-all">
+          <a href="#booking" className="bronze-btn text-white font-semibold rounded-full px-8 py-4 shadow-md inline-flex items-center gap-2">
             Book Your Free AI Audit
-            <ArrowRight size={16} />
+            <ArrowRight size={18} />
           </a>
 
-          <div className="mt-10 relative">
-            <div className="absolute -inset-4 bg-gradient-to-b from-[#B07A45]/15 via-[#B07A45]/5 to-transparent rounded-2xl blur-xl" />
-            <div className="relative rounded-xl overflow-hidden border border-[#B07A45]/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]">
-              <div className="bg-[#1A1A1A] px-3 py-2 flex items-center gap-2">
-                <div className="flex gap-1">
-                  <span className="w-2 h-2 rounded-full bg-[#FF5F57]" />
-                  <span className="w-2 h-2 rounded-full bg-[#FFBD2E]" />
-                  <span className="w-2 h-2 rounded-full bg-[#28C840]" />
-                </div>
-                <div className="flex-1 mx-2">
-                  <div className="bg-[#0F0F0F] rounded px-3 py-1 text-[10px] text-[#555] text-center font-mono">usevantix.com/dashboard</div>
-                </div>
-              </div>
-              <Image src="/dash-overview.png" alt="Vantix AI Dashboard" width={600} height={400} className="w-full block" priority />
-            </div>
-          </div>
-
-          <div className="mt-6 flex gap-3 justify-center flex-wrap">
-            <div className="bg-[#B07A45]/10 border border-[#B07A45]/15 rounded-full px-4 py-2 text-xs text-[#D4A574] font-medium">11 AI Agents</div>
-            <div className="bg-[#B07A45]/10 border border-[#B07A45]/15 rounded-full px-4 py-2 text-xs text-[#D4A574] font-medium">108 Leads</div>
-            <div className="bg-[#B07A45]/10 border border-[#B07A45]/15 rounded-full px-4 py-2 text-xs text-[#D4A574] font-medium">24/7 Live</div>
+          <div className="mt-8 relative rounded-xl overflow-hidden shadow-2xl border border-[#E3D9CD]">
+            <Image src="/dash-overview.png" alt="Vantix AI Dashboard" width={600} height={400} className="w-full" priority />
           </div>
         </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#F4EFE8] to-transparent" />
       </section>
     );
   }
@@ -216,53 +186,55 @@ export default function ScrollHero() {
   // ═══ DESKTOP ═══
   return (
     <section ref={sectionRef} className="relative h-screen overflow-hidden">
-      {/* Background layers */}
-      <div className="sh-bg-dark absolute inset-0 bg-[#0C0A09] z-0" />
-      <div className="sh-bg-cream absolute inset-0 bg-[#F4EFE8] z-0 opacity-0" />
+      {/* Background — cream */}
+      <div className="absolute inset-0 bg-[#F4EFE8] z-0" />
 
       {/* Ambient light */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-        <div className="absolute w-[700px] h-[700px] rounded-full bg-[#B07A45]/[0.03] blur-[150px] top-[-200px] left-1/2 -translate-x-1/2" />
-        <div className="absolute w-[400px] h-[400px] rounded-full bg-[#B07A45]/[0.02] blur-[100px] bottom-[20%] left-[15%]" />
-        <div className="absolute w-[300px] h-[300px] rounded-full bg-[#8E5E34]/[0.02] blur-[80px] top-[40%] right-[10%]" />
+        <div className="absolute w-[700px] h-[700px] rounded-full bg-[#B07A45]/[0.05] blur-[150px] top-[-200px] left-1/2 -translate-x-1/2" />
+        <div className="absolute w-[400px] h-[400px] rounded-full bg-[#B07A45]/[0.03] blur-[100px] bottom-[20%] left-[15%]" />
       </div>
 
-      {/* Subtle grid */}
-      <div className="absolute inset-0 z-[1] pointer-events-none opacity-[0.03]" style={{
-        backgroundImage: 'linear-gradient(rgba(176,122,69,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(176,122,69,0.3) 1px, transparent 1px)',
-        backgroundSize: '60px 60px'
-      }} />
+      {/* Subtle dot grid */}
+      <div className="absolute inset-0 z-[1] pointer-events-none">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="dot-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.6" fill="rgba(176,122,69,0.08)" />
+          </pattern></defs>
+          <rect width="100%" height="100%" fill="url(#dot-grid)" />
+        </svg>
+      </div>
 
-      {/* Bottom transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#F4EFE8] to-transparent z-40 pointer-events-none" />
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#EEE6DC] to-transparent z-40 pointer-events-none" />
 
       <div className="sh-stage relative z-10 h-full">
 
         {/* ═══ Text — visible on load ═══ */}
         <div className="sh-text-wrap absolute inset-0 flex flex-col items-center justify-center z-20 px-6">
-          <div className="sh-badge opacity-0 inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-[#B07A45]/20 bg-[#B07A45]/[0.06] mb-8 backdrop-blur-sm">
+          <div className="sh-badge opacity-0 inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-[#D8C2A8]/60 bg-[#EEE6DC]/80 mb-8 shadow-sm backdrop-blur-sm">
             <Sparkles size={14} className="text-[#B07A45]" />
-            <span className="text-sm text-[#B07A45]/80 font-medium tracking-wide">AI-First Agency — Building 24/7</span>
+            <span className="text-sm text-[#7A746C] font-medium tracking-wide">AI-First Agency — Building 24/7</span>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl xl:text-[5.5rem] font-bold tracking-[-0.04em] text-white leading-[0.95] flex flex-wrap justify-center gap-x-[0.3em]">
+          <h1 className="text-5xl lg:text-7xl xl:text-[5.5rem] font-bold tracking-[-0.04em] text-[#1C1C1C] leading-[0.95] flex flex-wrap justify-center gap-x-[0.3em]">
             <span className="sh-word opacity-0 inline-block">Your</span>
             <span className="sh-word opacity-0 inline-block">Competitors</span>
             <span className="sh-word opacity-0 inline-block">Are</span>
           </h1>
 
           <h1 className="text-5xl lg:text-7xl xl:text-[5.5rem] font-bold tracking-[-0.04em] leading-[0.95] flex flex-wrap justify-center gap-x-[0.3em] mt-2">
-            <span className="sh-word-bronze opacity-0 inline-block bg-gradient-to-r from-[#C89A6A] via-[#D4A574] to-[#B07A45] bg-clip-text text-transparent">Automating.</span>
-            <span className="sh-word-bronze opacity-0 inline-block bg-gradient-to-r from-[#B07A45] via-[#D4A574] to-[#C89A6A] bg-clip-text text-transparent">Are</span>
-            <span className="sh-word-bronze opacity-0 inline-block bg-gradient-to-r from-[#C89A6A] to-[#8E5E34] bg-clip-text text-transparent">You?</span>
+            <span className="sh-word-bronze opacity-0 inline-block text-[#B07A45]">Automating.</span>
+            <span className="sh-word-bronze opacity-0 inline-block text-[#8E5E34]">Are</span>
+            <span className="sh-word-bronze opacity-0 inline-block text-[#B07A45]">You?</span>
           </h1>
 
-          <p className="sh-sub text-lg lg:text-xl text-[#888] max-w-2xl mx-auto leading-relaxed mt-8 text-center opacity-0">
+          <p className="sh-sub text-lg lg:text-xl text-[#7A746C] max-w-2xl mx-auto leading-relaxed mt-8 text-center opacity-0">
             We build AI-powered platforms, dashboards, and automation systems
             that run your business while you sleep.
           </p>
 
-          <a href="#booking" className="sh-cta opacity-0 mt-8 inline-flex items-center gap-2 bg-gradient-to-r from-[#B07A45] to-[#8E5E34] text-white font-semibold rounded-full px-8 py-4 shadow-[0_0_40px_rgba(176,122,69,0.25)] hover:shadow-[0_0_50px_rgba(176,122,69,0.35)] transition-all">
+          <a href="#booking" className="sh-cta opacity-0 mt-8 inline-flex items-center gap-2 bronze-btn text-white font-semibold rounded-full px-8 py-4 shadow-md hover:shadow-lg hover:brightness-110 transition-all">
             Book Your Free AI Audit
             <ArrowRight size={18} />
           </a>
@@ -271,24 +243,24 @@ export default function ScrollHero() {
         {/* ═══ Dashboard Container ═══ */}
         <div className="absolute inset-0 flex items-center justify-center z-10" style={{ perspective: '1200px' }}>
 
-          <div className="sh-glow absolute opacity-0" style={{ width: 'min(80vw, 1000px)', bottom: '10%' }}>
-            <div className="w-full h-[180px] bg-gradient-to-t from-[#B07A45]/12 via-[#B07A45]/4 to-transparent rounded-full blur-[50px]" />
+              <div className="sh-glow absolute opacity-0" style={{ width: 'min(80vw, 1000px)', bottom: '10%' }}>
+            <div className="w-full h-[150px] bg-gradient-to-t from-[#B07A45]/8 via-[#B07A45]/3 to-transparent rounded-full blur-[40px]" />
           </div>
 
           <div className="sh-dashboard absolute opacity-0" style={{ width: 'min(78vw, 960px)', transformStyle: 'preserve-3d' }}>
-            <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_100px_-20px_rgba(0,0,0,0.6)] border border-white/[0.06]">
-              <div className="bg-[#1A1A1A] px-4 py-3 flex items-center gap-3 border-b border-white/[0.04]">
+            <div className="relative rounded-2xl overflow-hidden shadow-[0_25px_80px_-15px_rgba(0,0,0,0.15)] border border-[#E3D9CD]">
+              <div className="bg-[#1C1C1C] px-4 py-2.5 flex items-center gap-3">
                 <div className="flex gap-1.5">
                   <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
                   <span className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
                   <span className="w-3 h-3 rounded-full bg-[#28C840]" />
                 </div>
-                <div className="flex-1 mx-6">
-                  <div className="bg-[#0F0F0F] rounded-lg px-4 py-1.5 text-[13px] text-[#555] max-w-md mx-auto text-center font-mono flex items-center justify-center gap-2">
-                    <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M5 0.5v4.5m0 2v4.5M0.5 5.5h4m1 0h4" stroke="#28C840" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                <div className="flex-1 mx-4">
+                  <div className="bg-[#2A2A2A] rounded-lg px-4 py-1.5 text-xs text-[#888] max-w-sm mx-auto text-center font-mono">
                     usevantix.com/dashboard
                   </div>
                 </div>
+                <div className="w-12" />
               </div>
               <Image src="/dash-overview.png" alt="Vantix AI Command Center" width={960} height={640} className="w-full block" priority />
             </div>
@@ -296,46 +268,46 @@ export default function ScrollHero() {
 
           {/* Stat cards */}
           <div className="sh-stat-1 absolute opacity-0" style={{ left: '3%', top: '20%' }}>
-            <div className="bg-[#1C1C1C]/85 backdrop-blur-xl rounded-2xl px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)] border border-white/[0.06] min-w-[170px]">
+            <div className="bg-[#EEE6DC] rounded-2xl px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-[#E3D9CD] min-w-[170px]">
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#28C840] shadow-[0_0_6px_rgba(40,200,64,0.5)] animate-pulse" />
-                <span className="text-[10px] text-[#777] uppercase tracking-wider font-medium">Live Agents</span>
+                <span className="w-2 h-2 rounded-full bg-[#B07A45] animate-pulse" />
+                <span className="text-[10px] text-[#7A746C] uppercase tracking-wider font-medium">Live Agents</span>
               </div>
-              <div className="text-2xl font-bold text-white">11</div>
+              <div className="text-2xl font-bold text-[#1C1C1C]">11</div>
               <div className="text-[11px] text-[#B07A45] mt-0.5">All systems operational</div>
             </div>
           </div>
 
           <div className="sh-stat-2 absolute opacity-0" style={{ right: '3%', top: '20%' }}>
-            <div className="bg-[#1C1C1C]/85 backdrop-blur-xl rounded-2xl px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)] border border-white/[0.06] min-w-[170px]">
+            <div className="bg-[#EEE6DC] rounded-2xl px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-[#E3D9CD] min-w-[170px]">
               <div className="flex items-center gap-2 mb-1.5">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10l3-4 2 2 3-5" stroke="#B07A45" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                <span className="text-[10px] text-[#777] uppercase tracking-wider font-medium">Pipeline</span>
+                <span className="text-[10px] text-[#7A746C] uppercase tracking-wider font-medium">Pipeline</span>
               </div>
-              <div className="text-2xl font-bold text-white">$47K</div>
-              <div className="text-[11px] text-[#28C840] mt-0.5">+340% this quarter</div>
+              <div className="text-2xl font-bold text-[#1C1C1C]">$47K</div>
+              <div className="text-[11px] text-[#B07A45] mt-0.5">+340% this quarter</div>
             </div>
           </div>
 
           <div className="sh-stat-3 absolute opacity-0" style={{ left: '5%', bottom: '22%' }}>
-            <div className="bg-[#1C1C1C]/85 backdrop-blur-xl rounded-2xl px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)] border border-white/[0.06] min-w-[170px]">
+            <div className="bg-[#EEE6DC] rounded-2xl px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-[#E3D9CD] min-w-[170px]">
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#B07A45] shadow-[0_0_6px_rgba(176,122,69,0.5)]" />
-                <span className="text-[10px] text-[#777] uppercase tracking-wider font-medium">Active Leads</span>
+                <span className="w-2 h-2 rounded-full bg-[#B07A45]" />
+                <span className="text-[10px] text-[#7A746C] uppercase tracking-wider font-medium">Active Leads</span>
               </div>
-              <div className="text-2xl font-bold text-white">108</div>
+              <div className="text-2xl font-bold text-[#1C1C1C]">108</div>
               <div className="text-[11px] text-[#B07A45] mt-0.5">Auto-generated by AI</div>
             </div>
           </div>
 
           <div className="sh-stat-4 absolute opacity-0" style={{ right: '5%', bottom: '22%' }}>
-            <div className="bg-[#1C1C1C]/85 backdrop-blur-xl rounded-2xl px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)] border border-white/[0.06] min-w-[170px]">
+            <div className="bg-[#EEE6DC] rounded-2xl px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-[#E3D9CD] min-w-[170px]">
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#FF5F57] animate-pulse shadow-[0_0_6px_rgba(255,95,87,0.5)]" />
-                <span className="text-[10px] text-[#777] uppercase tracking-wider font-medium">Operations</span>
+                <span className="w-2 h-2 rounded-full bg-[#B07A45] animate-pulse" />
+                <span className="text-[10px] text-[#7A746C] uppercase tracking-wider font-medium">Operations</span>
               </div>
-              <div className="text-2xl font-bold text-white">24/7</div>
-              <div className="text-[11px] text-[#888] mt-0.5">Always building</div>
+              <div className="text-2xl font-bold text-[#1C1C1C]">24/7</div>
+              <div className="text-[11px] text-[#7A746C] mt-0.5">Always building</div>
             </div>
           </div>
         </div>
@@ -343,9 +315,9 @@ export default function ScrollHero() {
 
       {/* Scroll indicator */}
       <div className="sh-scroll-hint absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 opacity-0">
-        <span className="text-[10px] tracking-[0.25em] uppercase font-medium text-[#666]">Scroll to explore</span>
-        <div className="w-[22px] h-[34px] rounded-full border-2 border-[#444] flex justify-center pt-2">
-          <div className="w-[3px] h-[6px] rounded-full bg-[#B07A45] animate-bounce" />
+        <span className="text-[10px] tracking-[0.25em] uppercase font-medium text-[#A39B90]">Scroll to explore</span>
+        <div className="w-[22px] h-[34px] rounded-full border-2 border-[#D8C2A8]/50 flex justify-center pt-2">
+          <div className="w-[3px] h-[6px] rounded-full bg-[#B07A45]/60 animate-bounce" />
         </div>
       </div>
     </section>
