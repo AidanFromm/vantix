@@ -8,9 +8,9 @@ import ShimmerButton from './ShimmerButton';
 
 const links = [
   { label: 'Services', href: '/services' },
-  { label: 'Work', href: '/case-studies' },
+  { label: 'Work', href: '/portfolio' },
   { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Contact', href: '#booking' },
 ];
 
 export default function FloatingNav() {
@@ -63,6 +63,13 @@ export default function FloatingNav() {
               {l.label}
             </a>
           ))}
+          <a
+            href="/login"
+            className="text-sm text-[#7A746C] hover:text-[#B07A45] transition-colors"
+            style={{ fontFamily: "'Satoshi', sans-serif" }}
+          >
+            Login
+          </a>
           <a href="#booking">
             <ShimmerButton className="px-6 py-2.5 text-sm rounded-full">
               Book a Call
@@ -98,6 +105,13 @@ export default function FloatingNav() {
                   {l.label}
                 </a>
               ))}
+              <a
+                href="/login"
+                onClick={() => setMobileOpen(false)}
+                className="text-[#B07A45] font-medium hover:text-[#8E5E34] transition-colors"
+              >
+                Login
+              </a>
               <a href="#booking" onClick={() => setMobileOpen(false)}>
                 <ShimmerButton className="w-full text-sm rounded-full">
                   Book a Call

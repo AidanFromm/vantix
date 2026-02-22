@@ -10,7 +10,7 @@ const fadeUp = {
 
 export default function FinalCTASection() {
   return (
-    <section className="py-24 md:py-32 bg-[#EEE6DC]">
+    <section id="booking" className="py-24 md:py-32 bg-[#EEE6DC]">
       <div className="max-w-4xl mx-auto px-5 sm:px-6 text-center">
         <motion.div
           initial="hidden"
