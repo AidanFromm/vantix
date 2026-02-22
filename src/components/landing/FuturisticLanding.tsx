@@ -15,6 +15,7 @@ import CaseStudySection from './CaseStudySection';
 import ROISection from './ROISection';
 import TeamSection from './TeamSection';
 import FAQSection from './FAQSection';
+import BookingSection from './BookingSection';
 import FinalCTASection from './FinalCTASection';
 import FooterSection from './FooterSection';
 
@@ -57,7 +58,10 @@ export default function FuturisticLanding() {
         {/* FAQ */}
         <FAQSection />
 
-        {/* Final CTA + Booking */}
+        {/* Booking Calendar */}
+        <BookingSection />
+
+        {/* Final CTA */}
         <FinalCTASection />
 
         {/* Footer */}
