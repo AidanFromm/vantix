@@ -8,14 +8,14 @@ const linkCols = [
     links: [
       { label: 'About', href: '/about' },
       { label: 'Services', href: '/services' },
-      { label: 'Work', href: '/case-studies' },
-      { label: 'Contact', href: '/contact' },
+      { label: 'Work', href: '/portfolio' },
+      { label: 'Contact', href: '#booking' },
     ],
   },
   {
     title: 'Resources',
     links: [
-      { label: 'Blog', href: '/blog' },
+      { label: 'Blog', href: '#' },
       { label: 'FAQ', href: '#faq' },
       { label: 'Privacy', href: '/privacy' },
       { label: 'Terms', href: '/terms' },

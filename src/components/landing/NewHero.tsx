@@ -11,13 +11,6 @@ import ShimmerButton from './ShimmerButton';
 export default function NewHero() {
   const imgRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
-  const [isMobile, setIsMobile] = useState(false);
-
-  // check mobile once
-  if (typeof window !== 'undefined' && !isMobile && window.innerWidth < 768) {
-    // will run on first render client-side
-  }
-
   const handleImgMouse = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) return;
     if (!imgRef.current) return;

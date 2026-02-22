@@ -56,7 +56,7 @@ export default function TeamSection() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={i === 0 ? fadeLeft : fadeRight}
-              className="bg-[#EEE6DC] rounded-2xl p-8 border border-[#E3D9CD] text-center"
+              className="bg-[#F4EFE8] rounded-2xl p-8 border border-[#E3D9CD] text-center"
             >
               <div className="w-[120px] h-[120px] rounded-full mx-auto mb-6 overflow-hidden border-4 border-[#D8C2A8]">
                 <Image

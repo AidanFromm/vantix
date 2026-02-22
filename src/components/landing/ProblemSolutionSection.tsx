@@ -48,12 +48,12 @@ function ProblemCard({ problem, index }: { problem: typeof problems[0]; index: n
         <Icon className="w-6 h-6 text-[#B07A45]" />
       </div>
       <h3
-        className="text-xl md:text-2xl font-semibold text-[#4B3621] mb-3"
+        className="text-xl md:text-2xl font-semibold text-[#1C1C1C] mb-3"
         style={{ fontFamily: 'Clash Display, sans-serif' }}
       >
         {problem.title}
       </h3>
-      <p className="text-[#6B5B4E] leading-relaxed" style={{ fontFamily: 'Satoshi, sans-serif' }}>
+      <p className="text-[#4B4B4B] leading-relaxed" style={{ fontFamily: 'Satoshi, sans-serif' }}>
         {problem.description}
       </p>
     </motion.div>
@@ -109,7 +109,7 @@ export default function ProblemSolutionSection() {
         {/* Mobile layout */}
         <div className="block md:hidden space-y-6">
           <h2
-            className="text-3xl font-bold text-[#4B3621] mb-8"
+            className="text-3xl font-bold text-[#1C1C1C] mb-8"
             style={{ fontFamily: 'Clash Display, sans-serif' }}
           >
             Running a Business Shouldn&apos;t Feel Like This.
@@ -132,7 +132,7 @@ export default function ProblemSolutionSection() {
               className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight"
               style={{
                 fontFamily: 'Clash Display, sans-serif',
-                color: transitioned ? '#B07A45' : '#4B3621',
+                color: transitioned ? '#B07A45' : '#1C1C1C',
                 transition: 'color 0.6s ease',
               }}
             >

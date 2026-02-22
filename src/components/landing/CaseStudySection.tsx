@@ -64,12 +64,12 @@ function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
         {study.label}
       </span>
       <h3
-        className="text-2xl md:text-3xl font-bold text-[#4B3621] mt-3 mb-4"
+        className="text-2xl md:text-3xl font-bold text-[#1C1C1C] mt-3 mb-4"
         style={{ fontFamily: 'Clash Display, sans-serif' }}
       >
         {study.name}
       </h3>
-      <p className="text-[#6B5B4E] leading-relaxed mb-6" style={{ fontFamily: 'Satoshi, sans-serif' }}>
+      <p className="text-[#4B4B4B] leading-relaxed mb-6" style={{ fontFamily: 'Satoshi, sans-serif' }}>
         {study.brief}
       </p>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-[#E3D9CD]">
@@ -88,7 +88,7 @@ export default function CaseStudySection() {
     <section className="bg-[#EEE6DC] py-20 md:py-32">
       <div className="max-w-7xl mx-auto px-6">
         <h2
-          className="text-3xl md:text-5xl font-bold text-[#4B3621] text-center mb-16"
+          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-16"
           style={{ fontFamily: 'Clash Display, sans-serif' }}
         >
           Real Results. Real Businesses.
@@ -107,7 +107,7 @@ export default function CaseStudySection() {
             &ldquo;
           </span>
           <p
-            className="text-xl md:text-2xl text-[#4B3621] font-medium leading-relaxed max-w-3xl mx-auto relative z-10"
+            className="text-xl md:text-2xl text-[#1C1C1C] font-medium leading-relaxed max-w-3xl mx-auto relative z-10"
             style={{ fontFamily: 'Satoshi, sans-serif' }}
           >
             They built our entire platform in 3 weeks. Inventory, POS, shipping — everything.

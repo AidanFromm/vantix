@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 const SmoothScroll = dynamic(() => import('../SmoothScroll'), { ssr: false });
 
 import FloatingNav from './FloatingNav';
+import ChatWidget from '../ChatWidget';
 import NewHero from './NewHero';
 import SocialProofBar from './SocialProofBar';
 import ProblemSolutionSection from './ProblemSolutionSection';
@@ -61,6 +62,9 @@ export default function FuturisticLanding() {
 
         {/* Footer */}
         <FooterSection />
+
+        {/* AI Chat Widget */}
+        <ChatWidget />
       </div>
     </SmoothScroll>
   );

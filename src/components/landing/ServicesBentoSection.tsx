@@ -75,13 +75,13 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
           <Icon className="w-6 h-6 text-[#B07A45]" />
         </div>
         <h3
-          className={`font-semibold text-[#4B3621] mb-3 ${service.large ? 'text-2xl md:text-3xl' : 'text-xl'}`}
+          className={`font-semibold text-[#1C1C1C] mb-3 ${service.large ? 'text-2xl md:text-3xl' : 'text-xl'}`}
           style={{ fontFamily: 'Clash Display, sans-serif' }}
         >
           {service.title}
         </h3>
         <p
-          className={`text-[#6B5B4E] leading-relaxed ${service.large ? 'text-lg max-w-lg' : ''}`}
+          className={`text-[#4B4B4B] leading-relaxed ${service.large ? 'text-lg max-w-lg' : ''}`}
           style={{ fontFamily: 'Satoshi, sans-serif' }}
         >
           {service.description}
@@ -96,7 +96,7 @@ export default function ServicesBentoSection() {
     <section className="bg-[#EEE6DC] py-20 md:py-32">
       <div className="max-w-7xl mx-auto px-6">
         <h2
-          className="text-3xl md:text-5xl font-bold text-[#4B3621] text-center mb-16"
+          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-16"
           style={{ fontFamily: 'Clash Display, sans-serif' }}
         >
           What We Build

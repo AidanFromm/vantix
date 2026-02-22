@@ -60,13 +60,13 @@ function StepItem({ step, index }: { step: typeof steps[0]; index: number }) {
         {step.number}
       </span>
       <h3
-        className="text-2xl md:text-3xl font-bold text-[#4B3621] mt-1 mb-3"
+        className="text-2xl md:text-3xl font-bold text-[#1C1C1C] mt-1 mb-3"
         style={{ fontFamily: 'Clash Display, sans-serif' }}
       >
         {step.title}
       </h3>
       <p
-        className="text-[#6B5B4E] leading-relaxed max-w-md text-lg"
+        className="text-[#4B4B4B] leading-relaxed max-w-md text-lg"
         style={{ fontFamily: 'Satoshi, sans-serif' }}
       >
         {step.description}
@@ -87,7 +87,7 @@ export default function ProcessSection() {
     <section className="bg-[#F4EFE8] py-20 md:py-32" ref={containerRef}>
       <div className="max-w-4xl mx-auto px-6">
         <h2
-          className="text-3xl md:text-5xl font-bold text-[#4B3621] text-center mb-20"
+          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-20"
           style={{ fontFamily: 'Clash Display, sans-serif' }}
         >
           How It Works
