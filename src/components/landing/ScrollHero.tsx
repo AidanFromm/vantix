@@ -26,23 +26,35 @@ gsap.registerPlugin(ScrollTrigger);
 // - Just typography + product shot, perfectly timed
 // ============================================
 
-const EASE_APPLE = 'power2.inOut'; // Apple's signature smooth ease
-const EASE_REVEAL = 'power3.out'; // For element reveals
+// Apple's signature easing: cubic-bezier(0.25, 0.1, 0.25, 1)
+const EASE_APPLE = 'cubic-bezier(0.25, 0.1, 0.25, 1)';
+const EASE_REVEAL = 'power3.out';
 
 export default function ScrollHero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
+
+    // Respect reduced motion preferences
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener('change', handler);
+
+    return () => {
+      window.removeEventListener('resize', check);
+      mq.removeEventListener('change', handler);
+    };
   }, []);
 
   // ═══ DESKTOP ANIMATION ═══
   useEffect(() => {
-    if (isMobile) return;
+    if (isMobile || prefersReducedMotion) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -148,11 +160,11 @@ export default function ScrollHero() {
     }, container);
 
     return () => ctx.revert();
-  }, [isMobile]);
+  }, [isMobile, prefersReducedMotion]);
 
   // ═══ MOBILE ANIMATION ═══
   useEffect(() => {
-    if (!isMobile) return;
+    if (!isMobile || prefersReducedMotion) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -231,7 +243,18 @@ export default function ScrollHero() {
     }, container);
 
     return () => ctx.revert();
-  }, [isMobile]);
+  }, [isMobile, prefersReducedMotion]);
+
+  // ═══ REDUCED MOTION: Show everything immediately ═══
+  useEffect(() => {
+    if (!prefersReducedMotion) return;
+    // Make all elements visible without animation
+    const elements = document.querySelectorAll('.hero-tagline, .hero-headline-line, .hero-subtitle, .hero-cta, .hero-scroll-indicator');
+    elements.forEach(el => {
+      (el as HTMLElement).style.opacity = '1';
+      (el as HTMLElement).style.transform = 'none';
+    });
+  }, [prefersReducedMotion]);
 
   return (
     <section
@@ -325,6 +348,14 @@ export default function ScrollHero() {
         <div className="w-[1px] h-8 bg-gradient-to-b from-transparent to-white/20" />
         <div className="w-1 h-1 rounded-full bg-white/30 animate-pulse" />
       </div>
+
+      {/* ═══ Dark-to-Cream Transition ═══ */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-32 z-30 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to bottom, transparent, #F4EFE8)',
+        }}
+      />
     </section>
   );
 }
