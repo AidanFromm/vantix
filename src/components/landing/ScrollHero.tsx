@@ -192,9 +192,9 @@ export default function ScrollHero() {
         scrollTrigger: {
           trigger: mobileRef.current,
           start: 'top top',
-          end: '+=200%',
+          end: '+=150%',
           pin: true,
-          scrub: 1.2,
+          scrub: 1.5,
           anticipatePin: 1,
         },
       });
@@ -210,10 +210,10 @@ export default function ScrollHero() {
 
       tl.to('.shm-scroll-hint', { opacity: 0, duration: 0.05 }, 0);
 
-      // Dashboard rises with 3D perspective
+      // Dashboard rises with 3D perspective (buttery smooth)
       tl.fromTo('.shm-dashboard',
-        { y: '60vh', opacity: 0, rotateX: 18, scale: 0.7 },
-        { y: 0, opacity: 1, rotateX: 6, scale: 0.85, duration: 0.25, ease: 'power3.out' },
+        { y: '50vh', opacity: 0, rotateX: 12, scale: 0.78 },
+        { y: 0, opacity: 1, rotateX: 4, scale: 0.88, duration: 0.3, ease: 'power2.out' },
         0.1
       );
 
@@ -224,14 +224,14 @@ export default function ScrollHero() {
         0.15
       );
 
-      // Dashboard straightens
+      // Dashboard straightens (smooth settle)
       tl.to('.shm-dashboard', {
         rotateX: 0,
         scale: 1,
         y: -5,
-        duration: 0.25,
-        ease: 'power2.out',
-      }, 0.35);
+        duration: 0.3,
+        ease: 'power1.out',
+      }, 0.4);
 
       // Stat pills fly in
       tl.fromTo('.shm-stat-1',
@@ -250,12 +250,7 @@ export default function ScrollHero() {
         0.56
       );
 
-      // Background transition: dark to cream
-      tl.fromTo('.shm-bg-cream',
-        { opacity: 0 },
-        { opacity: 1, duration: 0.2, ease: 'power2.inOut' },
-        0.6
-      );
+      // No bg transition needed — already cream
 
       // Everything fades for seamless exit
       tl.to('.shm-stage', {
@@ -274,24 +269,24 @@ export default function ScrollHero() {
   if (isMobile) {
     return (
       <section ref={mobileRef} className="relative h-screen overflow-hidden">
-        {/* Dark background */}
-        <div className="absolute inset-0 bg-[#0C0A09] z-0" />
-        {/* Cream overlay for transition */}
-        <div className="shm-bg-cream absolute inset-0 bg-[#F4EFE8] z-[1] opacity-0" />
+        {/* Cream background */}
+        <div className="absolute inset-0 bg-[#F4EFE8] z-0" />
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F4EFE8] via-[#F4EFE8] to-[#EEE6DC] z-[1]" />
 
         {/* Ambient glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full bg-[#B07A45]/[0.06] blur-[100px] z-[2]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full bg-[#B07A45]/[0.04] blur-[80px] z-[2]" />
 
         <div className="shm-stage relative z-10 h-full">
 
           {/* ═══ Text — visible on load ═══ */}
           <div className="shm-text-wrap absolute inset-0 flex flex-col items-center justify-center z-20 px-5">
-            <div className="shm-badge opacity-0 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#B07A45]/30 bg-[#1A1714]/80 mb-6 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-[#B07A45] animate-pulse" />
-              <span className="text-xs text-[#A39B90] font-medium">AI-First Agency — Building 24/7</span>
+            <div className="shm-badge opacity-0 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#D8C2A8]/60 bg-[#EEE6DC]/80 mb-6 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-[#8E5E34] animate-pulse" />
+              <span className="text-xs text-[#7A746C] font-medium">AI-First Agency — Building 24/7</span>
             </div>
 
-            <h1 className="text-[2.2rem] leading-[1.05] font-bold tracking-[-0.03em] text-[#F4EFE8] flex flex-wrap justify-center gap-x-[0.25em]">
+            <h1 className="text-[2.2rem] leading-[1.05] font-bold tracking-[-0.03em] text-[#1C1C1C] flex flex-wrap justify-center gap-x-[0.25em]">
               <span className="shm-word opacity-0 inline-block">Your</span>
               <span className="shm-word opacity-0 inline-block">Competitors</span>
               <span className="shm-word opacity-0 inline-block">Are</span>
@@ -303,7 +298,7 @@ export default function ScrollHero() {
               <span className="shm-word-bronze opacity-0 inline-block text-[#B07A45]">You?</span>
             </h1>
 
-            <p className="shm-sub opacity-0 text-sm text-[#A39B90] max-w-xs mx-auto leading-relaxed text-center mb-6">
+            <p className="shm-sub opacity-0 text-sm text-[#7A746C] max-w-xs mx-auto leading-relaxed text-center mb-6">
               We build AI-powered platforms, dashboards, and automation systems that run your business while you sleep.
             </p>
 
