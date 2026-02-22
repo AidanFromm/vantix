@@ -7,7 +7,7 @@ APOLLO_BASE_URL = "https://api.apollo.io/api/v1"
 
 # Resend (Email)
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "re_TJNHAFRB_A66nrWk5st1W4RAFyn2z4eQs")
-EMAIL_FROM = os.getenv("EMAIL_FROM", "hello@usevantix.com")
+EMAIL_FROM = os.getenv("EMAIL_FROM", "Aidan from Vantix <hello@usevantix.com>")
 EMAIL_FROM_FALLBACK = "onboarding@resend.dev"
 
 # Supabase

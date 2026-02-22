@@ -10,6 +10,7 @@ const navLinks = [
   { href: '/roi-calculator', label: 'ROI Calculator' },
   { href: '/ai-assessment', label: 'AI Assessment' },
   { href: '/portfolio', label: 'Portfolio' },
+  { href: '/blog', label: 'Blog' },
   { href: '/#pricing', label: 'Pricing' },
   { href: '/#contact', label: 'Contact' },
 ];

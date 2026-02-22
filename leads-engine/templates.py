@@ -52,7 +52,7 @@ We just built a full online system for a retail store in Tampa — took 3 weeks,
 Would it make sense to do a quick 10-minute call so I can show you what we'd do for {company}? No pitch, just an honest look at what you're missing.
 
 Aidan Fromm
-Vantix | (908) 498-7753 | usevantix.com"""
+Vantix | 914-888-6610 | usevantix.com"""
     
     return {"subject": subject, "body": body}
 
@@ -85,7 +85,7 @@ We fix this in about 3 weeks — website, online booking, Google visibility, the
 Worth a 10-minute conversation?
 
 Aidan
-(908) 498-7753 | usevantix.com"""
+914-888-6610 | usevantix.com"""
     
     return {"subject": subject, "body": body}
 
@@ -106,12 +106,12 @@ def email_3_final(lead: dict) -> dict:
 
 I've reached out a couple times about helping {company} get found online — I don't want to be a pest, so this will be my last email.
 
-If getting more customers through Google and having a professional online presence is something you'd want to explore, I'm here. Just reply to this email or call me at (908) 498-7753.
+If getting more customers through Google and having a professional online presence is something you'd want to explore, I'm here. Just reply to this email or call me at 914-888-6610.
 
 Either way, wishing you the best with {company}.
 
 Aidan
-(908) 498-7753 | usevantix.com"""
+914-888-6610 | usevantix.com"""
     
     return {"subject": subject, "body": body}
 

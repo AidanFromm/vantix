@@ -14,6 +14,7 @@ const quickLinks = [
   { href: '/', label: 'Home' },
   { href: '/#services', label: 'Services' },
   { href: '/#portfolio', label: 'Portfolio' },
+  { href: '/blog', label: 'Blog' },
   { href: '/#pricing', label: 'Pricing' },
   { href: '/#contact', label: 'Contact' },
   { href: '/roi-calculator', label: 'ROI Calculator' },
