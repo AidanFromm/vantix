@@ -278,7 +278,7 @@ export default function ProblemSolutionSection() {
             </div>
 
             {/* Right: Visual (hidden on mobile to avoid animation jank) */}
-            <div className="hidden lg:block relative h-[400px]">
+            <div className="relative h-[250px] lg:h-[400px]">
               {visualComponents.map((Visual, i) => {
                 const total = problems.length + 1;
                 const start = i / total;
