@@ -32,6 +32,7 @@ import {
   Settings,
   Shield,
   Bell,
+  Crosshair,
   BarChart3,
   ChevronLeft,
   ChevronRight,
@@ -54,6 +55,7 @@ const navGroups: NavGroup[] = [
       { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
       { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar },
       { href: '/dashboard/tasks', label: 'Tasks', icon: CheckSquare },
+      { href: '/dashboard/tracking', label: 'Tracking', icon: Crosshair },
     ],
   },
   {
