@@ -41,9 +41,9 @@ const fadeUp = {
 };
 
 const trustedLogos = [
-  { name: 'SecuredTampa', logo: 'https://obprrtqyzpaudfeyftyd.supabase.co/storage/v1/object/public/media/SecuredTampa/Logos/logo-icon.png', bg: undefined },
+  { name: 'SecuredTampa', logo: '/logos/secured-tampa.png', bg: undefined },
   { name: 'Just Four Kicks', logo: 'https://obprrtqyzpaudfeyftyd.supabase.co/storage/v1/object/public/media/J4K/Logos/logo-white.png', bg: '#1C1C1C' },
-  { name: 'CardLedger', logo: undefined, initial: 'CL', bg: '#1e3a5f' },
+  { name: 'CardLedger', logo: '/logos/cardledger.png', bg: undefined },
 ];
 
 export default function ProductShowcaseHero() {
