@@ -116,7 +116,7 @@ export default function ProductShowcaseHero() {
                   {logo.logo ? (
                     <Image src={logo.logo} alt={logo.name} width={40} height={40} unoptimized className="w-full h-full object-cover" />
                   ) : (
-                    logo.initial
+                    logo.name.charAt(0)
                   )}
                 </div>
               ))}
