@@ -6,31 +6,37 @@ import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 const steps = [
   {
     number: '01',
-    title: 'Discovery Call',
+    title: 'Audit',
     description:
-      '30 minutes. We learn your business inside and out. Pain points, goals, current tools — everything.',
+      'We dig into your operations, tools, and workflows to find where AI creates the most leverage.',
   },
   {
     number: '02',
-    title: 'Strategy & Blueprint',
+    title: 'Blueprint',
     description:
-      'Custom AI roadmap tailored to your business. No cookie-cutter solutions. You approve before we build.',
+      'You get a clear, prioritized roadmap — what to build, in what order, and exactly what it costs.',
   },
   {
     number: '03',
-    title: 'Build Sprint',
+    title: 'Build',
     description:
-      '2-4 weeks of focused development. Daily updates. You see progress in real-time through your own dashboard.',
+      'Our team builds your systems in focused sprints. You see progress weekly, not quarterly.',
   },
   {
     number: '04',
-    title: 'Launch & Optimize',
+    title: 'Deploy',
     description:
-      'Go live with full support. We monitor performance, gather data, and continuously improve.',
+      'We launch to production with monitoring, testing, and zero downtime migrations.',
+  },
+  {
+    number: '05',
+    title: 'Optimize',
+    description:
+      'Post-launch, we track performance and refine. Your systems get smarter over time.',
   },
 ];
 
-function StepItem({ step, index }: { step: typeof steps[0]; index: number }) {
+function StepItem({ step, index }: { step: (typeof steps)[0]; index: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -40,37 +46,44 @@ function StepItem({ step, index }: { step: typeof steps[0]; index: number }) {
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: 0.1 }}
-      className="relative pl-12 md:pl-20 pb-16 last:pb-0"
+      className="relative pl-16 md:pl-24 pb-16 last:pb-0"
     >
-      {/* Dot */}
-      <div className="absolute left-0 md:left-4 top-1 w-3 h-3 rounded-full bg-[#B07A45] z-10">
+      {/* Dot with glow */}
+      <div className="absolute left-[5px] md:left-[19px] top-2 z-10">
+        <div className={`w-3 h-3 rounded-full transition-all duration-700 ${
+          isInView ? 'bg-[#B07A45] shadow-[0_0_12px_rgba(176,122,69,0.5)]' : 'bg-[#D8C2A8]'
+        }`} />
         {isInView && (
           <motion.div
             className="absolute inset-0 rounded-full bg-[#B07A45]"
-            animate={{ scale: [1, 1.8, 1], opacity: [0.6, 0, 0.6] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            animate={{ scale: [1, 2, 1], opacity: [0.4, 0, 0.4] }}
+            transition={{ duration: 2.5, repeat: Infinity }}
           />
         )}
       </div>
 
+      {/* Big bronze number */}
       <span
-        className="text-sm font-semibold text-[#B07A45] tracking-widest"
+        className="text-5xl md:text-6xl font-bold text-[#B07A45]/20 absolute left-10 md:left-12 -top-3 select-none"
         style={{ fontFamily: 'Clash Display, sans-serif' }}
       >
         {step.number}
       </span>
-      <h3
-        className="text-2xl md:text-3xl font-bold text-[#1C1C1C] mt-1 mb-3"
-        style={{ fontFamily: 'Clash Display, sans-serif' }}
-      >
-        {step.title}
-      </h3>
-      <p
-        className="text-[#4B4B4B] leading-relaxed max-w-md text-lg"
-        style={{ fontFamily: 'Satoshi, sans-serif' }}
-      >
-        {step.description}
-      </p>
+
+      <div className="relative">
+        <h3
+          className="text-2xl md:text-3xl font-bold text-[#1C1C1C] mb-3"
+          style={{ fontFamily: 'Clash Display, sans-serif' }}
+        >
+          {step.title}
+        </h3>
+        <p
+          className="text-[#4B4B4B] leading-relaxed max-w-md text-lg"
+          style={{ fontFamily: 'Satoshi, sans-serif' }}
+        >
+          {step.description}
+        </p>
+      </div>
     </motion.div>
   );
 }
@@ -84,14 +97,29 @@ export default function ProcessSection() {
   const lineHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
 
   return (
-    <section className="bg-[#F4EFE8] py-20 md:py-32" ref={containerRef}>
+    <section id="process" className="bg-[#F4EFE8] py-20 md:py-32" ref={containerRef}>
       <div className="max-w-4xl mx-auto px-6">
-        <h2
-          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-20"
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-4"
           style={{ fontFamily: 'Clash Display, sans-serif' }}
         >
           How It Works
-        </h2>
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-[#4B4B4B] text-center text-lg mb-20 max-w-xl mx-auto"
+          style={{ fontFamily: 'Satoshi, sans-serif' }}
+        >
+          From audit to optimization in five focused steps.
+        </motion.p>
+
         <div className="relative">
           {/* Background line */}
           <div className="absolute left-[5px] md:left-[19px] top-0 bottom-0 w-[2px] bg-[#E3D9CD]" />

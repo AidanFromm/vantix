@@ -1,100 +1,105 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-
-const fadeLeft = {
-  hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const } },
-};
-
-const fadeRight = {
-  hidden: { opacity: 0, x: 40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const } },
-};
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 
 const team = [
   {
-    name: 'Kyle Ventura',
-    role: 'Co-Founder',
-    bio: 'Builder. Systems thinker. Runs operations and client delivery.',
-    photo: '/team-kyle.jpg',
+    name: 'Aidan Fromm',
+    role: 'Co-founder & Tech Lead',
+    bio: '19. CU Denver. Fell into coding through a business class and never looked back. Builds the systems that make everything else possible.',
+    initials: 'AF',
   },
   {
-    name: 'Aidan Fromm',
-    role: 'Co-Founder',
-    bio: 'Creative strategist. Handles design, marketing, and client relationships.',
-    photo: '/team-aidan.jpg',
+    name: 'Kyle',
+    role: 'Co-founder & Business Lead',
+    bio: '20. Built a $5.8M sneaker business before he could legally drink. Understands operations from the warehouse floor up.',
+    initials: 'K',
+  },
+  {
+    name: 'Our AI Team',
+    role: 'Always-On Agents',
+    bio: 'Two always-on AI agents that handle research, monitoring, development, and optimization 24/7. They don\u2019t sleep, and they don\u2019t miss deadlines.',
+    initials: 'AI',
+    isAI: true,
   },
 ];
 
-export default function TeamSection() {
-  return (
-    <section id="team" className="py-20 md:py-28 bg-[#EEE6DC]">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6">
-        <motion.h2
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1C1C1C] text-center mb-14"
-          style={{ fontFamily: 'var(--font-clash, "Clash Display", sans-serif)' }}
-        >
-          Who We Are
-        </motion.h2>
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+  }),
+};
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-          {team.map((t, i) => (
+export default function TeamSection() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-100px' });
+
+  return (
+    <section id="team" className="py-24 lg:py-32 bg-[#F4EFE8]">
+      <div className="max-w-6xl mx-auto px-6" ref={ref}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#B07A45] mb-4" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+            Who We Are
+          </p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1C1C1C]" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+            Small team. Big output.
+          </h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          {team.map((member, i) => (
             <motion.div
-              key={t.name}
+              key={member.name}
+              custom={i}
               initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={i === 0 ? fadeLeft : fadeRight}
-              className="bg-[#F4EFE8] rounded-2xl p-8 border border-[#E3D9CD] text-center"
+              animate={inView ? 'visible' : 'hidden'}
+              variants={fadeUp}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              className="bg-[#EEE6DC] rounded-2xl p-8 border border-[#E3D9CD] shadow-sm hover:shadow-md transition-shadow cursor-default"
             >
-              <div className="w-[120px] h-[120px] rounded-full mx-auto mb-6 overflow-hidden border-4 border-[#D8C2A8]">
-                <Image
-                  src={t.photo}
-                  alt={t.name}
-                  width={120}
-                  height={120}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+              {/* Avatar */}
+              <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${
+                member.isAI
+                  ? 'bg-[#1C1C1C] border-2 border-[#B07A45]'
+                  : 'bg-[#B07A45]/10 border-2 border-[#B07A45]/30'
+              }`}>
+                {member.isAI ? (
+                  <motion.span
+                    className="text-xl font-bold text-[#B07A45]"
+                    animate={{ opacity: [1, 0.5, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    style={{ fontFamily: "'Clash Display', sans-serif" }}
+                  >
+                    {member.initials}
+                  </motion.span>
+                ) : (
+                  <span className="text-xl font-bold text-[#B07A45]" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+                    {member.initials}
+                  </span>
+                )}
               </div>
-              <h3
-                className="text-2xl font-semibold text-[#1C1C1C] mb-1"
-                style={{ fontFamily: 'var(--font-clash, "Clash Display", sans-serif)' }}
-              >
-                {t.name}
+
+              <h3 className="text-xl font-bold text-[#1C1C1C] mb-1" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+                {member.name}
               </h3>
-              <p className="text-[#B07A45] font-medium mb-3">{t.role}</p>
-              <p
-                className="text-[#4B4B4B] leading-relaxed"
-                style={{ fontFamily: 'var(--font-satoshi, "Satoshi", sans-serif)' }}
-              >
-                {t.bio}
+              <p className="text-sm font-semibold text-[#B07A45] mb-4" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+                {member.role}
+              </p>
+              <p className="text-[#7A746C] text-sm leading-relaxed" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+                {member.bio}
               </p>
             </motion.div>
           ))}
         </div>
-
-        <motion.p
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          className="text-center text-[#7A746C] italic mt-10 text-lg"
-          style={{ fontFamily: 'var(--font-satoshi, "Satoshi", sans-serif)' }}
-        >
-          Plus our AI workforce that never sleeps.
-        </motion.p>
       </div>
     </section>
   );

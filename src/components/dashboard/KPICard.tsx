@@ -32,9 +32,9 @@ function AnimatedCounter({ value, prefix = '', suffix = '' }: { value: number; p
   return <motion.span>{display}</motion.span>;
 }
 
-function Sparkline({ data, color = '#8E5E34' }: { data: number[]; color?: string }) {
-  const width = 80;
-  const height = 32;
+function Sparkline({ data, color = '#B07A45' }: { data: number[]; color?: string }) {
+  const width = 120;
+  const height = 36;
   const padding = 2;
 
   if (!data || data.length < 2) return null;
@@ -46,34 +46,23 @@ function Sparkline({ data, color = '#8E5E34' }: { data: number[]; color?: string
   const points = data.map((value, index) => {
     const x = padding + (index / (data.length - 1)) * (width - padding * 2);
     const y = height - padding - ((value - min) / range) * (height - padding * 2);
-    return `${x},${y}`;
+    return { x, y };
   });
 
-  const pathD = `M ${points.join(' L ')}`;
-  
-  // Create gradient area
-  const areaPoints = [
-    `${padding},${height - padding}`,
-    ...points,
-    `${width - padding},${height - padding}`,
-  ].join(' ');
+  const pathD = `M ${points.map((p) => `${p.x},${p.y}`).join(' L ')}`;
+  const areaD = `M ${padding},${height - padding} L ${points.map((p) => `${p.x},${p.y}`).join(' L ')} L ${width - padding},${height - padding} Z`;
+
+  const gradientId = `spark-${Math.random().toString(36).slice(2, 8)}`;
 
   return (
     <svg width={width} height={height} className="overflow-visible">
       <defs>
-        <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+        <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor={color} stopOpacity="0.25" />
           <stop offset="100%" stopColor={color} stopOpacity="0" />
         </linearGradient>
       </defs>
-      
-      {/* Area fill */}
-      <polygon
-        points={areaPoints}
-        fill="url(#sparklineGradient)"
-      />
-      
-      {/* Line */}
+      <path d={areaD} fill={`url(#${gradientId})`} />
       <motion.path
         d={pathD}
         fill="none"
@@ -83,39 +72,18 @@ function Sparkline({ data, color = '#8E5E34' }: { data: number[]; color?: string
         strokeLinejoin="round"
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 1 }}
-        transition={{ duration: 1.5, ease: 'easeOut' }}
+        transition={{ duration: 1.2, ease: 'easeOut' }}
       />
-      
-      {/* End dot */}
       <motion.circle
-        cx={points[points.length - 1].split(',')[0]}
-        cy={points[points.length - 1].split(',')[1]}
+        cx={points[points.length - 1].x}
+        cy={points[points.length - 1].y}
         r={3}
         fill={color}
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ delay: 1.2, duration: 0.3 }}
+        transition={{ delay: 1, duration: 0.3 }}
       />
     </svg>
-  );
-}
-
-function TrendIndicator({ value, label }: { value: number; label?: string }) {
-  const isPositive = value > 0;
-  const isNeutral = value === 0;
-  
-  const Icon = isNeutral ? Minus : isPositive ? TrendingUp : TrendingDown;
-  const color = isNeutral ? 'text-[#7A746C]' : isPositive ? 'text-[#B07A45]' : 'text-[#B07A45]';
-  const bgColor = isNeutral ? 'bg-[#7A746C]/10' : isPositive ? 'bg-[#B07A45]/10' : 'bg-[#B07A45]/10';
-
-  return (
-    <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full ${bgColor}`}>
-      <Icon size={12} className={color} />
-      <span className={`text-xs font-medium ${color}`}>
-        {isPositive ? '+' : ''}{value}%
-      </span>
-      {label && <span className="text-xs text-[#7A746C]">{label}</span>}
-    </div>
   );
 }
 
@@ -143,10 +111,15 @@ export default function KPICard({
       },
       { threshold: 0.1 }
     );
-
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
+
+  const isPositive = trend !== undefined && trend > 0;
+  const isNegative = trend !== undefined && trend < 0;
+  const trendColor = isPositive ? 'text-green-600' : isNegative ? 'text-red-500' : 'text-[#7A746C]';
+  const trendBg = isPositive ? 'bg-green-50' : isNegative ? 'bg-red-50' : 'bg-[#EEE6DC]';
+  const TrendIcon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus;
 
   return (
     <motion.div
@@ -156,50 +129,52 @@ export default function KPICard({
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className={`
         group relative overflow-hidden
-        bg-[#EEE6DC]
-        border border-[#E3D9CD] rounded-2xl
-        shadow-sm
-        p-5 transition-all duration-300
-        hover:shadow-sm
-        hover:scale-[1.01]
+        bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl
+        shadow-sm hover:shadow-md hover:-translate-y-0.5
+        transition-all duration-300
         ${className}
       `}
     >
-      {/* Subtle gradient overlay on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#8E5E34]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      
-      <div className="relative z-10">
-        {/* Header */}
+      {/* Bronze gradient top border */}
+      <div className="h-[2px] w-full bg-gradient-to-r from-[#B07A45] via-[#C89A6A] to-[#B07A45]" />
+
+      <div className="p-5">
+        {/* Header: icon + sparkline */}
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
-            {Icon && (
-              <div className="p-2 rounded-lg bg-[#8E5E34]/10 text-[#8E5E34]">
-                <Icon size={16} />
-              </div>
-            )}
-            <span className="text-sm font-medium text-[#7A746C]">{title}</span>
-          </div>
-          
+          {Icon && (
+            <div className="p-2 rounded-lg bg-[#B07A45]/10">
+              <Icon size={20} className="text-[#B07A45]" />
+            </div>
+          )}
           {sparklineData && sparklineData.length > 0 && (
-            <Sparkline data={sparklineData} color={trend && trend < 0 ? '#B07A45' : '#8E5E34'} />
+            <Sparkline data={sparklineData} color={isNegative ? '#EF4444' : '#B07A45'} />
           )}
         </div>
 
-        {/* Value */}
-        <div className="flex items-end justify-between">
-          <div>
-            <h3 className="text-3xl font-bold text-[#1C1C1C] tracking-tight">
-              {isVisible && <AnimatedCounter value={value} prefix={prefix} suffix={suffix} />}
-            </h3>
-            
-            {trend !== undefined && (
-              <div className="mt-2">
-                <TrendIndicator value={trend} label={trendLabel} />
-              </div>
+        {/* Big number */}
+        <h3 className="text-[32px] font-bold text-[#1C1C1C] tracking-tight leading-none mb-1">
+          {isVisible && <AnimatedCounter value={value} prefix={prefix} suffix={suffix} />}
+        </h3>
+
+        {/* Label */}
+        <p className="text-[14px] text-[#7A746C] mb-3">{title}</p>
+
+        {/* Trend indicator */}
+        {trend !== undefined && (
+          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${trendBg}`}>
+            <TrendIcon size={13} className={trendColor} />
+            <span className={`text-xs font-semibold ${trendColor}`}>
+              {isPositive ? '+' : ''}{trend}%
+            </span>
+            {trendLabel && (
+              <span className="text-xs text-[#7A746C]">{trendLabel}</span>
             )}
           </div>
-        </div>
+        )}
       </div>
+
+      {/* Hover overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#B07A45]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
     </motion.div>
   );
 }

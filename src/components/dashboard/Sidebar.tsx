@@ -6,19 +6,33 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
-  Users,
-  Target,
-  FolderOpen,
-  CheckSquare,
-  DollarSign,
-  MessageSquare,
-  Image,
-  FileText,
   Calendar,
-  BarChart3,
+  CheckSquare,
+  Target,
+  GitMerge,
+  Users,
   BookOpen,
-  Shield,
+  MessageSquare,
+  FileText,
+  Send,
+  FolderOpen,
+  Briefcase,
+  Github,
+  DollarSign,
+  Receipt,
+  CreditCard,
+  TrendingDown,
+  PenTool,
+  Image,
+  Search,
+  UsersRound,
+  Bot,
+  Brain,
+  StickyNote,
   Settings,
+  Shield,
+  Bell,
+  BarChart3,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -27,90 +41,84 @@ import {
   X,
 } from 'lucide-react';
 
-interface NavItem {
-  href: string;
+// ─── Types ───────────────────────────────────────────────────────────
+interface NavGroup {
   label: string;
-  icon: React.ElementType;
-  children?: { href: string; label: string }[];
+  items: { href: string; label: string; icon: React.ElementType }[];
 }
 
-const navSections: { label?: string; items: NavItem[] }[] = [
+const navGroups: NavGroup[] = [
   {
+    label: 'OVERVIEW',
     items: [
-      { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-    ],
-  },
-  {
-    items: [
-      { href: '/dashboard/clients', label: 'Clients', icon: Users },
-      { href: '/dashboard/leads', label: 'Leads', icon: Target },
-      { href: '/dashboard/projects', label: 'Projects', icon: FolderOpen },
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar },
       { href: '/dashboard/tasks', label: 'Tasks', icon: CheckSquare },
     ],
   },
   {
+    label: 'CLIENTS',
     items: [
-      {
-        href: '/dashboard/finances',
-        label: 'Finances',
-        icon: DollarSign,
-        children: [
-          { href: '/dashboard/finances/invoices', label: 'Invoices' },
-          { href: '/dashboard/finances/payments', label: 'Payments' },
-          { href: '/dashboard/finances/revenue', label: 'Revenue' },
-          { href: '/dashboard/finances/expenses', label: 'Expenses' },
-        ],
-      },
+      { href: '/dashboard/leads', label: 'Leads', icon: Target },
+      { href: '/dashboard/pipeline', label: 'Pipeline', icon: GitMerge },
+      { href: '/dashboard/clients', label: 'Clients', icon: Users },
+      { href: '/dashboard/bookings', label: 'Bookings', icon: BookOpen },
     ],
   },
   {
+    label: 'COMMUNICATIONS',
     items: [
-      {
-        href: '/dashboard/communications',
-        label: 'Communications',
-        icon: MessageSquare,
-        children: [
-          { href: '/dashboard/communications/inbox', label: 'Inbox' },
-          { href: '/dashboard/communications/templates', label: 'Templates' },
-        ],
-      },
+      { href: '/dashboard/communications/inbox', label: 'Inbox', icon: MessageSquare },
+      { href: '/dashboard/communications/templates', label: 'Templates', icon: FileText },
+      { href: '/dashboard/outreach', label: 'Outreach', icon: Send },
     ],
   },
   {
+    label: 'PROJECTS',
     items: [
-      { href: '/dashboard/bookings', label: 'Bookings', icon: Calendar },
+      { href: '/dashboard/projects', label: 'Projects', icon: FolderOpen },
+      { href: '/dashboard/portfolio', label: 'Portfolio', icon: Briefcase },
+      { href: '/dashboard/github', label: 'GitHub', icon: Github },
     ],
   },
   {
-    label: 'Growth',
+    label: 'FINANCES',
     items: [
-      { href: '/dashboard/outreach', label: 'Outreach', icon: Target },
+      { href: '/dashboard/finances/revenue', label: 'Revenue', icon: DollarSign },
+      { href: '/dashboard/finances/invoices', label: 'Invoices', icon: Receipt },
+      { href: '/dashboard/finances/expenses', label: 'Expenses', icon: TrendingDown },
+      { href: '/dashboard/finances/payments', label: 'Payments', icon: CreditCard },
     ],
   },
   {
+    label: 'CONTENT',
     items: [
-      { href: '/dashboard/media', label: 'Media & Social', icon: Image },
-      { href: '/dashboard/proposals', label: 'Proposals', icon: FileText },
-      { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar },
+      { href: '/dashboard/knowledge', label: 'Blog / Knowledge', icon: PenTool },
+      { href: '/dashboard/media', label: 'Media', icon: Image },
+      { href: '/dashboard/seo-tracker', label: 'SEO Tracker', icon: Search },
+    ],
+  },
+  {
+    label: 'TEAM',
+    items: [
+      { href: '/dashboard/team-hub', label: 'Team Hub', icon: UsersRound },
+      { href: '/dashboard/bots', label: 'Bots', icon: Bot },
+      { href: '/dashboard/memory', label: 'Memory', icon: Brain },
+      { href: '/dashboard/notepad', label: 'Notepad', icon: StickyNote },
+    ],
+  },
+  {
+    label: 'SYSTEM',
+    items: [
+      { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+      { href: '/dashboard/vault', label: 'Vault', icon: Shield },
+      { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
       { href: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
     ],
   },
-  {
-    items: [
-      { href: '/dashboard/vault', label: 'Vault', icon: Shield },
-      { href: '/dashboard/knowledge', label: 'Knowledge Base', icon: BookOpen },
-      { href: '/dashboard/settings', label: 'Settings', icon: Settings },
-    ],
-  },
 ];
 
-const teamMembers = [
-  { initial: 'K', online: true },
-  { initial: 'A', online: true },
-  { initial: 'V', online: false },
-  { initial: 'B', online: true },
-];
-
+// ─── Context ─────────────────────────────────────────────────────────
 interface SidebarContextType {
   isCollapsed: boolean;
   setIsCollapsed: (value: boolean) => void;
@@ -142,6 +150,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// ─── Component ───────────────────────────────────────────────────────
 interface SidebarProps {
   user: { name: string; email: string; role: string };
   onLogout: () => void;
@@ -151,18 +160,17 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
   const pathname = usePathname();
   const { isCollapsed, setIsCollapsed } = useSidebar();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
+    // All groups expanded by default
+    const init: Record<string, boolean> = {};
+    navGroups.forEach((g) => { init[g.label] = true; });
+    return init;
+  });
   const [pendingBookings, setPendingBookings] = useState(0);
 
+  // Pending bookings badge
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('vantix_bookings');
-      if (raw) {
-        const bookings = JSON.parse(raw);
-        setPendingBookings(bookings.filter((b: { status: string }) => b.status === 'Pending').length);
-      }
-    } catch {}
-    const handler = () => {
+    const check = () => {
       try {
         const raw = localStorage.getItem('vantix_bookings');
         if (raw) {
@@ -171,133 +179,37 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
         }
       } catch {}
     };
-    window.addEventListener('storage', handler);
-    const interval = setInterval(handler, 5000);
-    return () => { window.removeEventListener('storage', handler); clearInterval(interval); };
+    check();
+    window.addEventListener('storage', check);
+    const interval = setInterval(check, 5000);
+    return () => { window.removeEventListener('storage', check); clearInterval(interval); };
   }, []);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+  // Close mobile on navigate
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
+  // Lock body scroll on mobile
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
-  // Auto-expand group if a child is active
+  // Auto-expand group containing active item
   useEffect(() => {
-    navSections.forEach((section) => {
-      section.items.forEach((item) => {
-        if (item.children) {
-          const childActive = item.children.some((c) => pathname === c.href);
-          if (childActive) {
-            setExpandedGroups((prev) => ({ ...prev, [item.href]: true }));
-          }
-        }
-      });
+    navGroups.forEach((group) => {
+      if (group.items.some((item) => pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href)))) {
+        setExpandedGroups((prev) => ({ ...prev, [group.label]: true }));
+      }
     });
   }, [pathname]);
 
-  const toggleGroup = (href: string) => {
-    setExpandedGroups((prev) => ({ ...prev, [href]: !prev[href] }));
+  const toggleGroup = (label: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [label]: !prev[label] }));
   };
 
-  const isActive = (href: string) => pathname === href;
-  const isGroupActive = (item: NavItem) =>
-    isActive(item.href) || (item.children?.some((c) => pathname === c.href) ?? false);
-
-  const renderNavItem = (item: NavItem) => {
-    const Icon = item.icon;
-    const hasChildren = item.children && item.children.length > 0;
-    const expanded = expandedGroups[item.href] ?? false;
-    const active = hasChildren ? isGroupActive(item) : isActive(item.href);
-
-    return (
-      <div key={item.href}>
-        {hasChildren ? (
-          <button
-            onClick={() => toggleGroup(item.href)}
-            className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg w-full transition-all duration-150 ${
-              isCollapsed ? 'justify-center' : ''
-            } ${
-              active
-                ? 'bg-[#B07A45]/10 text-[#B07A45] font-semibold'
-                : 'text-[#7A746C] hover:text-[#4B4B4B] hover:bg-[#EEE6DC]'
-            }`}
-          >
-            <Icon size={18} className="flex-shrink-0" />
-            {!isCollapsed && (
-              <>
-                <span className="text-sm flex-1 text-left">{item.label}</span>
-                <ChevronDown
-                  size={14}
-                  className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
-                />
-              </>
-            )}
-            {isCollapsed && (
-              <div className="absolute left-full ml-3 px-2 py-1 bg-[#1C1C1C] text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-nowrap shadow-lg">
-                {item.label}
-              </div>
-            )}
-          </button>
-        ) : (
-          <Link
-            href={item.href}
-            className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
-              isCollapsed ? 'justify-center' : ''
-            } ${
-              active
-                ? 'bg-[#B07A45]/10 text-[#B07A45] font-semibold'
-                : 'text-[#7A746C] hover:text-[#4B4B4B] hover:bg-[#EEE6DC]'
-            }`}
-          >
-            <Icon size={18} className="flex-shrink-0" />
-            {!isCollapsed && <span className="text-sm">{item.label}</span>}
-            {item.href === '/dashboard/bookings' && pendingBookings > 0 && (
-              <span className="ml-auto w-2 h-2 rounded-full bg-[#B07A45] flex-shrink-0" />
-            )}
-            {isCollapsed && (
-              <div className="absolute left-full ml-3 px-2 py-1 bg-[#1C1C1C] text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-nowrap shadow-lg">
-                {item.label}
-              </div>
-            )}
-          </Link>
-        )}
-
-        {/* Sub-items */}
-        {hasChildren && !isCollapsed && (
-          <AnimatePresence>
-            {expanded && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="ml-7 mt-1 space-y-0.5 border-l border-[#E3D9CD] pl-3">
-                  {item.children!.map((child) => (
-                    <Link
-                      key={child.href}
-                      href={child.href}
-                      className={`block px-3 py-1.5 rounded-md text-sm transition-all duration-150 ${
-                        isActive(child.href)
-                          ? 'bg-[#B07A45]/10 text-[#B07A45] font-semibold'
-                          : 'text-[#7A746C] hover:text-[#4B4B4B] hover:bg-[#EEE6DC]'
-                      }`}
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        )}
-      </div>
-    );
+  const isActive = (href: string) => {
+    if (href === '/dashboard') return pathname === '/dashboard';
+    return pathname === href || pathname.startsWith(href + '/');
   };
 
   const sidebarContent = (
@@ -313,14 +225,12 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
               </span>
             )}
           </Link>
-
           <button
-            onClick={() => isCollapsed ? setIsCollapsed(false) : setIsCollapsed(true)}
+            onClick={() => setIsCollapsed(!isCollapsed)}
             className="hidden lg:flex w-7 h-7 items-center justify-center rounded-md bg-[#EEE6DC] hover:bg-[#E3D9CD] text-[#7A746C] hover:text-[#1C1C1C] transition-all"
           >
             {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
-
           <button
             onClick={() => setMobileOpen(false)}
             className="lg:hidden p-1.5 rounded-md text-[#7A746C] hover:text-[#1C1C1C] hover:bg-[#EEE6DC] transition-colors"
@@ -331,44 +241,118 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-1">
-        {navSections.map((section, sIdx) => (
-          <div key={sIdx}>
-            {sIdx > 0 && (
-              <div className="my-3 border-t border-[#E3D9CD]" />
-            )}
-            {section.label && !isCollapsed && (
-              <p className="px-3 mb-1 text-[10px] uppercase tracking-widest text-[#A39B90] font-semibold">
-                {section.label}
-              </p>
-            )}
-            <div className="space-y-0.5">
-              {section.items.map(renderNavItem)}
+      <nav className="flex-1 px-3 py-3 overflow-y-auto scrollbar-thin">
+        {navGroups.map((group) => {
+          const expanded = expandedGroups[group.label] ?? true;
+          const groupHasActive = group.items.some((item) => isActive(item.href));
+
+          return (
+            <div key={group.label} className="mb-1">
+              {/* Group header */}
+              {!isCollapsed ? (
+                <button
+                  onClick={() => toggleGroup(group.label)}
+                  className={`flex items-center justify-between w-full px-3 py-1.5 mb-0.5 rounded-md transition-colors ${
+                    groupHasActive ? 'text-[#B07A45]' : 'text-[#A39B90] hover:text-[#7A746C]'
+                  }`}
+                >
+                  <span className="text-[10px] uppercase tracking-widest font-semibold">
+                    {group.label}
+                  </span>
+                  <ChevronDown
+                    size={12}
+                    className={`transition-transform duration-200 ${expanded ? '' : '-rotate-90'}`}
+                  />
+                </button>
+              ) : (
+                <div className="my-2 mx-2 border-t border-[#E3D9CD]" />
+              )}
+
+              {/* Group items */}
+              {isCollapsed ? (
+                // Always show icons when collapsed
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={`group relative flex items-center justify-center py-2 rounded-lg transition-all duration-150 ${
+                          active
+                            ? 'bg-[#B07A45]/10 text-[#B07A45] border-l-2 border-[#B07A45]'
+                            : 'text-[#7A746C] hover:text-[#4B4B4B] hover:bg-[#EEE6DC]'
+                        }`}
+                      >
+                        <Icon size={18} className="flex-shrink-0" />
+                        {item.href === '/dashboard/bookings' && pendingBookings > 0 && (
+                          <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#B07A45]" />
+                        )}
+                        {/* Tooltip */}
+                        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-[#1C1C1C] text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 whitespace-nowrap shadow-lg pointer-events-none">
+                          {item.label}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <AnimatePresence initial={false}>
+                  {expanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="space-y-0.5 pb-1">
+                        {group.items.map((item) => {
+                          const Icon = item.icon;
+                          const active = isActive(item.href);
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 ${
+                                active
+                                  ? 'bg-[#B07A45]/10 text-[#B07A45] font-semibold border-l-2 border-[#B07A45] ml-0'
+                                  : 'text-[#7A746C] hover:text-[#4B4B4B] hover:bg-[#EEE6DC]'
+                              }`}
+                            >
+                              <Icon size={18} className="flex-shrink-0" />
+                              <span className="text-sm">{item.label}</span>
+                              {item.href === '/dashboard/bookings' && pendingBookings > 0 && (
+                                <span className="ml-auto w-2 h-2 rounded-full bg-[#B07A45] flex-shrink-0" />
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
-      {/* Team avatars */}
+      {/* User avatar */}
       <div className="px-4 py-3 border-t border-[#E3D9CD]">
-        {!isCollapsed && (
-          <p className="text-[10px] uppercase tracking-widest text-[#A39B90] font-semibold mb-2">
-            Team
-          </p>
-        )}
-        <div className={`flex ${isCollapsed ? 'flex-col items-center gap-2' : 'gap-2'}`}>
-          {teamMembers.map((member, i) => (
-            <div key={i} className="relative">
-              <div className="w-8 h-8 rounded-full bg-[#EEE6DC] border border-[#E3D9CD] flex items-center justify-center">
-                <span className="text-xs font-semibold text-[#7A746C]">{member.initial}</span>
-              </div>
-              <div
-                className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-[#F4EFE8] ${
-                  member.online ? 'bg-green-500' : 'bg-gray-300'
-                }`}
-              />
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#B07A45] to-[#8E5E34] flex items-center justify-center flex-shrink-0">
+            <span className="text-sm font-bold text-white">
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+            </span>
+          </div>
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-[#1C1C1C] truncate">{user.name}</p>
+              <p className="text-[10px] text-[#7A746C] truncate">{user.role || user.email}</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
@@ -413,7 +397,7 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={{ width: isCollapsed ? 72 : 256 }}
+        animate={{ width: isCollapsed ? 72 : 260 }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] as const }}
         className={`
           fixed lg:sticky top-0 left-0 z-50 h-screen

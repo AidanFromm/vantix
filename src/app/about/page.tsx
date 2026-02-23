@@ -1,173 +1,208 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  ArrowRight, ArrowLeft, Zap, Eye, Target, Lightbulb,
-  Bot, Settings, Code, Clock, Shield
-} from 'lucide-react';
+import { useRef } from 'react';
+import FloatingNav from '@/components/landing/FloatingNav';
+import FooterSection from '@/components/landing/FooterSection';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
 };
 
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.8, ease } },
+};
 
 const values = [
-  { icon: Zap, title: 'Ship Fast, Ship Right', description: 'We built a 122-page platform in 3 weeks. Speed without sacrifice is our standard — not our exception.' },
-  { icon: Eye, title: 'Radical Transparency', description: 'No black boxes. No surprise invoices. You see every step, every decision, every line of progress in real time.' },
-  { icon: Target, title: 'Outcomes Over Output', description: 'We don\'t measure success by hours logged. We measure it by revenue generated, time saved, and costs eliminated.' },
-  { icon: Shield, title: 'Own Everything', description: 'You own every line of code, every system, every asset. No vendor lock-in. No hostage situations. Ever.' },
+  {
+    title: 'Build > Talk',
+    description:
+      'We don\'t pitch decks for months. We audit, scope, build, and deliver. You\'ll see working software before most agencies finish their discovery phase.',
+  },
+  {
+    title: 'Speed Matters',
+    description:
+      'We stay lean, move fast, and deliver more per dollar than agencies three times our size. Our AI agents handle the rest.',
+  },
+  {
+    title: 'Your Business First',
+    description:
+      'We don\'t build technology for its own sake. We build it because your margins depend on it, your team\'s time is finite, and your competitors are already figuring this out.',
+  },
 ];
 
 const team = [
-  { name: 'Kyle Ventura', role: 'Co-Founder · Operations & Strategy', icon: Settings, photo: '/team-kyle.jpg', description: 'Kyle doesn\'t just plan AI strategies — he obsesses over your P&L until AI is making you money. Drives client relationships, scopes every project, and won\'t sign off until the ROI is undeniable. Background in business operations and a genuine obsession with making things work better.' },
-  { name: 'Aidan Fromm', role: 'Co-Founder · Engineering & Design', icon: Code, photo: '/team-aidan.jpg', description: 'Aidan turns "that sounds impossible" into "it shipped Tuesday." Architects and builds every technical solution from full-stack applications to deep AI integrations. Built a complete e-commerce platform in 3 weeks. When he\'s not coding, he\'s coding something else.' },
+  {
+    name: 'Kyle Ventura',
+    role: 'Co-Founder',
+    bio: 'Builder. Systems thinker. Runs operations and client delivery.',
+    photo: '/team-kyle.jpg',
+  },
+  {
+    name: 'Aidan Fromm',
+    role: 'Co-Founder',
+    bio: 'Creative strategist. Handles design, marketing, and client relationships.',
+    photo: '/team-aidan.jpg',
+  },
 ];
 
 export default function AboutPage() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+
   return (
-    <div className="min-h-screen bg-[#F4EFE8] text-[#1C1C1C] scroll-smooth">
-      <nav className="sticky top-0 z-50 bg-[#F4EFE8]/90 backdrop-blur-md border-b border-[#E3D9CD]">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight hover:text-[#8E5E34] transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Vantix
-          </Link>
-          <Link
-            href="/#booking"
-            className="px-5 py-2 text-sm font-semibold rounded-full bg-[#B07A45] hover:bg-[#8E5E34] text-white shadow-sm transition-all"
-          >
-            Work With Us
-          </Link>
-        </div>
-      </nav>
+    <main className="min-h-screen" style={{ backgroundColor: colors.bg, color: colors.text, fontFamily: fonts.body }}>
+      <FloatingNav />
 
       {/* Hero */}
-      <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-        <motion.p initial="hidden" animate="visible" variants={fadeUp} className="text-[#8E5E34] text-sm font-semibold uppercase tracking-widest mb-4">
-          About Vantix
-        </motion.p>
-        <motion.h1 initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.05 } } }} className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-          A 4-Person Team.<br />Half of Us Never Sleep.
-        </motion.h1>
-        <motion.p initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.1 } } }} className="text-lg text-[#7A746C] max-w-2xl mx-auto">
-          2 humans who obsess over your success. 2 AI assistants who build around the clock. Small enough to care. Powerful enough to deliver enterprise results.
-        </motion.p>
-      </section>
-
-      {/* Origin Story */}
-      <section className="max-w-4xl mx-auto px-6 pb-16">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm">
-          <h2 className="text-2xl font-bold mb-4">Why We Exist</h2>
-          <div className="space-y-4 text-[#4B4B4B] leading-relaxed">
-            <p>We started Vantix because we watched business after business get sold overpriced AI "consulting" that never actually shipped anything. Decks without deployments. Strategies without systems. Six-figure invoices for PowerPoints.</p>
-            <p><strong className="text-[#1C1C1C]">We decided to be the opposite.</strong> No theory. No fluff. We build AI systems that are live in weeks and generating ROI from day one.</p>
-            <p>Our unfair advantage? Half our team is AI. Two AI assistants work alongside us 24/7 — researching, building, testing, optimizing — while our competitors&apos; teams are asleep. That&apos;s how we built a 122-page e-commerce platform in 3 weeks. That&apos;s how we deliver what agencies 10x our size can&apos;t.</p>
-          </div>
+      <section ref={heroRef} className="relative overflow-hidden pt-32 pb-24 md:pt-44 md:pb-36">
+        <motion.div style={{ y: heroY }} className="max-w-6xl mx-auto px-5 sm:px-6 text-center">
+          <motion.h1
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
+            style={{ fontFamily: fonts.display }}
+          >
+            We&apos;re Vantix.
+          </motion.h1>
+          <motion.p
+            initial="hidden"
+            animate="visible"
+            variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.15 } } }}
+            className="text-lg sm:text-xl max-w-2xl mx-auto"
+            style={{ color: colors.muted }}
+          >
+            An AI consulting and infrastructure agency building the systems that make businesses faster, leaner, and harder to compete with.
+          </motion.p>
         </motion.div>
       </section>
 
-      {/* Human Team */}
-      <section className="max-w-4xl mx-auto px-6 pb-16">
-        <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-2xl font-bold mb-8 text-center">
-          The Humans
-        </motion.h2>
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
-          {team.map((m, i) => (
-            <motion.div key={m.name} initial="hidden" whileInView="visible" viewport={{ once: true }}
-              variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
-              className="rounded-2xl p-8 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm hover:border-[#8E5E34]/20 transition-all">
-              {m.photo ? (
-                <Image src={m.photo} alt={m.name} width={80} height={80} className="w-20 h-20 rounded-xl object-cover shadow-sm mb-5" />
-              ) : (
-                <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-sm flex items-center justify-center mb-5">
-                  <m.icon className="w-7 h-7 text-[#8E5E34]" />
-                </div>
-              )}
-              <h3 className="text-xl font-bold">{m.name}</h3>
-              <p className="text-sm text-[#8E5E34] font-medium mb-3">{m.role}</p>
-              <p className="text-[#7A746C] text-sm leading-relaxed">{m.description}</p>
-            </motion.div>
-          ))}
+      {/* Story */}
+      <section className="py-20 md:py-28" style={{ backgroundColor: colors.bgAlt }}>
+        <div className="max-w-4xl mx-auto px-5 sm:px-6">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+            <p className="text-lg sm:text-xl leading-relaxed mb-6" style={{ color: colors.muted }}>
+              Started in 2025 by two friends who got tired of watching businesses burn money on problems AI already solved.
+            </p>
+            <p className="text-base sm:text-lg leading-relaxed mb-6" style={{ color: colors.muted }}>
+              Aidan — the engineer — was spending nights building data pipelines and AI systems, watching companies pay six figures for solutions he could ship in weeks. Kyle — the operator — kept running into the same story from business owners: &quot;We know AI can help, but every vendor wants to sell us a product, not solve our problem.&quot;
+            </p>
+            <p className="text-base sm:text-lg leading-relaxed mb-6" style={{ color: colors.muted }}>
+              So they teamed up. One builds the systems. The other speaks both languages — yours and ours. Together, they started Vantix with a simple thesis: start with the business, not the tech stack. Audit how you actually operate, find the highest-leverage opportunities, and build custom infrastructure that makes you faster.
+            </p>
+            <p className="text-base sm:text-lg leading-relaxed" style={{ color: colors.muted }}>
+              No off-the-shelf products. No dashboards you&apos;ll never check. Just systems that work — and numbers that follow.
+            </p>
+          </motion.div>
         </div>
-
-        {/* AI Team */}
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-8 md:p-10 bg-[#EEE6DC] border border-[#8E5E34]/20 shadow-sm">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="text-center md:text-left">
-              <div className="w-14 h-14 rounded-xl bg-[#F4EFE8] shadow-sm flex items-center justify-center mb-5 mx-auto md:mx-0">
-                <Bot className="w-7 h-7 text-[#8E5E34]" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">The AI Team Members</h3>
-              <p className="text-[#8E5E34] text-sm font-medium mb-4">The Half That Never Sleeps</p>
-              <p className="text-[#7A746C] leading-relaxed">
-                This isn&apos;t a gimmick. Our 2 AI assistants are full team members. They research technologies, generate and review code, run tests, draft documentation, and optimize systems — 24 hours a day, 7 days a week, 365 days a year.
-              </p>
-            </div>
-            <div className="space-y-4">
-              {[
-                { icon: Code, text: 'Code generation, review, and testing around the clock' },
-                { icon: Target, text: 'Research and identify the best tools for every project' },
-                { icon: Clock, text: 'Work continues while humans sleep — deadlines crushed' },
-                { icon: Lightbulb, text: 'Continuous optimization of deployed systems' },
-              ].map((item) => (
-                <div key={item.text} className="flex items-start gap-3">
-                  <item.icon className="w-5 h-5 text-[#8E5E34] mt-0.5 shrink-0" />
-                  <span className="text-sm text-[#4B4B4B]">{item.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
       </section>
 
       {/* Values */}
-      <section className="max-w-4xl mx-auto px-6 pb-16">
-        <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-2xl font-bold mb-8 text-center">
-          What We Stand For
-        </motion.h2>
-        <div className="grid sm:grid-cols-2 gap-6">
-          {values.map((v, i) => (
-            <motion.div key={v.title} initial="hidden" whileInView="visible" viewport={{ once: true }}
-              variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.08 } } }}
-              className="rounded-2xl p-6 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm hover:border-[#8E5E34]/20 transition-all">
-              <v.icon className="w-6 h-6 text-[#8E5E34] mb-3" />
-              <h3 className="font-bold mb-1">{v.title}</h3>
-              <p className="text-sm text-[#7A746C] leading-relaxed">{v.description}</p>
-            </motion.div>
-          ))}
+      <section className="py-20 md:py-28">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6">
+          <motion.h2
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeUp}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-14"
+            style={{ fontFamily: fonts.display }}
+          >
+            What We Believe
+          </motion.h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {values.map((v, i) => (
+              <motion.div
+                key={v.title}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
+                className="rounded-2xl p-8 border-2"
+                style={{ borderColor: colors.bronze, backgroundColor: colors.bg }}
+              >
+                <h3 className="text-xl font-bold mb-3" style={{ fontFamily: fonts.display, color: colors.bronze }}>
+                  {v.title}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: colors.muted }}>
+                  {v.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team */}
+      <section className="py-20 md:py-28" style={{ backgroundColor: colors.bgAlt }}>
+        <div className="max-w-6xl mx-auto px-5 sm:px-6">
+          <motion.h2
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeUp}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-14"
+            style={{ fontFamily: fonts.display }}
+          >
+            Who We Are
+          </motion.h2>
+          <div className="grid md:grid-cols-2 gap-10 max-w-3xl mx-auto">
+            {team.map((m, i) => (
+              <motion.div
+                key={m.name}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.12 } } }}
+                className="text-center"
+              >
+                <div className="relative w-40 h-40 mx-auto mb-5 rounded-full overflow-hidden border-2" style={{ borderColor: colors.border }}>
+                  <Image src={m.photo} alt={m.name} fill className="object-cover" />
+                </div>
+                <h3 className="text-xl font-bold" style={{ fontFamily: fonts.display }}>{m.name}</h3>
+                <p className="text-sm mb-2" style={{ color: colors.bronze }}>{m.role}</p>
+                <p className="text-sm" style={{ color: colors.muted }}>{m.bio}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-          className="rounded-2xl p-12 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm">
-          <h2 className="text-3xl font-bold mb-4">Ready to See What 4 of Us Can Do?</h2>
-          <p className="text-[#7A746C] mb-8 max-w-lg mx-auto">
-            We take on 3 new clients per month. If you&apos;re serious about automating your business, let&apos;s talk before the spots fill.
+      <section className="py-20 md:py-28">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="max-w-3xl mx-auto px-5 sm:px-6 text-center"
+        >
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ fontFamily: fonts.display }}>
+            Ready to build something?
+          </h2>
+          <p className="text-base mb-8" style={{ color: colors.muted }}>
+            Book a free audit call and we&apos;ll map your biggest opportunities in 30 minutes.
           </p>
           <Link
             href="/#booking"
-            className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#B07A45] hover:bg-[#8E5E34] text-white font-semibold rounded-full shadow-md transition-all"
+            className="inline-block px-8 py-4 rounded-full text-white font-semibold text-base transition-all hover:opacity-90"
+            style={{ backgroundColor: colors.bronze }}
           >
-            Book Your Free AI Audit <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            Talk to Our Team →
           </Link>
         </motion.div>
       </section>
 
-      <footer className="border-t border-[#E3D9CD] py-8 text-center text-sm text-[#7A746C]">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>Vantix {new Date().getFullYear()}</p>
-          <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#1C1C1C] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#1C1C1C] transition-colors">Terms</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <FooterSection />
+    </main>
   );
 }

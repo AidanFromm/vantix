@@ -1,153 +1,218 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { MessageSquare, Table2, Clock, Users } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const problems = [
   {
-    icon: MessageSquare,
-    title: "You're answering the same questions 100x a day",
-    description:
-      "Your team spends hours repeating the same responses to customers. That's time stolen from growth, strategy, and the work that actually moves the needle.",
+    stat: '40%',
+    title: 'Your team spends 40% of their time on tasks a machine could handle.',
+    visual: 'automation',
   },
   {
-    icon: Table2,
-    title: 'Your data lives in 5 different spreadsheets',
-    description:
-      "Orders in one place, inventory in another, customer info somewhere else. Nothing talks to each other, and you're duct-taping it all together manually.",
+    stat: '6',
+    title: 'Your data lives in 6 different tools that don\u2019t talk to each other.',
+    visual: 'integration',
   },
   {
-    icon: Clock,
-    title: "You're losing leads because you can't follow up fast enough",
-    description:
-      "By the time you respond, they've already gone to a competitor. Every hour of delay is revenue walking out the door.",
-  },
-  {
-    icon: Users,
-    title: "You're hiring people for tasks a machine could do",
-    description:
-      "Data entry, appointment scheduling, order processing — you're paying salaries for work that AI handles in seconds, 24/7, without mistakes.",
+    stat: '7d',
+    title: 'You\u2019re making decisions on last week\u2019s numbers.',
+    visual: 'realtime',
   },
 ];
 
-function ProblemCard({ problem, index }: { problem: typeof problems[0]; index: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
-  const Icon = problem.icon;
+function AutomationVisual({ opacity }: { opacity: number }) {
+  return (
+    <div className="relative w-full h-full flex items-center justify-center" style={{ opacity }}>
+      <div className="relative">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-lg bg-[#B07A45]/10 border border-[#B07A45]/20"
+            style={{
+              width: 60,
+              height: 40,
+              top: i * 28 - 56,
+              left: i % 2 === 0 ? -40 : 40,
+            }}
+            animate={{ x: [0, 80], opacity: [1, 0] }}
+            transition={{ duration: 2, delay: i * 0.3, repeat: Infinity, repeatDelay: 1 }}
+          />
+        ))}
+        <div className="w-24 h-24 rounded-2xl bg-[#B07A45] flex items-center justify-center shadow-lg shadow-[#B07A45]/20">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F4EFE8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IntegrationVisual({ opacity }: { opacity: number }) {
+  const nodes = [
+    { x: 0, y: -60 }, { x: 52, y: -30 }, { x: 52, y: 30 },
+    { x: 0, y: 60 }, { x: -52, y: 30 }, { x: -52, y: -30 },
+  ];
+  return (
+    <div className="relative w-full h-full flex items-center justify-center" style={{ opacity }}>
+      <svg width="200" height="200" viewBox="-100 -100 200 200" className="overflow-visible">
+        {nodes.map((n, i) =>
+          nodes.slice(i + 1).map((m, j) => (
+            <motion.line
+              key={`${i}-${j}`}
+              x1={n.x} y1={n.y} x2={m.x} y2={m.y}
+              stroke="#B07A45" strokeWidth="1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.4, 0] }}
+              transition={{ duration: 3, delay: (i + j) * 0.2, repeat: Infinity }}
+            />
+          ))
+        )}
+        {nodes.map((n, i) => (
+          <motion.circle
+            key={i}
+            cx={n.x} cy={n.y} r="12"
+            fill="#B07A45" fillOpacity={0.15}
+            stroke="#B07A45" strokeWidth="2"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 2, delay: i * 0.3, repeat: Infinity }}
+          />
+        ))}
+        <circle cx="0" cy="0" r="16" fill="#B07A45" />
+        <text x="0" y="5" textAnchor="middle" fill="#F4EFE8" fontSize="12" fontWeight="bold">V</text>
+      </svg>
+    </div>
+  );
+}
+
+function RealtimeVisual({ opacity }: { opacity: number }) {
+  return (
+    <div className="relative w-full h-full flex items-center justify-center" style={{ opacity }}>
+      <div className="w-64 h-44 rounded-xl bg-[#1C1C1C] border border-[#B07A45]/30 p-4 overflow-hidden">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          <span className="text-[10px] text-[#B07A45] font-semibold tracking-wider uppercase">Live</span>
+        </div>
+        <div className="flex items-end gap-1 h-20">
+          {Array.from({ length: 16 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="flex-1 bg-[#B07A45] rounded-t"
+              animate={{ height: [`${20 + Math.random() * 60}%`, `${20 + Math.random() * 60}%`] }}
+              transition={{ duration: 1.5, delay: i * 0.1, repeat: Infinity, repeatType: 'reverse' }}
+            />
+          ))}
+        </div>
+        <div className="mt-2 flex justify-between text-[9px] text-[#7A746C]">
+          <span>Now</span>
+          <span className="text-[#B07A45] font-bold">+23% ↑</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const visuals = [AutomationVisual, IntegrationVisual, RealtimeVisual];
+
+export default function ProblemSolutionSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="bg-[#EEE6DC] rounded-2xl border border-[#E3D9CD] p-8 shadow-sm"
-    >
-      <div className="w-12 h-12 rounded-xl bg-[#D8C2A8]/30 flex items-center justify-center mb-5">
-        <Icon className="w-6 h-6 text-[#B07A45]" />
+    <section id="problem" className="bg-[#0a0a0a]">
+      <div ref={containerRef} style={{ height: `${(problems.length + 1) * 100}vh` }} className="relative">
+        <div className="sticky top-0 h-screen flex items-center overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left: Text */}
+            <div className="relative h-[300px] flex flex-col justify-center">
+              {problems.map((p, i) => {
+                const start = i / (problems.length + 1);
+                const mid = (i + 0.5) / (problems.length + 1);
+                const end = (i + 1) / (problems.length + 1);
+                return <ProblemText key={i} problem={p} progress={scrollYProgress} start={start} mid={mid} end={end} />;
+              })}
+              <BetterWayText progress={scrollYProgress} start={problems.length / (problems.length + 1)} />
+            </div>
+
+            {/* Right: Visual */}
+            <div className="relative h-[300px]">
+              {visuals.map((Visual, i) => {
+                const start = i / (problems.length + 1);
+                const end = (i + 1) / (problems.length + 1);
+                return <VisualPanel key={i} Visual={Visual} progress={scrollYProgress} start={start} end={end} />;
+              })}
+              <BetterWayVisual progress={scrollYProgress} start={problems.length / (problems.length + 1)} />
+            </div>
+          </div>
+        </div>
       </div>
-      <h3
-        className="text-xl md:text-2xl font-semibold text-[#1C1C1C] mb-3"
-        style={{ fontFamily: 'Clash Display, sans-serif' }}
-      >
+    </section>
+  );
+}
+
+function ProblemText({ problem, progress, start, mid, end }: {
+  problem: typeof problems[0];
+  progress: ReturnType<typeof useScroll>['scrollYProgress'];
+  start: number; mid: number; end: number;
+}) {
+  const opacity = useTransform(progress, [start, start + 0.05, mid, end - 0.05, end], [0, 1, 1, 1, 0]);
+  const y = useTransform(progress, [start, start + 0.05, end - 0.05, end], [30, 0, 0, -30]);
+
+  return (
+    <motion.div className="absolute inset-0 flex flex-col justify-center" style={{ opacity, y }}>
+      <span className="text-6xl font-bold text-[#B07A45] mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+        {problem.stat}
+      </span>
+      <h3 className="text-2xl lg:text-3xl font-bold text-[#F4EFE8] leading-snug" style={{ fontFamily: "'Clash Display', sans-serif" }}>
         {problem.title}
       </h3>
-      <p className="text-[#4B4B4B] leading-relaxed" style={{ fontFamily: 'Satoshi, sans-serif' }}>
-        {problem.description}
+    </motion.div>
+  );
+}
+
+function BetterWayText({ progress, start }: {
+  progress: ReturnType<typeof useScroll>['scrollYProgress'];
+  start: number;
+}) {
+  const opacity = useTransform(progress, [start, start + 0.05, 1], [0, 1, 1]);
+  const y = useTransform(progress, [start, start + 0.05], [30, 0]);
+
+  return (
+    <motion.div className="absolute inset-0 flex flex-col justify-center" style={{ opacity, y }}>
+      <h3 className="text-3xl lg:text-5xl font-bold text-[#B07A45] leading-snug" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+        There&apos;s a better way.
+      </h3>
+      <p className="text-lg text-[#7A746C] mt-4" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+        Vantix builds the systems that get your time back.
       </p>
     </motion.div>
   );
 }
 
-export default function ProblemSolutionSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [transitioned, setTransitioned] = useState(false);
-
-  useEffect(() => {
-    let ScrollTrigger: typeof import('gsap/ScrollTrigger').ScrollTrigger;
-    let gsapInstance: typeof import('gsap').gsap;
-
-    const init = async () => {
-      if (typeof window === 'undefined' || window.innerWidth < 768) return;
-
-      const gsapMod = await import('gsap');
-      const stMod = await import('gsap/ScrollTrigger');
-      gsapInstance = gsapMod.gsap;
-      ScrollTrigger = stMod.ScrollTrigger;
-      gsapInstance.registerPlugin(ScrollTrigger);
-
-      if (!sectionRef.current) return;
-
-      const rightCol = sectionRef.current.querySelector('.right-col') as HTMLElement;
-      if (!rightCol) return;
-
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: () => `+=${rightCol.scrollHeight - window.innerHeight + 200}`,
-        pin: sectionRef.current.querySelector('.left-col') as HTMLElement,
-        pinSpacing: false,
-        onUpdate: (self) => {
-          setTransitioned(self.progress > 0.85);
-        },
-      });
-    };
-
-    init();
-
-    return () => {
-      if (typeof ScrollTrigger !== 'undefined') {
-        ScrollTrigger.getAll().forEach((t) => t.kill());
-      }
-    };
-  }, []);
-
+function VisualPanel({ Visual, progress, start, end }: {
+  Visual: typeof visuals[0];
+  progress: ReturnType<typeof useScroll>['scrollYProgress'];
+  start: number; end: number;
+}) {
+  const opacity = useTransform(progress, [start, start + 0.05, end - 0.05, end], [0, 1, 1, 0]);
   return (
-    <section ref={sectionRef} className="bg-[#F4EFE8] relative">
-      <div className="max-w-7xl mx-auto px-6 py-20 md:py-32">
-        {/* Mobile layout */}
-        <div className="block md:hidden space-y-6">
-          <h2
-            className="text-3xl font-bold text-[#1C1C1C] mb-8"
-            style={{ fontFamily: 'Clash Display, sans-serif' }}
-          >
-            Running a Business Shouldn&apos;t Feel Like This.
-          </h2>
-          {problems.map((p, i) => (
-            <ProblemCard key={i} problem={p} index={i} />
-          ))}
-          <h2
-            className="text-3xl font-bold text-[#B07A45] pt-8 text-center"
-            style={{ fontFamily: 'Clash Display, sans-serif' }}
-          >
-            What If It Didn&apos;t Have To?
-          </h2>
-        </div>
+    <motion.div className="absolute inset-0" style={{ opacity }}>
+      <Visual opacity={1} />
+    </motion.div>
+  );
+}
 
-        {/* Desktop layout */}
-        <div className="hidden md:grid md:grid-cols-2 gap-16">
-          <div className="left-col flex items-center min-h-screen">
-            <motion.h2
-              className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight"
-              style={{
-                fontFamily: 'Clash Display, sans-serif',
-                color: transitioned ? '#B07A45' : '#1C1C1C',
-                transition: 'color 0.6s ease',
-              }}
-            >
-              {transitioned
-                ? "What If It Didn't Have To?"
-                : "Running a Business Shouldn't Feel Like This."}
-            </motion.h2>
-          </div>
-          <div className="right-col space-y-8 py-32">
-            {problems.map((p, i) => (
-              <ProblemCard key={i} problem={p} index={i} />
-            ))}
-          </div>
-        </div>
+function BetterWayVisual({ progress, start }: {
+  progress: ReturnType<typeof useScroll>['scrollYProgress'];
+  start: number;
+}) {
+  const opacity = useTransform(progress, [start, start + 0.05, 1], [0, 1, 1]);
+  return (
+    <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity }}>
+      <div className="w-32 h-32 rounded-full bg-[#B07A45] flex items-center justify-center shadow-2xl shadow-[#B07A45]/30">
+        <span className="text-4xl font-bold text-[#F4EFE8]" style={{ fontFamily: "'Clash Display', sans-serif" }}>V</span>
       </div>
-    </section>
+    </motion.div>
   );
 }

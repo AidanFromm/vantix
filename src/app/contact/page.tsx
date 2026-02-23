@@ -3,154 +3,175 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import {
-  ArrowLeft, ArrowRight, Phone, Mail, Calendar, CheckCircle2, Clock, Zap
-} from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
+import FloatingNav from '@/components/landing/FloatingNav';
+import FooterSection from '@/components/landing/FooterSection';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
 };
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', company: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-    } catch { /* best effort */ }
-    const existing = JSON.parse(localStorage.getItem('vantix_leads') || '[]');
-    existing.push({ ...form, timestamp: new Date().toISOString() });
-    localStorage.setItem('vantix_leads', JSON.stringify(existing));
+    const subject = encodeURIComponent(`Vantix Inquiry from ${form.name}`);
+    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company}\n\n${form.message}`);
+    window.location.href = `mailto:usevantix@gmail.com?subject=${subject}&body=${body}`;
     setSubmitted(true);
   };
 
-  const inputClass = "w-full px-4 py-3 rounded-xl bg-[#F4EFE8] border border-[#E3D9CD] focus:outline-none focus:ring-2 focus:ring-[#B07A45]/30 focus:border-[#B07A45] transition-all text-[#1C1C1C] placeholder-[#A39B90]";
+  const inputStyle: React.CSSProperties = {
+    backgroundColor: 'transparent',
+    borderColor: colors.border,
+    color: colors.text,
+    fontFamily: fonts.body,
+  };
+
+  const focusClass = 'focus:outline-none focus:ring-2 focus:border-transparent';
 
   return (
-    <div className="min-h-screen text-[#1C1C1C]">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-[#F4EFE8]/90 backdrop-blur-md border-b border-[#E3D9CD]">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <img src="/logo-nav.png" alt="Vantix" className="w-8 h-8 object-contain" />
-            <span className="text-xl font-bold text-[#B07A45] tracking-tight">vantix<span className="text-[#8E5E34]">.</span></span>
-          </Link>
-          <Link href="/" className="flex items-center gap-2 text-sm text-[#7A746C] hover:text-[#B07A45] transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back to Home
-          </Link>
-        </div>
-      </nav>
+    <main className="min-h-screen" style={{ backgroundColor: colors.bg, color: colors.text, fontFamily: fonts.body }}>
+      <FloatingNav />
 
-      {/* Header */}
-      <section className="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
-        <motion.p initial="hidden" animate="visible" variants={fadeUp} className="text-[#B07A45] text-sm font-semibold uppercase tracking-widest mb-4">
-          Let&apos;s Talk
-        </motion.p>
-        <motion.h1 initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.05 } } }} className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-[#1C1C1C]">
-          Stop Losing Time.<br />Start Automating This Week.
-        </motion.h1>
-        <motion.p initial="hidden" animate="visible" variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.1 } } }} className="text-lg text-[#7A746C] max-w-2xl mx-auto">
-          Tell us what&apos;s eating your time. We&apos;ll respond within 24 hours with a clear plan to fix it.
-        </motion.p>
-      </section>
+      <section className="pt-32 pb-20 md:pt-44 md:pb-28">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6">
+          <motion.h1
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="text-5xl sm:text-7xl font-bold tracking-tight mb-6 text-center"
+            style={{ fontFamily: fonts.display }}
+          >
+            Get in Touch
+          </motion.h1>
+          <motion.p
+            initial="hidden"
+            animate="visible"
+            variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.1 } } }}
+            className="text-lg text-center max-w-xl mx-auto mb-16"
+            style={{ color: colors.muted }}
+          >
+            Tell us what you&apos;re working with. We&apos;ll tell you what&apos;s possible.
+          </motion.p>
 
-      {/* Content */}
-      <section className="max-w-6xl mx-auto px-6 pb-16">
-        <div className="grid lg:grid-cols-5 gap-8">
-          {/* Form */}
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-            className="lg:col-span-3 rounded-2xl p-8 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm">
-            {submitted ? (
-              <div className="text-center py-12">
-                <CheckCircle2 className="w-12 h-12 text-[#B07A45] mx-auto mb-4" />
-                <h3 className="text-2xl font-bold mb-2">You&apos;re In.</h3>
-                <p className="text-[#7A746C] mb-2">We&apos;ll respond within 24 hours with next steps.</p>
-                <p className="text-[#7A746C] text-sm">Check your inbox — or book a call below for faster turnaround.</p>
+          <div className="grid md:grid-cols-2 gap-12 md:gap-20">
+            {/* Form */}
+            <motion.form
+              onSubmit={handleSubmit}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeUp}
+              className="space-y-5"
+            >
+              {(['name', 'email', 'company'] as const).map((field) => (
+                <div key={field}>
+                  <label className="block text-sm font-medium mb-1.5 capitalize" style={{ color: colors.muted }}>
+                    {field}
+                  </label>
+                  <input
+                    type={field === 'email' ? 'email' : 'text'}
+                    required={field !== 'company'}
+                    value={form[field]}
+                    onChange={(e) => setForm({ ...form, [field]: e.target.value })}
+                    className={`w-full px-4 py-3 rounded-xl border ${focusClass}`}
+                    style={{ ...inputStyle, ['--tw-ring-color' as string]: colors.bronze }}
+                  />
+                </div>
+              ))}
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: colors.muted }}>
+                  Message
+                </label>
+                <textarea
+                  required
+                  rows={5}
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  className={`w-full px-4 py-3 rounded-xl border resize-none ${focusClass}`}
+                  style={{ ...inputStyle, ['--tw-ring-color' as string]: colors.bronze }}
+                />
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <p className="text-sm text-[#7A746C] mb-2">Takes 60 seconds. No commitment required.</p>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-[#4B4B4B]">Name *</label>
-                  <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputClass} placeholder="Your name" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-[#4B4B4B]">Email *</label>
-                  <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} placeholder="you@company.com" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-[#4B4B4B]">Company <span className="text-[#A39B90]">(optional)</span></label>
-                  <input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} className={inputClass} placeholder="Your company" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-[#4B4B4B]">What&apos;s eating your time? *</label>
-                  <textarea required rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className={inputClass + " resize-none"} placeholder="Tell us about the manual tasks, bottlenecks, or goals you want to automate..." />
-                </div>
-                <button type="submit" className="w-full bronze-btn text-white font-semibold rounded-full px-8 py-4 shadow-md hover:shadow-lg hover:brightness-110 transition-all flex items-center justify-center gap-2">
-                  Start Automating This Week <ArrowRight className="w-4 h-4" />
-                </button>
-              </form>
-            )}
-          </motion.div>
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-full text-white font-semibold transition-all hover:opacity-90"
+                style={{ backgroundColor: colors.bronze }}
+              >
+                {submitted ? 'Opening Email Client…' : 'Send Message'}
+              </button>
+            </motion.form>
 
-          {/* Sidebar */}
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}
-            variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.15 } } }}
-            className="lg:col-span-2 space-y-6">
-            <div className="rounded-2xl p-6 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm">
-              <h3 className="font-bold mb-4 text-[#1C1C1C]">Direct Line</h3>
-              <div className="space-y-4">
-                <a href="tel:+19084987753" className="flex items-center gap-3 text-sm text-[#4B4B4B] hover:text-[#B07A45] transition-colors">
-                  <Phone className="w-4 h-4 text-[#B07A45]" /> (908) 498-7753
-                </a>
-                <a href="mailto:hello@usevantix.com" className="flex items-center gap-3 text-sm text-[#4B4B4B] hover:text-[#B07A45] transition-colors">
-                  <Mail className="w-4 h-4 text-[#B07A45]" /> hello@usevantix.com
-                </a>
-              </div>
-            </div>
-            <div className="rounded-2xl p-6 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm">
-              <h3 className="font-bold mb-3 text-[#1C1C1C]">Skip the Form — Book a Call</h3>
-              <p className="text-sm text-[#7A746C] mb-4">30-minute free AI audit. We&apos;ll map your automation opportunities and show you projected ROI.</p>
-              <a href="/#booking" className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-full border border-[#D8C2A8] text-sm font-semibold text-[#1C1C1C] hover:bg-[#E6DED3] transition-all">
-                <Calendar className="w-4 h-4 text-[#B07A45]" /> Book a Call
-              </a>
-            </div>
-            <div className="rounded-2xl p-6 bg-[#EEE6DC] border border-[#E3D9CD] shadow-sm">
-              <h3 className="font-bold mb-3 text-[#1C1C1C]">What Happens Next</h3>
-              <div className="space-y-3">
-                {[
-                  { icon: Mail, text: 'We respond within 24 hours' },
-                  { icon: Clock, text: '30-min discovery call to understand your needs' },
-                  { icon: Zap, text: 'Custom proposal with ROI projections' },
-                ].map((step) => (
-                  <div key={step.text} className="flex items-start gap-3 text-sm text-[#4B4B4B]">
-                    <step.icon className="w-4 h-4 text-[#B07A45] mt-0.5 shrink-0" />
-                    <span>{step.text}</span>
+            {/* Contact Info */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: 0.15 } } }}
+              className="space-y-8"
+            >
+              <div>
+                <h3 className="text-lg font-bold mb-4" style={{ fontFamily: fonts.display }}>
+                  Direct Contact
+                </h3>
+                <div className="space-y-4">
+                  <a href="mailto:usevantix@gmail.com" className="flex items-center gap-3 text-base transition-colors hover:opacity-80" style={{ color: colors.muted }}>
+                    <Mail size={20} style={{ color: colors.bronze }} />
+                    usevantix@gmail.com
+                  </a>
+                  <a href="tel:+19084987753" className="flex items-center gap-3 text-base transition-colors hover:opacity-80" style={{ color: colors.muted }}>
+                    <Phone size={20} style={{ color: colors.bronze }} />
+                    (908) 498-7753
+                  </a>
+                  <div className="flex items-center gap-3 text-base" style={{ color: colors.muted }}>
+                    <MapPin size={20} style={{ color: colors.bronze }} />
+                    Tampa, FL
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
+
+              <div className="rounded-2xl p-6 border" style={{ borderColor: colors.border, backgroundColor: colors.bgAlt }}>
+                <h4 className="font-bold mb-2" style={{ fontFamily: fonts.display }}>
+                  What happens next?
+                </h4>
+                <ol className="space-y-2 text-sm" style={{ color: colors.muted }}>
+                  <li>1. You fill out the form — takes 2 minutes.</li>
+                  <li>2. We review your info and do some homework.</li>
+                  <li>3. We hop on a call, audit your setup, and show you where the leverage is.</li>
+                </ol>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Book a call CTA */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeUp}
+            className="mt-16 text-center"
+          >
+            <p className="text-base mb-4" style={{ color: colors.muted }}>
+              Prefer to just talk? Book a call instead.
+            </p>
+            <Link
+              href="/#booking"
+              className="inline-block px-8 py-4 rounded-full font-semibold text-base border-2 transition-all hover:opacity-80"
+              style={{ borderColor: colors.bronze, color: colors.bronze }}
+            >
+              Book a Call →
+            </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-[#E3D9CD] py-8 text-center text-sm text-[#7A746C]">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>Vantix {new Date().getFullYear()}</p>
-          <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-[#1C1C1C] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#1C1C1C] transition-colors">Terms</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <FooterSection />
+    </main>
   );
 }

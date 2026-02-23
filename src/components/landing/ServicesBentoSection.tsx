@@ -2,86 +2,93 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Bot, Layout, Target, BarChart3, Mail, Phone } from 'lucide-react';
+import { Cpu, Globe, MessageSquare, BarChart3, Target, Plug } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-const services = [
+interface Service {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  gridClass: string;
+}
+
+const services: Service[] = [
   {
-    icon: Bot,
+    icon: Cpu,
+    title: 'AI Infrastructure & Automation',
+    description:
+      'We design and deploy AI-powered workflows that replace repetitive tasks, route decisions intelligently, and keep your operations running without constant oversight.',
+    gridClass: 'md:col-span-2',
+  },
+  {
+    icon: Globe,
+    title: 'Custom Websites & Apps',
+    description:
+      'High-performance websites and applications engineered for conversion, speed, and the way your customers actually behave — not a template with your logo on it.',
+    gridClass: 'md:row-span-2',
+  },
+  {
+    icon: MessageSquare,
     title: 'AI Chatbots & Assistants',
-    description: '24/7 customer support that sounds human. Answers questions, books appointments, qualifies leads.',
-    large: true,
-  },
-  {
-    icon: Layout,
-    title: 'Custom Business Platforms',
-    description: 'E-commerce, inventory, POS — all in one system built for YOUR workflow.',
-    large: true,
-  },
-  {
-    icon: Target,
-    title: 'Automated Lead Generation',
-    description: 'Find prospects, send personalized outreach, follow up automatically.',
-    large: false,
+    description:
+      'Custom AI assistants trained on your data, your tone, and your workflows — handling questions, qualifying leads, and escalating only when it matters.',
+    gridClass: '',
   },
   {
     icon: BarChart3,
-    title: 'Business Intelligence Dashboards',
-    description: 'See every metric that matters. Real-time. From any device.',
-    large: false,
+    title: 'Dashboards & Analytics',
+    description:
+      'Real-time dashboards that surface the metrics you actually need — not 47 charts nobody reads. Clean data, clear decisions.',
+    gridClass: '',
   },
   {
-    icon: Mail,
-    title: 'Email & SMS Automation',
-    description: 'Drip campaigns, order confirmations, appointment reminders — on autopilot.',
-    large: false,
+    icon: Target,
+    title: 'Lead Generation Engines',
+    description:
+      'AI-driven systems that identify, qualify, and nurture leads — so your sales team spends time closing, not chasing.',
+    gridClass: '',
   },
   {
-    icon: Phone,
-    title: 'AI Phone Agents',
-    description: 'Handle calls, take orders, schedule appointments. Never miss a customer.',
-    large: false,
+    icon: Plug,
+    title: 'API Integration & Data Pipelines',
+    description:
+      'We connect the systems you already use into a unified data layer — eliminating manual transfers, sync errors, and duct-taped spreadsheets.',
+    gridClass: '',
   },
 ];
 
-function ServiceCard({ service, index }: { service: typeof services[0]; index: number }) {
+function ServiceCard({ service, index }: { service: Service; index: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-40px' });
+  const isInView = useInView(ref, { once: true, margin: '-60px' });
   const Icon = service.icon;
+  const isLarge = service.gridClass.includes('col-span') || service.gridClass.includes('row-span');
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={`
-        bg-[#EEE6DC] rounded-2xl p-6 md:p-8 border border-[#E3D9CD]
-        hover:scale-[1.02] hover:border-[#D8C2A8] transition-all duration-300
-        ${service.large ? 'md:col-span-2 min-h-[200px] md:min-h-[300px] relative overflow-hidden' : ''}
-      `}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      className={`group relative bg-[#EEE6DC] rounded-2xl p-6 md:p-8 border border-transparent
+        hover:border-[#B07A45]/40 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(176,122,69,0.15)]
+        transition-all duration-300 overflow-hidden ${service.gridClass}`}
     >
-      {service.large && (
-        <div className="absolute inset-0 opacity-[0.03]">
-          <svg width="100%" height="100%">
-            <pattern id={`pat-${index}`} x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-              <circle cx="20" cy="20" r="1.5" fill="#B07A45" />
-            </pattern>
-            <rect width="100%" height="100%" fill={`url(#pat-${index})`} />
-          </svg>
-        </div>
-      )}
-      <div className="relative z-10">
-        <div className="w-12 h-12 rounded-xl bg-[#D8C2A8]/30 flex items-center justify-center mb-5">
-          <Icon className="w-6 h-6 text-[#B07A45]" />
+      {/* Subtle gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#B07A45]/[0.03] to-transparent pointer-events-none rounded-2xl" />
+
+      <div className="relative z-10 h-full flex flex-col">
+        <div className="w-12 h-12 rounded-xl bg-[#D8C2A8]/30 flex items-center justify-center mb-5
+          group-hover:bg-[#B07A45]/20 transition-colors duration-300">
+          <Icon className="w-6 h-6 text-[#B07A45] group-hover:scale-110 transition-transform duration-300" />
         </div>
         <h3
-          className={`font-semibold text-[#1C1C1C] mb-3 ${service.large ? 'text-2xl md:text-3xl' : 'text-xl'}`}
+          className={`font-semibold text-[#1C1C1C] mb-3 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl'}`}
           style={{ fontFamily: 'Clash Display, sans-serif' }}
         >
           {service.title}
         </h3>
         <p
-          className={`text-[#4B4B4B] leading-relaxed ${service.large ? 'text-lg max-w-lg' : ''}`}
+          className={`text-[#4B4B4B] leading-relaxed ${isLarge ? 'text-lg max-w-lg' : 'line-clamp-3'}`}
           style={{ fontFamily: 'Satoshi, sans-serif' }}
         >
           {service.description}
@@ -93,14 +100,28 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
 
 export default function ServicesBentoSection() {
   return (
-    <section className="bg-[#EEE6DC] py-20 md:py-32">
+    <section id="services" className="bg-[#EEE6DC] py-20 md:py-32">
       <div className="max-w-7xl mx-auto px-6">
-        <h2
-          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-16"
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-4"
           style={{ fontFamily: 'Clash Display, sans-serif' }}
         >
           What We Build
-        </h2>
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-[#4B4B4B] text-center text-lg mb-16 max-w-2xl mx-auto"
+          style={{ fontFamily: 'Satoshi, sans-serif' }}
+        >
+          End-to-end AI systems designed around how your business actually works.
+        </motion.p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {services.map((s, i) => (
             <ServiceCard key={i} service={s} index={i} />

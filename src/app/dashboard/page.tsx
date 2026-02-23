@@ -27,9 +27,7 @@ import {
   Zap,
 } from 'lucide-react';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-
-const LiveGlobe = dynamic(() => import('@/components/dashboard/LiveGlobe'), { ssr: false });
+import KPICard from '@/components/dashboard/KPICard';
 
 // ─── Types ───────────────────────────────────────────────────────────
 interface Invoice {
@@ -96,14 +94,17 @@ interface ActivityItem {
   type?: string;
 }
 
-// No seed data — all data pulled from Supabase via getData()
-
-// ─── Helpers ─────────────────────────────────────────────────────────
-function formatCurrency(n: number): string {
-  if (n >= 1000) return `$${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k`;
-  return `$${n.toLocaleString()}`;
+interface Booking {
+  id: string;
+  clientName?: string;
+  client?: string;
+  date?: string;
+  time?: string;
+  status?: string;
+  type?: string;
 }
 
+// ─── Helpers ─────────────────────────────────────────────────────────
 function formatMoney(n: number): string {
   return `$${n.toLocaleString()}`;
 }
@@ -133,244 +134,15 @@ function getActivityIcon(type?: string) {
   }
 }
 
-function getPriorityColor(p?: string) {
-  if (p === 'high') return 'text-red-500';
-  if (p === 'medium') return 'text-[#B07A45]';
-  return 'text-[#7A746C]';
+function getPriorityDot(p?: string) {
+  if (p === 'high') return 'bg-red-500';
+  if (p === 'medium') return 'bg-[#B07A45]';
+  return 'bg-[#7A746C]';
 }
 
 // ─── Skeleton ────────────────────────────────────────────────────────
 function Skeleton({ className = '' }: { className?: string }) {
   return <div className={`animate-pulse bg-[#E3D9CD] rounded-lg ${className}`} />;
-}
-
-function MetricSkeleton() {
-  return (
-    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm">
-      <Skeleton className="h-4 w-20 mb-3" />
-      <Skeleton className="h-8 w-28 mb-2" />
-      <Skeleton className="h-3 w-16" />
-    </div>
-  );
-}
-
-// ─── Components ──────────────────────────────────────────────────────
-function MetricCard({
-  icon,
-  label,
-  value,
-  trend,
-  trendUp,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  trend: string;
-  trendUp: boolean;
-}) {
-  return (
-    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 cursor-default">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[#7A746C] text-sm font-medium">{label}</span>
-        <div className="text-[#B07A45]">{icon}</div>
-      </div>
-      <div className="text-[#1C1C1C] text-2xl font-bold tracking-tight">{value}</div>
-      <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${trendUp ? 'text-green-600' : 'text-red-500'}`}>
-        {trendUp ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-        {trend}
-      </div>
-    </div>
-  );
-}
-
-function RevenueChart({ data }: { data: { month: string; amount: number }[] }) {
-  const max = data.length > 0 ? Math.max(...data.map((d) => d.amount)) : 1;
-  return (
-    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-[#1C1C1C] font-bold text-sm">Monthly Revenue</h3>
-        <span className="text-[#7A746C] text-xs">Last 6 months</span>
-      </div>
-      <div className="flex items-end gap-3 h-40">
-        {data.map((d) => (
-          <div key={d.month} className="flex-1 flex flex-col items-center gap-2">
-            <span className="text-[#7A746C] text-[10px] font-medium">{formatCurrency(d.amount)}</span>
-            <div className="w-full relative group">
-              <div
-                className="w-full bg-gradient-to-t from-[#B07A45] to-[#C89A6A] rounded-t-md transition-all duration-500 hover:from-[#C89A6A] hover:to-[#D4A96E]"
-                style={{ height: `${(d.amount / max) * 120}px` }}
-              />
-            </div>
-            <span className="text-[#7A746C] text-xs font-medium">{d.month}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PipelineCard({ leads }: { leads: Lead[] }) {
-  const stages = [
-    { key: 'new', label: 'New', color: 'bg-blue-400' },
-    { key: 'contacted', label: 'Contacted', color: 'bg-yellow-400' },
-    { key: 'qualified', label: 'Qualified', color: 'bg-orange-400' },
-    { key: 'proposal', label: 'Proposal', color: 'bg-purple-400' },
-    { key: 'won', label: 'Won', color: 'bg-green-500' },
-  ];
-  const counts = stages.map((s) => ({
-    ...s,
-    count: leads.filter((l) => l.stage === s.key || l.status === s.key).length,
-  }));
-  const totalValue = leads.reduce((s, l) => s + (l.value || 0), 0);
-
-  return (
-    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[#1C1C1C] font-bold text-sm">Lead Pipeline</h3>
-        <span className="text-[#B07A45] text-xs font-semibold">{formatMoney(totalValue)}</span>
-      </div>
-      <div className="space-y-3">
-        {counts.map((s) => (
-          <div key={s.key} className="flex items-center gap-3">
-            <div className={`w-2 h-2 rounded-full ${s.color} shrink-0`} />
-            <span className="text-[#7A746C] text-xs flex-1">{s.label}</span>
-            <span className="text-[#1C1C1C] text-sm font-semibold">{s.count}</span>
-          </div>
-        ))}
-      </div>
-      <div className="mt-4 pt-3 border-t border-[#E3D9CD]">
-        <div className="flex items-center justify-between">
-          <span className="text-[#7A746C] text-xs">Total leads</span>
-          <span className="text-[#1C1C1C] text-sm font-bold">{leads.length}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
-  return (
-    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[#1C1C1C] font-bold text-sm">Recent Activity</h3>
-        <Activity size={16} className="text-[#7A746C]" />
-      </div>
-      <div className="space-y-1">
-        {activities.slice(0, 10).map((a) => (
-          <div key={a.id} className="flex items-start gap-3 py-2 group">
-            <div className="mt-0.5 text-[#B07A45] shrink-0">
-              {getActivityIcon(a.type)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[#1C1C1C] text-xs leading-relaxed truncate">
-                {a.description || a.action || a.message}
-              </p>
-            </div>
-            <span className="text-[#7A746C] text-[10px] shrink-0 mt-0.5">
-              {a.timestamp ? timeAgo(a.timestamp) : a.createdAt ? timeAgo(a.createdAt) : ''}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function UpcomingTasks({ tasks }: { tasks: TaskItem[] }) {
-  const upcoming = tasks
-    .filter((t) => t.status !== 'completed' && t.status !== 'done')
-    .sort((a, b) => (a.dueDate || a.due || '').localeCompare(b.dueDate || b.due || ''))
-    .slice(0, 6);
-
-  return (
-    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[#1C1C1C] font-bold text-sm">Upcoming</h3>
-        <Calendar size={16} className="text-[#7A746C]" />
-      </div>
-      <div className="space-y-1">
-        {upcoming.map((t) => {
-          const due = t.dueDate || t.due || '';
-          const dateStr = due ? new Date(due + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-          return (
-            <div key={t.id} className="flex items-center gap-3 py-2">
-              <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${getPriorityColor(t.priority).replace('text-', 'bg-')}`} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[#1C1C1C] text-xs truncate">{t.title}</p>
-                <p className="text-[#7A746C] text-[10px]">{t.project}</p>
-              </div>
-              <span className="text-[#7A746C] text-[10px] shrink-0">{dateStr}</span>
-            </div>
-          );
-        })}
-      </div>
-      <Link href="/dashboard/tasks" className="flex items-center gap-1 mt-3 pt-3 border-t border-[#E3D9CD] text-[#B07A45] text-xs font-medium hover:underline">
-        View all tasks <ChevronRight size={12} />
-      </Link>
-    </div>
-  );
-}
-
-function ClientHealth({ clients }: { clients: Client[] }) {
-  const sorted = [...clients].sort((a, b) => (b.health || 0) - (a.health || 0));
-  return (
-    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[#1C1C1C] font-bold text-sm">Client Health</h3>
-        <Heart size={16} className="text-[#7A746C]" />
-      </div>
-      <div className="space-y-3">
-        {sorted.map((c) => {
-          const health = c.health || 0;
-          const color = health >= 85 ? 'bg-green-500' : health >= 70 ? 'bg-yellow-400' : 'bg-red-400';
-          return (
-            <div key={c.id}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[#1C1C1C] text-xs font-medium">{c.name}</span>
-                <span className="text-[#7A746C] text-[10px]">{health}%</span>
-              </div>
-              <div className="h-1.5 bg-[#E3D9CD] rounded-full overflow-hidden">
-                <div className={`h-full ${color} rounded-full transition-all duration-700`} style={{ width: `${health}%` }} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <Link href="/dashboard/clients" className="flex items-center gap-1 mt-3 pt-3 border-t border-[#E3D9CD] text-[#B07A45] text-xs font-medium hover:underline">
-        View all clients <ChevronRight size={12} />
-      </Link>
-    </div>
-  );
-}
-
-function QuickActions() {
-  const actions = [
-    { label: 'New Invoice', icon: <FileText size={18} />, href: '/dashboard/invoices?action=new' },
-    { label: 'Add Lead', icon: <UserPlus size={18} />, href: '/dashboard/leads?action=new' },
-    { label: 'Create Task', icon: <CheckSquare size={18} />, href: '/dashboard/tasks?action=new' },
-    { label: 'Send Email', icon: <Mail size={18} />, href: '/dashboard/outreach' },
-  ];
-
-  return (
-    <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[#1C1C1C] font-bold text-sm">Quick Actions</h3>
-        <Zap size={16} className="text-[#7A746C]" />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        {actions.map((a) => (
-          <Link
-            key={a.label}
-            href={a.href}
-            className="flex items-center gap-2.5 px-4 py-3 bg-gradient-to-b from-[#C89A6A] to-[#B07A45] text-white rounded-xl text-xs font-medium hover:opacity-90 transition-opacity shadow-sm"
-          >
-            {a.icon}
-            {a.label}
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 // ─── Main Page ───────────────────────────────────────────────────────
@@ -385,6 +157,7 @@ export default function DashboardOverview() {
   const [clients, setClients] = useState<Client[]>([]);
   const [expenses, setExpenses] = useState<{ id: string; amount?: number }[]>([]);
   const [payments, setPayments] = useState<{ id: string; amount?: number }[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
 
   useEffect(() => {
     try {
@@ -403,7 +176,7 @@ export default function DashboardOverview() {
   useEffect(() => {
     async function load() {
       try {
-        const [inv, proj, ld, tsk, act, cl, exp, pay] = await Promise.all([
+        const [inv, proj, ld, tsk, act, cl, exp, pay, bk] = await Promise.all([
           getData('invoices').catch(() => []),
           getData('projects').catch(() => []),
           getData('leads').catch(() => []),
@@ -412,6 +185,7 @@ export default function DashboardOverview() {
           getData('clients').catch(() => []),
           getData('expenses').catch(() => []),
           getData('payments').catch(() => []),
+          getData('bookings').catch(() => []),
         ]);
         setInvoices(inv);
         setProjects(proj);
@@ -421,9 +195,8 @@ export default function DashboardOverview() {
         setClients(cl);
         setExpenses(exp);
         setPayments(pay);
-      } catch {
-        // No seed fallback — leave empty
-      }
+        setBookings(bk);
+      } catch {}
       setLoading(false);
     }
     load();
@@ -443,122 +216,281 @@ export default function DashboardOverview() {
     (l) => l.stage !== 'won' && l.stage !== 'lost' && l.status !== 'won' && l.status !== 'lost'
   ).length;
   const totalExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
-  const netProfit = totalRevenue - totalExpenses;
+
+  // Quick actions
+  const quickActions = [
+    { label: 'New Invoice', icon: FileText, href: '/dashboard/finances/invoices?action=new' },
+    { label: 'Add Lead', icon: UserPlus, href: '/dashboard/leads?action=new' },
+    { label: 'Create Task', icon: CheckSquare, href: '/dashboard/tasks?action=new' },
+    { label: 'Send Email', icon: Mail, href: '/dashboard/outreach' },
+  ];
+
+  // Upcoming tasks
+  const upcomingTasks = tasks
+    .filter((t) => t.status !== 'completed' && t.status !== 'done')
+    .sort((a, b) => (a.dueDate || a.due || '').localeCompare(b.dueDate || b.due || ''))
+    .slice(0, 5);
+
+  // Recent leads
+  const recentLeads = [...leads]
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+    .slice(0, 5);
+
+  // Upcoming bookings
+  const upcomingBookings = [...bookings]
+    .filter((b) => b.status !== 'cancelled')
+    .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
+    .slice(0, 4);
 
   if (loading) {
     return (
-      <div className="min-h-screen p-6 lg:p-8 space-y-6">
-        <div>
-          <Skeleton className="h-7 w-48 mb-1" />
-          <Skeleton className="h-4 w-72" />
+      <div className="space-y-6">
+        <Skeleton className="h-16 w-full" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-40" />)}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => <MetricSkeleton key={i} />)}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2"><Skeleton className="h-64" /></div>
-          <Skeleton className="h-64" />
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Skeleton className="h-72" />
-          <Skeleton className="h-72" />
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <Skeleton className="lg:col-span-3 h-80" />
+          <Skeleton className="lg:col-span-2 h-80" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-6 lg:p-8 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-[#1C1C1C] text-xl font-bold tracking-tight">
-          {userName ? `Welcome back, ${userName}` : 'Dashboard'}
-        </h1>
-        <p className="text-[#7A746C] text-sm mt-0.5">
-          {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
-          {' — '}
-          {new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-        </p>
-      </div>
-
-      {/* Live Globe */}
-      <LiveGlobe />
-
-      {/* Row 1 — Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <MetricCard
-          icon={<DollarSign size={18} />}
-          label="Total Revenue"
-          value={formatMoney(totalRevenue)}
-          trend={`${invoices.filter((i) => i.status === 'paid').length} paid invoices`}
-          trendUp={totalRevenue > 0}
-        />
-        <MetricCard
-          icon={<TrendingDown size={18} />}
-          label="Total Expenses"
-          value={formatMoney(totalExpenses)}
-          trend={`${expenses.length} expenses tracked`}
-          trendUp={false}
-        />
-        <MetricCard
-          icon={<TrendingUp size={18} />}
-          label="Net Profit"
-          value={formatMoney(netProfit)}
-          trend={totalRevenue > 0 ? `${((netProfit / totalRevenue) * 100).toFixed(0)}% margin` : 'No revenue yet'}
-          trendUp={netProfit > 0}
-        />
-        <MetricCard
-          icon={<Clock size={18} />}
-          label="Outstanding"
-          value={formatMoney(outstanding)}
-          trend={`${invoices.filter((i) => i.status !== 'paid' && i.status !== 'cancelled').length} invoices pending`}
-          trendUp={false}
-        />
-        <MetricCard
-          icon={<Briefcase size={18} />}
-          label="Active Projects"
-          value={String(activeProjects)}
-          trend={`${projects.length} total projects`}
-          trendUp={activeProjects > 0}
-        />
-        <MetricCard
-          icon={<Target size={18} />}
-          label="Active Leads"
-          value={String(activeLeads)}
-          trend={activeLeads > 0 ? `${formatMoney(leads.reduce((s, l) => s + (l.value || 0), 0))} pipeline` : 'No active leads'}
-          trendUp={activeLeads > 0}
-        />
-      </div>
-
-      {/* Row 2 — Chart + Pipeline */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <RevenueChart data={(() => {
-            const months: { month: string; amount: number }[] = [];
-            const now = new Date();
-            for (let i = 5; i >= 0; i--) {
-              const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-              const prefix = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-              const label = d.toLocaleString('en-US', { month: 'short' });
-              const amt = invoices.filter(inv => inv.status === 'paid' && (inv.paidDate || inv.date || '').startsWith(prefix)).reduce((s, inv) => s + (inv.amount || inv.total || 0), 0);
-              months.push({ month: label, amount: amt });
-            }
-            return months;
-          })()} />
+    <div className="space-y-6 max-w-[1400px]">
+      {/* ─── Header: Welcome + Quick Actions ─── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-[28px] font-bold text-[#1C1C1C] tracking-tight leading-tight">
+            {userName ? `Welcome back, ${userName}` : 'Dashboard'}
+          </h1>
+          <p className="text-[14px] text-[#7A746C] mt-1">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+          </p>
         </div>
-        <PipelineCard leads={leads} />
+        <div className="flex gap-2 flex-wrap">
+          {quickActions.map((a) => {
+            const Icon = a.icon;
+            return (
+              <Link
+                key={a.label}
+                href={a.href}
+                className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#EEE6DC] border border-[#E3D9CD] text-[#1C1C1C] rounded-lg text-xs font-medium hover:bg-[#B07A45]/10 hover:border-[#B07A45]/30 transition-all"
+              >
+                <Icon size={14} className="text-[#B07A45]" />
+                {a.label}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Row 3 — Activity + Upcoming */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ActivityFeed activities={activities} />
-        <UpcomingTasks tasks={tasks} />
+      {/* ─── KPI Cards Row ─── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard
+          title="Total Revenue"
+          value={totalRevenue}
+          prefix="$"
+          icon={DollarSign}
+          trend={totalRevenue > 0 ? 12 : 0}
+          trendLabel="vs last month"
+          sparklineData={[40, 55, 45, 60, 52, 70, 65, 80]}
+        />
+        <KPICard
+          title="Outstanding"
+          value={outstanding}
+          prefix="$"
+          icon={Clock}
+          trend={outstanding > 0 ? -5 : 0}
+          trendLabel="pending"
+          sparklineData={[30, 40, 35, 50, 45, 38, 42, 35]}
+        />
+        <KPICard
+          title="Active Projects"
+          value={activeProjects}
+          icon={Briefcase}
+          trend={8}
+          trendLabel="this month"
+          sparklineData={[2, 3, 3, 4, 3, 5, 4, activeProjects]}
+        />
+        <KPICard
+          title="Active Leads"
+          value={activeLeads}
+          icon={Target}
+          trend={activeLeads > 0 ? 15 : 0}
+          trendLabel="growth"
+          sparklineData={[5, 8, 6, 10, 9, 12, 11, activeLeads]}
+        />
       </div>
 
-      {/* Row 4 — Client Health + Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ClientHealth clients={clients} />
-        <QuickActions />
+      {/* ─── 2-Column Layout ─── */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Left Column (60%) — Activity Feed */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Activity Feed */}
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
+            <div className="h-[2px] w-full bg-gradient-to-r from-[#B07A45] via-[#C89A6A] to-[#B07A45]" />
+            <div className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-[#1C1C1C] font-bold text-base">Recent Activity</h2>
+                <Activity size={16} className="text-[#7A746C]" />
+              </div>
+              <div className="space-y-0.5">
+                {activities.length === 0 && (
+                  <p className="text-[#7A746C] text-sm py-4 text-center">No recent activity</p>
+                )}
+                {activities.slice(0, 12).map((a) => (
+                  <div key={a.id} className="flex items-start gap-3 py-2.5 border-b border-[#E3D9CD]/50 last:border-0">
+                    <div className="mt-0.5 p-1.5 rounded-md bg-[#B07A45]/10 text-[#B07A45] shrink-0">
+                      {getActivityIcon(a.type)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[#1C1C1C] text-sm leading-relaxed truncate">
+                        {a.description || a.action || a.message}
+                      </p>
+                    </div>
+                    <span className="text-[#7A746C] text-[11px] shrink-0 mt-0.5">
+                      {a.timestamp ? timeAgo(a.timestamp) : a.createdAt ? timeAgo(a.createdAt) : ''}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Upcoming Tasks */}
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
+            <div className="h-[2px] w-full bg-gradient-to-r from-[#B07A45] via-[#C89A6A] to-[#B07A45]" />
+            <div className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-[#1C1C1C] font-bold text-base">Upcoming Tasks</h2>
+                <CheckSquare size={16} className="text-[#7A746C]" />
+              </div>
+              <div className="space-y-1">
+                {upcomingTasks.length === 0 && (
+                  <p className="text-[#7A746C] text-sm py-4 text-center">No upcoming tasks</p>
+                )}
+                {upcomingTasks.map((t) => {
+                  const due = t.dueDate || t.due || '';
+                  const dateStr = due ? new Date(due + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+                  return (
+                    <div key={t.id} className="flex items-center gap-3 py-2.5 border-b border-[#E3D9CD]/50 last:border-0">
+                      <div className={`w-2 h-2 rounded-full shrink-0 ${getPriorityDot(t.priority)}`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[#1C1C1C] text-sm truncate">{t.title}</p>
+                        {t.project && <p className="text-[#7A746C] text-[11px]">{t.project}</p>}
+                      </div>
+                      <span className="text-[#7A746C] text-[11px] shrink-0">{dateStr}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <Link href="/dashboard/tasks" className="flex items-center gap-1 mt-3 pt-3 border-t border-[#E3D9CD] text-[#B07A45] text-xs font-medium hover:underline">
+                View all tasks <ChevronRight size={12} />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column (40%) — Quick Links, Bookings, Recent Leads */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Quick Links */}
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
+            <div className="h-[2px] w-full bg-gradient-to-r from-[#B07A45] via-[#C89A6A] to-[#B07A45]" />
+            <div className="p-5">
+              <h2 className="text-[#1C1C1C] font-bold text-base mb-4">Quick Links</h2>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: 'Invoices', href: '/dashboard/finances/invoices', icon: FileText },
+                  { label: 'Pipeline', href: '/dashboard/pipeline', icon: Target },
+                  { label: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
+                  { label: 'Reports', href: '/dashboard/reports', icon: TrendingUp },
+                ].map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-[#F4EFE8] border border-[#E3D9CD] text-sm text-[#1C1C1C] hover:border-[#B07A45]/30 hover:bg-[#B07A45]/5 transition-all"
+                    >
+                      <Icon size={15} className="text-[#B07A45]" />
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Upcoming Bookings */}
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
+            <div className="h-[2px] w-full bg-gradient-to-r from-[#B07A45] via-[#C89A6A] to-[#B07A45]" />
+            <div className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-[#1C1C1C] font-bold text-base">Upcoming Bookings</h2>
+                <Calendar size={16} className="text-[#7A746C]" />
+              </div>
+              <div className="space-y-1">
+                {upcomingBookings.length === 0 && (
+                  <p className="text-[#7A746C] text-sm py-4 text-center">No upcoming bookings</p>
+                )}
+                {upcomingBookings.map((b) => {
+                  const dateStr = b.date ? new Date(b.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+                  return (
+                    <div key={b.id} className="flex items-center gap-3 py-2.5 border-b border-[#E3D9CD]/50 last:border-0">
+                      <div className="w-9 h-9 rounded-lg bg-[#B07A45]/10 flex items-center justify-center text-[#B07A45] text-xs font-bold shrink-0">
+                        {dateStr}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[#1C1C1C] text-sm truncate">{b.clientName || b.client || 'Client'}</p>
+                        <p className="text-[#7A746C] text-[11px]">{b.time || b.type || ''}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <Link href="/dashboard/bookings" className="flex items-center gap-1 mt-3 pt-3 border-t border-[#E3D9CD] text-[#B07A45] text-xs font-medium hover:underline">
+                View all bookings <ChevronRight size={12} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Recent Leads */}
+          <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-2xl overflow-hidden shadow-sm">
+            <div className="h-[2px] w-full bg-gradient-to-r from-[#B07A45] via-[#C89A6A] to-[#B07A45]" />
+            <div className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-[#1C1C1C] font-bold text-base">Recent Leads</h2>
+                <Target size={16} className="text-[#7A746C]" />
+              </div>
+              <div className="space-y-1">
+                {recentLeads.length === 0 && (
+                  <p className="text-[#7A746C] text-sm py-4 text-center">No leads yet</p>
+                )}
+                {recentLeads.map((l) => (
+                  <div key={l.id} className="flex items-center gap-3 py-2.5 border-b border-[#E3D9CD]/50 last:border-0">
+                    <div className="w-8 h-8 rounded-full bg-[#B07A45]/10 flex items-center justify-center text-[#B07A45] text-xs font-bold shrink-0">
+                      {(l.name || '?').charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[#1C1C1C] text-sm truncate">{l.name}</p>
+                      <p className="text-[#7A746C] text-[11px]">{l.company || l.source || ''}</p>
+                    </div>
+                    {l.value && l.value > 0 && (
+                      <span className="text-[#B07A45] text-xs font-semibold shrink-0">
+                        {formatMoney(l.value)}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <Link href="/dashboard/leads" className="flex items-center gap-1 mt-3 pt-3 border-t border-[#E3D9CD] text-[#B07A45] text-xs font-medium hover:underline">
+                View all leads <ChevronRight size={12} />
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
