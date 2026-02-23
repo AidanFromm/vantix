@@ -25,44 +25,25 @@ export default function FuturisticLanding() {
     <SmoothScroll>
       <div className="min-h-screen" style={{ fontFamily: "'Satoshi', sans-serif" }}>
         <FloatingNav />
-
-        {/* Hero */}
         <ProductShowcaseHero />
-
-        {/* Social Proof */}
         <SocialProofBar />
-
-        {/* Problem → Solution (slide animations) */}
         <ProblemSolutionSection />
 
-        {/* Services */}
-        <ServicesBentoSection />
-
-        {/* Process */}
-        <ProcessSection />
-
-        {/* 📅 Booking — right after Process on both mobile and desktop */}
+        {/* 📅 Booking — right after the slide animation */}
         <BookingSection />
 
-        {/* Case Studies */}
+        <ServicesBentoSection />
+        <ProcessSection />
         <CaseStudySection />
 
-        {/* ROI — desktop only */}
         <div className="hidden lg:block">
           <ROISection />
         </div>
 
-        {/* Team */}
         <TeamSection />
-
-        {/* FAQ */}
         <FAQSection />
-
-        {/* Final CTA */}
         <FinalCTASection />
-
         <FooterSection />
-
         <ChatWidget />
       </div>
     </SmoothScroll>
