@@ -156,28 +156,29 @@ export default function ProductShowcaseHero() {
         </motion.div>
       </div>
 
-      {/* ─── MOBILE: Horizontal marquee below hero text ─── */}
-      <div className="lg:hidden w-full overflow-hidden py-8 relative">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16" style={{ background: `linear-gradient(to right, ${colors.bg}, transparent)` }} />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16" style={{ background: `linear-gradient(to left, ${colors.bg}, transparent)` }} />
-        <div className="mobile-marquee flex gap-4">
-          {mobileItems.map((item, i) => (
-            <div key={`m-${i}`} className="flex-shrink-0 w-48">
-              <div className="rounded-xl overflow-hidden border" style={{ borderColor: colors.border, background: 'rgba(255,255,255,0.3)' }}>
-                <Image
-                  src={item.src}
-                  alt={item.label}
-                  width={192}
-                  height={134}
-                  sizes="192px"
-                  loading="lazy"
-                  className="w-full h-auto object-cover"
-                />
+      {/* ─── MOBILE: Scrollable + auto-scroll marquee ─── */}
+      <div className="lg:hidden w-full py-8 relative">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8" style={{ background: `linear-gradient(to right, ${colors.bg}, transparent)` }} />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8" style={{ background: `linear-gradient(to left, ${colors.bg}, transparent)` }} />
+        <div className="overflow-x-auto scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="mobile-marquee flex gap-4 w-max px-4">
+            {[...allItems, ...allItems, ...allItems, ...allItems].map((item, i) => (
+              <div key={`m-${i}`} className="flex-shrink-0 w-44">
+                <div className="rounded-xl overflow-hidden border" style={{ borderColor: colors.border, background: 'rgba(255,255,255,0.3)' }}>
+                  <Image
+                    src={item.src}
+                    alt={item.label}
+                    width={176}
+                    height={123}
+                    sizes="176px"
+                    loading="lazy"
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+                <span className="block mt-2 text-center text-[10px] font-semibold tracking-[0.15em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+                  {item.label}
+                </span>
               </div>
-              <span className="block mt-2 text-center text-[10px] font-semibold tracking-[0.15em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
-                {item.label}
-              </span>
-            </div>
           ))}
         </div>
       </div>
@@ -195,8 +196,10 @@ export default function ProductShowcaseHero() {
         }
         @keyframes marquee-left {
           0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-33.333%, 0, 0); }
+          100% { transform: translate3d(-25%, 0, 0); }
         }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .desktop-scroll-up {
           animation: scroll-up 30s linear infinite;
           will-change: transform;
@@ -210,7 +213,7 @@ export default function ProductShowcaseHero() {
           -webkit-backface-visibility: hidden;
         }
         .mobile-marquee {
-          animation: marquee-left 15s linear infinite;
+          animation: marquee-left 8s linear infinite;
           will-change: transform;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
