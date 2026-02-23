@@ -22,106 +22,248 @@ const problems = [
   },
 ];
 
-function AutomationVisual({ opacity }: { opacity: number }) {
+/* ── Automation Visual: Animated task cards getting processed ── */
+function AutomationVisual() {
+  const tasks = [
+    { label: 'Invoice #4821', color: '#B07A45' },
+    { label: 'Order Update', color: '#C89A6A' },
+    { label: 'Inventory Sync', color: '#B07A45' },
+    { label: 'Email Follow-up', color: '#8E5E34' },
+    { label: 'Report Gen', color: '#C89A6A' },
+  ];
+
   return (
-    <div className="relative w-full h-full flex items-center justify-center" style={{ opacity }}>
-      <div className="relative">
-        {[0, 1, 2, 3, 4].map((i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-lg bg-[#B07A45]/10 border border-[#B07A45]/20"
-            style={{
-              width: 60,
-              height: 40,
-              top: i * 28 - 56,
-              left: i % 2 === 0 ? -40 : 40,
-            }}
-            animate={{ x: [0, 80], opacity: [1, 0] }}
-            transition={{ duration: 2, delay: i * 0.3, repeat: Infinity, repeatDelay: 1 }}
-          />
-        ))}
-        <div className="w-24 h-24 rounded-2xl bg-[#B07A45] flex items-center justify-center shadow-lg shadow-[#B07A45]/20">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F4EFE8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-          </svg>
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="relative w-80 h-72">
+        {/* Input queue - left side */}
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 flex flex-col gap-2">
+          {tasks.map((task, i) => (
+            <motion.div
+              key={i}
+              className="px-4 py-2 rounded-lg border text-sm font-medium"
+              style={{ borderColor: `${task.color}40`, color: task.color, backgroundColor: `${task.color}10` }}
+              animate={{
+                x: [0, 140, 280],
+                opacity: [1, 1, 0],
+                scale: [1, 0.9, 0.7],
+              }}
+              transition={{
+                duration: 3,
+                delay: i * 0.6,
+                repeat: Infinity,
+                repeatDelay: tasks.length * 0.6 - 3 + 1,
+                ease: 'easeInOut',
+              }}
+            >
+              {task.label}
+            </motion.div>
+          ))}
         </div>
+
+        {/* Center processor */}
+        <motion.div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-2xl bg-gradient-to-br from-[#C89A6A] to-[#8E5E34] flex items-center justify-center shadow-xl shadow-[#B07A45]/20"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+        >
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F4EFE8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </motion.div>
+
+        {/* Output - check marks appearing right */}
+        {tasks.map((_, i) => (
+          <motion.div
+            key={`done-${i}`}
+            className="absolute right-0 w-8 h-8 rounded-full bg-[#B07A45]/20 flex items-center justify-center"
+            style={{ top: `${20 + i * 13}%` }}
+            animate={{ opacity: [0, 0, 1, 1, 0], scale: [0.5, 0.5, 1, 1, 0.8] }}
+            transition={{ duration: 3, delay: i * 0.6 + 2, repeat: Infinity, repeatDelay: tasks.length * 0.6 - 2 }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B07A45" strokeWidth="3">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
 }
 
-function IntegrationVisual({ opacity }: { opacity: number }) {
-  const nodes = [
-    { x: 0, y: -60 }, { x: 52, y: -30 }, { x: 52, y: 30 },
-    { x: 0, y: 60 }, { x: -52, y: 30 }, { x: -52, y: -30 },
+/* ── Integration Visual: Animated nodes connecting ── */
+function IntegrationVisual() {
+  const apps = [
+    { name: 'CRM', x: 0, y: -70 },
+    { name: 'Shop', x: 65, y: -35 },
+    { name: 'Pay', x: 65, y: 35 },
+    { name: 'Mail', x: 0, y: 70 },
+    { name: 'Inv', x: -65, y: 35 },
+    { name: 'Data', x: -65, y: -35 },
   ];
+
   return (
-    <div className="relative w-full h-full flex items-center justify-center" style={{ opacity }}>
-      <svg width="200" height="200" viewBox="-100 -100 200 200" className="overflow-visible">
-        {nodes.map((n, i) =>
-          nodes.slice(i + 1).map((m, j) => (
+    <div className="w-full h-full flex items-center justify-center">
+      <svg width="280" height="280" viewBox="-120 -120 240 240" className="overflow-visible">
+        {/* Connection lines that pulse */}
+        {apps.map((app, i) =>
+          apps.slice(i + 1).map((other, j) => (
             <motion.line
-              key={`${i}-${j}`}
-              x1={n.x} y1={n.y} x2={m.x} y2={m.y}
-              stroke="#B07A45" strokeWidth="1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0.4, 0] }}
-              transition={{ duration: 3, delay: (i + j) * 0.2, repeat: Infinity }}
+              key={`line-${i}-${j}`}
+              x1={app.x} y1={app.y} x2={other.x} y2={other.y}
+              stroke="#B07A45"
+              strokeWidth="1.5"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: [0, 1], opacity: [0, 0.3, 0.5, 0.3, 0] }}
+              transition={{ duration: 4, delay: (i + j) * 0.3, repeat: Infinity }}
             />
           ))
         )}
-        {nodes.map((n, i) => (
-          <motion.circle
-            key={i}
-            cx={n.x} cy={n.y} r="12"
-            fill="#B07A45" fillOpacity={0.15}
-            stroke="#B07A45" strokeWidth="2"
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 2, delay: i * 0.3, repeat: Infinity }}
-          />
+
+        {/* Data packets moving along connections */}
+        {apps.slice(0, 3).map((app, i) => {
+          const target = apps[(i + 3) % apps.length];
+          return (
+            <motion.circle
+              key={`packet-${i}`}
+              r="4"
+              fill="#B07A45"
+              animate={{
+                cx: [app.x, 0, target.x],
+                cy: [app.y, 0, target.y],
+              }}
+              transition={{ duration: 2.5, delay: i * 0.8, repeat: Infinity, repeatDelay: 1 }}
+            />
+          );
+        })}
+
+        {/* Center hub */}
+        <motion.circle
+          cx="0" cy="0" r="22"
+          fill="#B07A45"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+        <text x="0" y="5" textAnchor="middle" fill="#F4EFE8" fontSize="11" fontWeight="bold" style={{ fontFamily: 'Satoshi, sans-serif' }}>V</text>
+
+        {/* App nodes */}
+        {apps.map((app, i) => (
+          <g key={`node-${i}`}>
+            <motion.circle
+              cx={app.x} cy={app.y} r="18"
+              fill="#1C1C1C"
+              stroke="#B07A45"
+              strokeWidth="2"
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{ duration: 2, delay: i * 0.3, repeat: Infinity }}
+            />
+            <text x={app.x} y={app.y + 4} textAnchor="middle" fill="#B07A45" fontSize="9" fontWeight="600" style={{ fontFamily: 'Satoshi, sans-serif' }}>
+              {app.name}
+            </text>
+          </g>
         ))}
-        <circle cx="0" cy="0" r="16" fill="#B07A45" />
-        <text x="0" y="5" textAnchor="middle" fill="#F4EFE8" fontSize="12" fontWeight="bold">V</text>
       </svg>
     </div>
   );
 }
 
-function RealtimeVisual({ opacity }: { opacity: number }) {
+/* ── Realtime Visual: Live dashboard with moving charts ── */
+function RealtimeVisual() {
   return (
-    <div className="relative w-full h-full flex items-center justify-center" style={{ opacity }}>
-      <div className="w-64 h-44 rounded-xl bg-[#1C1C1C] border border-[#B07A45]/30 p-4 overflow-hidden">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-[10px] text-[#B07A45] font-semibold tracking-wider uppercase">Live</span>
-        </div>
-        <div className="flex items-end gap-1 h-20">
-          {Array.from({ length: 16 }).map((_, i) => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="w-72 space-y-3">
+        {/* Mini KPI cards */}
+        <div className="flex gap-3">
+          <motion.div
+            className="flex-1 rounded-xl bg-[#1C1C1C] border border-[#B07A45]/20 p-3"
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            <div className="text-[10px] text-[#7A746C] mb-1">Revenue</div>
             <motion.div
-              key={i}
-              className="flex-1 bg-[#B07A45] rounded-t"
-              animate={{ height: [`${20 + Math.random() * 60}%`, `${20 + Math.random() * 60}%`] }}
-              transition={{ duration: 1.5, delay: i * 0.1, repeat: Infinity, repeatType: 'reverse' }}
-            />
-          ))}
+              className="text-lg font-bold text-[#B07A45]"
+              style={{ fontFamily: "'Clash Display', sans-serif" }}
+              animate={{ opacity: [1, 0.7, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              $48,291
+            </motion.div>
+            <div className="text-[9px] text-green-400 mt-1">+12.4% ↑</div>
+          </motion.div>
+          <motion.div
+            className="flex-1 rounded-xl bg-[#1C1C1C] border border-[#B07A45]/20 p-3"
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 3, delay: 0.5, repeat: Infinity }}
+          >
+            <div className="text-[10px] text-[#7A746C] mb-1">Orders</div>
+            <motion.div
+              className="text-lg font-bold text-[#F4EFE8]"
+              style={{ fontFamily: "'Clash Display', sans-serif" }}
+            >
+              1,847
+            </motion.div>
+            <div className="text-[9px] text-green-400 mt-1">+8.2% ↑</div>
+          </motion.div>
         </div>
-        <div className="mt-2 flex justify-between text-[9px] text-[#7A746C]">
-          <span>Now</span>
-          <span className="text-[#B07A45] font-bold">+23% ↑</span>
+
+        {/* Live chart */}
+        <motion.div
+          className="rounded-xl bg-[#1C1C1C] border border-[#B07A45]/20 p-4"
+          animate={{ y: [0, -2, 0] }}
+          transition={{ duration: 4, delay: 1, repeat: Infinity }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-[10px] text-[#B07A45] font-semibold tracking-wider uppercase">Live Analytics</span>
+            </div>
+            <span className="text-[10px] text-[#7A746C]">Last 24h</span>
+          </div>
+          <div className="flex items-end gap-[3px] h-24">
+            {Array.from({ length: 24 }).map((_, i) => (
+              <motion.div
+                key={i}
+                className="flex-1 bg-gradient-to-t from-[#8E5E34] to-[#C89A6A] rounded-t"
+                animate={{
+                  height: [`${30 + Math.sin(i * 0.5) * 25 + Math.random() * 20}%`, `${30 + Math.cos(i * 0.5) * 25 + Math.random() * 20}%`],
+                }}
+                transition={{ duration: 2, delay: i * 0.08, repeat: Infinity, repeatType: 'reverse' }}
+              />
+            ))}
+          </div>
+          <div className="mt-2 flex justify-between text-[9px] text-[#7A746C]">
+            <span>12AM</span>
+            <span>Now</span>
+          </div>
+        </motion.div>
+
+        {/* Activity feed */}
+        <div className="rounded-xl bg-[#1C1C1C] border border-[#B07A45]/20 p-3 space-y-2 overflow-hidden h-20">
+          <motion.div
+            className="space-y-2"
+            animate={{ y: [0, -60] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+          >
+            {['New order from Store #42', 'Payment received $2,400', 'Inventory alert: Low stock', 'Lead qualified: Tampa Co.', 'Invoice #891 paid', 'New signup: CardLedger'].map((item, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#B07A45]" />
+                <span className="text-[10px] text-[#7A746C] whitespace-nowrap">{item}</span>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </div>
   );
 }
 
-const visuals = [AutomationVisual, IntegrationVisual, RealtimeVisual];
+const visualComponents = [AutomationVisual, IntegrationVisual, RealtimeVisual];
 
 export default function ProblemSolutionSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
 
   return (
-    <section id="problem" className="bg-[#0a0a0a]">
+    <section id="problem" className="bg-[#F4EFE8]">
       <div ref={containerRef} style={{ height: `${(problems.length + 1) * 100}vh` }} className="relative">
         <div className="sticky top-0 h-screen flex items-center overflow-hidden">
           <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -138,8 +280,8 @@ export default function ProblemSolutionSection() {
             </div>
 
             {/* Right: Visual */}
-            <div className="relative h-[300px]">
-              {visuals.map((Visual, i) => {
+            <div className="relative h-[400px]">
+              {visualComponents.map((Visual, i) => {
                 const total = problems.length + 1;
                 const start = i / total;
                 const end = (i + 1) / total;
@@ -164,7 +306,7 @@ function ProblemText({ problem, progress, start, mid, end }: {
 
   return (
     <motion.div className="absolute inset-0 flex flex-col justify-center" style={{ opacity, y }}>
-      <h3 className="text-3xl lg:text-4xl font-bold text-[#F4EFE8] leading-snug mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+      <h3 className="text-3xl lg:text-4xl font-bold text-[#1C1C1C] leading-snug mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
         {problem.headline}
       </h3>
       <p className="text-lg text-[#7A746C] leading-relaxed max-w-lg" style={{ fontFamily: "'Satoshi', sans-serif" }}>
@@ -194,14 +336,14 @@ function BetterWayText({ progress, start }: {
 }
 
 function VisualPanel({ Visual, progress, start, end }: {
-  Visual: typeof visuals[0];
+  Visual: React.ComponentType;
   progress: ReturnType<typeof useScroll>['scrollYProgress'];
   start: number; end: number;
 }) {
   const opacity = useTransform(progress, [start, start + 0.05, end - 0.05, end], [0, 1, 1, 0]);
   return (
     <motion.div className="absolute inset-0" style={{ opacity }}>
-      <Visual opacity={1} />
+      <Visual />
     </motion.div>
   );
 }
@@ -211,21 +353,17 @@ function LogoReveal({ progress, start }: {
   start: number;
 }) {
   const opacity = useTransform(progress, [start, start + 0.05, 1], [0, 1, 1]);
-  const scale = useTransform(progress, [start, start + 0.08], [0.8, 1]);
+  const scale = useTransform(progress, [start, start + 0.1], [0.7, 1]);
 
   return (
     <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity, scale }}>
-      <div className="relative">
-        {/* Bronze glow behind logo */}
-        <div className="absolute inset-0 blur-3xl bg-[#B07A45]/20 rounded-full scale-150" />
-        <Image
-          src="/logo-v-bronze.png"
-          alt="Vantix"
-          width={200}
-          height={200}
-          className="relative z-10 drop-shadow-2xl"
-        />
-      </div>
+      <Image
+        src="/logo-v-bronze.png"
+        alt="Vantix"
+        width={240}
+        height={240}
+        className="drop-shadow-2xl"
+      />
     </motion.div>
   );
 }
