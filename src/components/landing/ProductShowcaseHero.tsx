@@ -41,9 +41,9 @@ const fadeUp = {
 };
 
 const trustedLogos = [
-  { name: 'SecuredTampa', logo: '/logos/secured-tampa.png', bg: undefined },
+  { name: 'SecuredTampa', logo: 'https://obprrtqyzpaudfeyftyd.supabase.co/storage/v1/object/public/media/SecuredTampa/Logos/logo-icon.png', bg: '#e8e4de' },
   { name: 'Just Four Kicks', logo: 'https://obprrtqyzpaudfeyftyd.supabase.co/storage/v1/object/public/media/J4K/Logos/logo-white.png', bg: '#1C1C1C' },
-  { name: 'CardLedger', logo: '/logos/cardledger.png', bg: undefined },
+  { name: 'CardLedger', logo: '/logos/cardledger.png', bg: '#f0f0f0' },
 ];
 
 export default function ProductShowcaseHero() {
@@ -109,12 +109,12 @@ export default function ProductShowcaseHero() {
               {trustedLogos.map((logo) => (
                 <div
                   key={logo.name}
-                  className="flex items-center justify-center h-10 px-3 rounded-lg overflow-hidden"
+                  className="flex items-center justify-center w-11 h-11 rounded-full overflow-hidden"
                   style={{ backgroundColor: logo.bg || colors.surface, border: `1px solid ${colors.border}` }}
                   title={logo.name}
                 >
                   {logo.logo ? (
-                    <Image src={logo.logo} alt={logo.name} width={80} height={32} unoptimized className="h-7 w-auto object-contain" />
+                    <img src={logo.logo} alt={logo.name} className="w-full h-full object-cover" />
                   ) : (
                     <span className="text-xs font-bold" style={{ color: colors.muted }}>{logo.name.charAt(0)}</span>
                   )}
