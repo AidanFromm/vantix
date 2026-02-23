@@ -2,21 +2,22 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import Image from 'next/image';
 
 const problems = [
   {
-    stat: '40%',
-    title: 'Your team spends 40% of their time on tasks a machine could handle.',
+    headline: 'Half your team\u2019s day is wasted.',
+    description: 'Repetitive tasks, manual data entry, copy-pasting between tools \u2014 your best people are doing work a machine should handle.',
     visual: 'automation',
   },
   {
-    stat: '6',
-    title: 'Your data lives in 6 different tools that don\u2019t talk to each other.',
+    headline: 'Your tools don\u2019t talk to each other.',
+    description: 'Inventory in one app. Payments in another. Analytics somewhere else. Nothing syncs, nothing connects, nothing scales.',
     visual: 'integration',
   },
   {
-    stat: '7d',
-    title: 'You\u2019re making decisions on last week\u2019s numbers.',
+    headline: 'You\u2019re always a step behind.',
+    description: 'By the time you see the numbers, the opportunity already passed. Real-time intelligence isn\u2019t optional anymore.',
     visual: 'realtime',
   },
 ];
@@ -127,9 +128,10 @@ export default function ProblemSolutionSection() {
             {/* Left: Text */}
             <div className="relative h-[300px] flex flex-col justify-center">
               {problems.map((p, i) => {
-                const start = i / (problems.length + 1);
-                const mid = (i + 0.5) / (problems.length + 1);
-                const end = (i + 1) / (problems.length + 1);
+                const total = problems.length + 1;
+                const start = i / total;
+                const mid = (i + 0.5) / total;
+                const end = (i + 1) / total;
                 return <ProblemText key={i} problem={p} progress={scrollYProgress} start={start} mid={mid} end={end} />;
               })}
               <BetterWayText progress={scrollYProgress} start={problems.length / (problems.length + 1)} />
@@ -138,11 +140,12 @@ export default function ProblemSolutionSection() {
             {/* Right: Visual */}
             <div className="relative h-[300px]">
               {visuals.map((Visual, i) => {
-                const start = i / (problems.length + 1);
-                const end = (i + 1) / (problems.length + 1);
+                const total = problems.length + 1;
+                const start = i / total;
+                const end = (i + 1) / total;
                 return <VisualPanel key={i} Visual={Visual} progress={scrollYProgress} start={start} end={end} />;
               })}
-              <BetterWayVisual progress={scrollYProgress} start={problems.length / (problems.length + 1)} />
+              <LogoReveal progress={scrollYProgress} start={problems.length / (problems.length + 1)} />
             </div>
           </div>
         </div>
@@ -161,12 +164,12 @@ function ProblemText({ problem, progress, start, mid, end }: {
 
   return (
     <motion.div className="absolute inset-0 flex flex-col justify-center" style={{ opacity, y }}>
-      <span className="text-6xl font-bold text-[#B07A45] mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
-        {problem.stat}
-      </span>
-      <h3 className="text-2xl lg:text-3xl font-bold text-[#F4EFE8] leading-snug" style={{ fontFamily: "'Clash Display', sans-serif" }}>
-        {problem.title}
+      <h3 className="text-3xl lg:text-4xl font-bold text-[#F4EFE8] leading-snug mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+        {problem.headline}
       </h3>
+      <p className="text-lg text-[#7A746C] leading-relaxed max-w-lg" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+        {problem.description}
+      </p>
     </motion.div>
   );
 }
@@ -180,10 +183,10 @@ function BetterWayText({ progress, start }: {
 
   return (
     <motion.div className="absolute inset-0 flex flex-col justify-center" style={{ opacity, y }}>
-      <h3 className="text-3xl lg:text-5xl font-bold text-[#B07A45] leading-snug" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+      <h3 className="text-3xl lg:text-5xl font-bold text-[#B07A45] leading-snug mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
         There&apos;s a better way.
       </h3>
-      <p className="text-lg text-[#7A746C] mt-4" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+      <p className="text-lg text-[#7A746C]" style={{ fontFamily: "'Satoshi', sans-serif" }}>
         Vantix builds the systems that get your time back.
       </p>
     </motion.div>
@@ -203,15 +206,25 @@ function VisualPanel({ Visual, progress, start, end }: {
   );
 }
 
-function BetterWayVisual({ progress, start }: {
+function LogoReveal({ progress, start }: {
   progress: ReturnType<typeof useScroll>['scrollYProgress'];
   start: number;
 }) {
   const opacity = useTransform(progress, [start, start + 0.05, 1], [0, 1, 1]);
+  const scale = useTransform(progress, [start, start + 0.08], [0.8, 1]);
+
   return (
-    <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity }}>
-      <div className="w-32 h-32 rounded-full bg-[#B07A45] flex items-center justify-center shadow-2xl shadow-[#B07A45]/30">
-        <span className="text-4xl font-bold text-[#F4EFE8]" style={{ fontFamily: "'Clash Display', sans-serif" }}>V</span>
+    <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity, scale }}>
+      <div className="relative">
+        {/* Bronze glow behind logo */}
+        <div className="absolute inset-0 blur-3xl bg-[#B07A45]/20 rounded-full scale-150" />
+        <Image
+          src="/logo-v-bronze.png"
+          alt="Vantix"
+          width={200}
+          height={200}
+          className="relative z-10 drop-shadow-2xl"
+        />
       </div>
     </motion.div>
   );
