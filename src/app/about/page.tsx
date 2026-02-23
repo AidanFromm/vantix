@@ -43,13 +43,13 @@ const team = [
     name: 'Kyle Ventura',
     role: 'Co-Founder',
     bio: 'Builder. Systems thinker. Runs operations and client delivery.',
-    photo: '/team-kyle.jpg',
+    photo: '/team/kyle.jpg',
   },
   {
     name: 'Aidan Fromm',
     role: 'Co-Founder',
     bio: 'Creative strategist. Handles design, marketing, and client relationships.',
-    photo: '/team-aidan.jpg',
+    photo: '/team/aidan.jpg',
   },
 ];
 

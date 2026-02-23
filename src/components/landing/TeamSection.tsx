@@ -2,19 +2,20 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import Image from 'next/image';
 
 const team = [
   {
     name: 'Aidan Fromm',
     role: 'Co-founder & Tech Lead',
     bio: '19. CU Denver. Fell into coding through a business class and never looked back. Builds the systems that make everything else possible.',
-    initials: 'AF',
+    photo: '/team/aidan.jpg',
   },
   {
     name: 'Kyle',
     role: 'Co-founder & Business Lead',
     bio: '20. Built a $5.8M sneaker business before he could legally drink. Understands operations from the warehouse floor up.',
-    initials: 'K',
+    photo: '/team/kyle.jpg',
   },
   {
     name: 'Our AI Team',
@@ -67,26 +68,28 @@ export default function TeamSection() {
               className="bg-[#EEE6DC] rounded-2xl p-8 border border-[#E3D9CD] shadow-sm hover:shadow-md transition-shadow cursor-default"
             >
               {/* Avatar */}
-              <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${
-                member.isAI
-                  ? 'bg-[#1C1C1C] border-2 border-[#B07A45]'
-                  : 'bg-[#B07A45]/10 border-2 border-[#B07A45]/30'
-              }`}>
-                {member.isAI ? (
+              {member.isAI ? (
+                <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 bg-[#1C1C1C] border-2 border-[#B07A45]">
                   <motion.span
                     className="text-xl font-bold text-[#B07A45]"
                     animate={{ opacity: [1, 0.5, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                     style={{ fontFamily: "'Clash Display', sans-serif" }}
                   >
-                    {member.initials}
+                    AI
                   </motion.span>
-                ) : (
-                  <span className="text-xl font-bold text-[#B07A45]" style={{ fontFamily: "'Clash Display', sans-serif" }}>
-                    {member.initials}
-                  </span>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="w-20 h-20 rounded-full overflow-hidden mb-6 border-2 border-[#B07A45]/30">
+                  <Image
+                    src={member.photo!}
+                    alt={member.name}
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
 
               <h3 className="text-xl font-bold text-[#1C1C1C] mb-1" style={{ fontFamily: "'Clash Display', sans-serif" }}>
                 {member.name}
