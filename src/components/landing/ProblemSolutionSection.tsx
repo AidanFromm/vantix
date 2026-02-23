@@ -27,9 +27,7 @@ function AutomationVisual() {
   const tasks = [
     { label: 'Invoice #4821', color: '#B07A45' },
     { label: 'Order Update', color: '#C89A6A' },
-    { label: 'Inventory Sync', color: '#B07A45' },
-    { label: 'Email Follow-up', color: '#8E5E34' },
-    { label: 'Report Gen', color: '#C89A6A' },
+    { label: 'Inventory Sync', color: '#8E5E34' },
   ];
 
   return (
@@ -305,7 +303,7 @@ function ProblemText({ problem, progress, start, mid, end }: {
   const y = useTransform(progress, [start, start + 0.05, end - 0.05, end], [30, 0, 0, -30]);
 
   return (
-    <motion.div className="absolute inset-0 flex flex-col justify-center" style={{ opacity, y }}>
+    <motion.div className="absolute inset-0 flex flex-col justify-center" style={{ opacity, y, willChange: 'opacity, transform' }}>
       <h3 className="text-3xl lg:text-4xl font-bold text-[#1C1C1C] leading-snug mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
         {problem.headline}
       </h3>
@@ -342,7 +340,7 @@ function VisualPanel({ Visual, progress, start, end }: {
 }) {
   const opacity = useTransform(progress, [start, start + 0.05, end - 0.05, end], [0, 1, 1, 0]);
   return (
-    <motion.div className="absolute inset-0" style={{ opacity }}>
+    <motion.div className="absolute inset-0" style={{ opacity, willChange: 'opacity, transform' }}>
       <Visual />
     </motion.div>
   );
@@ -362,6 +360,8 @@ function LogoReveal({ progress, start }: {
         alt="Vantix"
         width={240}
         height={240}
+        sizes="240px"
+        loading="lazy"
         className="drop-shadow-2xl"
       />
     </motion.div>

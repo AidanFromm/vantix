@@ -1,13 +1,16 @@
 'use client';
 
+import Link from 'next/link';
+
 const links = [
-  { label: 'Services', href: '#services' },
-  { label: 'Work', href: '#work' },
-  { label: 'About', href: '#team' },
-  { label: 'Contact', href: '#booking' },
-  { label: 'Blog', href: '#' },
-  { label: 'Privacy', href: '#' },
-  { label: 'Terms', href: '#' },
+  { label: 'Services', href: '/services' },
+  { label: 'Work', href: '/portfolio' },
+  { label: 'About', href: '/about' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'Terms', href: '/terms' },
+  { label: 'Login', href: '/login' },
 ];
 
 export default function FooterSection() {
@@ -16,21 +19,21 @@ export default function FooterSection() {
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           {/* Logo */}
-          <a href="#" className="text-2xl font-bold text-[#F4EFE8] tracking-tight" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+          <Link href="/" className="text-2xl font-bold text-[#F4EFE8] tracking-tight" style={{ fontFamily: "'Clash Display', sans-serif" }}>
             Vantix<span className="text-[#B07A45]">.</span>
-          </a>
+          </Link>
 
           {/* Links */}
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             {links.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
                 className="text-sm text-[#7A746C] hover:text-[#B07A45] transition-colors"
                 style={{ fontFamily: "'Satoshi', sans-serif" }}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>

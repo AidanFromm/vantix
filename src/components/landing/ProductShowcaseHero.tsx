@@ -20,9 +20,9 @@ const columnB = [
   { src: '/vantix-mockups/mockup-8-automation.png', label: 'Automation Hub' },
 ];
 
-/* Triplicate for seamless infinite scroll */
-const colAItems = [...columnA, ...columnA, ...columnA];
-const colBItems = [...columnB, ...columnB, ...columnB];
+/* Duplicate for seamless infinite scroll (reduced from triplicate) */
+const colAItems = [...columnA, ...columnA];
+const colBItems = [...columnB, ...columnB];
 
 /* ── Shared animation config ── */
 const ease = animations.easing as unknown as [number, number, number, number];
@@ -232,18 +232,22 @@ export default function ProductShowcaseHero() {
       {/* CSS keyframes for infinite scroll */}
       <style jsx>{`
         @keyframes scroll-up {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(-33.333%); }
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(0, -50%, 0); }
         }
         @keyframes scroll-down {
-          0% { transform: translateY(-33.333%); }
-          100% { transform: translateY(0); }
+          0% { transform: translate3d(0, -50%, 0); }
+          100% { transform: translate3d(0, 0, 0); }
         }
         .scroll-col-up {
           animation: scroll-up 30s linear infinite;
+          will-change: transform;
+          backface-visibility: hidden;
         }
         .scroll-col-down {
           animation: scroll-down 30s linear infinite;
+          will-change: transform;
+          backface-visibility: hidden;
         }
       `}</style>
     </section>
@@ -281,6 +285,8 @@ function MockupCard({ item }: { item: { src: string; label: string } }) {
           alt={item.label}
           width={300}
           height={210}
+          sizes="300px"
+          loading="lazy"
           className="w-full h-auto object-cover"
         />
       </div>

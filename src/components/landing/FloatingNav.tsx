@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { colors, fonts, animations } from '@/lib/design-tokens';
 
@@ -85,7 +86,14 @@ export default function FloatingNav() {
           </div>
 
           {/* ── Desktop CTA (right) ── */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-6">
+            <Link
+              href="/login"
+              className="text-sm transition-colors duration-200 hover:text-[#B07A45]"
+              style={{ fontFamily: fonts.body, color: '#7A746C', fontSize: '14px' }}
+            >
+              Login
+            </Link>
             <a
               href="#booking"
               className="relative px-7 py-2.5 rounded-full text-sm font-semibold text-white overflow-hidden group"
@@ -169,8 +177,16 @@ export default function FloatingNav() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35, duration: 0.3 }}
-                className="mt-auto"
+                className="mt-auto flex flex-col gap-4"
               >
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="block w-full text-center py-3 text-lg transition-colors duration-200 hover:text-[#B07A45]"
+                  style={{ fontFamily: fonts.body, color: '#7A746C' }}
+                >
+                  Login
+                </Link>
                 <a
                   href="#booking"
                   onClick={() => setMobileOpen(false)}

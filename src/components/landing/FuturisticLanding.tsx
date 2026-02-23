@@ -12,13 +12,15 @@ import SocialProofBar from './SocialProofBar';
 import ProblemSolutionSection from './ProblemSolutionSection';
 import ServicesBentoSection from './ServicesBentoSection';
 import ProcessSection from './ProcessSection';
-import CaseStudySection from './CaseStudySection';
-import ROISection from './ROISection';
-import TeamSection from './TeamSection';
-import FAQSection from './FAQSection';
-import BookingSection from './BookingSection';
 import FinalCTASection from './FinalCTASection';
 import FooterSection from './FooterSection';
+
+// Lazy load heavy below-fold sections
+const CaseStudySection = dynamic(() => import('./CaseStudySection'), { ssr: false });
+const ROISection = dynamic(() => import('./ROISection'), { ssr: false });
+const TeamSection = dynamic(() => import('./TeamSection'), { ssr: false });
+const FAQSection = dynamic(() => import('./FAQSection'), { ssr: false });
+const BookingSection = dynamic(() => import('./BookingSection'), { ssr: false });
 
 // ============================================
 // VANTIX — Landing Page V2
