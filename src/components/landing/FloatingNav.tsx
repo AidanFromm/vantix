@@ -52,6 +52,7 @@ export default function FloatingNav() {
         transition={{ duration: 0.35, ease }}
         className="fixed top-0 left-0 right-0 z-50"
         style={{
+          willChange: 'transform',
           backdropFilter: scrolled ? 'blur(20px) saturate(1.6)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(1.6)' : 'none',
           backgroundColor: scrolled ? 'rgba(244, 239, 232, 0.85)' : 'transparent',
@@ -149,7 +150,7 @@ export default function FloatingNav() {
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ duration: 0.4, ease }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="fixed top-0 right-0 bottom-0 z-45 w-[80vw] max-w-sm flex flex-col pt-24 px-8 pb-10"
               style={{
                 backgroundColor: colors.bg,

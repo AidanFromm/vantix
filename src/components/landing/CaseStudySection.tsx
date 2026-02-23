@@ -56,18 +56,18 @@ const caseStudies: CaseStudy[] = [
 
 function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-60px' });
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
   const isEven = index % 2 === 0;
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.12 }}
+      transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
       className={`group relative flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} 
         bg-[#EEE6DC] rounded-2xl overflow-hidden border border-transparent
-        hover:border-[#B07A45]/30 transition-all duration-300`}
+        md:hover:border-[#B07A45]/30 transition-colors duration-300`}
     >
       {/* Bronze accent line */}
       <div className={`absolute top-0 ${isEven ? 'left-0' : 'right-0'} w-1 h-0 bg-[#B07A45] 
@@ -79,7 +79,8 @@ function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
           src={study.image}
           alt={study.name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover md:group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
           sizes="(max-width: 1024px) 100vw, 40vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -161,7 +162,7 @@ export default function CaseStudySection() {
           See how we&apos;ve transformed operations for businesses like yours.
         </motion.p>
 
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {caseStudies.map((study, i) => (
             <CaseStudyCard key={i} study={study} index={i} />
           ))}

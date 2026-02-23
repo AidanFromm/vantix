@@ -66,12 +66,12 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
       className={`group relative bg-[#EEE6DC] rounded-2xl p-6 md:p-8 border border-transparent
-        hover:border-[#B07A45]/40 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(176,122,69,0.15)]
-        transition-all duration-300 overflow-hidden ${service.gridClass}`}
+        hover:border-[#B07A45]/40 md:hover:-translate-y-1
+        transition-colors duration-300 overflow-hidden ${service.gridClass}`}
     >
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#B07A45]/[0.03] to-transparent pointer-events-none rounded-2xl" />
@@ -79,7 +79,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
       <div className="relative z-10 h-full flex flex-col">
         <div className="w-12 h-12 rounded-xl bg-[#D8C2A8]/30 flex items-center justify-center mb-5
           group-hover:bg-[#B07A45]/20 transition-colors duration-300">
-          <Icon className="w-6 h-6 text-[#B07A45] group-hover:scale-110 transition-transform duration-300" />
+          <Icon className="w-6 h-6 text-[#B07A45] md:group-hover:scale-110 transition-transform duration-300" />
         </div>
         <h3
           className={`font-semibold text-[#1C1C1C] mb-3 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl'}`}

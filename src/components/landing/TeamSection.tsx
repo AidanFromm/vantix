@@ -64,8 +64,7 @@ export default function TeamSection() {
               initial="hidden"
               animate={inView ? 'visible' : 'hidden'}
               variants={fadeUp}
-              whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              className="bg-[#EEE6DC] rounded-2xl p-8 border border-[#E3D9CD] shadow-sm hover:shadow-md transition-shadow cursor-default"
+              className="bg-[#EEE6DC] rounded-2xl p-8 border border-[#E3D9CD] shadow-sm md:hover:shadow-md md:hover:-translate-y-2 transition-all duration-300 cursor-default"
             >
               {/* Avatar */}
               {member.isAI ? (
@@ -87,6 +86,7 @@ export default function TeamSection() {
                     width={80}
                     height={80}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
               )}
