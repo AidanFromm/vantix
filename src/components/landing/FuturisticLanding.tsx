@@ -8,7 +8,6 @@ import FloatingNav from './FloatingNav';
 import ChatWidget from '../ChatWidget';
 import ProductShowcaseHero from './ProductShowcaseHero';
 
-// Lazy load all sections below hero
 const SocialProofBar = dynamic(() => import('./SocialProofBar'), { ssr: false });
 const ProblemSolutionSection = dynamic(() => import('./ProblemSolutionSection'), { ssr: false });
 const ServicesBentoSection = dynamic(() => import('./ServicesBentoSection'), { ssr: false });
@@ -33,24 +32,22 @@ export default function FuturisticLanding() {
         {/* Social Proof */}
         <SocialProofBar />
 
+        {/* Problem → Solution (slide animations) */}
+        <ProblemSolutionSection />
+
         {/* Services */}
         <ServicesBentoSection />
 
         {/* Process */}
         <ProcessSection />
 
-        {/* 📅 Booking — RIGHT after Process so mobile users convert fast */}
+        {/* 📅 Booking — right after Process on both mobile and desktop */}
         <BookingSection />
-
-        {/* Problem → Solution — hidden on mobile (too long with sticky scroll) */}
-        <div className="hidden lg:block">
-          <ProblemSolutionSection />
-        </div>
 
         {/* Case Studies */}
         <CaseStudySection />
 
-        {/* ROI — hidden on mobile (stats already shown in Social Proof) */}
+        {/* ROI — desktop only */}
         <div className="hidden lg:block">
           <ROISection />
         </div>
