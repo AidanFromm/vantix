@@ -109,14 +109,14 @@ export default function ProductShowcaseHero() {
               {trustedLogos.map((logo) => (
                 <div
                   key={logo.name}
-                  className="flex items-center justify-center w-10 h-10 rounded-full text-xs font-bold overflow-hidden"
-                  style={{ backgroundColor: logo.bg || colors.surface, color: '#fff', fontFamily: fonts.body, border: `1px solid ${colors.border}` }}
+                  className="flex items-center justify-center h-10 px-3 rounded-lg overflow-hidden"
+                  style={{ backgroundColor: logo.bg || colors.surface, border: `1px solid ${colors.border}` }}
                   title={logo.name}
                 >
                   {logo.logo ? (
-                    <Image src={logo.logo} alt={logo.name} width={40} height={40} unoptimized className="w-full h-full object-cover" />
+                    <Image src={logo.logo} alt={logo.name} width={80} height={32} unoptimized className="h-7 w-auto object-contain" />
                   ) : (
-                    logo.name.charAt(0)
+                    <span className="text-xs font-bold" style={{ color: colors.muted }}>{logo.name.charAt(0)}</span>
                   )}
                 </div>
               ))}
