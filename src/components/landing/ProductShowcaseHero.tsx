@@ -180,6 +180,7 @@ export default function ProductShowcaseHero() {
                 </span>
               </div>
           ))}
+          </div>
         </div>
       </div>
 
