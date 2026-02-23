@@ -41,7 +41,7 @@ const fadeUp = {
 };
 
 const trustedLogos = [
-  { name: 'SecuredTampa', logo: 'https://obprrtqyzpaudfeyftyd.supabase.co/storage/v1/object/public/media/SecuredTampa/Logos/logo-icon.png', bg: '#e8e4de' },
+  { name: 'SecuredTampa', logo: '/logos/secured-tampa.jpg', bg: '#e2dfda' },
   { name: 'Just Four Kicks', logo: 'https://obprrtqyzpaudfeyftyd.supabase.co/storage/v1/object/public/media/J4K/Logos/logo-white.png', bg: '#1C1C1C' },
   { name: 'CardLedger', logo: '/logos/cardledger.png', bg: '#f0f0f0' },
 ];
