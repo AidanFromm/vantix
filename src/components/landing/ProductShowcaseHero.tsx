@@ -25,7 +25,7 @@ const allItems = [...columnA, ...columnB];
 /* Duplicate for seamless loop */
 const colAItems = [...columnA, ...columnA];
 const colBItems = [...columnB, ...columnB];
-const mobileItems = [...allItems, ...allItems];
+const mobileItems = [...allItems, ...allItems, ...allItems];
 
 /* ── Shared animation config ── */
 const ease = animations.easing as unknown as [number, number, number, number];
@@ -195,7 +195,7 @@ export default function ProductShowcaseHero() {
         }
         @keyframes marquee-left {
           0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-50%, 0, 0); }
+          100% { transform: translate3d(-33.333%, 0, 0); }
         }
         .desktop-scroll-up {
           animation: scroll-up 30s linear infinite;
@@ -210,7 +210,7 @@ export default function ProductShowcaseHero() {
           -webkit-backface-visibility: hidden;
         }
         .mobile-marquee {
-          animation: marquee-left 10s linear infinite;
+          animation: marquee-left 15s linear infinite;
           will-change: transform;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
