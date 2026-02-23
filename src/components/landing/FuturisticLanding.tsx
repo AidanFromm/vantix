@@ -6,7 +6,8 @@ const SmoothScroll = dynamic(() => import('../SmoothScroll'), { ssr: false });
 
 import FloatingNav from './FloatingNav';
 import ChatWidget from '../ChatWidget';
-import NewHero from './NewHero';
+// import NewHero from './NewHero';
+import ProductShowcaseHero from './ProductShowcaseHero';
 import SocialProofBar from './SocialProofBar';
 import ProblemSolutionSection from './ProblemSolutionSection';
 import ServicesBentoSection from './ServicesBentoSection';
@@ -32,7 +33,8 @@ export default function FuturisticLanding() {
         <FloatingNav />
 
         {/* Hero */}
-        <NewHero />
+        {/* <NewHero /> */}
+        <ProductShowcaseHero />
 
         {/* Social Proof Logo Bar */}
         <SocialProofBar />
