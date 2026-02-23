@@ -220,7 +220,7 @@ export default function ProductShowcaseHero() {
           -webkit-backface-visibility: hidden;
         }
         .mobile-marquee {
-          animation: marquee-left 20s linear infinite;
+          animation: marquee-left 10s linear infinite;
           will-change: transform;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
