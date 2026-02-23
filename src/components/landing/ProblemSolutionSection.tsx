@@ -262,7 +262,7 @@ export default function ProblemSolutionSection() {
 
   return (
     <section id="problem" className="bg-[#F4EFE8]">
-      <div ref={containerRef} style={{ height: `${(problems.length + 1) * 100}vh` }} className="relative">
+      <div ref={containerRef} style={{ height: '500vh' }} className="relative">
         <div className="sticky top-0 h-screen flex items-center overflow-hidden">
           <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Left: Text */}
@@ -277,8 +277,8 @@ export default function ProblemSolutionSection() {
               <BetterWayText progress={scrollYProgress} start={problems.length / (problems.length + 1)} />
             </div>
 
-            {/* Right: Visual */}
-            <div className="relative h-[400px]">
+            {/* Right: Visual (hidden on mobile to avoid animation jank) */}
+            <div className="hidden lg:block relative h-[400px]">
               {visualComponents.map((Visual, i) => {
                 const total = problems.length + 1;
                 const start = i / total;

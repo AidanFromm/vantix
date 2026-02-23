@@ -18,6 +18,7 @@
 
 * {
   box-sizing: border-box;
+  -webkit-transform: translateZ(0);
 }
 
 html {

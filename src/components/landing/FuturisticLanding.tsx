@@ -6,21 +6,20 @@ const SmoothScroll = dynamic(() => import('../SmoothScroll'), { ssr: false });
 
 import FloatingNav from './FloatingNav';
 import ChatWidget from '../ChatWidget';
-// import NewHero from './NewHero';
 import ProductShowcaseHero from './ProductShowcaseHero';
-import SocialProofBar from './SocialProofBar';
-import ProblemSolutionSection from './ProblemSolutionSection';
-import ServicesBentoSection from './ServicesBentoSection';
-import ProcessSection from './ProcessSection';
-import FinalCTASection from './FinalCTASection';
-import FooterSection from './FooterSection';
 
-// Lazy load heavy below-fold sections
+// Lazy load all sections below hero
+const SocialProofBar = dynamic(() => import('./SocialProofBar'), { ssr: false });
+const ProblemSolutionSection = dynamic(() => import('./ProblemSolutionSection'), { ssr: false });
+const ServicesBentoSection = dynamic(() => import('./ServicesBentoSection'), { ssr: false });
+const ProcessSection = dynamic(() => import('./ProcessSection'), { ssr: false });
 const CaseStudySection = dynamic(() => import('./CaseStudySection'), { ssr: false });
 const ROISection = dynamic(() => import('./ROISection'), { ssr: false });
 const TeamSection = dynamic(() => import('./TeamSection'), { ssr: false });
 const FAQSection = dynamic(() => import('./FAQSection'), { ssr: false });
 const BookingSection = dynamic(() => import('./BookingSection'), { ssr: false });
+const FinalCTASection = dynamic(() => import('./FinalCTASection'), { ssr: false });
+const FooterSection = dynamic(() => import('./FooterSection'), { ssr: false });
 
 // ============================================
 // VANTIX — Landing Page V2

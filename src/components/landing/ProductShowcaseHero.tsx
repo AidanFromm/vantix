@@ -41,10 +41,9 @@ const fadeUp = {
 };
 
 const trustedLogos = [
-  { name: 'SecuredTampa', initial: 'ST' },
-  { name: 'Just Four Kicks', initial: 'JFK' },
-  { name: 'CardLedger', initial: 'CL' },
-  { name: 'Nextera', initial: 'NX' },
+  { name: 'SecuredTampa', logo: 'https://obprrtqyzpaudfeyftyd.supabase.co/storage/v1/object/public/media/SecuredTampa/Logos/logo-icon.png', bg: undefined },
+  { name: 'Just Four Kicks', logo: 'https://obprrtqyzpaudfeyftyd.supabase.co/storage/v1/object/public/media/J4K/Logos/logo-white.png', bg: '#1C1C1C' },
+  { name: 'CardLedger', logo: undefined, initial: 'CL', bg: '#1e3a5f' },
 ];
 
 export default function ProductShowcaseHero() {
@@ -110,11 +109,15 @@ export default function ProductShowcaseHero() {
               {trustedLogos.map((logo) => (
                 <div
                   key={logo.name}
-                  className="flex items-center justify-center w-10 h-10 rounded-full text-xs font-bold"
-                  style={{ backgroundColor: colors.surface, color: colors.muted, fontFamily: fonts.body, border: `1px solid ${colors.border}` }}
+                  className="flex items-center justify-center w-10 h-10 rounded-full text-xs font-bold overflow-hidden"
+                  style={{ backgroundColor: logo.bg || colors.surface, color: '#fff', fontFamily: fonts.body, border: `1px solid ${colors.border}` }}
                   title={logo.name}
                 >
-                  {logo.initial}
+                  {logo.logo ? (
+                    <Image src={logo.logo} alt={logo.name} width={40} height={40} unoptimized className="w-full h-full object-cover" />
+                  ) : (
+                    logo.initial
+                  )}
                 </div>
               ))}
               <span className="text-xs ml-1" style={{ color: colors.muted, fontFamily: fonts.body }}>+ more</span>

@@ -105,7 +105,7 @@ export default function ServicesBentoSection() {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.5 }}
           className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-4"
           style={{ fontFamily: 'Clash Display, sans-serif' }}

@@ -30,7 +30,7 @@ const caseStudies: CaseStudy[] = [
     name: 'Just Four Kicks',
     image: '/redesign/case-study-sneakers.webp',
     challenge:
-      '$5.8M in revenue running on spreadsheets and manual coordination across 200+ retail stores.',
+      '$5Running on spreadsheets and manual coordination across 200+ retail stores.',
     solution:
       'Custom wholesale platform with tiered pricing, automated invoicing, and real-time inventory sync.',
     results: [
