@@ -21,39 +21,39 @@ const BookingSection = dynamic(() => import('./BookingSection'), { ssr: false })
 const FinalCTASection = dynamic(() => import('./FinalCTASection'), { ssr: false });
 const FooterSection = dynamic(() => import('./FooterSection'), { ssr: false });
 
-// ============================================
-// VANTIX — Landing Page V2
-// Complete rebuild: cream + bronze, research-backed
-// ============================================
-
 export default function FuturisticLanding() {
   return (
     <SmoothScroll>
       <div className="min-h-screen" style={{ fontFamily: "'Satoshi', sans-serif" }}>
-        {/* Navigation */}
         <FloatingNav />
 
         {/* Hero */}
-        {/* <NewHero /> */}
         <ProductShowcaseHero />
 
-        {/* Social Proof Logo Bar */}
+        {/* Social Proof */}
         <SocialProofBar />
 
-        {/* Problem → Solution (Sticky Scroll) */}
-        <ProblemSolutionSection />
-
-        {/* Services Bento Grid */}
+        {/* Services */}
         <ServicesBentoSection />
 
-        {/* Process Timeline */}
+        {/* Process */}
         <ProcessSection />
+
+        {/* 📅 Booking — RIGHT after Process so mobile users convert fast */}
+        <BookingSection />
+
+        {/* Problem → Solution — hidden on mobile (too long with sticky scroll) */}
+        <div className="hidden lg:block">
+          <ProblemSolutionSection />
+        </div>
 
         {/* Case Studies */}
         <CaseStudySection />
 
-        {/* ROI Numbers */}
-        <ROISection />
+        {/* ROI — hidden on mobile (stats already shown in Social Proof) */}
+        <div className="hidden lg:block">
+          <ROISection />
+        </div>
 
         {/* Team */}
         <TeamSection />
@@ -61,16 +61,11 @@ export default function FuturisticLanding() {
         {/* FAQ */}
         <FAQSection />
 
-        {/* Booking Calendar */}
-        <BookingSection />
-
         {/* Final CTA */}
         <FinalCTASection />
 
-        {/* Footer */}
         <FooterSection />
 
-        {/* AI Chat Widget */}
         <ChatWidget />
       </div>
     </SmoothScroll>
