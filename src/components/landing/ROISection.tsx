@@ -15,7 +15,7 @@ const stats: Stat[] = [
   { display: '37%', numericPart: 37, prefix: '', suffix: '%', label: 'Average reduction in manual operating hours' },
   { display: '2.4x', numericPart: 24, prefix: '', suffix: 'x', label: 'Faster order processing for e-commerce clients' },
   { display: '$180K+', numericPart: 180, prefix: '$', suffix: 'K+', label: 'Annual savings identified across engagements' },
-  { display: '< 4 weeks', numericPart: null, prefix: '', suffix: '', label: 'Average time from audit to first deployment' },
+  { display: '28 days', numericPart: 28, prefix: '', suffix: ' days', label: 'Average time from audit to first deployment' },
 ];
 
 function AnimatedNumber({ stat }: { stat: Stat }) {
