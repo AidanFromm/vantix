@@ -311,16 +311,16 @@ export default function ClientsPage() {
         // Fetch clients and invoices in parallel
         const [data, invoicesRes] = await Promise.all([
           getData<Client>('clients'),
-          supabase.from('invoices').select('client_id, total, status').then(r => r.data || []),
+          supabase.from('invoices').select('client_id, total, amount_paid, status').then(r => r.data || []),
         ]);
 
-        // Build revenue map from invoices (sum paid invoice totals per client)
+        // Build revenue map from invoices (sum amount_paid per client — actual money collected)
         const invoiceRevMap: Record<string, number> = {};
         for (const inv of invoicesRes) {
           const cid = (inv as { client_id?: string }).client_id;
           if (!cid) continue;
-          const total = (inv as { total?: number }).total || 0;
-          invoiceRevMap[cid] = (invoiceRevMap[cid] || 0) + total;
+          const paid = (inv as { amount_paid?: number }).amount_paid || 0;
+          invoiceRevMap[cid] = (invoiceRevMap[cid] || 0) + paid;
         }
 
         // Map all rows to the page's expected shape
