@@ -56,8 +56,13 @@ export async function getData<T extends { id: string }>(table: string): Promise<
     const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending: false });
     if (error) throw error;
     const supaData = (data as T[]) || [];
-    const merged = mergeById(supaData, local);
+    // Supabase is source of truth — only keep localStorage items that don't exist in Supabase
+    // (i.e. items created locally but not yet synced). Remove any that were deleted from Supabase.
+    const supaIds = new Set(supaData.map(item => item.id));
+    const localOnly = local.filter(item => !supaIds.has(item.id));
+    const merged = [...supaData, ...localOnly];
     if (merged.length > 0) lsSet(lsKey(table), merged);
+    else lsSet(lsKey(table), []);
     return merged;
   } catch {
     return local;
