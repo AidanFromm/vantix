@@ -7,6 +7,53 @@ import {
   CheckCircle2, XCircle, BarChart3, Plus, MessageSquare
 } from 'lucide-react';
 import { getData, createRecord, updateRecord, deleteRecord } from '@/lib/data';
+import { supabase } from '@/lib/supabase-client';
+
+// --- Helpers ---
+function capitalize(s: string): string {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function parseDealAmount(deal: string): number {
+  if (!deal) return 0;
+  const match = deal.match(/\$([\d,]+)/);
+  return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapClient(row: any, invoiceRevMap?: Record<string, number>): any {
+  // Already in page format (localStorage or already mapped)
+  if (row.company && !row.company_name) return row;
+
+  // Supabase format: has company_name
+  const cf = row.custom_fields || {};
+  const revenue = (invoiceRevMap && invoiceRevMap[row.id]) || parseDealAmount(cf.deal || '') || 0;
+  const statusRaw = row.status || 'active';
+  const normalizedStatus = statusRaw.toLowerCase() === 'active' ? 'Active'
+    : statusRaw.toLowerCase() === 'at risk' ? 'At Risk'
+    : statusRaw.toLowerCase() === 'churned' ? 'Churned'
+    : statusRaw.toLowerCase() === 'prospect' ? 'Active'
+    : capitalize(statusRaw);
+
+  return {
+    id: row.id,
+    name: cf.contact_name || (row.company_name || '').split(' ')[0] || '',
+    company: row.company_name || '',
+    email: cf.email || '',
+    phone: cf.phone || '',
+    status: normalizedStatus,
+    healthScore: row.health_score || 0,
+    revenue,
+    tags: row.tags || [],
+    notes: row.notes || '',
+    lastContact: row.updated_at ? row.updated_at.split('T')[0] : '',
+    createdAt: row.created_at || '',
+    projects: [],
+    invoices: [],
+    activity: [],
+  };
+}
 
 // --- Types ---
 interface Client {
@@ -261,8 +308,24 @@ export default function ClientsPage() {
   useEffect(() => {
     (async () => {
       try {
-        const data = await getData<Client>('clients');
-        setClients(data);
+        // Fetch clients and invoices in parallel
+        const [data, invoicesRes] = await Promise.all([
+          getData<Client>('clients'),
+          supabase.from('invoices').select('client_id, total, status').then(r => r.data || []),
+        ]);
+
+        // Build revenue map from invoices (sum paid invoice totals per client)
+        const invoiceRevMap: Record<string, number> = {};
+        for (const inv of invoicesRes) {
+          const cid = (inv as { client_id?: string }).client_id;
+          if (!cid) continue;
+          const total = (inv as { total?: number }).total || 0;
+          invoiceRevMap[cid] = (invoiceRevMap[cid] || 0) + total;
+        }
+
+        // Map all rows to the page's expected shape
+        const mapped = data.map((row: Client) => mapClient(row, invoiceRevMap));
+        setClients(mapped);
       } catch { setClients([]); }
       setMounted(true);
     })();
@@ -271,15 +334,15 @@ export default function ClientsPage() {
   const filtered = useMemo(() => {
     return clients.filter(c => {
       const matchSearch = !search || (c.name || '').toLowerCase().includes(search.toLowerCase()) || (c.company || '').toLowerCase().includes(search.toLowerCase());
-      const matchStatus = filterStatus === 'All' || c.status === filterStatus;
+      const matchStatus = filterStatus === 'All' || (c.status || '').toLowerCase() === filterStatus.toLowerCase();
       return matchSearch && matchStatus;
     });
   }, [clients, search, filterStatus]);
 
   const stats = useMemo(() => ({
     total: clients.length,
-    active: clients.filter(c => c.status === 'Active').length,
-    atRisk: clients.filter(c => c.status === 'At Risk').length,
+    active: clients.filter(c => (c.status || '').toLowerCase() === 'active').length,
+    atRisk: clients.filter(c => (c.status || '').toLowerCase() === 'at risk').length,
     revenue: clients.reduce((s, c) => s + (c.revenue || 0), 0),
   }), [clients]);
 

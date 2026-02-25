@@ -39,7 +39,7 @@ interface Credential {
   updated_at: string;
 }
 
-const PROJECTS = ['Vantix', 'SecuredTampa', 'J4K', 'CardLedger'];
+const PROJECTS = ['Vantix', 'SecuredTampa', 'J4K', 'CardLedger', 'MixzoKickz'];
 const TYPES = ['API Key', 'Login/Password', 'Database', 'Domain/DNS', 'Payment/Billing'];
 
 const PROJECT_COLORS: Record<string, string> = {
@@ -47,6 +47,7 @@ const PROJECT_COLORS: Record<string, string> = {
   SecuredTampa: 'bg-blue-100 text-blue-700',
   J4K: 'bg-purple-100 text-purple-700',
   CardLedger: 'bg-emerald-100 text-emerald-700',
+  MixzoKickz: 'bg-pink-100 text-pink-700',
 };
 
 // ── Password Gate ──────────────────────────────────────────────
