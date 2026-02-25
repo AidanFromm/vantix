@@ -314,13 +314,13 @@ export default function ClientsPage() {
           supabase.from('invoices').select('client_id, total, amount_paid, status').then(r => r.data || []),
         ]);
 
-        // Build revenue map from invoices (sum amount_paid per client — actual money collected)
+        // Build revenue map from invoices (sum total per client — contract value)
         const invoiceRevMap: Record<string, number> = {};
         for (const inv of invoicesRes) {
           const cid = (inv as { client_id?: string }).client_id;
           if (!cid) continue;
-          const paid = (inv as { amount_paid?: number }).amount_paid || 0;
-          invoiceRevMap[cid] = (invoiceRevMap[cid] || 0) + paid;
+          const total = (inv as { total?: number }).total || 0;
+          invoiceRevMap[cid] = (invoiceRevMap[cid] || 0) + total;
         }
 
         // Map all rows to the page's expected shape

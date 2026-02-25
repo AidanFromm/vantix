@@ -56,14 +56,9 @@ export async function getData<T extends { id: string }>(table: string): Promise<
     const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending: false });
     if (error) throw error;
     const supaData = (data as T[]) || [];
-    // Supabase is source of truth — only keep localStorage items that don't exist in Supabase
-    // (i.e. items created locally but not yet synced). Remove any that were deleted from Supabase.
-    const supaIds = new Set(supaData.map(item => item.id));
-    const localOnly = local.filter(item => !supaIds.has(item.id));
-    const merged = [...supaData, ...localOnly];
-    if (merged.length > 0) lsSet(lsKey(table), merged);
-    else lsSet(lsKey(table), []);
-    return merged;
+    // Supabase is THE source of truth. Replace localStorage completely.
+    lsSet(lsKey(table), supaData);
+    return supaData;
   } catch {
     return local;
   }
@@ -165,17 +160,9 @@ export async function getClients(filters?: { status?: string; search?: string })
     const { data, error } = await query;
     if (error) throw error;
     const supaData = (data as Client[]) || [];
-    // If filtered query, we can't simply merge all local — filter local too then merge
-    let filteredLocal = local;
-    if (filters?.status) filteredLocal = filteredLocal.filter(c => c.status === filters.status);
-    if (filters?.search) {
-      const s = filters.search.toLowerCase();
-      filteredLocal = filteredLocal.filter(c => c.name?.toLowerCase().includes(s) || c.contact_email?.toLowerCase().includes(s));
-    }
-    const merged = mergeById(supaData, filteredLocal);
-    // Update full cache with unfiltered merge
-    if (!filters?.status && !filters?.search) lsSet(lsKey('clients'), merged);
-    return { data: merged, error: null };
+    // Supabase is THE source of truth. Replace localStorage completely.
+    if (!filters?.status && !filters?.search) lsSet(lsKey('clients'), supaData);
+    return { data: supaData, error: null };
   } catch {
     let items = local;
     if (filters?.status) items = items.filter(c => c.status === filters.status);
@@ -266,16 +253,9 @@ export async function getLeads(filters?: { status?: string; source?: string; sea
     if (filters?.search) query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,company.ilike.%${filters.search}%`);
     const { data, error } = await query;
     if (error) throw error;
-    let filteredLocal = local;
-    if (filters?.status) filteredLocal = filteredLocal.filter(l => l.status === filters.status);
-    if (filters?.source) filteredLocal = filteredLocal.filter(l => l.source === filters.source);
-    if (filters?.search) {
-      const s = filters.search.toLowerCase();
-      filteredLocal = filteredLocal.filter(l => l.name?.toLowerCase().includes(s) || l.email?.toLowerCase().includes(s) || l.company?.toLowerCase().includes(s));
-    }
-    const merged = mergeById((data as Lead[]) || [], filteredLocal);
-    if (!filters?.status && !filters?.source && !filters?.search) lsSet(lsKey('leads'), merged);
-    return { data: merged, error: null };
+    const supaData = (data as Lead[]) || [];
+    if (!filters?.status && !filters?.source && !filters?.search) lsSet(lsKey('leads'), supaData);
+    return { data: supaData, error: null };
   } catch {
     let items = local;
     if (filters?.status) items = items.filter(l => l.status === filters.status);
@@ -436,12 +416,9 @@ export async function getInvoices(filters?: { status?: string; client_id?: strin
     if (filters?.client_id) query = query.eq('client_id', filters.client_id);
     const { data, error } = await query;
     if (error) throw error;
-    let filteredLocal = local;
-    if (filters?.status) filteredLocal = filteredLocal.filter(i => i.status === filters.status);
-    if (filters?.client_id) filteredLocal = filteredLocal.filter(i => i.client_id === filters.client_id);
-    const merged = mergeById((data as Invoice[]) || [], filteredLocal);
-    if (!filters?.status && !filters?.client_id) lsSet(lsKey('invoices'), merged);
-    return { data: merged, error: null };
+    const supaData = (data as Invoice[]) || [];
+    if (!filters?.status && !filters?.client_id) lsSet(lsKey('invoices'), supaData);
+    return { data: supaData, error: null };
   } catch {
     let items = local;
     if (filters?.status) items = items.filter(i => i.status === filters.status);
@@ -506,13 +483,9 @@ export async function getExpenses(filters?: { category?: string; from?: string; 
     if (filters?.to) query = query.lte('expense_date', filters.to);
     const { data, error } = await query;
     if (error) throw error;
-    let filteredLocal = local;
-    if (filters?.category) filteredLocal = filteredLocal.filter(e => e.category === filters.category);
-    if (filters?.from) filteredLocal = filteredLocal.filter(e => e.expense_date >= filters.from!);
-    if (filters?.to) filteredLocal = filteredLocal.filter(e => e.expense_date <= filters.to!);
-    const merged = mergeById((data as Expense[]) || [], filteredLocal);
-    if (!filters?.category && !filters?.from && !filters?.to) lsSet(lsKey('expenses'), merged);
-    return { data: merged, error: null };
+    const supaData = (data as Expense[]) || [];
+    if (!filters?.category && !filters?.from && !filters?.to) lsSet(lsKey('expenses'), supaData);
+    return { data: supaData, error: null };
   } catch {
     let items = local;
     if (filters?.category) items = items.filter(e => e.category === filters.category);
@@ -727,9 +700,9 @@ export async function getBookings(): Promise<{ data: Booking[] | null; error: nu
   try {
     const { data, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
     if (error) throw error;
-    const merged = mergeById((data as Booking[]) || [], local);
-    if (merged.length > 0) lsSet(lsKey('bookings'), merged);
-    return { data: merged, error: null };
+    const supaData = (data as Booking[]) || [];
+    lsSet(lsKey('bookings'), supaData);
+    return { data: supaData, error: null };
   } catch {
     return { data: local, error: null };
   }
@@ -865,16 +838,20 @@ export async function getDashboardStats(): Promise<{ data: DashboardStats | null
     const clients = clientsRes.data || [];
     const leads = leadsRes.data || [];
 
-    const totalRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total || i.amount || 0), 0);
+    const totalRevenue = invoices.reduce((sum, i) => sum + (i.total || i.amount || 0), 0);
     const totalExpenses = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const outstandingAmount = invoices.reduce((sum, i) => {
+      const total = i.total || i.amount || 0;
+      const paid = (i as Record<string, unknown>).amount_paid as number || (i.status === 'paid' ? total : 0);
+      return sum + Math.max(0, total - paid);
+    }, 0);
     const outstandingInvoices = invoices.filter(i => i.status === 'sent' || i.status === 'overdue');
-    const outstandingAmount = outstandingInvoices.reduce((sum, i) => sum + (i.total || i.amount || 0), 0);
 
     return {
       data: {
         totalRevenue, totalExpenses, netProfit: totalRevenue - totalExpenses,
         outstandingInvoices: outstandingInvoices.length, outstandingAmount,
-        activeProjects: projects.filter(p => p.status === 'active').length,
+        activeProjects: projects.filter(p => ['active', 'in-progress', 'in_progress', 'delivered'].includes((p.status || '').toLowerCase())).length,
         activeClients: clients.filter(c => c.status === 'active').length,
         newLeads: leads.filter(l => l.status === 'new').length,
       },

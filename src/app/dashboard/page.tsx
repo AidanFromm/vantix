@@ -204,15 +204,15 @@ export default function DashboardOverview() {
 
   // Compute metrics
   const totalRevenue = invoices
-    .reduce((s, i) => s + ((i as any).amount_paid || (i.status === 'paid' ? (i.amount || i.total || 0) : 0)), 0);
+    .reduce((s, i) => s + (i.total || i.amount || 0), 0);
   const outstanding = invoices
     .reduce((s, i) => {
-      const total = i.amount || i.total || 0;
+      const total = i.total || i.amount || 0;
       const paid = (i as any).amount_paid || (i.status === 'paid' ? total : 0);
       return s + Math.max(0, total - paid);
     }, 0);
   const activeProjects = projects.filter(
-    (p) => p.status === 'active' || p.status === 'in-progress'
+    (p) => ['active', 'in-progress', 'in_progress', 'delivered'].includes((p.status || '').toLowerCase())
   ).length;
   const activeLeads = leads.filter(
     (l) => l.stage !== 'won' && l.stage !== 'lost' && l.status !== 'won' && l.status !== 'lost'

@@ -16,14 +16,19 @@ interface Project {
   id: string;
   name: string;
   client: string;
-  status: 'active' | 'completed' | 'on-hold';
+  client_id?: string;
+  status: string;
   budget: number;
   spent: number;
+  value?: number;
+  monthly_recurring?: number;
   progress: number;
   startDate: string;
   endDate: string;
   description: string;
   milestones: Milestone[];
+  priority?: string;
+  tags?: string[];
 }
 
 const SEED: Project[] = [];
@@ -45,7 +50,7 @@ const fmt = (n: number | undefined | null) => '$' + (n || 0).toLocaleString('en-
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed' | 'on-hold'>('all');
+  const [filter, setFilter] = useState<string>('all');
   const [selected, setSelected] = useState<Project | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
@@ -68,7 +73,7 @@ export default function ProjectsPage() {
     })();
   }, []);
 
-  const filtered = filter === 'all' ? projects : projects.filter(p => p.status === filter);
+  const filtered = filter === 'all' ? projects : projects.filter(p => (p.status || '').toLowerCase() === filter.toLowerCase());
 
   function openCreate() {
     setEditing(null); setFName(''); setFClient(CLIENTS[0]); setFStatus('active');
@@ -221,7 +226,7 @@ export default function ProjectsPage() {
               {/* Budget bar */}
               <div className="mb-3">
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="text-[#7A746C]">{fmt(p.spent)} / {fmt(p.budget)}</span>
+                  <span className="text-[#7A746C]">{fmt(p.value || p.budget)}{(p.monthly_recurring || 0) > 0 ? ` / ${fmt(p.monthly_recurring)}/mo` : ''}</span>
                   <span className="text-[#1C1C1C] font-semibold">{p.progress}%</span>
                 </div>
                 <div className="h-2 bg-[#E3D9CD] rounded-full overflow-hidden">

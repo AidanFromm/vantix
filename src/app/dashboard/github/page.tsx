@@ -48,6 +48,28 @@ const repos = [
     defaultBranch: 'main',
     isPrivate: true,
   },
+  {
+    name: 'justfourkicks',
+    fullName: 'justfourkicksllc/justfourkicks',
+    description: 'B2B wholesale sneaker platform - React/Vite + Supabase',
+    url: 'https://github.com/justfourkicksllc/justfourkicks',
+    language: 'TypeScript',
+    stars: 0,
+    watchers: 2,
+    defaultBranch: 'main',
+    isPrivate: true,
+  },
+  {
+    name: 'mixzo',
+    fullName: 'mixzokickz/mixzo',
+    description: 'Custom sneaker e-commerce platform - Next.js + Supabase + StockX',
+    url: 'https://github.com/mixzokickz/mixzo',
+    language: 'TypeScript',
+    stars: 0,
+    watchers: 2,
+    defaultBranch: 'main',
+    isPrivate: true,
+  },
 ];
 
 const languageColors: Record<string, string> = {
