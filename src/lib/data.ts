@@ -842,7 +842,7 @@ export async function getDashboardStats(): Promise<{ data: DashboardStats | null
     const totalExpenses = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
     const outstandingAmount = invoices.reduce((sum, i) => {
       const total = i.total || i.amount || 0;
-      const paid = (i as Record<string, unknown>).amount_paid as number || (i.status === 'paid' ? total : 0);
+      const paid = i.amount_paid || i.paid || (i.status === 'paid' ? total : 0);
       return sum + Math.max(0, total - paid);
     }, 0);
     const outstandingInvoices = invoices.filter(i => i.status === 'sent' || i.status === 'overdue');

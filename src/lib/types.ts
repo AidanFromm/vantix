@@ -128,6 +128,7 @@ export interface Invoice {
   tax?: number;
   total: number;
   paid?: number;
+  amount_paid?: number;
   amount?: number; // legacy alias
   
   due_date?: string;
