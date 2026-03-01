@@ -15,7 +15,7 @@ import {
   type NotificationType,
 } from '@/lib/notifications';
 
-const typeIcons: Record<NotificationType, React.ElementType> = {
+const typeIcons: Record<string, any> = {
   new_lead: Inbox,
   invoice_overdue: DollarSign,
   project_deadline: Clock,
@@ -184,3 +184,4 @@ export default function NotificationBell() {
     </div>
   );
 }
+

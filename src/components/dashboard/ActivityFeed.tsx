@@ -33,7 +33,7 @@ interface ActivityFeedProps {
   className?: string;
 }
 
-const iconMap: Record<ActivityType, React.ElementType> = {
+const iconMap: Record<string, any> = {
   client: User,
   email: Mail,
   payment: DollarSign,
@@ -205,3 +205,5 @@ export default function ActivityFeed({ activities, maxItems = 10, className = ''
     </div>
   );
 }
+
+

@@ -22,7 +22,7 @@ interface Tool {
 
 interface StackCategory {
   title: string;
-  icon: React.ElementType;
+  icon: any;
   tools: Tool[];
 }
 
@@ -194,3 +194,4 @@ export default function ToolsPage() {
     </div>
   );
 }
+

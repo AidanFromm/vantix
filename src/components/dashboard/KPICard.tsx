@@ -12,7 +12,7 @@ interface KPICardProps {
   trend?: number;
   trendLabel?: string;
   sparklineData?: number[];
-  icon?: React.ElementType;
+  icon?: any;
   className?: string;
 }
 
@@ -178,3 +178,5 @@ export default function KPICard({
     </motion.div>
   );
 }
+
+

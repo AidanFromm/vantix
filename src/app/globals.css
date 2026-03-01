@@ -3,6 +3,7 @@
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.font-playfair { font-family: var(--font-playfair), 'Playfair Display', serif; }
 img, video { max-width: 100%; height: auto; }
 
 :root {

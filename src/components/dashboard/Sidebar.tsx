@@ -45,7 +45,7 @@ import {
 // ─── Types ───────────────────────────────────────────────────────────
 interface NavGroup {
   label: string;
-  items: { href: string; label: string; icon: React.ElementType }[];
+  items: { href: string; label: string; icon: any }[];
 }
 
 const navGroups: NavGroup[] = [
@@ -414,3 +414,5 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
     </>
   );
 }
+
+

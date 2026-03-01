@@ -113,7 +113,7 @@ function HealthBar({ score: rawScore }: { score: number }) {
   );
 }
 
-function StatCard({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string | number }) {
+function StatCard({ icon: Icon, label, value }: { icon: any; label: string; value: string | number }) {
   return (
     <div className="bg-[#EEE6DC] border border-[#E3D9CD] rounded-xl p-4 flex items-center gap-3">
       <div className="p-2 rounded-lg bg-[#F4EFE8]">
