@@ -1,65 +1,318 @@
-
 [
   {
     "id": "JFK-2026-012",
-    "date": "2026-02-15",
-    "subtotal": 230240.00,
-    "totalPaid": 100000.00,
-    "balance": 130240.00,
-    "status": "partial",
-    "lineItems": [
-      { "description": "100x Nike SB Dunk Low Pro 'Travis Scott'", "quantity": 100, "unitPrice": 2300.00, "total": 230000.00 },
-      { "description": "Shipping", "quantity": 1, "unitPrice": 240.00, "total": 240.00 }
-    ]
+    "date": "2026-02-28",
+    "customer": "TBD",
+    "items": [
+      {
+        "name": "Nike Air Force 1 Low x Supreme",
+        "variant": "Black",
+        "qty": 1314,
+        "price": 115
+      },
+      {
+        "name": "Nike Air Force 1 Low x Supreme",
+        "variant": "White",
+        "qty": 593,
+        "price": 115
+      },
+      {
+        "name": "Nike Air Force 1 Low x Supreme",
+        "variant": "White/Black",
+        "qty": 64,
+        "price": 135
+      },
+      {
+        "name": "Nike Air Force 1 Low x Supreme",
+        "variant": "Black/White",
+        "qty": 17,
+        "price": 135
+      }
+    ],
+    "subtotal": 230240,
+    "payments": [
+      {
+        "date": "2026-02-28",
+        "method": "wire",
+        "amount": 100000
+      }
+    ],
+    "totalPaid": 100000,
+    "balance": 130240,
+    "status": "partial"
   },
   {
     "id": "JFK-2026-013",
-    "date": "2026-02-18",
-    "subtotal": 1140.00,
-    "totalPaid": 0.00,
-    "balance": 1140.00,
-    "status": "unpaid",
-    "lineItems": [
-      { "description": "1x Supreme AF1 Black Orange Box", "quantity": 1, "unitPrice": 1100.00, "total": 1100.00 },
-      { "description": "Shipping", "quantity": 1, "unitPrice": 40.00, "total": 40.00 }
-    ]
+    "date": "2026-02-28",
+    "customer": "TBD",
+    "items": [
+      {
+        "name": "Nike Air Force 1 Low '07 White",
+        "variant": "",
+        "qty": 4,
+        "price": 75
+      },
+      {
+        "name": "ASICS Gel-1130 Black Pure Silver",
+        "variant": "",
+        "qty": 3,
+        "price": 90
+      },
+      {
+        "name": "Jordan 1 Low OG SP Travis Scott Velvet Brown (PS)",
+        "variant": "Size 3Y",
+        "qty": 1,
+        "price": 140
+      },
+      {
+        "name": "Jordan 1 Low OG SP Travis Scott Medium Olive (PS)",
+        "variant": "Size 2Y",
+        "qty": 1,
+        "price": 120
+      },
+      {
+        "name": "Jordan 1 Low OG SP Travis Scott Canary (PS)",
+        "variant": "Size 1.5Y",
+        "qty": 1,
+        "price": 90
+      },
+      {
+        "name": "Nike SB Dunk Low Verdy Visty (TD)",
+        "variant": "",
+        "qty": 1,
+        "price": 100
+      },
+      {
+        "name": "Jordan 13 Retro Wheat (PS)",
+        "variant": "Size 3Y",
+        "qty": 1,
+        "price": 20
+      },
+      {
+        "name": "Nike AF1 Low Supreme Black (Orange Box)",
+        "variant": "Size 11.5",
+        "qty": 1,
+        "price": 100
+      }
+    ],
+    "subtotal": 1140,
+    "payments": [],
+    "totalPaid": 0,
+    "balance": 1140,
+    "status": "unpaid"
   },
   {
     "id": "JFK-2026-014",
-    "date": "2026-02-20",
-    "subtotal": 38032.50,
-    "totalPaid": 38032.50,
-    "balance": 0.00,
-    "status": "paid",
-    "lineItems": [
-      { "description": "50x Adidas Yeezy Boost 350 V2 'Zebra'", "quantity": 50, "unitPrice": 750.00, "total": 37500.00 },
-      { "description": "Sales Tax", "quantity": 1, "unitPrice": 232.50, "total": 232.50 },
-      { "description": "Shipping", "quantity": 1, "unitPrice": 300.00, "total": 300.00 }
-    ]
+    "date": "2026-02-28",
+    "customer": "TBD",
+    "items": [
+      {
+        "name": "ASICS Gel-1130 Black Pure Silver",
+        "sizes": "9.5, 10, 10, 10.5(x3), 11(x2)",
+        "qty": 8,
+        "price": 88
+      },
+      {
+        "name": "Jordan 11 Retro Gamma Blue (2025)",
+        "sizes": "8.5",
+        "qty": 1,
+        "price": 220
+      },
+      {
+        "name": "Jordan 11 Retro Gamma Blue (2025)",
+        "sizes": "10.5",
+        "qty": 2,
+        "price": 270
+      },
+      {
+        "name": "Jordan 11 Retro Gamma Blue (2025)",
+        "sizes": "11",
+        "qty": 1,
+        "price": 270
+      },
+      {
+        "name": "Jordan 11 Retro Gamma Blue (2025)",
+        "sizes": "12",
+        "qty": 1,
+        "price": 300
+      },
+      {
+        "name": "Jordan 4 Retro Black Cat (2025)",
+        "sizes": "8.5",
+        "qty": 1,
+        "price": 250
+      },
+      {
+        "name": "Nike Air Force 1 Low '07 White",
+        "sizes": "8, 9(x2)",
+        "qty": 3,
+        "price": 75
+      },
+      {
+        "name": "Nike AF1 Low Supreme Black",
+        "sizes": "8.5(x25), 9(x7), 9.5(x25), 10(x14), 10.5(x21), 11(x25), 11.5(x25), 12(x3)",
+        "qty": 145,
+        "price": 133
+      },
+      {
+        "name": "Nike AF1 Low Supreme White",
+        "sizes": "8(x14), 8.5(x14), 9(x12), 9.5(x25), 10(x25), 11.5(x23), 12(x6)",
+        "qty": 119,
+        "price": 131.5
+      },
+      {
+        "name": "Nike AF1 Low Supreme White/Black",
+        "sizes": "9.5(x2)",
+        "qty": 2,
+        "price": 150
+      },
+      {
+        "name": "Nike AF1 Low Supreme White/Black",
+        "sizes": "10.5(x2)",
+        "qty": 2,
+        "price": 145
+      }
+    ],
+    "subtotal": 38032.5,
+    "payments": [
+      {
+        "date": "2026-02-28",
+        "method": "paid",
+        "amount": 38032.5
+      }
+    ],
+    "totalPaid": 38032.5,
+    "balance": 0,
+    "status": "paid"
   },
   {
     "id": "JFK-2026-015",
-    "date": "2026-02-22",
-    "subtotal": 21184.00,
-    "totalPaid": 0.00,
-    "balance": 21184.00,
-    "status": "unpaid",
-    "lineItems": [
-      { "description": "20x Air Jordan 1 Retro High OG 'Chicago'", "quantity": 20, "unitPrice": 1000.00, "total": 20000.00 },
-      { "description": "Sales Tax", "quantity": 1, "unitPrice": 184.00, "total": 184.00 },
-      { "description": "Shipping", "quantity": 1, "unitPrice": 1000.00, "total": 1000.00 }
-    ]
+    "date": "2026-02-28",
+    "customer": "TBD",
+    "items": [
+      {
+        "name": "Supreme x Hanes Crew Socks (4 Pack)",
+        "variant": "Black",
+        "qty": 344,
+        "price": 32
+      },
+      {
+        "name": "Supreme x Hanes Crew Socks (4 Pack)",
+        "variant": "White",
+        "qty": 318,
+        "price": 32
+      }
+    ],
+    "subtotal": 21184,
+    "payments": [],
+    "totalPaid": 0,
+    "balance": 21184,
+    "status": "unpaid"
   },
   {
     "id": "JFK-2026-016",
-    "date": "2026-02-25",
-    "subtotal": 2340.00,
-    "totalPaid": 2340.00,
-    "balance": 0.00,
-    "status": "paid",
-    "lineItems": [
-      { "description": "3x Nike Dunk Low 'Panda'", "quantity": 3, "unitPrice": 750.00, "total": 2250.00 },
-      { "description": "Shipping", "quantity": 1, "unitPrice": 90.00, "total": 90.00 }
-    ]
+    "date": "2026-02-28",
+    "customer": "Existing client (in system)",
+    "items": [
+      {
+        "name": "Nike Mind 002 Black Hyper Crimson",
+        "variant": "Sizes 7.5-12",
+        "qty": 13,
+        "price": 180
+      }
+    ],
+    "subtotal": 2340,
+    "payments": [
+      {
+        "date": "2026-02-28",
+        "method": "paid",
+        "amount": 2340
+      }
+    ],
+    "totalPaid": 2340,
+    "balance": 0,
+    "status": "paid"
+  },
+  {
+    "id": "JFK-2026-017",
+    "date": "2026-03-02",
+    "customer": "TBD",
+    "items": [
+      {
+        "name": "GLITCH ZIP UP",
+        "variant": "Black",
+        "sizes": "S(x2), M(x2), L(x2)",
+        "qty": 6,
+        "price": 140
+      },
+      {
+        "name": "GLITCH ZIP UP",
+        "variant": "Hack Green",
+        "sizes": "S(x2), M(x2), L(x2)",
+        "qty": 6,
+        "price": 140
+      },
+      {
+        "name": "SUNNY ZIP UP",
+        "variant": "Yellow",
+        "sizes": "S(x2)",
+        "qty": 2,
+        "price": 155
+      },
+      {
+        "name": "INFERNO ZIP UP",
+        "variant": "",
+        "sizes": "M, L(x2), XL, XXL",
+        "qty": 5,
+        "price": 135
+      },
+      {
+        "name": "COLLAGE ZIP UP",
+        "variant": "Mardi Gras",
+        "sizes": "S(x1), XL(x1)",
+        "qty": 2,
+        "price": 160
+      },
+      {
+        "name": "Jordan 4 Black Cat",
+        "variant": "",
+        "sizes": "9(x2)",
+        "qty": 2,
+        "price": 250
+      },
+      {
+        "name": "Jordan 4 Black Cat GS",
+        "variant": "",
+        "sizes": "6Y",
+        "qty": 1,
+        "price": 180
+      },
+      {
+        "name": "Jordan 1 Lost and Found",
+        "variant": "",
+        "sizes": "8.5",
+        "qty": 1,
+        "price": 230
+      },
+      {
+        "name": "Jordan 11 Gamma GS",
+        "variant": "",
+        "sizes": "4Y",
+        "qty": 1,
+        "price": 180
+      },
+      {
+        "name": "Jordan 11 Gamma",
+        "variant": "",
+        "sizes": "10",
+        "qty": 1,
+        "price": 260
+      }
+    ],
+    "subtotal": 4335,
+    "payments": [],
+    "totalPaid": 0,
+    "balance": 4335,
+    "status": "unpaid"
   }
 ]
