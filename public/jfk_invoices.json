@@ -1,0 +1,65 @@
+
+[
+  {
+    "id": "JFK-2026-012",
+    "date": "2026-02-15",
+    "subtotal": 230240.00,
+    "totalPaid": 100000.00,
+    "balance": 130240.00,
+    "status": "partial",
+    "lineItems": [
+      { "description": "100x Nike SB Dunk Low Pro 'Travis Scott'", "quantity": 100, "unitPrice": 2300.00, "total": 230000.00 },
+      { "description": "Shipping", "quantity": 1, "unitPrice": 240.00, "total": 240.00 }
+    ]
+  },
+  {
+    "id": "JFK-2026-013",
+    "date": "2026-02-18",
+    "subtotal": 1140.00,
+    "totalPaid": 0.00,
+    "balance": 1140.00,
+    "status": "unpaid",
+    "lineItems": [
+      { "description": "1x Supreme AF1 Black Orange Box", "quantity": 1, "unitPrice": 1100.00, "total": 1100.00 },
+      { "description": "Shipping", "quantity": 1, "unitPrice": 40.00, "total": 40.00 }
+    ]
+  },
+  {
+    "id": "JFK-2026-014",
+    "date": "2026-02-20",
+    "subtotal": 38032.50,
+    "totalPaid": 38032.50,
+    "balance": 0.00,
+    "status": "paid",
+    "lineItems": [
+      { "description": "50x Adidas Yeezy Boost 350 V2 'Zebra'", "quantity": 50, "unitPrice": 750.00, "total": 37500.00 },
+      { "description": "Sales Tax", "quantity": 1, "unitPrice": 232.50, "total": 232.50 },
+      { "description": "Shipping", "quantity": 1, "unitPrice": 300.00, "total": 300.00 }
+    ]
+  },
+  {
+    "id": "JFK-2026-015",
+    "date": "2026-02-22",
+    "subtotal": 21184.00,
+    "totalPaid": 0.00,
+    "balance": 21184.00,
+    "status": "unpaid",
+    "lineItems": [
+      { "description": "20x Air Jordan 1 Retro High OG 'Chicago'", "quantity": 20, "unitPrice": 1000.00, "total": 20000.00 },
+      { "description": "Sales Tax", "quantity": 1, "unitPrice": 184.00, "total": 184.00 },
+      { "description": "Shipping", "quantity": 1, "unitPrice": 1000.00, "total": 1000.00 }
+    ]
+  },
+  {
+    "id": "JFK-2026-016",
+    "date": "2026-02-25",
+    "subtotal": 2340.00,
+    "totalPaid": 2340.00,
+    "balance": 0.00,
+    "status": "paid",
+    "lineItems": [
+      { "description": "3x Nike Dunk Low 'Panda'", "quantity": 3, "unitPrice": 750.00, "total": 2250.00 },
+      { "description": "Shipping", "quantity": 1, "unitPrice": 90.00, "total": 90.00 }
+    ]
+  }
+]
