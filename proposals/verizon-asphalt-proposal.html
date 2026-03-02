@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vantix — Proposal for Verizon Asphalt</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: #e5e5e5;
+    line-height: 1.6;
+  }
+  
+  .container { max-width: 800px; margin: 0 auto; padding: 60px 40px; }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(176,122,69,0.2);
+  }
+  .logo { font-size: 28px; font-weight: 700; color: #B07A45; letter-spacing: -0.5px; }
+  .logo span { color: #fff; }
+  .header-right { text-align: right; font-size: 13px; color: #7A746C; }
+  .header-right a { color: #B07A45; text-decoration: none; }
+  
+  /* Title */
+  .proposal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .proposal-subtitle {
+    font-size: 18px;
+    color: #7A746C;
+    margin-bottom: 50px;
+  }
+  .proposal-for {
+    font-size: 14px;
+    color: #B07A45;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+  }
+  
+  /* Sections */
+  .section { margin-bottom: 50px; }
+  .section-title {
+    font-size: 13px;
+    color: #B07A45;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  h3 { font-size: 22px; color: #fff; margin-bottom: 12px; font-weight: 600; }
+  p { color: #a0a0a0; font-size: 15px; margin-bottom: 12px; }
+  
+  /* Deliverables */
+  .deliverables { list-style: none; padding: 0; }
+  .deliverables li {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 15px;
+    color: #d0d0d0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .deliverables li::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: #B07A45;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  
+  /* Pricing Table */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 30px 0;
+  }
+  .price-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(176,122,69,0.15);
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .price-card.recommended {
+    border-color: #B07A45;
+    background: rgba(176,122,69,0.05);
+  }
+  .price-card.recommended::before {
+    content: 'MOST POPULAR';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #B07A45;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 16px;
+    border-radius: 20px;
+  }
+  .plan-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .plan-desc {
+    font-size: 12px;
+    color: #7A746C;
+    margin-bottom: 24px;
+    min-height: 32px;
+  }
+  .plan-upfront {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .plan-upfront-label {
+    font-size: 12px;
+    color: #7A746C;
+    margin-bottom: 16px;
+  }
+  .plan-monthly {
+    font-size: 20px;
+    font-weight: 600;
+    color: #B07A45;
+    margin-top: 8px;
+  }
+  .plan-monthly-label {
+    font-size: 12px;
+    color: #7A746C;
+    margin-bottom: 20px;
+  }
+  .plan-features {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    font-size: 13px;
+    color: #a0a0a0;
+  }
+  .plan-features li {
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .plan-features li::before {
+    content: '✓';
+    color: #B07A45;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .plan-total {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 12px;
+    color: #7A746C;
+  }
+  .plan-total strong { color: #fff; font-size: 14px; }
+  
+  /* Timeline */
+  .timeline {
+    display: flex;
+    gap: 0;
+    margin: 20px 0;
+  }
+  .timeline-step {
+    flex: 1;
+    padding: 20px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+  }
+  .timeline-step:first-child { border-radius: 12px 0 0 12px; }
+  .timeline-step:last-child { border-radius: 0 12px 12px 0; }
+  .timeline-day {
+    font-size: 11px;
+    color: #B07A45;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .timeline-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .timeline-desc {
+    font-size: 12px;
+    color: #7A746C;
+    margin-top: 4px;
+  }
+  
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(176,122,69,0.3), transparent);
+    margin: 50px 0;
+  }
+  
+  /* CTA */
+  .cta-section { text-align: center; margin: 60px 0 30px; }
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .cta-subtitle {
+    color: #7A746C;
+    font-size: 15px;
+    margin-bottom: 30px;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: #B07A45;
+    color: #fff;
+    padding: 16px 40px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+  }
+  .cta-contact {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #7A746C;
+  }
+  .cta-contact a { color: #B07A45; text-decoration: none; }
+  
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-size: 12px;
+    color: #7A746C;
+  }
+  
+  /* Responsive */
+  @media (max-width: 700px) {
+    .container { padding: 40px 24px; }
+    .proposal-title { font-size: 30px; }
+    .pricing-grid { grid-template-columns: 1fr; gap: 20px; }
+    .timeline { flex-direction: column; }
+    .timeline-step { border-radius: 8px !important; }
+    .header { flex-direction: column; gap: 16px; }
+    .header-right { text-align: left; }
+    .price-card.recommended::before { position: static; transform: none; display: inline-block; margin-bottom: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="logo"><span>vantix.</span></div>
+      <div style="font-size: 12px; color: #7A746C; margin-top: 4px;">AI-Powered Consulting</div>
+    </div>
+    <div class="header-right">
+      <a href="https://usevantix.com">usevantix.com</a><br>
+      (914) 888-6610<br>
+      hello@usevantix.com
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div class="proposal-for">Prepared for</div>
+  <div class="proposal-title">Verizon Asphalt</div>
+  <div class="proposal-subtitle">Professional Landing Page — Project Proposal</div>
+  <p style="font-size: 13px; color: #7A746C;">Date: March 1, 2026 &nbsp;|&nbsp; Valid for 14 days</p>
+
+  <div class="divider"></div>
+
+  <!-- Overview -->
+  <div class="section">
+    <div class="section-title">Overview</div>
+    <h3>A high-quality landing page that converts visitors into customers.</h3>
+    <p>
+      We'll build a professional, mobile-first landing page for Verizon Asphalt that establishes credibility, 
+      showcases your services, and drives leads directly to your phone or inbox. 
+      Designed to look premium and load fast — optimized for Google search from day one.
+    </p>
+  </div>
+
+  <!-- Deliverables -->
+  <div class="section">
+    <div class="section-title">What's Included</div>
+    <ul class="deliverables">
+      <li>Custom-designed landing page (4-6 sections)</li>
+      <li>Mobile-responsive design (looks great on every device)</li>
+      <li>Hero section with strong headline + call-to-action</li>
+      <li>Services section highlighting your asphalt offerings</li>
+      <li>About / trust section (years in business, certifications, service area)</li>
+      <li>Photo gallery or project showcase section</li>
+      <li>Contact form with email notifications</li>
+      <li>Click-to-call phone button (mobile optimized)</li>
+      <li>Google Maps integration showing service area</li>
+      <li>Basic SEO setup (meta tags, schema markup, sitemap)</li>
+      <li>SSL certificate (HTTPS security)</li>
+      <li>Fast hosting with 99.9% uptime</li>
+      <li>1 week turnaround — live in 7 days</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Pricing -->
+  <div class="section">
+    <div class="section-title">Choose Your Plan</div>
+    <p style="margin-bottom: 30px;">Three options designed to fit your budget. All plans include the same high-quality landing page.</p>
+    
+    <div class="pricing-grid">
+      
+      <!-- Plan 1: Pay Upfront -->
+      <div class="price-card">
+        <div class="plan-name">Upfront</div>
+        <div class="plan-desc">Best value — pay once, own it</div>
+        <div class="plan-upfront">$1,800</div>
+        <div class="plan-upfront-label">one-time payment</div>
+        <div class="plan-monthly">$0</div>
+        <div class="plan-monthly-label">per month</div>
+        <ul class="plan-features">
+          <li>Everything listed above</li>
+          <li>1 month free hosting</li>
+          <li>2 rounds of revisions</li>
+          <li>$50/mo hosting after month 1</li>
+        </ul>
+        <div class="plan-total">
+          Year 1 total: <strong>$2,350</strong>
+        </div>
+      </div>
+
+      <!-- Plan 2: Balanced (Recommended) -->
+      <div class="price-card recommended">
+        <div class="plan-name">Growth</div>
+        <div class="plan-desc">Lower upfront + ongoing support</div>
+        <div class="plan-upfront">$999</div>
+        <div class="plan-upfront-label">one-time payment</div>
+        <div class="plan-monthly">$150</div>
+        <div class="plan-monthly-label">per month</div>
+        <ul class="plan-features">
+          <li>Everything listed above</li>
+          <li>Hosting included</li>
+          <li>Unlimited minor edits</li>
+          <li>Monthly performance report</li>
+          <li>Priority support</li>
+        </ul>
+        <div class="plan-total">
+          Year 1 total: <strong>$2,649</strong>
+        </div>
+      </div>
+
+      <!-- Plan 3: Low Entry -->
+      <div class="price-card">
+        <div class="plan-name">Easy Start</div>
+        <div class="plan-desc">Lowest upfront — spread the cost</div>
+        <div class="plan-upfront">$499</div>
+        <div class="plan-upfront-label">one-time payment</div>
+        <div class="plan-monthly">$250</div>
+        <div class="plan-monthly-label">per month</div>
+        <ul class="plan-features">
+          <li>Everything listed above</li>
+          <li>Hosting included</li>
+          <li>Unlimited minor edits</li>
+          <li>Monthly performance report</li>
+          <li>Priority support</li>
+          <li>SEO updates monthly</li>
+        </ul>
+        <div class="plan-total">
+          Year 1 total: <strong>$3,249</strong>
+        </div>
+      </div>
+
+    </div>
+    
+    <p style="font-size: 12px; color: #7A746C; text-align: center; margin-top: 16px;">
+      All plans include a 7-day delivery guarantee. Monthly plans require a 6-month minimum commitment.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Timeline -->
+  <div class="section">
+    <div class="section-title">Timeline — 7 Days to Launch</div>
+    <div class="timeline">
+      <div class="timeline-step">
+        <div class="timeline-day">Day 1-2</div>
+        <div class="timeline-label">Discovery</div>
+        <div class="timeline-desc">Gather content, photos, brand details</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-day">Day 3-4</div>
+        <div class="timeline-label">Design</div>
+        <div class="timeline-desc">Build the page, your review</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-day">Day 5-6</div>
+        <div class="timeline-label">Refine</div>
+        <div class="timeline-desc">Revisions + polish</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-day">Day 7</div>
+        <div class="timeline-label">Launch</div>
+        <div class="timeline-desc">Go live + SEO submit</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Upsells (future) -->
+  <div class="section">
+    <div class="section-title">Optional Add-Ons</div>
+    <p style="margin-bottom: 16px;">Available anytime after launch:</p>
+    <ul class="deliverables">
+      <li>Custom logo & brand identity — $300</li>
+      <li>Domain registration + setup — $25/yr</li>
+      <li>Google Business Profile optimization — $150</li>
+      <li>Google Ads management — $200/mo + ad spend</li>
+      <li>Additional pages (About, Gallery, etc.) — $200/page</li>
+      <li>Online booking / scheduling system — $300</li>
+      <li>AI chatbot for lead capture — $100/mo</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-title">Ready to get started?</div>
+    <div class="cta-subtitle">Pick a plan and we'll have your site live in 7 days.</div>
+    <a href="https://cal.com/vantix/ai-consultation" class="cta-btn">Book a Quick Call</a>
+    <div class="cta-contact">
+      or reach out directly: <a href="tel:9148886610">(914) 888-6610</a> &nbsp;|&nbsp; <a href="mailto:hello@usevantix.com">hello@usevantix.com</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>Vantix LLC &nbsp;|&nbsp; usevantix.com &nbsp;|&nbsp; AI-Powered Consulting & Development</p>
+    <p style="margin-top: 8px;">This proposal is confidential and intended solely for Verizon Asphalt.</p>
+  </div>
+
+</div>
+</body>
+</html>

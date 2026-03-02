@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Proposal — Verizon Asphalt</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #ffffff;
+    color: #1a1a1a;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  
+  .page { max-width: 750px; margin: 0 auto; padding: 50px 45px; }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 30px;
+    border-bottom: 3px solid #B07A45;
+    margin-bottom: 40px;
+  }
+  .logo { font-size: 26px; font-weight: 800; color: #B07A45; }
+  .header-info { text-align: right; font-size: 14px; color: #555; line-height: 1.8; }
+  .header-info strong { color: #1a1a1a; }
+  
+  .title-block {
+    background: #f8f5f0;
+    border-radius: 12px;
+    padding: 35px;
+    margin-bottom: 40px;
+  }
+  .prepared-for { font-size: 13px; color: #B07A45; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .company-name { font-size: 34px; font-weight: 800; color: #1a1a1a; margin-bottom: 4px; }
+  .proposal-type { font-size: 18px; color: #666; }
+  .date { font-size: 14px; color: #999; margin-top: 12px; }
+  
+  .section { margin-bottom: 40px; }
+  .section-header {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0ebe4;
+  }
+  
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+    color: #333;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .check {
+    width: 24px; height: 24px;
+    background: #B07A45;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* All Plans Include */
+  .included-box {
+    background: #f8f5f0;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 20px 0 30px;
+  }
+  .included-box p {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 0;
+  }
+  .included-box strong { color: #1a1a1a; }
+  
+  /* Pricing */
+  .pricing-cards { display: flex; gap: 14px; margin-top: 20px; }
+  
+  .card {
+    flex: 1;
+    border: 2px solid #e8e3dc;
+    border-radius: 14px;
+    padding: 28px 20px;
+    text-align: center;
+    background: #fff;
+  }
+  .card.best {
+    border-color: #B07A45;
+    background: #fdf9f4;
+    position: relative;
+    transform: scale(1.03);
+  }
+  .card.best::after {
+    content: 'MOST FLEXIBLE';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #B07A45;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    padding: 4px 18px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  
+  .card-name { font-size: 18px; font-weight: 800; color: #1a1a1a; margin-bottom: 22px; }
+  
+  .price-big { font-size: 42px; font-weight: 800; color: #1a1a1a; line-height: 1; }
+  .price-label { font-size: 14px; color: #888; margin-bottom: 18px; }
+  
+  .plus { font-size: 20px; color: #B07A45; font-weight: 700; margin-bottom: 8px; }
+  
+  .monthly-price { font-size: 30px; font-weight: 700; color: #B07A45; line-height: 1; }
+  .monthly-label { font-size: 14px; color: #888; margin-bottom: 22px; }
+  
+  .year-total {
+    padding: 16px 0 0;
+    border-top: 2px solid #f0ebe4;
+    font-size: 14px;
+    color: #666;
+  }
+  .year-total strong { color: #1a1a1a; font-size: 18px; }
+  .year-note { font-size: 12px; color: #B07A45; font-weight: 600; margin-top: 4px; }
+  
+  /* Add-ons */
+  .addon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .addon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: #f8f5f0;
+    border-radius: 10px;
+    font-size: 15px;
+  }
+  .addon-name { color: #333; }
+  .addon-price { color: #B07A45; font-weight: 700; }
+  
+  /* Timeline */
+  .timeline-bar {
+    display: flex;
+    margin-top: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #f0ebe4;
+  }
+  .tl-step {
+    flex: 1;
+    padding: 22px 16px;
+    text-align: center;
+    border-right: 1px solid #f0ebe4;
+  }
+  .tl-step:last-child { border-right: none; }
+  .tl-day { font-size: 12px; color: #B07A45; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .tl-title { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+  .tl-desc { font-size: 13px; color: #888; margin-top: 3px; }
+  
+  /* CTA */
+  .cta-box {
+    text-align: center;
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: 16px;
+    padding: 45px 35px;
+    margin-top: 40px;
+  }
+  .cta-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+  .cta-sub { font-size: 16px; color: #aaa; margin-bottom: 28px; }
+  .cta-btn {
+    display: inline-block;
+    background: #B07A45;
+    color: #fff;
+    padding: 16px 44px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 17px;
+  }
+  .cta-phone { margin-top: 18px; font-size: 20px; font-weight: 700; }
+  .cta-phone a { color: #B07A45; text-decoration: none; }
+  .cta-email { font-size: 14px; color: #777; margin-top: 6px; }
+  .cta-email a { color: #B07A45; text-decoration: none; }
+  
+  .footer { text-align: center; padding: 30px 0 10px; font-size: 12px; color: #bbb; }
+  
+  @media (max-width: 700px) {
+    .page { padding: 30px 20px; }
+    .pricing-cards { flex-direction: column; }
+    .card.best { transform: none; }
+    .addon-grid { grid-template-columns: 1fr; }
+    .timeline-bar { flex-direction: column; }
+    .tl-step { border-right: none; border-bottom: 1px solid #f0ebe4; }
+    .header { flex-direction: column; gap: 12px; }
+    .header-info { text-align: left; }
+    .company-name { font-size: 26px; }
+    .card.best::after { position: static; transform: none; display: inline-block; margin-bottom: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="logo">vantix.</div>
+    <div class="header-info">
+      <strong>Aidan Fromm</strong><br>
+      (914) 888-6610<br>
+      hello@usevantix.com
+    </div>
+  </div>
+
+  <div class="title-block">
+    <div class="prepared-for">Proposal For</div>
+    <div class="company-name">Verizon Asphalt</div>
+    <div class="proposal-type">Professional Landing Page</div>
+    <div class="date">March 1, 2026 &nbsp;·&nbsp; Valid for 14 days</div>
+  </div>
+
+  <!-- What You Get -->
+  <div class="section">
+    <div class="section-header">What You Get</div>
+    <ul class="checklist">
+      <li><span class="check">✓</span> Custom-designed landing page (4+ sections)</li>
+      <li><span class="check">✓</span> Works perfectly on phones, tablets, and computers</li>
+      <li><span class="check">✓</span> Big, clear call-to-action buttons</li>
+      <li><span class="check">✓</span> Services section showing what you offer</li>
+      <li><span class="check">✓</span> About section — your experience, service area, trust</li>
+      <li><span class="check">✓</span> Photo gallery of your work</li>
+      <li><span class="check">✓</span> Contact form — leads go straight to your email</li>
+      <li><span class="check">✓</span> Tap-to-call button for mobile visitors</li>
+      <li><span class="check">✓</span> Google-friendly so customers can find you</li>
+      <li><span class="check">✓</span> Secure website (HTTPS) + fast hosting</li>
+      <li><span class="check">✓</span> Custom domain included (yourname.com)</li>
+      <li><span class="check">✓</span> Ongoing edits, updates, and support</li>
+      <li><span class="check">✓</span> <strong>Ready in 7 days</strong></li>
+    </ul>
+    
+    <div class="included-box">
+      <p><strong>Every plan includes the exact same website and features.</strong><br>The only difference is how you pay — pick whatever works best for your budget.</p>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="section">
+    <div class="section-header">Choose How You Pay</div>
+
+    <div class="pricing-cards">
+      
+      <!-- Plan 1 -->
+      <div class="card">
+        <div class="card-name">Pay More Now</div>
+        <div class="price-big">$1,500</div>
+        <div class="price-label">upfront</div>
+        <div class="plus">+</div>
+        <div class="monthly-price">$150</div>
+        <div class="monthly-label">per month</div>
+        <div class="year-total">
+          First year total:<br>
+          <strong>$3,300</strong>
+          <div class="year-note">Lowest yearly cost</div>
+        </div>
+      </div>
+
+      <!-- Plan 2 (Best) -->
+      <div class="card best">
+        <div class="card-name">Split It Up</div>
+        <div class="price-big">$750</div>
+        <div class="price-label">upfront</div>
+        <div class="plus">+</div>
+        <div class="monthly-price">$200</div>
+        <div class="monthly-label">per month</div>
+        <div class="year-total">
+          First year total:<br>
+          <strong>$3,150</strong>
+          <div class="year-note">Best of both worlds</div>
+        </div>
+      </div>
+
+      <!-- Plan 3 -->
+      <div class="card">
+        <div class="card-name">$0 to Start</div>
+        <div class="price-big">$0</div>
+        <div class="price-label">nothing upfront</div>
+        <div class="plus">+</div>
+        <div class="monthly-price">$275</div>
+        <div class="monthly-label">per month</div>
+        <div class="year-total">
+          First year total:<br>
+          <strong>$3,300</strong>
+          <div class="year-note">Get started risk-free</div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="font-size: 13px; color: #999; text-align: center; margin-top: 14px;">
+      All plans include the same website, hosting, domain, support, and updates.<br>
+      12-month agreement. After year 1, just the monthly fee continues.
+    </p>
+  </div>
+
+  <!-- Add-ons -->
+  <div class="section">
+    <div class="section-header">Grow Later (Optional Add-Ons)</div>
+    <p style="color: #666; margin-bottom: 10px;">Available anytime — no pressure, just options when you're ready.</p>
+    <div class="addon-grid">
+      <div class="addon"><span class="addon-name">Logo Design</span><span class="addon-price">$300</span></div>
+      <div class="addon"><span class="addon-name">Extra Pages</span><span class="addon-price">$200 each</span></div>
+      <div class="addon"><span class="addon-name">Google Ads</span><span class="addon-price">$200/mo</span></div>
+      <div class="addon"><span class="addon-name">Google Business Setup</span><span class="addon-price">$150</span></div>
+      <div class="addon"><span class="addon-name">Booking System</span><span class="addon-price">$300</span></div>
+      <div class="addon"><span class="addon-name">AI Chat on Your Site</span><span class="addon-price">$100/mo</span></div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="section">
+    <div class="section-header">How It Works — 7 Days</div>
+    <div class="timeline-bar">
+      <div class="tl-step">
+        <div class="tl-day">Day 1-2</div>
+        <div class="tl-title">We Talk</div>
+        <div class="tl-desc">Send us photos + info</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-day">Day 3-4</div>
+        <div class="tl-title">We Build</div>
+        <div class="tl-desc">Design + build your site</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-day">Day 5-6</div>
+        <div class="tl-title">You Review</div>
+        <div class="tl-desc">Check it, we adjust</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-day">Day 7</div>
+        <div class="tl-title">Go Live!</div>
+        <div class="tl-desc">You're on the internet</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <div class="cta-title">Let's Get Started</div>
+    <div class="cta-sub">Pick a plan and your site is live in 7 days.</div>
+    <a href="https://cal.com/vantix/ai-consultation" class="cta-btn">Schedule a Quick Call</a>
+    <div class="cta-phone">or call <a href="tel:9148886610">(914) 888-6610</a></div>
+    <div class="cta-email"><a href="mailto:hello@usevantix.com">hello@usevantix.com</a></div>
+  </div>
+
+  <div class="footer">
+    <p>Vantix LLC &nbsp;|&nbsp; usevantix.com</p>
+  </div>
+
+</div>
+</body>
+</html>
