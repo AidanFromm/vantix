@@ -1,9 +1,8 @@
 'use client';
 
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 
+/* ── Mockup Data (unchanged) ── */
 const problems = [
   {
     headline: 'Half your team\u2019s day is wasted.',
@@ -22,7 +21,7 @@ const problems = [
   },
 ];
 
-/* ── Automation Visual: Reduced to 3 task cards ── */
+/* ── Automation Visual: Simplified (removed motion.div infinite animations) ── */
 function AutomationVisual() {
   const tasks = [
     { label: 'Invoice #4821', color: '#B07A45' },
@@ -31,62 +30,45 @@ function AutomationVisual() {
   ];
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center py-8">
       <div className="relative w-80 h-72">
         <div className="absolute left-0 top-1/2 -translate-y-1/2 flex flex-col gap-2">
           {tasks.map((task, i) => (
-            <motion.div
+            <div
               key={i}
               className="px-4 py-2 rounded-lg border text-sm font-medium"
-              style={{ borderColor: `${task.color}40`, color: task.color, backgroundColor: `${task.color}10`, willChange: 'transform' }}
-              animate={{
-                x: [0, 140, 280],
-                opacity: [1, 1, 0],
-                scale: [1, 0.9, 0.7],
-              }}
-              transition={{
-                duration: 3,
-                delay: i * 0.6,
-                repeat: Infinity,
-                repeatDelay: tasks.length * 0.6 - 3 + 1,
-                ease: 'easeInOut',
-              }}
+              style={{ borderColor: `${task.color}40`, color: task.color, backgroundColor: `${task.color}10` }}
             >
               {task.label}
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.div
+        <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-2xl bg-gradient-to-br from-[#C89A6A] to-[#8E5E34] flex items-center justify-center shadow-xl shadow-[#B07A45]/20"
-          style={{ willChange: 'transform' }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
         >
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F4EFE8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
-        </motion.div>
+        </div>
 
         {tasks.map((_, i) => (
-          <motion.div
+          <div
             key={`done-${i}`}
             className="absolute right-0 w-8 h-8 rounded-full bg-[#B07A45]/20 flex items-center justify-center"
-            style={{ top: `${20 + i * 13}%`, willChange: 'transform' }}
-            animate={{ opacity: [0, 0, 1, 1, 0], scale: [0.5, 0.5, 1, 1, 0.8] }}
-            transition={{ duration: 3, delay: i * 0.6 + 2, repeat: Infinity, repeatDelay: tasks.length * 0.6 - 2 }}
+            style={{ top: `${20 + i * 13}%` }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B07A45" strokeWidth="3">
               <path d="M20 6L9 17l-5-5" />
             </svg>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
   );
 }
 
-/* ── Integration Visual: Reduced to 4 nodes ── */
+/* ── Integration Visual: Simplified (removed motion.line and motion.circle infinite animations) ── */
 function IntegrationVisual() {
   const apps = [
     { name: 'CRM', x: 0, y: -70 },
@@ -96,58 +78,33 @@ function IntegrationVisual() {
   ];
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
-      <svg width="280" height="280" viewBox="-120 -120 240 240" className="overflow-visible" style={{ willChange: 'transform' }}>
+    <div className="w-full h-full flex items-center justify-center py-8">
+      <svg width="280" height="280" viewBox="-120 -120 240 240" className="overflow-visible">
         {apps.map((app, i) =>
           apps.slice(i + 1).map((other, j) => (
-            <motion.line
+            <line
               key={`line-${i}-${j}`}
               x1={app.x} y1={app.y} x2={other.x} y2={other.y}
               stroke="#B07A45"
               strokeWidth="1.5"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: [0, 1], opacity: [0, 0.3, 0.5, 0.3, 0] }}
-              transition={{ duration: 4, delay: (i + j) * 0.3, repeat: Infinity }}
+              opacity="0.5" // Static opacity
             />
           ))
         )}
 
-        {apps.slice(0, 2).map((app, i) => {
-          const target = apps[(i + 2) % apps.length];
-          return (
-            <motion.circle
-              key={`packet-${i}`}
-              r="4"
-              fill="#B07A45"
-              style={{ willChange: 'transform' }}
-              animate={{
-                cx: [app.x, 0, target.x],
-                cy: [app.y, 0, target.y],
-              }}
-              transition={{ duration: 2.5, delay: i * 0.8, repeat: Infinity, repeatDelay: 1 }}
-            />
-          );
-        })}
-
-        <motion.circle
+        <circle
           cx="0" cy="0" r="22"
           fill="#B07A45"
-          style={{ willChange: 'transform' }}
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
         />
         <text x="0" y="5" textAnchor="middle" fill="#F4EFE8" fontSize="11" fontWeight="bold" style={{ fontFamily: 'Satoshi, sans-serif' }}>V</text>
 
         {apps.map((app, i) => (
           <g key={`node-${i}`}>
-            <motion.circle
+            <circle
               cx={app.x} cy={app.y} r="18"
               fill="#1C1C1C"
               stroke="#B07A45"
               strokeWidth="2"
-              style={{ willChange: 'transform' }}
-              animate={{ scale: [1, 1.08, 1] }}
-              transition={{ duration: 2, delay: i * 0.3, repeat: Infinity }}
             />
             <text x={app.x} y={app.y + 4} textAnchor="middle" fill="#B07A45" fontSize="9" fontWeight="600" style={{ fontFamily: 'Satoshi, sans-serif' }}>
               {app.name}
@@ -159,10 +116,10 @@ function IntegrationVisual() {
   );
 }
 
-/* ── Realtime Visual: KPI cards + chart only (removed activity feed) ── */
+/* ── Realtime Visual (unchanged as it had no framer-motion animations) ── */
 function RealtimeVisual() {
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center py-8">
       <div className="w-72 space-y-3">
         <div className="flex gap-3">
           <div className="flex-1 rounded-xl bg-[#1C1C1C] border border-[#B07A45]/20 p-3">
@@ -217,118 +174,55 @@ function RealtimeVisual() {
   );
 }
 
-const visualComponents = [AutomationVisual, IntegrationVisual, RealtimeVisual];
+const visualComponents = { 
+  automation: AutomationVisual, 
+  integration: IntegrationVisual, 
+  realtime: RealtimeVisual 
+};
 
 export default function ProblemSolutionSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
-
   return (
-    <section id="problem" className="bg-[#F4EFE8]">
-      <div ref={containerRef} className="relative problem-scroll-container">
-        <style jsx>{`
-          .problem-scroll-container { height: 400vh; }
-          @media (max-width: 1023px) { .problem-scroll-container { height: 350vh; } }
-        `}</style>
-        <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-          <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="relative h-[300px] flex flex-col justify-center">
-              {problems.map((p, i) => {
-                const total = problems.length + 1;
-                const start = i / total;
-                const mid = (i + 0.5) / total;
-                const end = (i + 1) / total;
-                return <ProblemText key={i} problem={p} progress={scrollYProgress} start={start} mid={mid} end={end} />;
-              })}
-              <BetterWayText progress={scrollYProgress} start={problems.length / (problems.length + 1)} />
+    <section id="problem" className="bg-[#F4EFE8] py-16 sm:py-20">
+      <div className="max-w-7xl mx-auto px-6 w-full">
+        {problems.map((p, i) => {
+          const VisualComponent = visualComponents[p.visual as keyof typeof visualComponents];
+          return (
+            <div key={i} className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-16 last:mb-0">
+              <div className="flex flex-col justify-center text-center lg:text-left">
+                <h3 className="text-3xl lg:text-4xl font-bold text-[#1C1C1C] leading-snug mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+                  {p.headline}
+                </h3>
+                <p className="text-lg text-[#7A746C] leading-relaxed max-w-lg mx-auto lg:mx-0" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+                  {p.description}
+                </p>
+              </div>
+              <div className="flex items-center justify-center">
+                <VisualComponent />
+              </div>
             </div>
+          );
+        })}
 
-            <div className="relative h-[250px] lg:h-[400px]">
-              {visualComponents.map((Visual, i) => {
-                const total = problems.length + 1;
-                const start = i / total;
-                const end = (i + 1) / total;
-                return <VisualPanel key={i} Visual={Visual} progress={scrollYProgress} start={start} end={end} />;
-              })}
-              <LogoReveal progress={scrollYProgress} start={problems.length / (problems.length + 1)} />
-            </div>
+        <div className="mt-20 text-center">
+          <h3 className="text-3xl lg:text-5xl font-bold text-[#B07A45] leading-snug mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+            There&apos;s a better way.
+          </h3>
+          <p className="text-lg text-[#7A746C] mx-auto max-w-xl" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+            Vantix builds the systems that get your time back.
+          </p>
+          <div className="flex items-center justify-center mt-8">
+            <Image
+              src="/logo-v-bronze.png"
+              alt="Vantix"
+              width={160} // Adjusted for mobile
+              height={160} // Adjusted for mobile
+              sizes="160px"
+              loading="lazy"
+              className="drop-shadow-xl"
+            />
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function ProblemText({ problem, progress, start, mid, end }: {
-  problem: typeof problems[0];
-  progress: ReturnType<typeof useScroll>['scrollYProgress'];
-  start: number; mid: number; end: number;
-}) {
-  const opacity = useTransform(progress, [start, start + 0.05, mid, end - 0.05, end], [0, 1, 1, 1, 0]);
-  const y = useTransform(progress, [start, start + 0.05, end - 0.05, end], [30, 0, 0, -30]);
-
-  return (
-    <motion.div className="absolute inset-0 flex flex-col justify-center" style={{ opacity, y, willChange: 'opacity, transform' }}>
-      <h3 className="text-3xl lg:text-4xl font-bold text-[#1C1C1C] leading-snug mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
-        {problem.headline}
-      </h3>
-      <p className="text-lg text-[#7A746C] leading-relaxed max-w-lg" style={{ fontFamily: "'Satoshi', sans-serif" }}>
-        {problem.description}
-      </p>
-    </motion.div>
-  );
-}
-
-function BetterWayText({ progress, start }: {
-  progress: ReturnType<typeof useScroll>['scrollYProgress'];
-  start: number;
-}) {
-  const opacity = useTransform(progress, [start, start + 0.05, 1], [0, 1, 1]);
-  const y = useTransform(progress, [start, start + 0.05], [30, 0]);
-
-  return (
-    <motion.div className="absolute inset-0 flex flex-col justify-center" style={{ opacity, y, willChange: 'opacity, transform' }}>
-      <h3 className="text-3xl lg:text-5xl font-bold text-[#B07A45] leading-snug mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
-        There&apos;s a better way.
-      </h3>
-      <p className="text-lg text-[#7A746C]" style={{ fontFamily: "'Satoshi', sans-serif" }}>
-        Vantix builds the systems that get your time back.
-      </p>
-    </motion.div>
-  );
-}
-
-function VisualPanel({ Visual, progress, start, end }: {
-  Visual: React.ComponentType;
-  progress: ReturnType<typeof useScroll>['scrollYProgress'];
-  start: number; end: number;
-}) {
-  const opacity = useTransform(progress, [start, start + 0.05, end - 0.05, end], [0, 1, 1, 0]);
-  return (
-    <motion.div className="absolute inset-0" style={{ opacity, willChange: 'opacity' }}>
-      <Visual />
-    </motion.div>
-  );
-}
-
-function LogoReveal({ progress, start }: {
-  progress: ReturnType<typeof useScroll>['scrollYProgress'];
-  start: number;
-}) {
-  const opacity = useTransform(progress, [start, start + 0.05, 1], [0, 1, 1]);
-  const scale = useTransform(progress, [start, start + 0.1], [0.7, 1]);
-
-  return (
-    <motion.div className="absolute inset-0 flex items-center justify-center" style={{ opacity, scale, willChange: 'opacity, transform' }}>
-      <Image
-        src="/logo-v-bronze.png"
-        alt="Vantix"
-        width={240}
-        height={240}
-        sizes="240px"
-        loading="lazy"
-        className="drop-shadow-2xl"
-      />
-    </motion.div>
   );
 }

@@ -49,7 +49,7 @@ const trustedLogos = [
 export default function ProductShowcaseHero() {
   return (
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden" style={{ backgroundColor: colors.bg }}>
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-8 pt-28 sm:pt-24 pb-12 flex flex-col lg:flex-row items-center gap-12 lg:gap-0">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-8 pt-16 pb-8 sm:pt-24 lg:pt-28 sm:pb-12 flex flex-col lg:flex-row items-center gap-12 lg:gap-0">
 
         {/* ─── LEFT SIDE ─── */}
         <motion.div

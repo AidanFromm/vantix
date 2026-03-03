@@ -2,8 +2,6 @@
 
 import dynamic from 'next/dynamic';
 
-const SmoothScroll = dynamic(() => import('../SmoothScroll'), { ssr: false });
-
 import FloatingNav from './FloatingNav';
 import ChatWidget from '../ChatWidget';
 import ProductShowcaseHero from './ProductShowcaseHero';
@@ -22,30 +20,28 @@ const FooterSection = dynamic(() => import('./FooterSection'), { ssr: false });
 
 export default function FuturisticLanding() {
   return (
-    <SmoothScroll>
-      <div className="min-h-screen" style={{ fontFamily: "'Satoshi', sans-serif" }}>
-        <FloatingNav />
-        <ProductShowcaseHero />
-        <SocialProofBar />
-        <ProblemSolutionSection />
+    <div className="min-h-screen" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+      <FloatingNav />
+      <ProductShowcaseHero />
+      <SocialProofBar />
+      <ProblemSolutionSection />
 
-        {/* 📅 Booking — right after the slide animation */}
-        <BookingSection />
+      {/* 📅 Booking — right after the slide animation */}
+      <BookingSection />
 
-        <ServicesBentoSection />
-        <ProcessSection />
-        <CaseStudySection />
+      <ServicesBentoSection />
+      <ProcessSection />
+      <CaseStudySection />
 
-        <div className="hidden lg:block">
-          <ROISection />
-        </div>
-
-        <TeamSection />
-        <FAQSection />
-        <FinalCTASection />
-        <FooterSection />
-        <ChatWidget />
+      <div className="hidden lg:block">
+        <ROISection />
       </div>
-    </SmoothScroll>
+
+      <TeamSection />
+      <FAQSection />
+      <FinalCTASection />
+      <FooterSection />
+      <ChatWidget />
+    </div>
   );
 }
