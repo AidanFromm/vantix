@@ -1,5 +1,5 @@
-import ImmersiveLanding from '@/components/landing/ImmersiveLanding';
+import FuturisticLanding from '@/components/landing/FuturisticLanding';
 
 export default function Home() {
-  return <ImmersiveLanding />;
+  return <FuturisticLanding />;
 }
