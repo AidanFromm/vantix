@@ -13,7 +13,7 @@ const metrics = [
 
 export default function SocialProofBar() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-50px' });
+  const inView = useInView(ref, { once: true, amount: 0.1 });
 
   return (
     <section

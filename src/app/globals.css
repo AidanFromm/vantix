@@ -479,3 +479,15 @@ textarea {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Mobile: Force all content visible ──
+   Framer-motion useInView animations often fail on mobile
+   (lazy imports + negative margins = opacity stuck at 0).
+   Force everything visible on small screens. */
+@media (max-width: 768px) {
+  section *,
+  section > div {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

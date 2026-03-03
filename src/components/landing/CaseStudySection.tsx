@@ -56,7 +56,7 @@ const caseStudies: CaseStudy[] = [
 
 function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  const isInView = useInView(ref, { once: true, amount: 0.05 });
   const isEven = index % 2 === 0;
 
   return (

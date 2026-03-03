@@ -59,7 +59,7 @@ const services: Service[] = [
 
 function ServiceCard({ service, index }: { service: Service; index: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-60px' });
+  const isInView = useInView(ref, { once: true, amount: 0.05 });
   const Icon = service.icon;
   const isLarge = service.gridClass.includes('col-span') || service.gridClass.includes('row-span');
 
