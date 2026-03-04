@@ -88,7 +88,6 @@ const navGroups: NavGroup[] = [
     items: [
       { href: '/dashboard/finances/revenue', label: 'Revenue', icon: DollarSign },
       { href: '/dashboard/finances/invoices', label: 'Invoices', icon: Receipt },
-      { href: '/dashboard/finances/j4k-invoices', label: 'J4K Invoices', icon: Receipt },
       { href: '/dashboard/finances/expenses', label: 'Expenses', icon: TrendingDown },
       { href: '/dashboard/finances/subscriptions', label: 'Subscriptions', icon: CreditCard },
     ],
