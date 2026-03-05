@@ -13,11 +13,11 @@ export default function VideoSplitSection() {
   return (
     <section
       ref={ref}
-      className="py-24 md:py-36 overflow-hidden"
+      className="py-16 sm:py-24 md:py-36 overflow-hidden"
       style={{ backgroundColor: colors.surface }}
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
           {/* Video side */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -32,12 +32,14 @@ export default function VideoSplitSection() {
                 border: `1px solid ${colors.border}`,
               }}
             >
+              {/* eslint-disable-next-line react/no-unknown-property */}
               <video
                 autoPlay
                 muted
                 playsInline
                 loop
-                className="w-full h-auto"
+                webkit-playsinline="true"
+                className="w-full h-auto aspect-video"
               >
                 <source src="/media-assets/videos/cinematic-showcase.mp4" type="video/mp4" />
               </video>

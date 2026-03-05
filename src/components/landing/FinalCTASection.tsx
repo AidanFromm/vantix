@@ -14,11 +14,13 @@ export default function FinalCTASection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
+        {/* eslint-disable-next-line react/no-unknown-property */}
         <video
           autoPlay
           muted
           playsInline
           loop
+          webkit-playsinline="true"
           className="w-full h-full object-cover"
         >
           <source src="/media-assets/videos/vantix-vd-1.mp4" type="video/mp4" />
@@ -46,7 +48,7 @@ export default function FinalCTASection() {
         style={{ backgroundColor: `${colors.bronze}08` }}
       />
 
-      <div className="relative z-10 max-w-3xl mx-auto px-6 text-center py-24" ref={ref}>
+      <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-6 text-center py-16 sm:py-24" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}

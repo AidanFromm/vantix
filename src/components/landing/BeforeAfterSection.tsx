@@ -29,10 +29,10 @@ export default function BeforeAfterSection() {
   return (
     <section
       ref={ref}
-      className="py-24 md:py-36 overflow-hidden"
+      className="py-16 sm:py-24 md:py-36 overflow-hidden"
       style={{ backgroundColor: colors.dark }}
     >
-      <div className="max-w-5xl mx-auto px-6">
+      <div className="max-w-5xl mx-auto px-5 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -50,7 +50,7 @@ export default function BeforeAfterSection() {
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
           </div>
           <h2
-            className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
+            className="text-2xl sm:text-3xl md:text-5xl font-bold mb-5 tracking-tight"
             style={{ fontFamily: fonts.display, color: '#ffffff' }}
           >
             Before Vantix. <span style={{ color: colors.bronze }}>After Vantix.</span>

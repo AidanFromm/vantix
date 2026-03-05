@@ -151,7 +151,7 @@ export default function FloatingNav() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed top-0 right-0 bottom-0 z-45 w-[80vw] max-w-sm flex flex-col pt-24 px-8 pb-10"
+              className="fixed top-0 right-0 bottom-0 z-[45] w-[80vw] max-w-sm flex flex-col pt-24 px-8 pb-10"
               style={{
                 backgroundColor: colors.bg,
                 borderLeft: `1px solid ${colors.border}`,

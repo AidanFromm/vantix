@@ -30,15 +30,17 @@ export default function ProductShowcaseSection() {
   const inView = useInView(ref, { once: true, amount: 0.1 });
 
   return (
-    <section className="relative py-24 md:py-36 overflow-hidden" style={{ backgroundColor: colors.dark }}>
+    <section className="relative py-16 sm:py-24 md:py-36 overflow-hidden" style={{ backgroundColor: colors.dark }}>
       {/* Background video */}
       <div className="absolute inset-0 z-0 opacity-20">
+        {/* eslint-disable-next-line react/no-unknown-property */}
         <video
           src="/media-assets/videos/cinematic-showcase.mp4"
           autoPlay
           muted
           playsInline
           loop
+          webkit-playsinline="true"
           className="w-full h-full object-cover"
         />
       </div>
@@ -51,13 +53,13 @@ export default function ProductShowcaseSection() {
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6" ref={ref}>
+      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6" ref={ref}>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease }}
-          className="text-center mb-20"
+          className="text-center mb-12 sm:mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-5">
             <span className="h-px w-8" style={{ backgroundColor: `${colors.bronze}60` }} />
@@ -70,7 +72,7 @@ export default function ProductShowcaseSection() {
             <span className="h-px w-8" style={{ backgroundColor: `${colors.bronze}60` }} />
           </div>
           <h2
-            className="text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight mb-5"
+            className="text-2xl sm:text-3xl lg:text-6xl font-bold tracking-tight mb-5"
             style={{ fontFamily: fonts.display, color: colors.bg }}
           >
             One system.{' '}
@@ -92,7 +94,7 @@ export default function ProductShowcaseSection() {
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.2 + i * 0.15, ease }}
-              className="group relative rounded-3xl overflow-hidden"
+              className="group relative rounded-2xl sm:rounded-3xl overflow-hidden"
               style={{
                 border: `1px solid ${colors.bronze}20`,
                 backgroundColor: `${colors.darkSurface}80`,
