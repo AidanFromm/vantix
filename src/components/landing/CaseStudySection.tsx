@@ -21,8 +21,8 @@ const caseStudies = [
   },
   {
     name: 'Secured Tampa',
-    logo: '/logos/secured-tampa.jpg',
-    image: '/media-assets/images/client-results.png',
+    logo: '/logos/secured-tampa-logo.png',
+    image: '/media-assets/images/secured-tampa-og.png',
     metric: 'Full Platform in 3 Weeks',
     stat2: '$4,500 Build',
     stat3: 'E-Commerce',
@@ -31,8 +31,8 @@ const caseStudies = [
   },
   {
     name: 'Horizon Asphalt',
-    logo: null,
-    image: '/media-assets/images/hero-bg.jpg',
+    logo: '/logos/horizon.png',
+    image: '/media-assets/images/horizon-hero.jpg',
     metric: 'Commercial Lead Gen',
     stat2: 'Google Workspace',
     stat3: 'NJ Coverage',
