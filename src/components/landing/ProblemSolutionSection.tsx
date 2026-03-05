@@ -8,17 +8,17 @@ import { colors, fonts, animations } from '@/lib/design-tokens';
 const ease = animations.easing as unknown as [number, number, number, number];
 
 const beforeItems = [
-  { icon: '⏳', text: 'Manual processes eating your day' },
-  { icon: '📉', text: 'Lost leads slipping through cracks' },
-  { icon: '📊', text: 'Scattered data across 10 tools' },
-  { icon: '🔥', text: 'Firefighting instead of growing' },
+  { text: 'Manual processes eating your day' },
+  { text: 'Lost leads slipping through cracks' },
+  { text: 'Scattered data across 10 tools' },
+  { text: 'Firefighting instead of growing' },
 ];
 
 const afterItems = [
-  { icon: '⚡', text: 'Automated workflows running 24/7' },
-  { icon: '🎯', text: 'Every lead captured and nurtured' },
-  { icon: '📱', text: 'One dashboard for everything' },
-  { icon: '🚀', text: 'Scaling with systems, not stress' },
+  { text: 'Automated workflows running 24/7' },
+  { text: 'Every lead captured and nurtured' },
+  { text: 'One dashboard for everything' },
+  { text: 'Scaling with systems, not stress' },
 ];
 
 export default function ProblemSolutionSection() {
@@ -121,7 +121,7 @@ export default function ProblemSolutionSection() {
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.1, ease }}
                   className="flex items-start gap-4"
                 >
-                  <span className="text-xl flex-shrink-0 mt-0.5">{item.icon}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400/60 flex-shrink-0 mt-2" />
                   <p
                     className="text-base leading-relaxed"
                     style={{ fontFamily: fonts.body, color: colors.muted }}
@@ -168,7 +168,7 @@ export default function ProblemSolutionSection() {
                   transition={{ duration: 0.5, delay: 0.5 + i * 0.1, ease }}
                   className="flex items-start gap-4"
                 >
-                  <span className="text-xl flex-shrink-0 mt-0.5">{item.icon}</span>
+                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 mt-2" style={{ backgroundColor: colors.bronze }} />
                   <p
                     className="text-base leading-relaxed"
                     style={{ fontFamily: fonts.body, color: colors.textSecondary }}
