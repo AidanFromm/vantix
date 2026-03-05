@@ -80,24 +80,24 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
         (e.currentTarget as HTMLElement).style.boxShadow = 'none';
       }}
     >
-      {/* Image background with overlay */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Image top portion */}
+      <div className="relative w-full overflow-hidden" style={{ height: isLarge ? '60%' : '55%' }}>
         <Image
           src={service.image}
           alt={service.title}
           fill
-          className="object-cover opacity-15 group-hover:opacity-25 group-hover:scale-105 transition-all duration-700"
+          className="object-cover group-hover:scale-105 transition-transform duration-700"
           loading="lazy"
           sizes="(max-width: 768px) 100vw, 50vw"
         />
         <div
-          className="absolute inset-0"
-          style={{ background: `linear-gradient(to top, ${colors.bg} 30%, ${colors.bg}80 60%, transparent)` }}
+          className="absolute inset-x-0 bottom-0 h-16"
+          style={{ background: `linear-gradient(to top, ${colors.bg}, transparent)` }}
         />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-end p-7 md:p-9">
+      <div className="relative z-10 flex flex-col justify-end p-7 md:p-9">
         <h3
           className={`font-semibold mb-3 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl'}`}
           style={{ fontFamily: fonts.display, color: colors.text }}
