@@ -491,12 +491,3 @@ textarea {
     transform: none !important;
   }
 }
-
-/* Hide scrollbar for snap-scroll containers */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}

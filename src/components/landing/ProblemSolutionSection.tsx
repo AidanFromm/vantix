@@ -28,14 +28,14 @@ export default function ProblemSolutionSection() {
   const imageInView = useInView(imageRef, { once: true, amount: 0.2 });
 
   return (
-    <section id="problem" className="py-16 sm:py-24 lg:py-36" style={{ backgroundColor: colors.bg }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-6" ref={ref}>
+    <section id="problem" className="py-24 sm:py-36" style={{ backgroundColor: colors.bg }}>
+      <div className="max-w-7xl mx-auto px-6" ref={ref}>
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease }}
-          className="text-center mb-12 sm:mb-20"
+          className="text-center mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-5">
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
@@ -48,7 +48,7 @@ export default function ProblemSolutionSection() {
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
           </div>
           <h2
-            className="text-2xl sm:text-3xl lg:text-5xl font-bold tracking-tight mb-5"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-5"
             style={{ fontFamily: fonts.display, color: colors.text }}
           >
             From chaos to infrastructure.
@@ -67,7 +67,7 @@ export default function ProblemSolutionSection() {
           initial={{ opacity: 0, y: 30, scale: 0.97 }}
           animate={imageInView ? { opacity: 1, y: 0, scale: 1 } : {}}
           transition={{ duration: 0.8, ease }}
-          className="relative mb-12 sm:mb-20 rounded-2xl sm:rounded-3xl overflow-hidden"
+          className="relative mb-20 rounded-3xl overflow-hidden"
           style={{
             border: `1px solid ${colors.border}`,
             boxShadow: `0 24px 64px ${colors.bronze}10`,
@@ -91,7 +91,7 @@ export default function ProblemSolutionSection() {
             initial={{ opacity: 0, x: -30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.2, ease }}
-            className="rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10"
+            className="rounded-3xl p-8 sm:p-10"
             style={{
               backgroundColor: colors.dark,
               border: `1px solid #222`,
@@ -138,7 +138,7 @@ export default function ProblemSolutionSection() {
             initial={{ opacity: 0, x: 30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.4, ease }}
-            className="rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10"
+            className="rounded-3xl p-8 sm:p-10"
             style={{
               backgroundColor: colors.surface,
               border: `1px solid ${colors.border}`,

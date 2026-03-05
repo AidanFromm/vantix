@@ -17,16 +17,14 @@ export default function VideoTrustSection() {
   const inView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section ref={ref} className="relative py-16 sm:py-24 md:py-44 overflow-hidden">
+    <section ref={ref} className="relative py-32 md:py-44 overflow-hidden">
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
-        {/* eslint-disable-next-line react/no-unknown-property */}
         <video
           autoPlay
           muted
           playsInline
           loop
-          webkit-playsinline="true"
           className="w-full h-full object-cover"
         >
           <source src="/media-assets/videos/vantix-video-3.mp4" type="video/mp4" />
@@ -39,7 +37,7 @@ export default function VideoTrustSection() {
         />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-5 sm:px-6 text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}

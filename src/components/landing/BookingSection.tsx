@@ -81,9 +81,9 @@ export default function BookingSection() {
   const step = submitted ? 3 : selectedTime ? 2 : selectedDate ? 1 : 0;
 
   return (
-    <section id="booking" className="relative py-16 sm:py-24 lg:py-36 overflow-hidden" style={{ backgroundColor: colors.bg }}>
-      {/* Background accent image — hidden on mobile to prevent bleed */}
-      <div className="absolute inset-0 z-0 opacity-5 hidden sm:block">
+    <section id="booking" className="relative py-28 lg:py-36 overflow-hidden" style={{ backgroundColor: colors.bg }}>
+      {/* Background accent image */}
+      <div className="absolute inset-0 z-0 opacity-5">
         <Image
           src="/media-assets/images/product-8.png"
           alt=""
@@ -93,13 +93,13 @@ export default function BookingSection() {
         />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-5 sm:px-6" ref={ref}>
+      <div className="relative z-10 max-w-4xl mx-auto px-6" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease }}
-          className="text-center mb-10 sm:mb-14"
+          className="text-center mb-14"
         >
           <div className="flex items-center justify-center gap-3 mb-5">
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
@@ -127,7 +127,7 @@ export default function BookingSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.6, ease }}
-          className="rounded-2xl sm:rounded-3xl overflow-hidden p-5 sm:p-8 md:p-12"
+          className="rounded-3xl overflow-hidden p-8 sm:p-12"
           style={{
             backgroundColor: colors.surface,
             border: `1px solid ${colors.border}`,

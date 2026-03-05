@@ -83,12 +83,12 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.08, ease }}
-      className={`group relative rounded-2xl sm:rounded-3xl overflow-hidden border cursor-default
+      className={`group relative rounded-3xl overflow-hidden border cursor-default
         transition-all duration-500 ${service.gridClass}`}
       style={{
         backgroundColor: colors.darkSurface,
         borderColor: '#2a2a2a',
-        minHeight: isLarge ? '320px' : '240px',
+        minHeight: isLarge ? '420px' : '260px',
       }}
       onMouseEnter={() => handleHover(true)}
       onMouseLeave={() => handleHover(false)}
@@ -104,15 +104,12 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
           sizes="(max-width: 768px) 100vw, 50vw"
         />
         {service.video && (
-          // eslint-disable-next-line react/no-unknown-property
           <video
             ref={videoRef}
-            autoPlay
             muted
             playsInline
             loop
-            webkit-playsinline="true"
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hovered ? 'opacity-100' : 'sm:opacity-0'}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hovered ? 'opacity-100' : 'opacity-0'}`}
           >
             <source src={service.video} type="video/mp4" />
           </video>
@@ -124,15 +121,15 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col justify-end p-5 sm:p-7 md:p-9">
+      <div className="relative z-10 flex flex-col justify-end p-7 md:p-9">
         <h3
-          className={`font-semibold mb-2 sm:mb-3 ${isLarge ? 'text-xl sm:text-2xl md:text-3xl' : 'text-lg sm:text-xl'}`}
+          className={`font-semibold mb-3 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl'}`}
           style={{ fontFamily: fonts.display, color: '#ffffff' }}
         >
           {service.title}
         </h3>
         <p
-          className={`leading-relaxed ${isLarge ? 'text-base sm:text-lg max-w-lg' : 'text-sm'}`}
+          className={`leading-relaxed ${isLarge ? 'text-lg max-w-lg' : 'text-sm'}`}
           style={{ fontFamily: fonts.body, color: colors.muted }}
         >
           {service.description}
@@ -141,7 +138,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
 
       {/* Hover border glow */}
       <div
-        className="absolute inset-0 rounded-2xl sm:rounded-3xl pointer-events-none transition-opacity duration-500"
+        className="absolute inset-0 rounded-3xl pointer-events-none transition-opacity duration-500"
         style={{
           opacity: hovered ? 1 : 0,
           boxShadow: `inset 0 0 0 1px ${colors.bronze}40, 0 16px 48px ${colors.bronze}12`,
@@ -153,8 +150,8 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
 
 export default function ServicesBentoSection() {
   return (
-    <section id="services" className="py-16 sm:py-24 md:py-36" style={{ backgroundColor: colors.dark }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-6">
+    <section id="services" className="py-24 md:py-36" style={{ backgroundColor: colors.dark }}>
+      <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -170,7 +167,7 @@ export default function ServicesBentoSection() {
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
           </div>
           <h2
-            className="text-2xl sm:text-3xl md:text-5xl font-bold mb-5 tracking-tight"
+            className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
             style={{ fontFamily: fonts.display, color: '#ffffff' }}
           >
             What We Build
@@ -181,12 +178,12 @@ export default function ServicesBentoSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1, ease }}
-          className="text-center text-base sm:text-lg mb-10 sm:mb-16 max-w-2xl mx-auto"
+          className="text-center text-lg mb-16 max-w-2xl mx-auto"
           style={{ fontFamily: fonts.body, color: colors.muted }}
         >
           End-to-end AI systems designed around how your business actually works.
         </motion.p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {services.map((s, i) => (
             <ServiceCard key={i} service={s} index={i} />
           ))}

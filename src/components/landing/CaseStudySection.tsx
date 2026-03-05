@@ -52,7 +52,7 @@ function CaseStudyCard({ study, index }: { study: typeof caseStudies[0]; index: 
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay: 0.1, ease }}
-      className={`flex flex-col lg:flex-row items-stretch gap-0 rounded-2xl sm:rounded-3xl overflow-hidden border ${isEven ? '' : 'lg:flex-row-reverse'}`}
+      className={`flex flex-col lg:flex-row items-stretch gap-0 rounded-3xl overflow-hidden border ${isEven ? '' : 'lg:flex-row-reverse'}`}
       style={{ backgroundColor: colors.darkSurface, borderColor: '#2a2a2a' }}
     >
       {/* Image */}
@@ -72,7 +72,7 @@ function CaseStudyCard({ study, index }: { study: typeof caseStudies[0]; index: 
       </div>
 
       {/* Content */}
-      <div className="w-full lg:w-1/2 p-5 sm:p-8 lg:p-14 flex flex-col justify-center">
+      <div className="w-full lg:w-1/2 p-8 sm:p-10 lg:p-14 flex flex-col justify-center">
         {/* Client logo */}
         {study.logo && (
           <div className="mb-5">
@@ -138,14 +138,14 @@ export default function CaseStudySection() {
   const inView = useInView(ref, { once: true, amount: 0.05 });
 
   return (
-    <section id="work" className="py-16 sm:py-24 md:py-36 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+    <section id="work" className="py-24 md:py-36 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
       {/* Subtle bronze glow */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full blur-3xl opacity-10"
         style={{ background: `radial-gradient(ellipse, ${colors.bronze}, transparent)` }}
       />
 
-      <div className="max-w-6xl mx-auto px-5 sm:px-6 relative z-10" ref={ref}>
+      <div className="max-w-6xl mx-auto px-6 relative z-10" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -163,7 +163,7 @@ export default function CaseStudySection() {
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
           </div>
           <h2
-            className="text-2xl sm:text-3xl md:text-5xl font-bold mb-5 tracking-tight"
+            className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
             style={{ fontFamily: fonts.display, color: '#fff' }}
           >
             Real Results. <span style={{ color: colors.bronze }}>Real Businesses.</span>

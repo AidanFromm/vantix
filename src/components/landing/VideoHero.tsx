@@ -30,13 +30,11 @@ export default function VideoHero() {
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
         <motion.div style={{ scale: videoScale }} className="w-full h-full">
-          {/* eslint-disable-next-line react/no-unknown-property */}
           <video
             autoPlay
             muted
             playsInline
             loop
-            webkit-playsinline="true"
             className="w-full h-full object-cover"
             poster="/media-assets/images/hero-bg.jpg"
           >
@@ -78,7 +76,7 @@ export default function VideoHero() {
 
           <motion.h1
             variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease } } }}
-            className="text-3xl sm:text-5xl lg:text-[3.75rem] font-bold tracking-[-0.035em] leading-[1.06] mb-7"
+            className="text-[2.5rem] sm:text-5xl lg:text-[3.75rem] font-bold tracking-[-0.035em] leading-[1.06] mb-7"
             style={{ fontFamily: fonts.display, color: '#ffffff' }}
           >
             Your business runs on decisions.{' '}

@@ -119,19 +119,19 @@ export default function ProcessSection() {
   const inView = useInView(ref, { once: true, amount: 0.1 });
 
   return (
-    <section id="process" className="py-16 sm:py-24 md:py-36 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+    <section id="process" className="py-24 md:py-36 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
       {/* Background glow */}
       <div
         className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl"
         style={{ background: `radial-gradient(ellipse, ${colors.bronze}10, transparent)` }}
       />
 
-      <div className="max-w-6xl mx-auto px-5 sm:px-6 relative z-10" ref={ref}>
+      <div className="max-w-6xl mx-auto px-6 relative z-10" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease }}
-          className="text-center mb-12 sm:mb-20"
+          className="text-center mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-5">
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
@@ -144,7 +144,7 @@ export default function ProcessSection() {
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
           </div>
           <h2
-            className="text-2xl sm:text-3xl md:text-5xl font-bold mb-5 tracking-tight"
+            className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
             style={{ fontFamily: fonts.display, color: '#fff' }}
           >
             Four steps. <span style={{ color: colors.bronze }}>Zero guesswork.</span>

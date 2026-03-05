@@ -17,7 +17,7 @@ const links = [
 export default function FooterSection() {
   return (
     <footer style={{ backgroundColor: colors.dark, borderTop: `1px solid ${colors.darkSurface}` }} className="py-16">
-      <div className="max-w-6xl mx-auto px-5 sm:px-6">
+      <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
           <Link
             href="/"

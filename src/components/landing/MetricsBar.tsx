@@ -44,15 +44,15 @@ function AnimatedCounter({ metric, inView }: { metric: Metric; inView: boolean }
   const display = metric.value % 1 !== 0 ? count.toFixed(1) : Math.floor(count).toString();
 
   return (
-    <div className="text-center px-2 sm:px-4 py-4 sm:py-6">
+    <div className="text-center px-4 py-6">
       <div
-        className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-1 sm:mb-2"
+        className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-2"
         style={{ fontFamily: fonts.display, color: colors.bronze }}
       >
         {metric.prefix || ''}{display}{metric.suffix}
       </div>
       <div
-        className="text-xs sm:text-sm lg:text-base tracking-wide uppercase"
+        className="text-sm sm:text-base tracking-wide uppercase"
         style={{ fontFamily: fonts.body, color: colors.muted }}
       >
         {metric.label}
@@ -76,7 +76,7 @@ export default function MetricsBar() {
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[120px] pointer-events-none"
         style={{ backgroundColor: `${colors.bronze}08` }}
       />
-      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6">
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
