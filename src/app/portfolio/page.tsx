@@ -84,7 +84,7 @@ export default function PortfolioPage() {
               viewport={{ once: true, margin: '-30px' }}
               variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { ...fadeUp.visible.transition, delay: i * 0.1 } } }}
             >
-              <Link href={`/portfolio/${p.slug}`} className="group block">
+              <Link href={`/case-studies/${p.slug}`} className="group block">
                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-5 border" style={{ borderColor: colors.border }}>
                   <Image
                     src={p.image}
