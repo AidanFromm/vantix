@@ -7,89 +7,103 @@ export async function GET() {
     (
       <div
         style={{
-          width: '100%',
-          height: '100%',
+          width: '1200px',
+          height: '630px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#F4EFE8',
-          backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(184, 137, 90, 0.12) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(184, 137, 90, 0.08) 0%, transparent 50%)',
+          backgroundColor: '#1C1C1C',
+          position: 'relative',
         }}
       >
-        {/* V Logo */}
+        {/* Bronze gradient glow */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '400px',
+            height: '400px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(176,122,69,0.15) 0%, transparent 70%)',
+            left: '80px',
+            top: '115px',
+          }}
+        />
+
+        {/* Left: Logo V */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginRight: 60,
+            width: '160px',
+            height: '160px',
+            marginRight: '60px',
+            fontSize: '120px',
+            fontWeight: 900,
+            color: '#B07A45',
+            fontFamily: 'sans-serif',
           }}
         >
-          <div style={{
-            width: 160,
-            height: 160,
-            borderRadius: 40,
-            background: 'linear-gradient(135deg, #8E5E34, #B07A45)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '8px 8px 24px rgba(0,0,0,0.15), -4px -4px 12px rgba(255,255,255,0.8)',
-          }}>
-            <div style={{ fontSize: 100, fontWeight: 800, color: 'white', lineHeight: 1 }}>V</div>
-          </div>
+          V
         </div>
 
-        {/* Text */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-          }}
-        >
+        {/* Right: Text */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div
             style={{
-              fontSize: 80,
+              fontSize: '64px',
               fontWeight: 800,
-              color: '#1C1C1C',
-              letterSpacing: 4,
+              color: '#FFFFFF',
+              letterSpacing: '8px',
+              fontFamily: 'sans-serif',
             }}
           >
             VANTIX
           </div>
           <div
             style={{
-              fontSize: 26,
-              fontWeight: 600,
-              color: '#8E5E34',
-              letterSpacing: 3,
-              marginTop: 8,
+              width: '180px',
+              height: '3px',
+              backgroundColor: '#B07A45',
+            }}
+          />
+          <div
+            style={{
+              fontSize: '22px',
+              color: '#B07A45',
+              fontWeight: 500,
+              letterSpacing: '3px',
+              fontFamily: 'sans-serif',
             }}
           >
-            AI-POWERED SOLUTIONS
+            AI-POWERED INFRASTRUCTURE
           </div>
           <div
             style={{
-              fontSize: 20,
+              fontSize: '16px',
               color: '#7A746C',
-              marginTop: 16,
+              marginTop: '8px',
+              fontFamily: 'sans-serif',
             }}
           >
-            usevantix.com
+            Automation · Websites · Dashboards · AI Systems
           </div>
         </div>
 
-        {/* Bottom accent */}
+        {/* Bottom right URL */}
         <div
           style={{
             position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 6,
-            background: 'linear-gradient(90deg, #8E5E34, #C89A6A, #8E5E34)',
+            bottom: '30px',
+            right: '40px',
+            fontSize: '14px',
+            color: '#7A746C',
+            letterSpacing: '2px',
+            fontFamily: 'sans-serif',
           }}
-        />
+        >
+          usevantix.com
+        </div>
       </div>
     ),
     {

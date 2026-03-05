@@ -16,9 +16,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Vantix — AI-Powered Business Automation",
+  title: "Vantix — AI-Powered Business Infrastructure",
   description:
-    "Vantix is an AI consulting agency that builds intelligent systems to generate revenue, cut costs, and automate operations. Custom AI chatbots, websites, automation, and analytics for businesses ready to scale.",
+    "Your business runs on decisions. We make them faster. Vantix builds custom AI systems, dashboards, websites, and automation that generate revenue and eliminate manual work.",
   keywords: [
     "AI automation",
     "AI consulting",
@@ -48,9 +48,9 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Vantix — AI-Powered Business Automation",
+    title: "Vantix — AI-Powered Business Infrastructure",
     description:
-      "We deploy AI systems that generate revenue, cut costs, and automate operations. Strategy, implementation, and ongoing support from one partner.",
+      "Your business runs on decisions. We make them faster. Custom AI systems, dashboards, websites, and automation for businesses ready to scale.",
     url: "https://www.usevantix.com",
     siteName: "Vantix",
     images: [
@@ -66,9 +66,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vantix — AI-Powered Business Automation",
+    title: "Vantix — AI-Powered Business Infrastructure",
     description:
-      "We deploy AI systems that generate revenue, cut costs, and automate operations.",
+      "Your business runs on decisions. We make them faster. Custom AI, dashboards, websites, and automation.",
     images: ["/og-image.jpg"],
   },
   metadataBase: new URL("https://www.usevantix.com"),
