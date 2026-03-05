@@ -11,6 +11,7 @@ const ease = animations.easing as unknown as [number, number, number, number];
 const caseStudies = [
   {
     name: 'Just Four Kicks',
+    logo: '/logos/j4k.jpg',
     image: '/media-assets/images/product-4.png',
     metric: '$5.8M Revenue Managed',
     stat2: '200+ Stores',
@@ -20,6 +21,7 @@ const caseStudies = [
   },
   {
     name: 'Secured Tampa',
+    logo: '/logos/secured-tampa.jpg',
     image: '/media-assets/images/client-results.png',
     metric: 'Full Platform in 3 Weeks',
     stat2: '$4,500 Build',
@@ -29,6 +31,7 @@ const caseStudies = [
   },
   {
     name: 'Horizon Asphalt',
+    logo: null,
     image: '/media-assets/images/hero-bg.jpg',
     metric: 'Commercial Lead Gen',
     stat2: 'Google Workspace',
@@ -70,6 +73,19 @@ function CaseStudyCard({ study, index }: { study: typeof caseStudies[0]; index: 
 
       {/* Content */}
       <div className="w-full lg:w-1/2 p-8 sm:p-10 lg:p-14 flex flex-col justify-center">
+        {/* Client logo */}
+        {study.logo && (
+          <div className="mb-5">
+            <Image
+              src={study.logo}
+              alt={`${study.name} logo`}
+              width={48}
+              height={48}
+              className="rounded-full object-cover"
+              style={{ border: `1px solid ${colors.bronze}30` }}
+            />
+          </div>
+        )}
         <h3
           className="text-2xl sm:text-3xl font-bold mb-4"
           style={{ fontFamily: fonts.display, color: '#fff' }}
