@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { colors, fonts, animations } from '@/lib/design-tokens';
@@ -11,6 +11,7 @@ interface Service {
   title: string;
   description: string;
   image: string;
+  video?: string;
   gridClass: string;
 }
 
@@ -19,24 +20,28 @@ const services: Service[] = [
     title: 'AI Dashboards',
     description: 'Real-time analytics dashboards that surface the metrics you need — not 47 charts nobody reads.',
     image: '/media-assets/images/product-2.png',
+    video: '/media-assets/videos/generated-1.mp4',
     gridClass: 'md:col-span-2 md:row-span-2',
   },
   {
     title: 'Custom Websites',
     description: 'High-performance sites engineered for conversion and speed — not templates with your logo.',
     image: '/media-assets/images/product-4.png',
+    video: '/media-assets/videos/generated-2.mp4',
     gridClass: '',
   },
   {
     title: 'AI Chatbots',
     description: 'Custom assistants trained on your data, handling questions, qualifying leads 24/7.',
     image: '/media-assets/images/product-1.png',
+    video: '/media-assets/videos/generated-3.mp4',
     gridClass: '',
   },
   {
     title: 'Automation',
     description: 'AI-powered workflows that replace repetitive tasks and keep operations running autonomously.',
     image: '/media-assets/images/product-6.png',
+    video: '/media-assets/videos/vantix-vd-4.mp4',
     gridClass: 'md:col-span-2',
   },
   {
@@ -55,8 +60,22 @@ const services: Service[] = [
 
 function ServiceCard({ service, index }: { service: Service; index: number }) {
   const ref = useRef(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.05 });
+  const [hovered, setHovered] = useState(false);
   const isLarge = service.gridClass.includes('col-span-2') && service.gridClass.includes('row-span-2');
+
+  const handleHover = (entering: boolean) => {
+    setHovered(entering);
+    if (service.video && videoRef.current) {
+      if (entering) {
+        videoRef.current.play().catch(() => {});
+      } else {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
+    }
+  };
 
   return (
     <motion.div
@@ -65,34 +84,39 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.08, ease }}
       className={`group relative rounded-3xl overflow-hidden border cursor-default
-        md:hover:-translate-y-1 transition-all duration-300 ${service.gridClass}`}
+        transition-all duration-500 ${service.gridClass}`}
       style={{
-        backgroundColor: colors.bg,
-        borderColor: colors.border,
+        backgroundColor: colors.darkSurface,
+        borderColor: '#2a2a2a',
         minHeight: isLarge ? '420px' : '260px',
       }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = `${colors.bronze}40`;
-        (e.currentTarget as HTMLElement).style.boxShadow = `0 16px 48px ${colors.bronze}12`;
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = colors.border;
-        (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-      }}
+      onMouseEnter={() => handleHover(true)}
+      onMouseLeave={() => handleHover(false)}
     >
-      {/* Image top portion */}
+      {/* Image / Video top portion */}
       <div className="relative w-full overflow-hidden" style={{ height: isLarge ? '60%' : '55%' }}>
         <Image
           src={service.image}
           alt={service.title}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700"
+          className={`object-cover transition-all duration-700 ${hovered && service.video ? 'opacity-0' : 'opacity-100 group-hover:scale-105'}`}
           loading="lazy"
           sizes="(max-width: 768px) 100vw, 50vw"
         />
+        {service.video && (
+          <video
+            ref={videoRef}
+            muted
+            playsInline
+            loop
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hovered ? 'opacity-100' : 'opacity-0'}`}
+          >
+            <source src={service.video} type="video/mp4" />
+          </video>
+        )}
         <div
-          className="absolute inset-x-0 bottom-0 h-16"
-          style={{ background: `linear-gradient(to top, ${colors.bg}, transparent)` }}
+          className="absolute inset-x-0 bottom-0 h-20"
+          style={{ background: `linear-gradient(to top, ${colors.darkSurface}, transparent)` }}
         />
       </div>
 
@@ -100,24 +124,33 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
       <div className="relative z-10 flex flex-col justify-end p-7 md:p-9">
         <h3
           className={`font-semibold mb-3 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl'}`}
-          style={{ fontFamily: fonts.display, color: colors.text }}
+          style={{ fontFamily: fonts.display, color: '#ffffff' }}
         >
           {service.title}
         </h3>
         <p
           className={`leading-relaxed ${isLarge ? 'text-lg max-w-lg' : 'text-sm'}`}
-          style={{ fontFamily: fonts.body, color: colors.textSecondary }}
+          style={{ fontFamily: fonts.body, color: colors.muted }}
         >
           {service.description}
         </p>
       </div>
+
+      {/* Hover border glow */}
+      <div
+        className="absolute inset-0 rounded-3xl pointer-events-none transition-opacity duration-500"
+        style={{
+          opacity: hovered ? 1 : 0,
+          boxShadow: `inset 0 0 0 1px ${colors.bronze}40, 0 16px 48px ${colors.bronze}12`,
+        }}
+      />
     </motion.div>
   );
 }
 
 export default function ServicesBentoSection() {
   return (
-    <section id="services" className="py-24 md:py-36" style={{ backgroundColor: colors.surface }}>
+    <section id="services" className="py-24 md:py-36" style={{ backgroundColor: colors.dark }}>
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -135,7 +168,7 @@ export default function ServicesBentoSection() {
           </div>
           <h2
             className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
-            style={{ fontFamily: fonts.display, color: colors.text }}
+            style={{ fontFamily: fonts.display, color: '#ffffff' }}
           >
             What We Build
           </h2>
@@ -146,7 +179,7 @@ export default function ServicesBentoSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1, ease }}
           className="text-center text-lg mb-16 max-w-2xl mx-auto"
-          style={{ fontFamily: fonts.body, color: colors.textSecondary }}
+          style={{ fontFamily: fonts.body, color: colors.muted }}
         >
           End-to-end AI systems designed around how your business actually works.
         </motion.p>

@@ -34,6 +34,86 @@ const steps = [
   },
 ];
 
+function TimelineStep({ step, index }: { step: typeof steps[0]; index: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.3 });
+  const isEven = index % 2 === 0;
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay: 0.1, ease }}
+      className={`relative flex flex-col lg:flex-row items-center gap-6 lg:gap-12 ${isEven ? '' : 'lg:flex-row-reverse'}`}
+    >
+      {/* Image card */}
+      <div className="w-full lg:w-[45%]">
+        <div
+          className="rounded-2xl sm:rounded-3xl overflow-hidden border group"
+          style={{ borderColor: '#2a2a2a', backgroundColor: colors.darkSurface }}
+        >
+          <div className="relative h-52 sm:h-64 overflow-hidden">
+            <Image
+              src={step.image}
+              alt={step.title}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-700"
+              loading="lazy"
+              sizes="(max-width: 1024px) 100vw, 45vw"
+            />
+            <div
+              className="absolute inset-0"
+              style={{ background: `linear-gradient(to top, ${colors.darkSurface}, transparent 60%)` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Timeline node (desktop only) */}
+      <div className="hidden lg:flex flex-col items-center z-10">
+        <div
+          className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold"
+          style={{
+            backgroundColor: colors.bronze,
+            color: '#fff',
+            fontFamily: fonts.display,
+            boxShadow: `0 0 24px ${colors.bronze}40`,
+          }}
+        >
+          {step.number}
+        </div>
+      </div>
+
+      {/* Text content */}
+      <div className="w-full lg:w-[45%]">
+        {/* Mobile step number */}
+        <div className="lg:hidden flex items-center gap-3 mb-3">
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
+            style={{ backgroundColor: colors.bronze, color: '#fff', fontFamily: fonts.display }}
+          >
+            {step.number}
+          </div>
+          <div className="h-px flex-1" style={{ backgroundColor: '#2a2a2a' }} />
+        </div>
+        <h3
+          className="text-2xl sm:text-3xl font-bold mb-3"
+          style={{ fontFamily: fonts.display, color: '#fff' }}
+        >
+          {step.title}
+        </h3>
+        <p
+          className="text-base sm:text-lg leading-relaxed"
+          style={{ fontFamily: fonts.body, color: colors.muted }}
+        >
+          {step.description}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function ProcessSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, amount: 0.1 });
@@ -42,11 +122,11 @@ export default function ProcessSection() {
     <section id="process" className="py-24 md:py-36 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
       {/* Background glow */}
       <div
-        className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-8"
-        style={{ background: `radial-gradient(ellipse, ${colors.bronze}15, transparent)` }}
+        className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl"
+        style={{ background: `radial-gradient(ellipse, ${colors.bronze}10, transparent)` }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10" ref={ref}>
+      <div className="max-w-6xl mx-auto px-6 relative z-10" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -77,58 +157,18 @@ export default function ProcessSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.15 + i * 0.1, ease }}
-              className="group rounded-3xl overflow-hidden border transition-all duration-300 md:hover:-translate-y-2"
-              style={{
-                backgroundColor: colors.darkSurface,
-                borderColor: '#2a2a2a',
-              }}
-            >
-              {/* Image */}
-              <div className="relative h-44 overflow-hidden">
-                <Image
-                  src={step.image}
-                  alt={step.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  loading="lazy"
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                />
-                <div
-                  className="absolute inset-0"
-                  style={{ background: `linear-gradient(to top, ${colors.darkSurface}, transparent 60%)` }}
-                />
-                {/* Step number overlay */}
-                <span
-                  className="absolute top-4 left-5 text-5xl font-bold select-none"
-                  style={{ fontFamily: fonts.display, color: `${colors.bronze}30` }}
-                >
-                  {step.number}
-                </span>
-              </div>
-
-              <div className="p-6 sm:p-7">
-                <h3
-                  className="text-xl font-bold mb-2"
-                  style={{ fontFamily: fonts.display, color: '#fff' }}
-                >
-                  {step.title}
-                </h3>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ fontFamily: fonts.body, color: colors.muted }}
-                >
-                  {step.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+        {/* Timeline */}
+        <div className="relative">
+          {/* Vertical line (desktop only) */}
+          <div
+            className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px]"
+            style={{ backgroundColor: `${colors.bronze}30` }}
+          />
+          <div className="flex flex-col gap-16 lg:gap-24">
+            {steps.map((step, i) => (
+              <TimelineStep key={i} step={step} index={i} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

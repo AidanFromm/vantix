@@ -2,25 +2,32 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import Image from 'next/image';
 import { colors, fonts, animations } from '@/lib/design-tokens';
 
 const ease = animations.easing as unknown as [number, number, number, number];
 
 export default function FinalCTASection() {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-100px' });
+  const inView = useInView(ref, { once: true, amount: 0.3 });
 
   return (
-    <section className="relative py-36 lg:py-44 overflow-hidden" style={{ backgroundColor: colors.dark }}>
-      {/* Background texture */}
-      <div className="absolute inset-0 z-0 opacity-10">
-        <Image
-          src="/media-assets/images/product-9.png"
-          alt=""
-          fill
-          className="object-cover"
-          loading="lazy"
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          muted
+          playsInline
+          loop
+          className="w-full h-full object-cover"
+        >
+          <source src="/media-assets/videos/vantix-vd-1.mp4" type="video/mp4" />
+        </video>
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(10,10,10,0.8) 0%, rgba(10,10,10,0.7) 50%, rgba(10,10,10,0.9) 100%)',
+          }}
         />
       </div>
 
@@ -39,7 +46,7 @@ export default function FinalCTASection() {
         style={{ backgroundColor: `${colors.bronze}08` }}
       />
 
-      <div className="relative z-10 max-w-3xl mx-auto px-6 text-center" ref={ref}>
+      <div className="relative z-10 max-w-3xl mx-auto px-6 text-center py-24" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -55,7 +62,7 @@ export default function FinalCTASection() {
           </div>
           <h2
             className="text-3xl sm:text-4xl lg:text-[3.25rem] font-bold mb-7 tracking-tight leading-[1.1]"
-            style={{ fontFamily: fonts.display, color: colors.bg }}
+            style={{ fontFamily: fonts.display, color: '#ffffff' }}
           >
             Stop managing chaos.{' '}
             <span style={{ color: colors.bronze }}>Start building infrastructure.</span>
@@ -67,7 +74,7 @@ export default function FinalCTASection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.1, ease }}
           className="text-lg mb-12"
-          style={{ fontFamily: fonts.body, color: colors.muted }}
+          style={{ fontFamily: fonts.body, color: 'rgba(255,255,255,0.5)' }}
         >
           Book your audit. See the roadmap. Decide from there.
         </motion.p>
@@ -83,11 +90,11 @@ export default function FinalCTASection() {
             style={{
               fontFamily: fonts.body,
               background: `linear-gradient(135deg, ${colors.bronze}, ${colors.bronzeDark})`,
-              boxShadow: `0 12px 40px ${colors.bronze}30`,
+              boxShadow: `0 12px 40px ${colors.bronze}35`,
             }}
           >
             <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            <span className="relative z-10">Book Your Free Audit →</span>
+            <span className="relative z-10">Book Your Free Audit</span>
           </a>
         </motion.div>
       </div>
