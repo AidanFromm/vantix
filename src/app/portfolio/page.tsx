@@ -19,7 +19,7 @@ const projects = [
     slug: 'secured-tampa',
     title: 'Secured Tampa',
     tags: ['E-commerce', 'AI Chatbot', 'Automation'],
-    image: '/case-secured.jpg',
+    image: '/redesign/case-study-tampa.webp',
     description:
       'A sneaker and Pokémon retail operation buried in manual work. We rebuilt the website with real-time inventory sync, deployed an AI chatbot, and automated order processing.',
     stats: ['42% less time on ops', '3x faster response', '28% sales increase'],
@@ -28,7 +28,7 @@ const projects = [
     slug: 'just-four-kicks',
     title: 'Just Four Kicks',
     tags: ['Wholesale', 'Data Pipeline', 'Dashboard'],
-    image: '/case-j4k.jpg',
+    image: '/redesign/case-study-sneakers.webp',
     description:
       'A $5.8M sneaker wholesale business running on duct tape. We built a centralized operations layer with automated pricing sync, real-time dashboards, and intelligent order routing.',
     stats: ['60% faster processing', '$43K saved annually', 'Real-time visibility'],
@@ -37,7 +37,7 @@ const projects = [
     slug: 'cardledger',
     title: 'CardLedger',
     tags: ['Web App', 'SaaS', 'AI'],
-    image: '/case-cardledger.jpg',
+    image: '/redesign/case-study-cards.webp',
     description:
       'From concept to product with a waitlist. A portfolio tracker for collectible card investors — designed, architected, and built from scratch in under 8 weeks.',
     stats: ['8-week build', '500+ beta signups', '4.8/5 rating'],
