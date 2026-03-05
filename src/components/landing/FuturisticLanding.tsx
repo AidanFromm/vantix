@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 import FloatingNav from './FloatingNav';
 import ChatWidget from '../ChatWidget';
-import ProductShowcaseHero from './ProductShowcaseHero';
+import VideoHero from './VideoHero';
 
 const SocialProofBar = dynamic(() => import('./SocialProofBar'), { ssr: false });
 const ProblemSolutionSection = dynamic(() => import('./ProblemSolutionSection'), { ssr: false });
@@ -22,21 +22,14 @@ export default function FuturisticLanding() {
   return (
     <div className="min-h-screen" style={{ fontFamily: "'Satoshi', sans-serif" }}>
       <FloatingNav />
-      <ProductShowcaseHero />
+      <VideoHero />
       <SocialProofBar />
       <ProblemSolutionSection />
-
-      {/* 📅 Booking — right after the slide animation */}
       <BookingSection />
-
       <ServicesBentoSection />
       <ProcessSection />
       <CaseStudySection />
-
-      <div className="hidden lg:block">
-        <ROISection />
-      </div>
-
+      <ROISection />
       <TeamSection />
       <FAQSection />
       <FinalCTASection />

@@ -3,6 +3,9 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 const team = [
   {
@@ -26,32 +29,30 @@ const team = [
   },
 ];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-  }),
-};
-
 export default function TeamSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="team" className="py-24 lg:py-32 bg-[#F4EFE8]">
+    <section id="team" className="py-28 lg:py-36" style={{ backgroundColor: colors.bg }}>
       <div className="max-w-6xl mx-auto px-6" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6, ease }}
+          className="text-center mb-20"
         >
-          <p className="text-sm font-semibold uppercase tracking-widest text-[#B07A45] mb-4" style={{ fontFamily: "'Satoshi', sans-serif" }}>
-            Who We Are
-          </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1C1C1C]" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+              Who We Are
+            </span>
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+          </div>
+          <h2
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight"
+            style={{ fontFamily: fonts.display, color: colors.text }}
+          >
             Small team. Big output.
           </h2>
         </motion.div>
@@ -60,26 +61,42 @@ export default function TeamSection() {
           {team.map((member, i) => (
             <motion.div
               key={member.name}
-              custom={i}
-              initial="hidden"
-              animate={inView ? 'visible' : 'hidden'}
-              variants={fadeUp}
-              className="bg-[#EEE6DC] rounded-2xl p-8 border border-[#E3D9CD] shadow-sm md:hover:shadow-md md:hover:-translate-y-2 transition-all duration-300 cursor-default"
+              initial={{ opacity: 0, y: 30 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: i * 0.15, ease }}
+              className="group rounded-3xl p-9 border transition-all duration-300 md:hover:-translate-y-2 cursor-default"
+              style={{
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = `${colors.bronze}30`;
+                (e.currentTarget as HTMLElement).style.boxShadow = `0 16px 48px ${colors.bronze}10`;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = colors.border;
+                (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+              }}
             >
-              {/* Avatar */}
               {member.isAI ? (
-                <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 bg-[#1C1C1C] border-2 border-[#B07A45]">
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center mb-7"
+                  style={{ backgroundColor: colors.darkSurface, border: `2px solid ${colors.bronze}` }}
+                >
                   <motion.span
-                    className="text-xl font-bold text-[#B07A45]"
+                    className="text-xl font-bold"
                     animate={{ opacity: [1, 0.5, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    style={{ fontFamily: "'Clash Display', sans-serif" }}
+                    style={{ fontFamily: fonts.display, color: colors.bronze }}
                   >
                     AI
                   </motion.span>
                 </div>
               ) : (
-                <div className="w-20 h-20 rounded-full overflow-hidden mb-6 border-2 border-[#B07A45]/30">
+                <div
+                  className="w-20 h-20 rounded-full overflow-hidden mb-7"
+                  style={{ border: `2px solid ${colors.bronze}30` }}
+                >
                   <Image
                     src={member.photo!}
                     alt={member.name}
@@ -91,13 +108,22 @@ export default function TeamSection() {
                 </div>
               )}
 
-              <h3 className="text-xl font-bold text-[#1C1C1C] mb-1" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+              <h3
+                className="text-xl font-bold mb-1"
+                style={{ fontFamily: fonts.display, color: colors.text }}
+              >
                 {member.name}
               </h3>
-              <p className="text-sm font-semibold text-[#B07A45] mb-4" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+              <p
+                className="text-sm font-semibold mb-5"
+                style={{ fontFamily: fonts.body, color: colors.bronze }}
+              >
                 {member.role}
               </p>
-              <p className="text-[#7A746C] text-sm leading-relaxed" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ fontFamily: fonts.body, color: colors.muted }}
+              >
                 {member.bio}
               </p>
             </motion.div>

@@ -3,6 +3,9 @@
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, CheckCircle2 } from 'lucide-react';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 const TIME_SLOTS = [
   '3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM',
@@ -31,13 +34,6 @@ function toISO(d: Date, timeStr: string) {
   const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, parseInt(mStr));
   return dt.toISOString();
 }
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const } },
-};
-
-const staggerContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 
 export default function BookingSection() {
   const ref = useRef(null);
@@ -83,47 +79,78 @@ export default function BookingSection() {
 
   const step = submitted ? 3 : selectedTime ? 2 : selectedDate ? 1 : 0;
 
-  const inputClass = 'px-4 py-3 rounded-xl border border-[#E3D9CD] bg-[#F4EFE8] text-[#1C1C1C] placeholder-[#A39B90] text-sm focus:outline-none focus:ring-2 focus:ring-[#B07A45]/40 focus:border-[#B07A45] transition-all';
-
   return (
-    <section id="booking" className="py-24 lg:py-32 bg-[#F4EFE8]">
+    <section id="booking" className="py-28 lg:py-36" style={{ backgroundColor: colors.bg }}>
       <div className="max-w-4xl mx-auto px-6" ref={ref}>
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="text-center mb-12">
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1C1C1C] mb-4" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease }}
+          className="text-center mb-14"
+        >
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+              Get Started
+            </span>
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+          </div>
+          <h2
+            className="text-3xl sm:text-4xl lg:text-[3.25rem] font-bold mb-5 tracking-tight"
+            style={{ fontFamily: fonts.display, color: colors.text }}
+          >
             Let&apos;s Talk
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#7A746C] text-base lg:text-lg leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+          </h2>
+          <p
+            className="text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto"
+            style={{ fontFamily: fonts.body, color: colors.muted }}
+          >
             Book a free 30-minute strategy call. We&apos;ll map your operations, identify AI opportunities, and give you a clear action plan — whether you work with us or not.
-          </motion.p>
+          </p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
-          className="rounded-2xl bg-[#EEE6DC] shadow-sm border border-[#E3D9CD] overflow-hidden p-6 sm:p-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.6, ease }}
+          className="rounded-3xl overflow-hidden p-8 sm:p-12"
+          style={{
+            backgroundColor: colors.surface,
+            border: `1px solid ${colors.border}`,
+            boxShadow: `0 24px 64px ${colors.bronze}08`,
+          }}
         >
           <AnimatePresence mode="wait">
             {step === 3 ? (
-              <motion.div key="done" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="text-center py-16">
-                <CheckCircle2 className="mx-auto mb-4 text-[#B07A45]" size={56} />
-                <h3 className="text-2xl font-bold text-[#1C1C1C] mb-2" style={{ fontFamily: "'Clash Display', sans-serif" }}>You&apos;re booked!</h3>
-                <p className="text-[#7A746C]" style={{ fontFamily: "'Satoshi', sans-serif" }}>We&apos;ll email you to confirm your {selectedTime} slot on {selectedDate ? formatDateStr(selectedDate) : ''}.</p>
+              <motion.div key="done" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="text-center py-20">
+                <div className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ backgroundColor: `${colors.bronze}15` }}>
+                  <CheckCircle2 size={32} style={{ color: colors.bronze }} />
+                </div>
+                <h3 className="text-2xl font-bold mb-3" style={{ fontFamily: fonts.display, color: colors.text }}>You&apos;re booked!</h3>
+                <p style={{ fontFamily: fonts.body, color: colors.muted }}>
+                  We&apos;ll email you to confirm your {selectedTime} slot on {selectedDate ? formatDateStr(selectedDate) : ''}.
+                </p>
               </motion.div>
             ) : (
               <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <div className="mb-8">
-                  <div className="flex items-center justify-between mb-5">
+                <div className="mb-10">
+                  <div className="flex items-center justify-between mb-6">
                     <button onClick={goPrev} disabled={!canGoPrev}
                       className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${canGoPrev ? 'hover:bg-[#E3D9CD] text-[#B07A45]' : 'text-[#E3D9CD] cursor-not-allowed'}`}>
                       <ChevronDown size={20} className="rotate-90" />
                     </button>
-                    <p className="text-lg font-bold text-[#1C1C1C] tracking-wide" style={{ fontFamily: "'Clash Display', sans-serif" }}>{monthNames[viewMonth]} {viewYear}</p>
-                    <button onClick={goNext} className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-[#E3D9CD] text-[#B07A45] transition-all">
+                    <p className="text-lg font-bold tracking-wide" style={{ fontFamily: fonts.display, color: colors.text }}>
+                      {monthNames[viewMonth]} {viewYear}
+                    </p>
+                    <button onClick={goNext} className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-[#E3D9CD] transition-all" style={{ color: colors.bronze }}>
                       <ChevronDown size={20} className="-rotate-90" />
                     </button>
                   </div>
-                  <div className="grid grid-cols-7 gap-1.5">
+                  <div className="grid grid-cols-7 gap-2">
                     {dayHeaders.map((dh) => (
-                      <div key={dh} className="text-center text-[11px] font-semibold text-[#A39B90] uppercase tracking-wider py-2">{dh}</div>
+                      <div key={dh} className="text-center text-[11px] font-semibold uppercase tracking-wider py-2" style={{ color: colors.muted }}>{dh}</div>
                     ))}
                     {calendarDays.map((d, i) => {
                       if (!d) return <div key={`empty-${i}`} />;
@@ -136,10 +163,21 @@ export default function BookingSection() {
                         <button key={d.toISOString()} disabled={disabled}
                           onClick={() => { setSelectedDate(d); setSelectedTime(null); }}
                           className={`aspect-square rounded-xl flex items-center justify-center text-sm font-medium transition-all
-                            ${active ? 'bg-[#B07A45] text-white shadow-lg shadow-[#B07A45]/20 scale-105' :
-                              disabled ? 'text-[#D5CEC5] cursor-not-allowed' :
-                              isToday ? 'bg-[#B07A45]/10 text-[#B07A45] font-bold ring-1 ring-[#B07A45]/30' :
-                              'text-[#4B4B4B] hover:bg-[#E3D9CD] cursor-pointer'}`}>
+                            ${active
+                              ? 'text-white shadow-lg scale-105'
+                              : disabled
+                                ? 'cursor-not-allowed'
+                                : isToday
+                                  ? 'font-bold ring-1'
+                                  : 'hover:bg-[#E3D9CD] cursor-pointer'
+                            }`}
+                          style={{
+                            backgroundColor: active ? colors.bronze : undefined,
+                            boxShadow: active ? `0 8px 24px ${colors.bronze}30` : undefined,
+                            color: active ? '#fff' : disabled ? colors.border : isToday ? colors.bronze : colors.textSecondary,
+                            ...(isToday && !active ? { ringColor: `${colors.bronze}30`, backgroundColor: `${colors.bronze}10` } : {}),
+                          }}
+                        >
                           {d.getDate()}
                         </button>
                       );
@@ -149,15 +187,21 @@ export default function BookingSection() {
 
                 <AnimatePresence mode="wait">
                   {step >= 1 && (
-                    <motion.div key="times" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-8 overflow-hidden">
-                      <p className="text-sm font-semibold text-[#1C1C1C] mb-3" style={{ fontFamily: "'Clash Display', sans-serif" }}>
-                        Select a time <span className="text-[#A39B90] font-normal" style={{ fontFamily: "'Satoshi', sans-serif" }}>(Eastern Time)</span>
+                    <motion.div key="times" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-10 overflow-hidden">
+                      <p className="text-sm font-semibold mb-4" style={{ fontFamily: fonts.display, color: colors.text }}>
+                        Select a time <span className="font-normal" style={{ fontFamily: fonts.body, color: colors.muted }}>(Eastern Time)</span>
                       </p>
                       <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                         {TIME_SLOTS.map((t) => (
                           <button key={t} onClick={() => setSelectedTime(t)}
-                            className={`py-3 rounded-xl text-sm font-medium transition-all
-                              ${selectedTime === t ? 'bg-[#B07A45] text-white shadow-lg shadow-[#B07A45]/20' : 'bg-[#F4EFE8] text-[#4B4B4B] hover:bg-[#E3D9CD] border border-[#E3D9CD]'}`}>
+                            className="py-3 rounded-xl text-sm font-medium transition-all"
+                            style={{
+                              backgroundColor: selectedTime === t ? colors.bronze : colors.bg,
+                              color: selectedTime === t ? '#fff' : colors.textSecondary,
+                              boxShadow: selectedTime === t ? `0 8px 24px ${colors.bronze}30` : undefined,
+                              border: selectedTime === t ? 'none' : `1px solid ${colors.border}`,
+                            }}
+                          >
                             {t}
                           </button>
                         ))}
@@ -170,14 +214,38 @@ export default function BookingSection() {
                   {step >= 2 && (
                     <motion.form key="form" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                       onSubmit={handleSubmit} className="overflow-hidden">
-                      <p className="text-sm font-semibold text-[#1C1C1C] mb-3" style={{ fontFamily: "'Clash Display', sans-serif" }}>Your details</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-                        <input type="text" required placeholder="Name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputClass} />
-                        <input type="email" required placeholder="Email *" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} />
-                        <input type="tel" placeholder="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputClass} />
+                      <p className="text-sm font-semibold mb-4" style={{ fontFamily: fonts.display, color: colors.text }}>Your details</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                        {[
+                          { type: 'text', required: true, placeholder: 'Name *', value: form.name, key: 'name' as const },
+                          { type: 'email', required: true, placeholder: 'Email *', value: form.email, key: 'email' as const },
+                          { type: 'tel', required: false, placeholder: 'Phone', value: form.phone, key: 'phone' as const },
+                        ].map((field) => (
+                          <input
+                            key={field.key}
+                            type={field.type}
+                            required={field.required}
+                            placeholder={field.placeholder}
+                            value={field.value}
+                            onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                            className="px-5 py-3.5 rounded-xl text-sm focus:outline-none focus:ring-2 transition-all"
+                            style={{
+                              backgroundColor: colors.bg,
+                              border: `1px solid ${colors.border}`,
+                              color: colors.text,
+                              fontFamily: fonts.body,
+                            }}
+                          />
+                        ))}
                       </div>
                       <button type="submit"
-                        className="w-full bg-[#B07A45] hover:bg-[#8E5E34] text-white font-semibold rounded-xl px-8 py-4 shadow-lg shadow-[#B07A45]/20 hover:shadow-xl transition-all text-base">
+                        className="w-full font-semibold rounded-xl px-8 py-4 text-white text-base transition-all hover:brightness-110"
+                        style={{
+                          background: `linear-gradient(135deg, ${colors.bronze}, ${colors.bronzeDark})`,
+                          boxShadow: `0 8px 32px ${colors.bronze}25`,
+                          fontFamily: fonts.body,
+                        }}
+                      >
                         Confirm Booking — {selectedDate && selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} at {selectedTime}
                       </button>
                     </motion.form>

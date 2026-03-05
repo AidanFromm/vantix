@@ -2,6 +2,9 @@
 
 import { useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 const faqs = [
   {
@@ -44,18 +47,25 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="py-24 lg:py-32 bg-[#0a0a0a]">
+    <section id="faq" className="py-28 lg:py-36" style={{ backgroundColor: colors.dark }}>
       <div className="max-w-3xl mx-auto px-6" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6, ease }}
+          className="text-center mb-20"
         >
-          <p className="text-sm font-semibold uppercase tracking-widest text-[#B07A45] mb-4" style={{ fontFamily: "'Satoshi', sans-serif" }}>
-            FAQ
-          </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#F4EFE8]" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="h-px w-8" style={{ backgroundColor: `${colors.bronze}60` }} />
+            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+              FAQ
+            </span>
+            <span className="h-px w-8" style={{ backgroundColor: `${colors.bronze}60` }} />
+          </div>
+          <h2
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight"
+            style={{ fontFamily: fonts.display, color: colors.bg }}
+          >
             Questions we get asked
           </h2>
         </motion.div>
@@ -68,23 +78,28 @@ export default function FAQSection() {
                 key={i}
                 initial={{ opacity: 0, y: 16 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: i * 0.06 }}
-                className="border border-[#222] rounded-xl overflow-hidden"
+                transition={{ duration: 0.5, delay: i * 0.05, ease }}
+                className="rounded-2xl overflow-hidden transition-colors duration-300"
+                style={{
+                  border: `1px solid ${isOpen ? `${colors.bronze}40` : '#222'}`,
+                  backgroundColor: isOpen ? `${colors.bronze}08` : 'transparent',
+                }}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full flex items-center justify-between px-6 py-5 text-left group"
+                  className="w-full flex items-center justify-between px-7 py-6 text-left group"
                 >
                   <span
-                    className="text-[#F4EFE8] font-semibold text-base lg:text-lg pr-4"
-                    style={{ fontFamily: "'Clash Display', sans-serif", fontSize: '20px' }}
+                    className="font-semibold text-lg lg:text-xl pr-4"
+                    style={{ fontFamily: fonts.display, color: colors.bg }}
                   >
                     {faq.q}
                   </span>
                   <motion.span
                     animate={{ rotate: isOpen ? 45 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-[#B07A45] text-2xl font-light flex-shrink-0 leading-none"
+                    transition={{ duration: 0.3, ease }}
+                    className="text-2xl font-light flex-shrink-0 leading-none"
+                    style={{ color: colors.bronze }}
                   >
                     +
                   </motion.span>
@@ -95,12 +110,12 @@ export default function FAQSection() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.3, ease }}
                       className="overflow-hidden"
                     >
                       <p
-                        className="px-6 pb-5 text-[#7A746C] leading-relaxed"
-                        style={{ fontFamily: "'Satoshi', sans-serif", fontSize: '16px' }}
+                        className="px-7 pb-6 leading-relaxed text-base"
+                        style={{ fontFamily: fonts.body, color: colors.muted }}
                       >
                         {faq.a}
                       </p>

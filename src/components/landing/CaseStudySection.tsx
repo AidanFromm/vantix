@@ -3,6 +3,9 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 interface CaseStudy {
   name: string;
@@ -62,71 +65,86 @@ function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      className={`group relative flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} 
-        bg-[#EEE6DC] rounded-2xl overflow-hidden border border-transparent
-        md:hover:border-[#B07A45]/30 transition-colors duration-300`}
+      transition={{ duration: 0.6, delay: index * 0.1, ease }}
+      className={`group relative flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'}
+        rounded-3xl overflow-hidden border transition-all duration-300`}
+      style={{
+        backgroundColor: colors.bg,
+        borderColor: 'transparent',
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = `${colors.bronze}30`;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
+      }}
     >
-      {/* Bronze accent line */}
-      <div className={`absolute top-0 ${isEven ? 'left-0' : 'right-0'} w-1 h-0 bg-[#B07A45] 
-        group-hover:h-full transition-all duration-500 rounded-full hidden lg:block`} />
+      {/* Bronze accent */}
+      <div
+        className={`absolute top-0 ${isEven ? 'left-0' : 'right-0'} w-1 h-0 group-hover:h-full transition-all duration-500 rounded-full hidden lg:block`}
+        style={{ backgroundColor: colors.bronze }}
+      />
 
       {/* Image */}
-      <div className="relative w-full lg:w-2/5 h-64 lg:h-auto min-h-[280px] overflow-hidden">
+      <div className="relative w-full lg:w-2/5 h-64 lg:h-auto min-h-[300px] overflow-hidden">
         <Image
           src={study.image}
           alt={study.name}
           fill
-          className="object-cover md:group-hover:scale-105 transition-transform duration-500"
+          className="object-cover md:group-hover:scale-105 transition-transform duration-700"
           loading="lazy"
           sizes="(max-width: 1024px) 100vw, 40vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent" />
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">
+      <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
         <h3
-          className="text-2xl md:text-3xl font-bold text-[#1C1C1C] mb-6"
-          style={{ fontFamily: 'Clash Display, sans-serif' }}
+          className="text-2xl md:text-3xl font-bold mb-8"
+          style={{ fontFamily: fonts.display, color: colors.text }}
         >
           {study.name}
         </h3>
 
-        <div className="space-y-4 mb-6">
+        <div className="space-y-5 mb-8">
           <div>
             <span
-              className="text-xs uppercase tracking-widest text-[#B07A45] font-semibold"
-              style={{ fontFamily: 'Satoshi, sans-serif' }}
+              className="text-[11px] uppercase tracking-[0.2em] font-semibold"
+              style={{ fontFamily: fonts.body, color: colors.bronze }}
             >
               Challenge
             </span>
-            <p className="text-[#4B4B4B] mt-1 leading-relaxed" style={{ fontFamily: 'Satoshi, sans-serif' }}>
+            <p className="mt-2 leading-relaxed" style={{ fontFamily: fonts.body, color: colors.textSecondary }}>
               {study.challenge}
             </p>
           </div>
           <div>
             <span
-              className="text-xs uppercase tracking-widest text-[#B07A45] font-semibold"
-              style={{ fontFamily: 'Satoshi, sans-serif' }}
+              className="text-[11px] uppercase tracking-[0.2em] font-semibold"
+              style={{ fontFamily: fonts.body, color: colors.bronze }}
             >
               Solution
             </span>
-            <p className="text-[#4B4B4B] mt-1 leading-relaxed" style={{ fontFamily: 'Satoshi, sans-serif' }}>
+            <p className="mt-2 leading-relaxed" style={{ fontFamily: fonts.body, color: colors.textSecondary }}>
               {study.solution}
             </p>
           </div>
         </div>
 
-        {/* Results */}
         <div className="flex flex-wrap gap-3">
           {study.results.map((result, i) => (
             <span
               key={i}
-              className="text-sm font-medium text-[#B07A45] bg-[#B07A45]/10 px-4 py-2 rounded-full"
-              style={{ fontFamily: 'Satoshi, sans-serif' }}
+              className="text-sm font-medium px-4 py-2.5 rounded-full"
+              style={{
+                fontFamily: fonts.body,
+                color: colors.bronze,
+                backgroundColor: `${colors.bronze}10`,
+                border: `1px solid ${colors.bronze}20`,
+              }}
             >
               {result}
             </span>
@@ -139,30 +157,41 @@ function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
 
 export default function CaseStudySection() {
   return (
-    <section id="work" className="bg-[#EEE6DC] py-20 md:py-32">
+    <section id="work" className="py-24 md:py-36" style={{ backgroundColor: colors.surface }}>
       <div className="max-w-7xl mx-auto px-6">
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-4"
-          style={{ fontFamily: 'Clash Display, sans-serif' }}
+          transition={{ duration: 0.6, ease }}
+          className="text-center mb-5"
         >
-          Real Results. Real Businesses.
-        </motion.h2>
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+              Case Studies
+            </span>
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+          </div>
+          <h2
+            className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
+            style={{ fontFamily: fonts.display, color: colors.text }}
+          >
+            Real Results. Real Businesses.
+          </h2>
+        </motion.div>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-[#4B4B4B] text-center text-lg mb-16 max-w-2xl mx-auto"
-          style={{ fontFamily: 'Satoshi, sans-serif' }}
+          transition={{ duration: 0.5, delay: 0.1, ease }}
+          className="text-center text-lg mb-16 max-w-2xl mx-auto"
+          style={{ fontFamily: fonts.body, color: colors.textSecondary }}
         >
           See how we&apos;ve transformed operations for businesses like yours.
         </motion.p>
 
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-6">
           {caseStudies.map((study, i) => (
             <CaseStudyCard key={i} study={study} index={i} />
           ))}

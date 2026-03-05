@@ -4,6 +4,9 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Cpu, Globe, MessageSquare, BarChart3, Target, Plug } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 interface Service {
   icon: LucideIcon;
@@ -66,30 +69,43 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={`group relative bg-[#EEE6DC] rounded-2xl p-6 md:p-8 border border-transparent
-        hover:border-[#B07A45]/40 md:hover:-translate-y-1
-        transition-colors duration-300 overflow-hidden ${service.gridClass}`}
+      transition={{ duration: 0.6, delay: index * 0.08, ease }}
+      className={`group relative rounded-2xl p-7 md:p-9 border
+        md:hover:-translate-y-1 transition-all duration-300 overflow-hidden ${service.gridClass}`}
+      style={{
+        backgroundColor: colors.bg,
+        borderColor: 'transparent',
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = `${colors.bronze}40`;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
+      }}
     >
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#B07A45]/[0.03] to-transparent pointer-events-none rounded-2xl" />
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+        style={{ background: `linear-gradient(135deg, ${colors.bronze}05, transparent 60%)` }}
+      />
 
       <div className="relative z-10 h-full flex flex-col">
-        <div className="w-12 h-12 rounded-xl bg-[#D8C2A8]/30 flex items-center justify-center mb-5
-          group-hover:bg-[#B07A45]/20 transition-colors duration-300">
-          <Icon className="w-6 h-6 text-[#B07A45] md:group-hover:scale-110 transition-transform duration-300" />
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-300"
+          style={{ backgroundColor: `${colors.bronze}10` }}
+        >
+          <Icon className="w-6 h-6 md:group-hover:scale-110 transition-transform duration-300" style={{ color: colors.bronze }} />
         </div>
         <h3
-          className={`font-semibold text-[#1C1C1C] mb-3 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl'}`}
-          style={{ fontFamily: 'Clash Display, sans-serif' }}
+          className={`font-semibold mb-3 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl'}`}
+          style={{ fontFamily: fonts.display, color: colors.text }}
         >
           {service.title}
         </h3>
         <p
-          className={`text-[#4B4B4B] leading-relaxed ${isLarge ? 'text-lg max-w-lg' : 'line-clamp-3'}`}
-          style={{ fontFamily: 'Satoshi, sans-serif' }}
+          className={`leading-relaxed ${isLarge ? 'text-lg max-w-lg' : 'line-clamp-3'}`}
+          style={{ fontFamily: fonts.body, color: colors.textSecondary }}
         >
           {service.description}
         </p>
@@ -100,25 +116,36 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
 
 export default function ServicesBentoSection() {
   return (
-    <section id="services" className="bg-[#EEE6DC] py-20 md:py-32">
+    <section id="services" className="py-24 md:py-36" style={{ backgroundColor: colors.surface }}>
       <div className="max-w-7xl mx-auto px-6">
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-4"
-          style={{ fontFamily: 'Clash Display, sans-serif' }}
+          transition={{ duration: 0.6, ease }}
+          className="text-center mb-5"
         >
-          What We Build
-        </motion.h2>
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+              Our Services
+            </span>
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+          </div>
+          <h2
+            className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
+            style={{ fontFamily: fonts.display, color: colors.text }}
+          >
+            What We Build
+          </h2>
+        </motion.div>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-[#4B4B4B] text-center text-lg mb-16 max-w-2xl mx-auto"
-          style={{ fontFamily: 'Satoshi, sans-serif' }}
+          transition={{ duration: 0.5, delay: 0.1, ease }}
+          className="text-center text-lg mb-16 max-w-2xl mx-auto"
+          style={{ fontFamily: fonts.body, color: colors.textSecondary }}
         >
           End-to-end AI systems designed around how your business actually works.
         </motion.p>

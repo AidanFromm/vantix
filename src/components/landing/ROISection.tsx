@@ -2,6 +2,9 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useInView, useSpring, useMotionValue } from 'framer-motion';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 interface Stat {
   display: string;
@@ -18,7 +21,7 @@ const stats: Stat[] = [
   { display: '28 days', numericPart: 28, prefix: '', suffix: ' days', label: 'Average time from audit to first deployment' },
 ];
 
-function AnimatedNumber({ stat }: { stat: Stat }) {
+function AnimatedNumber({ stat, index }: { stat: Stat; index: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const [displayed, setDisplayed] = useState(stat.numericPart !== null ? `${stat.prefix}0${stat.suffix}` : stat.display);
@@ -53,24 +56,25 @@ function AnimatedNumber({ stat }: { stat: Stat }) {
       ref={ref}
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.6, delay: index * 0.1, ease }}
       className="text-center"
     >
       <span
-        className="text-6xl md:text-7xl lg:text-8xl font-bold text-[#B07A45] block leading-none"
-        style={{ fontFamily: 'Clash Display, sans-serif' }}
+        className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold block leading-none"
+        style={{ fontFamily: fonts.display, color: colors.bronze }}
       >
         {displayed}
       </span>
       <motion.div
-        className="h-[2px] bg-[#B07A45]/40 mx-auto mt-4 mb-4"
+        className="mx-auto mt-5 mb-4"
+        style={{ height: 2, backgroundColor: `${colors.bronze}40` }}
         initial={{ width: 0 }}
         animate={isInView ? { width: '3rem' } : {}}
         transition={{ duration: 0.8, delay: 0.3 }}
       />
       <span
-        className="text-sm md:text-base text-[#6B6B6B] max-w-[200px] inline-block leading-snug"
-        style={{ fontFamily: 'Satoshi, sans-serif' }}
+        className="text-sm md:text-base max-w-[220px] inline-block leading-snug"
+        style={{ fontFamily: fonts.body, color: colors.muted }}
       >
         {stat.label}
       </span>
@@ -80,11 +84,32 @@ function AnimatedNumber({ stat }: { stat: Stat }) {
 
 export default function ROISection() {
   return (
-    <section className="bg-[#F4EFE8] py-20 md:py-28">
+    <section className="py-20 md:py-32" style={{ backgroundColor: colors.bg }}>
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease }}
+          className="text-center mb-16"
+        >
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+              By the Numbers
+            </span>
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+          </div>
+          <h2
+            className="text-3xl md:text-5xl font-bold tracking-tight"
+            style={{ fontFamily: fonts.display, color: colors.text }}
+          >
+            Measurable Impact
+          </h2>
+        </motion.div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-8">
           {stats.map((stat, i) => (
-            <AnimatedNumber key={i} stat={stat} />
+            <AnimatedNumber key={i} stat={stat} index={i} />
           ))}
         </div>
       </div>

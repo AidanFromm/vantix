@@ -2,14 +2,16 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import ShimmerButton from './ShimmerButton';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 export default function FinalCTASection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section className="relative py-32 lg:py-40 bg-[#0a0a0a] overflow-hidden">
+    <section className="relative py-36 lg:py-44 overflow-hidden" style={{ backgroundColor: colors.dark }}>
       {/* Grain overlay */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -20,25 +22,39 @@ export default function FinalCTASection() {
       />
 
       {/* Bronze glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#B07A45]/5 blur-[120px] pointer-events-none" />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[140px] pointer-events-none"
+        style={{ backgroundColor: `${colors.bronze}08` }}
+      />
 
       <div className="relative max-w-3xl mx-auto px-6 text-center" ref={ref}>
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#F4EFE8] mb-6"
-          style={{ fontFamily: "'Clash Display', sans-serif" }}
+          transition={{ duration: 0.6, ease }}
+          className="mb-5"
         >
-          Ready to stop guessing?
-        </motion.h2>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <span className="h-px w-8" style={{ backgroundColor: `${colors.bronze}60` }} />
+            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+              Next Step
+            </span>
+            <span className="h-px w-8" style={{ backgroundColor: `${colors.bronze}60` }} />
+          </div>
+          <h2
+            className="text-3xl sm:text-4xl lg:text-[3.25rem] font-bold mb-7 tracking-tight leading-[1.1]"
+            style={{ fontFamily: fonts.display, color: colors.bg }}
+          >
+            Ready to stop guessing?
+          </h2>
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-lg text-[#7A746C] mb-10"
-          style={{ fontFamily: "'Satoshi', sans-serif" }}
+          transition={{ duration: 0.6, delay: 0.1, ease }}
+          className="text-lg mb-12"
+          style={{ fontFamily: fonts.body, color: colors.muted }}
         >
           Book your audit. See the roadmap. Decide from there.
         </motion.p>
@@ -46,14 +62,20 @@ export default function FinalCTASection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.2, ease }}
         >
-          <ShimmerButton
-            className="text-lg px-10 py-5"
-            onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })}
+          <a
+            href="#booking"
+            className="relative inline-flex items-center gap-2 px-12 py-5 rounded-full text-lg font-semibold text-white overflow-hidden group"
+            style={{
+              fontFamily: fonts.body,
+              background: `linear-gradient(135deg, ${colors.bronze}, ${colors.bronzeDark})`,
+              boxShadow: `0 12px 40px ${colors.bronze}30`,
+            }}
           >
-            Get Your AI Blueprint →
-          </ShimmerButton>
+            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <span className="relative z-10">Get Your AI Blueprint →</span>
+          </a>
         </motion.div>
       </div>
     </section>

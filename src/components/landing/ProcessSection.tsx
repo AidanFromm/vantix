@@ -2,6 +2,9 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { colors, fonts, animations } from '@/lib/design-tokens';
+
+const ease = animations.easing as unknown as [number, number, number, number];
 
 const steps = [
   {
@@ -33,40 +36,42 @@ const steps = [
 
 function StepItem({ step, index }: { step: (typeof steps)[0]; index: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  const isInView = useInView(ref, { once: true, margin: '-60px' });
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      className="relative pl-16 md:pl-24 pb-16 last:pb-0"
+      transition={{ duration: 0.6, delay: index * 0.1, ease }}
+      className="relative pl-20 md:pl-28 pb-20 last:pb-0"
     >
-      {/* Simple dot */}
-      <div className="absolute left-[5px] md:left-[19px] top-2 z-10">
-        <div className={`w-3 h-3 rounded-full transition-colors duration-700 ${
-          isInView ? 'bg-[#B07A45]' : 'bg-[#D8C2A8]'
-        }`} />
+      {/* Dot */}
+      <div className="absolute left-[7px] md:left-[19px] top-2 z-10">
+        <div
+          className="w-3.5 h-3.5 rounded-full transition-colors duration-700"
+          style={{ backgroundColor: isInView ? colors.bronze : colors.border }}
+        />
       </div>
 
+      {/* Large step number */}
       <span
-        className="text-5xl md:text-6xl font-bold text-[#B07A45]/20 absolute left-10 md:left-12 -top-3 select-none"
-        style={{ fontFamily: 'Clash Display, sans-serif' }}
+        className="text-6xl md:text-7xl font-bold absolute left-12 md:left-14 -top-4 select-none"
+        style={{ fontFamily: fonts.display, color: `${colors.bronze}15` }}
       >
         {step.number}
       </span>
 
       <div className="relative">
         <h3
-          className="text-2xl md:text-3xl font-bold text-[#1C1C1C] mb-3"
-          style={{ fontFamily: 'Clash Display, sans-serif' }}
+          className="text-2xl md:text-3xl font-bold mb-3"
+          style={{ fontFamily: fonts.display, color: colors.text }}
         >
           {step.title}
         </h3>
         <p
-          className="text-[#4B4B4B] leading-relaxed max-w-md text-lg"
-          style={{ fontFamily: 'Satoshi, sans-serif' }}
+          className="leading-relaxed max-w-md text-lg"
+          style={{ fontFamily: fonts.body, color: colors.textSecondary }}
         >
           {step.description}
         </p>
@@ -76,36 +81,47 @@ function StepItem({ step, index }: { step: (typeof steps)[0]; index: number }) {
 }
 
 export default function ProcessSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   return (
-    <section id="process" className="bg-[#F4EFE8] py-20 md:py-32" ref={containerRef}>
+    <section id="process" className="py-24 md:py-36" style={{ backgroundColor: colors.bg }}>
       <div className="max-w-4xl mx-auto px-6">
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl md:text-5xl font-bold text-[#1C1C1C] text-center mb-4"
-          style={{ fontFamily: 'Clash Display, sans-serif' }}
+          transition={{ duration: 0.6, ease }}
+          className="text-center mb-5"
         >
-          How It Works
-        </motion.h2>
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+              Our Process
+            </span>
+            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
+          </div>
+          <h2
+            className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
+            style={{ fontFamily: fonts.display, color: colors.text }}
+          >
+            How It Works
+          </h2>
+        </motion.div>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-[#4B4B4B] text-center text-lg mb-20 max-w-xl mx-auto"
-          style={{ fontFamily: 'Satoshi, sans-serif' }}
+          transition={{ duration: 0.5, delay: 0.1, ease }}
+          className="text-center text-lg mb-24 max-w-xl mx-auto"
+          style={{ fontFamily: fonts.body, color: colors.textSecondary }}
         >
           From audit to optimization in five focused steps.
         </motion.p>
 
         <div className="relative">
-          {/* Static background line */}
-          <div className="absolute left-[5px] md:left-[19px] top-0 bottom-0 w-[2px] bg-[#E3D9CD]" />
-          <div className="absolute left-[5px] md:left-[19px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#B07A45] to-[#D8C2A8]" />
+          {/* Line */}
+          <div
+            className="absolute left-[7px] md:left-[19px] top-0 bottom-0 w-[2px]"
+            style={{ background: `linear-gradient(to bottom, ${colors.bronze}, ${colors.border})` }}
+          />
           {steps.map((step, i) => (
             <StepItem key={i} step={step} index={i} />
           ))}
