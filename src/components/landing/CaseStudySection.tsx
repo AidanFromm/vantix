@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { colors, fonts, animations } from '@/lib/design-tokens';
 
 const ease = animations.easing as unknown as [number, number, number, number];
@@ -10,146 +11,110 @@ const ease = animations.easing as unknown as [number, number, number, number];
 interface CaseStudy {
   name: string;
   image: string;
-  challenge: string;
-  solution: string;
-  results: string[];
+  metric: string;
+  description: string;
+  href: string;
 }
 
 const caseStudies: CaseStudy[] = [
   {
-    name: 'Secured Tampa',
-    image: '/redesign/case-study-tampa.webp',
-    challenge:
-      'Manual inventory tracking across sneakers and Pokémon cards. No online presence, all sales through Instagram DMs.',
-    solution:
-      'Full e-commerce platform with barcode scanning, automated inventory, and integrated payment processing.',
-    results: [
-      '60% reduction in inventory time',
-      '3x online sales in 90 days',
-      '45 min/day saved on operations',
-    ],
-  },
-  {
     name: 'Just Four Kicks',
-    image: '/redesign/case-study-sneakers.webp',
-    challenge:
-      'Running on spreadsheets and manual coordination across 200+ retail stores.',
-    solution:
-      'Custom wholesale platform with tiered pricing, automated invoicing, and real-time inventory sync.',
-    results: [
-      '80% less time on order management',
-      '12% improvement in margin tracking',
-      '200+ stores onboarded digitally',
-    ],
+    image: '/media-assets/images/product-4.png',
+    metric: '$5.8M revenue managed',
+    description: '200+ stores served. 80+ features built. Custom wholesale platform with tiered pricing, automated invoicing, and real-time inventory sync.',
+    href: '/case-studies/just-four-kicks',
   },
   {
-    name: 'CardLedger',
-    image: '/redesign/case-study-cards.webp',
-    challenge:
-      'No good tool existed for tracking collectible card portfolios across Pokémon, sports cards, and TCGs.',
-    solution:
-      'Built a full portfolio tracker with real-time pricing, analytics, grading ROI calculator, and eBay integration.',
-    results: [
-      '500+ beta signups in first week',
-      '4.8/5 user satisfaction',
-      'Multi-platform launch ready',
-    ],
+    name: 'Secured Tampa',
+    image: '/media-assets/images/client-results.png',
+    metric: 'Full platform in 3 weeks',
+    description: '$4,500 build. Complete e-commerce platform with barcode scanning, automated inventory, and integrated payment processing.',
+    href: '/case-studies/secured-tampa',
+  },
+  {
+    name: 'Horizon Asphalt',
+    image: '/media-assets/images/hero-bg.jpg',
+    metric: 'Lead gen + Google Workspace',
+    description: 'Commercial property focus. Professional lead generation site with integrated Google Workspace for team communication.',
+    href: '#',
   },
 ];
 
 function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.05 });
-  const isEven = index % 2 === 0;
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.1, ease }}
-      className={`group relative flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'}
-        rounded-3xl overflow-hidden border transition-all duration-300`}
+      transition={{ duration: 0.6, delay: index * 0.12, ease }}
+      className="group flex-shrink-0 w-[85vw] sm:w-[380px] lg:w-auto lg:flex-1 rounded-3xl overflow-hidden border transition-all duration-300 md:hover:-translate-y-2"
       style={{
         backgroundColor: colors.bg,
-        borderColor: 'transparent',
+        borderColor: colors.border,
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLElement).style.borderColor = `${colors.bronze}30`;
+        (e.currentTarget as HTMLElement).style.boxShadow = `0 16px 48px ${colors.bronze}10`;
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
+        (e.currentTarget as HTMLElement).style.borderColor = colors.border;
+        (e.currentTarget as HTMLElement).style.boxShadow = 'none';
       }}
     >
-      {/* Bronze accent */}
-      <div
-        className={`absolute top-0 ${isEven ? 'left-0' : 'right-0'} w-1 h-0 group-hover:h-full transition-all duration-500 rounded-full hidden lg:block`}
-        style={{ backgroundColor: colors.bronze }}
-      />
-
       {/* Image */}
-      <div className="relative w-full lg:w-2/5 h-64 lg:h-auto min-h-[300px] overflow-hidden">
+      <div className="relative h-56 sm:h-64 overflow-hidden">
         <Image
           src={study.image}
           alt={study.name}
           fill
-          className="object-cover md:group-hover:scale-105 transition-transform duration-700"
+          className="object-cover group-hover:scale-105 transition-transform duration-700"
           loading="lazy"
-          sizes="(max-width: 1024px) 100vw, 40vw"
+          sizes="(max-width: 768px) 85vw, (max-width: 1024px) 380px, 33vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent" />
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(to top, ${colors.bg}, transparent 60%)` }}
+        />
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
+      <div className="p-7 sm:p-8 -mt-8 relative z-10">
         <h3
-          className="text-2xl md:text-3xl font-bold mb-8"
+          className="text-xl sm:text-2xl font-bold mb-2"
           style={{ fontFamily: fonts.display, color: colors.text }}
         >
           {study.name}
         </h3>
-
-        <div className="space-y-5 mb-8">
-          <div>
-            <span
-              className="text-[11px] uppercase tracking-[0.2em] font-semibold"
-              style={{ fontFamily: fonts.body, color: colors.bronze }}
-            >
-              Challenge
-            </span>
-            <p className="mt-2 leading-relaxed" style={{ fontFamily: fonts.body, color: colors.textSecondary }}>
-              {study.challenge}
-            </p>
-          </div>
-          <div>
-            <span
-              className="text-[11px] uppercase tracking-[0.2em] font-semibold"
-              style={{ fontFamily: fonts.body, color: colors.bronze }}
-            >
-              Solution
-            </span>
-            <p className="mt-2 leading-relaxed" style={{ fontFamily: fonts.body, color: colors.textSecondary }}>
-              {study.solution}
-            </p>
-          </div>
+        <div
+          className="inline-block text-sm font-semibold px-4 py-1.5 rounded-full mb-4"
+          style={{
+            fontFamily: fonts.body,
+            color: colors.bronze,
+            backgroundColor: `${colors.bronze}10`,
+            border: `1px solid ${colors.bronze}20`,
+          }}
+        >
+          {study.metric}
         </div>
-
-        <div className="flex flex-wrap gap-3">
-          {study.results.map((result, i) => (
-            <span
-              key={i}
-              className="text-sm font-medium px-4 py-2.5 rounded-full"
-              style={{
-                fontFamily: fonts.body,
-                color: colors.bronze,
-                backgroundColor: `${colors.bronze}10`,
-                border: `1px solid ${colors.bronze}20`,
-              }}
-            >
-              {result}
-            </span>
-          ))}
-        </div>
+        <p
+          className="text-sm leading-relaxed mb-6"
+          style={{ fontFamily: fonts.body, color: colors.textSecondary }}
+        >
+          {study.description}
+        </p>
+        <Link
+          href={study.href}
+          className="text-sm font-semibold transition-colors duration-200 group/link flex items-center gap-1"
+          style={{ fontFamily: fonts.body, color: colors.bronze }}
+        >
+          View Case Study
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="group-hover/link:translate-x-1 transition-transform duration-200">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </Link>
       </div>
     </motion.div>
   );
@@ -168,7 +133,10 @@ export default function CaseStudySection() {
         >
           <div className="flex items-center justify-center gap-3 mb-5">
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
-            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
+            <span
+              className="text-[11px] font-semibold tracking-[0.25em] uppercase"
+              style={{ fontFamily: fonts.body, color: colors.bronze }}
+            >
               Case Studies
             </span>
             <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
@@ -191,12 +159,18 @@ export default function CaseStudySection() {
           See how we&apos;ve transformed operations for businesses like yours.
         </motion.p>
 
-        <div className="space-y-6">
+        {/* Mobile: horizontal scroll, Desktop: grid */}
+        <div className="flex lg:grid lg:grid-cols-3 gap-6 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 scrollbar-hide -mx-6 px-6 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
           {caseStudies.map((study, i) => (
             <CaseStudyCard key={i} study={study} index={i} />
           ))}
         </div>
       </div>
+
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </section>
   );
 }

@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, CheckCircle2 } from 'lucide-react';
+import Image from 'next/image';
 import { colors, fonts, animations } from '@/lib/design-tokens';
 
 const ease = animations.easing as unknown as [number, number, number, number];
@@ -80,8 +81,19 @@ export default function BookingSection() {
   const step = submitted ? 3 : selectedTime ? 2 : selectedDate ? 1 : 0;
 
   return (
-    <section id="booking" className="py-28 lg:py-36" style={{ backgroundColor: colors.bg }}>
-      <div className="max-w-4xl mx-auto px-6" ref={ref}>
+    <section id="booking" className="relative py-28 lg:py-36 overflow-hidden" style={{ backgroundColor: colors.bg }}>
+      {/* Background accent image */}
+      <div className="absolute inset-0 z-0 opacity-5">
+        <Image
+          src="/media-assets/images/product-8.png"
+          alt=""
+          fill
+          className="object-cover"
+          loading="lazy"
+        />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto px-6" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -100,7 +112,7 @@ export default function BookingSection() {
             className="text-3xl sm:text-4xl lg:text-[3.25rem] font-bold mb-5 tracking-tight"
             style={{ fontFamily: fonts.display, color: colors.text }}
           >
-            Let&apos;s Talk
+            Ready to see what&apos;s possible?
           </h2>
           <p
             className="text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto"
@@ -175,7 +187,7 @@ export default function BookingSection() {
                             backgroundColor: active ? colors.bronze : undefined,
                             boxShadow: active ? `0 8px 24px ${colors.bronze}30` : undefined,
                             color: active ? '#fff' : disabled ? colors.border : isToday ? colors.bronze : colors.textSecondary,
-                            ...(isToday && !active ? { ringColor: `${colors.bronze}30`, backgroundColor: `${colors.bronze}10` } : {}),
+                            ...(isToday && !active ? { backgroundColor: `${colors.bronze}10` } : {}),
                           }}
                         >
                           {d.getDate()}
@@ -217,9 +229,9 @@ export default function BookingSection() {
                       <p className="text-sm font-semibold mb-4" style={{ fontFamily: fonts.display, color: colors.text }}>Your details</p>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
                         {[
-                          { type: 'text', required: true, placeholder: 'Name *', value: form.name, key: 'name' as const },
-                          { type: 'email', required: true, placeholder: 'Email *', value: form.email, key: 'email' as const },
-                          { type: 'tel', required: false, placeholder: 'Phone', value: form.phone, key: 'phone' as const },
+                          { type: 'text' as const, required: true, placeholder: 'Name *', value: form.name, key: 'name' as const },
+                          { type: 'email' as const, required: true, placeholder: 'Email *', value: form.email, key: 'email' as const },
+                          { type: 'tel' as const, required: false, placeholder: 'Phone', value: form.phone, key: 'phone' as const },
                         ].map((field) => (
                           <input
                             key={field.key}

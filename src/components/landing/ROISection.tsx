@@ -8,48 +8,44 @@ const ease = animations.easing as unknown as [number, number, number, number];
 
 interface Stat {
   display: string;
-  numericPart: number | null;
+  numericPart: number;
   prefix: string;
   suffix: string;
   label: string;
+  isDivisor10?: boolean;
 }
 
 const stats: Stat[] = [
-  { display: '37%', numericPart: 37, prefix: '', suffix: '%', label: 'Average reduction in manual operating hours' },
-  { display: '2.4x', numericPart: 24, prefix: '', suffix: 'x', label: 'Faster order processing for e-commerce clients' },
-  { display: '$180K+', numericPart: 180, prefix: '$', suffix: 'K+', label: 'Annual savings identified across engagements' },
-  { display: '28 days', numericPart: 28, prefix: '', suffix: ' days', label: 'Average time from audit to first deployment' },
+  { display: '3+', numericPart: 3, prefix: '', suffix: '+', label: 'Active clients served' },
+  { display: '$5.8M+', numericPart: 58, prefix: '$', suffix: 'M+', label: 'Revenue managed across platforms', isDivisor10: true },
+  { display: '80+', numericPart: 80, prefix: '', suffix: '+', label: 'Features built and deployed' },
+  { display: '3 weeks', numericPart: 3, prefix: '', suffix: ' weeks', label: 'Average time to full deployment' },
 ];
 
 function AnimatedNumber({ stat, index }: { stat: Stat; index: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-  const [displayed, setDisplayed] = useState(stat.numericPart !== null ? `${stat.prefix}0${stat.suffix}` : stat.display);
+  const [displayed, setDisplayed] = useState(`${stat.prefix}0${stat.suffix}`);
 
   const motionVal = useMotionValue(0);
   const spring = useSpring(motionVal, { stiffness: 40, damping: 20 });
 
   useEffect(() => {
-    if (isInView && stat.numericPart !== null) {
+    if (isInView) {
       motionVal.set(stat.numericPart);
     }
   }, [isInView, stat.numericPart, motionVal]);
 
   useEffect(() => {
-    if (stat.numericPart === null) {
-      if (isInView) setDisplayed(stat.display);
-      return;
-    }
-    const isDivisor10 = stat.display.includes('2.4');
     const unsub = spring.on('change', (v: number) => {
-      if (isDivisor10) {
+      if (stat.isDivisor10) {
         setDisplayed(`${stat.prefix}${(v / 10).toFixed(1)}${stat.suffix}`);
       } else {
         setDisplayed(`${stat.prefix}${Math.round(v)}${stat.suffix}`);
       }
     });
     return unsub;
-  }, [spring, stat, isInView]);
+  }, [spring, stat]);
 
   return (
     <motion.div
@@ -60,13 +56,13 @@ function AnimatedNumber({ stat, index }: { stat: Stat; index: number }) {
       className="text-center"
     >
       <span
-        className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold block leading-none"
+        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold block leading-none"
         style={{ fontFamily: fonts.display, color: colors.bronze }}
       >
         {displayed}
       </span>
       <motion.div
-        className="mx-auto mt-5 mb-4"
+        className="mx-auto mt-4 mb-3"
         style={{ height: 2, backgroundColor: `${colors.bronze}40` }}
         initial={{ width: 0 }}
         animate={isInView ? { width: '3rem' } : {}}
@@ -107,6 +103,7 @@ export default function ROISection() {
             Measurable Impact
           </h2>
         </motion.div>
+        {/* 2-col on mobile, 4-col on desktop — visible on ALL screens */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-8">
           {stats.map((stat, i) => (
             <AnimatedNumber key={i} stat={stat} index={i} />

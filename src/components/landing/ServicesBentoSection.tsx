@@ -2,60 +2,53 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Cpu, Globe, MessageSquare, BarChart3, Target, Plug } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import Image from 'next/image';
 import { colors, fonts, animations } from '@/lib/design-tokens';
 
 const ease = animations.easing as unknown as [number, number, number, number];
 
 interface Service {
-  icon: LucideIcon;
   title: string;
   description: string;
+  image: string;
   gridClass: string;
 }
 
 const services: Service[] = [
   {
-    icon: Cpu,
-    title: 'AI Infrastructure & Automation',
-    description:
-      'We design and deploy AI-powered workflows that replace repetitive tasks, route decisions intelligently, and keep your operations running without constant oversight.',
+    title: 'AI Dashboards',
+    description: 'Real-time analytics dashboards that surface the metrics you need — not 47 charts nobody reads.',
+    image: '/media-assets/images/product-2.png',
+    gridClass: 'md:col-span-2 md:row-span-2',
+  },
+  {
+    title: 'Custom Websites',
+    description: 'High-performance sites engineered for conversion and speed — not templates with your logo.',
+    image: '/media-assets/images/product-4.png',
+    gridClass: '',
+  },
+  {
+    title: 'AI Chatbots',
+    description: 'Custom assistants trained on your data, handling questions, qualifying leads 24/7.',
+    image: '/media-assets/images/product-1.png',
+    gridClass: '',
+  },
+  {
+    title: 'Automation',
+    description: 'AI-powered workflows that replace repetitive tasks and keep operations running autonomously.',
+    image: '/media-assets/images/product-6.png',
     gridClass: 'md:col-span-2',
   },
   {
-    icon: Globe,
-    title: 'Custom Websites & Apps',
-    description:
-      'High-performance websites and applications engineered for conversion, speed, and the way your customers actually behave — not a template with your logo on it.',
-    gridClass: 'md:row-span-2',
-  },
-  {
-    icon: MessageSquare,
-    title: 'AI Chatbots & Assistants',
-    description:
-      'Custom AI assistants trained on your data, your tone, and your workflows — handling questions, qualifying leads, and escalating only when it matters.',
+    title: 'Analytics',
+    description: 'Clean data, clear decisions. Real-time intelligence for real-time business.',
+    image: '/media-assets/images/workspace.png',
     gridClass: '',
   },
   {
-    icon: BarChart3,
-    title: 'Dashboards & Analytics',
-    description:
-      'Real-time dashboards that surface the metrics you actually need — not 47 charts nobody reads. Clean data, clear decisions.',
-    gridClass: '',
-  },
-  {
-    icon: Target,
-    title: 'Lead Generation Engines',
-    description:
-      'AI-driven systems that identify, qualify, and nurture leads — so your sales team spends time closing, not chasing.',
-    gridClass: '',
-  },
-  {
-    icon: Plug,
-    title: 'API Integration & Data Pipelines',
-    description:
-      'We connect the systems you already use into a unified data layer — eliminating manual transfers, sync errors, and duct-taped spreadsheets.',
+    title: 'Lead Generation',
+    description: 'AI-driven systems that identify, qualify, and nurture leads so you spend time closing, not chasing.',
+    image: '/media-assets/images/product-5.png',
     gridClass: '',
   },
 ];
@@ -63,8 +56,7 @@ const services: Service[] = [
 function ServiceCard({ service, index }: { service: Service; index: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.05 });
-  const Icon = service.icon;
-  const isLarge = service.gridClass.includes('col-span') || service.gridClass.includes('row-span');
+  const isLarge = service.gridClass.includes('col-span-2') && service.gridClass.includes('row-span-2');
 
   return (
     <motion.div
@@ -72,31 +64,40 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.08, ease }}
-      className={`group relative rounded-2xl p-7 md:p-9 border
-        md:hover:-translate-y-1 transition-all duration-300 overflow-hidden ${service.gridClass}`}
+      className={`group relative rounded-3xl overflow-hidden border cursor-default
+        md:hover:-translate-y-1 transition-all duration-300 ${service.gridClass}`}
       style={{
         backgroundColor: colors.bg,
-        borderColor: 'transparent',
+        borderColor: colors.border,
+        minHeight: isLarge ? '420px' : '260px',
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLElement).style.borderColor = `${colors.bronze}40`;
+        (e.currentTarget as HTMLElement).style.boxShadow = `0 16px 48px ${colors.bronze}12`;
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
+        (e.currentTarget as HTMLElement).style.borderColor = colors.border;
+        (e.currentTarget as HTMLElement).style.boxShadow = 'none';
       }}
     >
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
-        style={{ background: `linear-gradient(135deg, ${colors.bronze}05, transparent 60%)` }}
-      />
-
-      <div className="relative z-10 h-full flex flex-col">
+      {/* Image background with overlay */}
+      <div className="absolute inset-0 overflow-hidden">
+        <Image
+          src={service.image}
+          alt={service.title}
+          fill
+          className="object-cover opacity-15 group-hover:opacity-25 group-hover:scale-105 transition-all duration-700"
+          loading="lazy"
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
         <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-300"
-          style={{ backgroundColor: `${colors.bronze}10` }}
-        >
-          <Icon className="w-6 h-6 md:group-hover:scale-110 transition-transform duration-300" style={{ color: colors.bronze }} />
-        </div>
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(to top, ${colors.bg} 30%, ${colors.bg}80 60%, transparent)` }}
+        />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 h-full flex flex-col justify-end p-7 md:p-9">
         <h3
           className={`font-semibold mb-3 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl'}`}
           style={{ fontFamily: fonts.display, color: colors.text }}
@@ -104,7 +105,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
           {service.title}
         </h3>
         <p
-          className={`leading-relaxed ${isLarge ? 'text-lg max-w-lg' : 'line-clamp-3'}`}
+          className={`leading-relaxed ${isLarge ? 'text-lg max-w-lg' : 'text-sm'}`}
           style={{ fontFamily: fonts.body, color: colors.textSecondary }}
         >
           {service.description}
