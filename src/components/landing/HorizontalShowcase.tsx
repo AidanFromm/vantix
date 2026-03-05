@@ -75,7 +75,7 @@ export default function HorizontalShowcase() {
         {/* Horizontal scroll track */}
         <motion.div
           style={{ x }}
-          className="flex gap-6 sm:gap-8 pl-6 sm:pl-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))]"
+          className="flex gap-6 sm:gap-8 px-6 sm:px-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))]"
         >
           {showcaseItems.map((item, i) => (
             <motion.div
