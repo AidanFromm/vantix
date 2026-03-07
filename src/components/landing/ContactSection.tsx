@@ -1,123 +1,78 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Envelope, Phone } from '@phosphor-icons/react';
-import { colors, fonts } from '@/lib/design-tokens';
+import { Phone, EnvelopeSimple } from '@phosphor-icons/react';
 
 export default function ContactSection() {
-  const [submitted, setSubmitted] = useState(false);
-
   return (
-    <section id="contact" className="px-6 py-28 md:py-40" style={{ backgroundColor: colors.bg }}>
-      <div className="max-w-3xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl md:text-5xl font-bold mb-4 text-center"
-          style={{ fontFamily: fonts.display, color: colors.text }}
-        >
-          Let&apos;s talk about what you&apos;re building next.
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-base md:text-lg mb-12 text-center"
-          style={{ color: colors.textSecondary, fontFamily: fonts.body }}
-        >
-          Every great project starts with a conversation.
-        </motion.p>
+    <section id="contact" className="py-24 md:py-32" style={{ backgroundColor: '#F3F0EB' }}>
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid md:grid-cols-2 gap-16">
+          {/* Left */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+              Let&apos;s Build Something Great
+            </h2>
+            <p className="text-lg text-[#6B6B6B] mb-10 max-w-md">
+              Ready to elevate your brand? Tell us about your project and we&apos;ll get back to you within 24 hours.
+            </p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-[#6B6B6B]">
+                <Phone size={20} weight="light" className="text-[#B8935A]" />
+                <span>(813) 555-0142</span>
+              </div>
+              <div className="flex items-center gap-3 text-[#6B6B6B]">
+                <EnvelopeSimple size={20} weight="light" className="text-[#B8935A]" />
+                <span>hello@usevantix.com</span>
+              </div>
+            </div>
+          </motion.div>
 
-        <motion.form
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSubmitted(true);
-          }}
-          className="space-y-5"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Right - Form */}
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="space-y-5"
+            onSubmit={(e) => e.preventDefault()}
+          >
             <input
               type="text"
-              placeholder="Name"
-              required
-              className="w-full px-5 py-4 rounded-xl text-sm outline-none transition-colors duration-200 focus:border-[#B8935A50]"
-              style={{
-                backgroundColor: colors.bgCard,
-                color: colors.text,
-                border: `1px solid ${colors.border}`,
-                fontFamily: fonts.body,
-              }}
+              placeholder="Your Name"
+              className="w-full px-5 py-3.5 rounded-xl bg-white border border-black/[0.06] text-[#1A1A1A] placeholder:text-[#999] focus:outline-none focus:border-[#B8935A] transition-colors"
             />
             <input
               type="email"
-              placeholder="Email"
-              required
-              className="w-full px-5 py-4 rounded-xl text-sm outline-none transition-colors duration-200 focus:border-[#B8935A50]"
-              style={{
-                backgroundColor: colors.bgCard,
-                color: colors.text,
-                border: `1px solid ${colors.border}`,
-                fontFamily: fonts.body,
-              }}
+              placeholder="Your Email"
+              className="w-full px-5 py-3.5 rounded-xl bg-white border border-black/[0.06] text-[#1A1A1A] placeholder:text-[#999] focus:outline-none focus:border-[#B8935A] transition-colors"
             />
-          </div>
-          <select
-            className="w-full px-5 py-4 rounded-xl text-sm outline-none transition-colors duration-200"
-            style={{
-              backgroundColor: colors.bgCard,
-              color: colors.textSecondary,
-              border: `1px solid ${colors.border}`,
-              fontFamily: fonts.body,
-            }}
-          >
-            <option value="">Where do you want to start?</option>
-            <option value="web">Web Design & Development</option>
-            <option value="ai">AI Automation</option>
-            <option value="brand">Brand Identity</option>
-            <option value="growth">Growth & SEO</option>
-            <option value="full">Full Package</option>
-          </select>
-          <textarea
-            placeholder="Tell us about your project..."
-            rows={5}
-            className="w-full px-5 py-4 rounded-xl text-sm outline-none resize-none transition-colors duration-200 focus:border-[#B8935A50]"
-            style={{
-              backgroundColor: colors.bgCard,
-              color: colors.text,
-              border: `1px solid ${colors.border}`,
-              fontFamily: fonts.body,
-            }}
-          />
-          <button
-            type="submit"
-            className="w-full py-4 rounded-full text-sm font-semibold tracking-wide transition-all duration-300 hover:brightness-110"
-            style={{
-              backgroundColor: colors.bronze,
-              color: colors.bg,
-              fontFamily: fonts.body,
-            }}
-          >
-            {submitted ? 'Message Sent!' : 'Send Message'}
-          </button>
-        </motion.form>
-
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm" style={{ color: colors.textSecondary, fontFamily: fonts.body }}>
-          <a href="tel:+19084987753" className="flex items-center gap-2 hover:text-[#B8935A] transition-colors">
-            <Phone size={18} weight="light" color={colors.bronze} />
-            (908) 498-7753
-          </a>
-          <a href="mailto:usevantix@gmail.com" className="flex items-center gap-2 hover:text-[#B8935A] transition-colors">
-            <Envelope size={18} weight="light" color={colors.bronze} />
-            usevantix@gmail.com
-          </a>
+            <select
+              className="w-full px-5 py-3.5 rounded-xl bg-white border border-black/[0.06] text-[#6B6B6B] focus:outline-none focus:border-[#B8935A] transition-colors"
+              defaultValue=""
+            >
+              <option value="" disabled>Select a Service</option>
+              <option>Web Design & Development</option>
+              <option>AI Automation</option>
+              <option>Brand Identity</option>
+              <option>Growth & SEO</option>
+            </select>
+            <textarea
+              placeholder="Tell us about your project..."
+              rows={4}
+              className="w-full px-5 py-3.5 rounded-xl bg-white border border-black/[0.06] text-[#1A1A1A] placeholder:text-[#999] focus:outline-none focus:border-[#B8935A] transition-colors resize-none"
+            />
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-[#B8935A] hover:bg-[#A07D4A] text-white font-semibold rounded-xl transition-colors"
+            >
+              Send Message
+            </button>
+          </motion.form>
         </div>
       </div>
     </section>

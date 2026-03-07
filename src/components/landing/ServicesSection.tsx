@@ -1,108 +1,65 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Globe, Robot, Palette, ChartLineUp } from '@phosphor-icons/react';
-import { colors, fonts } from '@/lib/design-tokens';
+import { Globe, Robot, Palette, TrendUp } from '@phosphor-icons/react';
 
 const services = [
   {
     icon: Globe,
     title: 'Web Design & Development',
-    desc: 'High-performance websites built for conversion and scale.',
-    tags: ['Web', 'React', 'Next.js', 'UI Components'],
+    description: 'Custom websites built for speed, conversion, and brand consistency. No templates.',
+    tags: ['Next.js', 'React', 'E-Commerce', 'CMS'],
   },
   {
     icon: Robot,
     title: 'AI Automation',
-    desc: 'Custom AI agents and workflows that eliminate repetitive tasks.',
-    tags: ['Agents', 'Workflows', 'Chatbots', 'Integration'],
+    description: 'Intelligent workflows that save your team hours every week. From chatbots to data pipelines.',
+    tags: ['Chatbots', 'Workflows', 'Integrations', 'AI'],
   },
   {
     icon: Palette,
     title: 'Brand Identity',
-    desc: 'Your visual foundation built to last.',
-    tags: ['Logo System', 'Typography', 'Color', 'Guidelines'],
+    description: 'Logos, color systems, and brand guidelines that make your company instantly recognizable.',
+    tags: ['Logo Design', 'Brand Guide', 'Typography', 'Color'],
   },
   {
-    icon: ChartLineUp,
+    icon: TrendUp,
     title: 'Growth & SEO',
-    desc: 'Data-driven strategies that deliver measurable results.',
-    tags: ['SEO', 'Analytics', 'Paid Ads', 'Content'],
+    description: 'Data-driven strategies to increase your organic traffic and convert more visitors.',
+    tags: ['SEO', 'Analytics', 'Content', 'Strategy'],
   },
 ];
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="px-6 py-28 md:py-40" style={{ backgroundColor: colors.bg }}>
-      <div className="max-w-6xl mx-auto">
-        <motion.h2
+    <section id="services" className="py-24 md:py-32" style={{ backgroundColor: '#F3F0EB' }}>
+      <div className="max-w-7xl mx-auto px-6">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl md:text-5xl font-bold mb-4"
-          style={{ fontFamily: fonts.display, color: colors.text }}
+          className="mb-16"
         >
-          Everything connects by design.
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-base md:text-lg mb-16 max-w-xl"
-          style={{ color: colors.textSecondary, fontFamily: fonts.body }}
-        >
-          Brand identity, web, and AI — built from the same foundation.
-        </motion.p>
+          <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">What We Do</h2>
+          <p className="text-lg text-[#6B6B6B]">Four disciplines. One unified approach.</p>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {services.map((s, i) => (
+        <div className="grid sm:grid-cols-2 gap-6">
+          {services.map((service, i) => (
             <motion.div
-              key={s.title}
-              initial={{ opacity: 0, y: 25 }}
+              key={service.title}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="group rounded-2xl p-8 transition-all duration-300"
-              style={{
-                backgroundColor: colors.bgCard,
-                border: `1px solid ${colors.border}`,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = `${colors.bronze}40`;
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = colors.border;
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-white rounded-2xl p-8 border border-black/[0.06] shadow-sm"
             >
-              <s.icon size={32} weight="light" color={colors.bronze} className="mb-5" />
-              <h3
-                className="text-xl font-semibold mb-2"
-                style={{ fontFamily: fonts.display, color: colors.text }}
-              >
-                {s.title}
-              </h3>
-              <p
-                className="text-sm leading-relaxed mb-5"
-                style={{ color: colors.textSecondary, fontFamily: fonts.body }}
-              >
-                {s.desc}
-              </p>
+              <service.icon size={36} weight="light" className="text-[#B8935A] mb-5" />
+              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">{service.title}</h3>
+              <p className="text-[#6B6B6B] text-base mb-5 leading-relaxed">{service.description}</p>
               <div className="flex flex-wrap gap-2">
-                {s.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs px-3 py-1 rounded-full"
-                    style={{
-                      backgroundColor: colors.bgElevated,
-                      color: colors.textSecondary,
-                      border: `1px solid ${colors.border}`,
-                      fontFamily: fonts.body,
-                    }}
-                  >
+                {service.tags.map((tag) => (
+                  <span key={tag} className="text-xs font-medium px-3 py-1 rounded-full bg-[#F3F0EB] text-[#6B6B6B]">
                     {tag}
                   </span>
                 ))}
