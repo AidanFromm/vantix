@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import Image from 'next/image';
 import { colors, fonts, animations } from '@/lib/design-tokens';
 
 const ease = animations.easing as unknown as [number, number, number, number];
@@ -19,53 +18,114 @@ export default function VideoHero() {
     target: sectionRef,
     offset: ['start start', 'end start'],
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const meshY = useTransform(scrollYProgress, [0, 1], [0, 60]);
 
   return (
     <section
       ref={sectionRef}
       className="relative min-h-screen flex flex-col justify-center overflow-hidden"
+      style={{ background: colors.bg }}
     >
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0">
-        <motion.div style={{ scale: videoScale }} className="w-full h-full">
-          <video
-            autoPlay
-            muted
-            playsInline
-            loop
-            className="w-full h-full object-cover"
-            poster="/media-assets/images/hero-bg.jpg"
-          >
-            <source src="/media-assets/videos/hero-final.mp4" type="video/mp4" />
-          </video>
+      {/* ── Animated gradient mesh background ── */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Base dark */}
+        <div className="absolute inset-0" style={{ background: colors.bg }} />
+
+        {/* Animated mesh orbs */}
+        <motion.div className="absolute inset-0" style={{ y: meshY }}>
+          {/* Top-right bronze glow */}
+          <motion.div
+            className="absolute -top-[20%] -right-[10%] w-[70vw] h-[70vw] rounded-full opacity-[0.07]"
+            style={{
+              background: `radial-gradient(circle, ${colors.bronze} 0%, transparent 70%)`,
+              filter: 'blur(80px)',
+            }}
+            animate={{
+              x: [0, 30, -20, 0],
+              y: [0, -25, 15, 0],
+              scale: [1, 1.08, 0.95, 1],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+
+          {/* Center-left copper glow */}
+          <motion.div
+            className="absolute top-[30%] -left-[15%] w-[60vw] h-[60vw] rounded-full opacity-[0.05]"
+            style={{
+              background: `radial-gradient(circle, ${colors.copper} 0%, transparent 70%)`,
+              filter: 'blur(100px)',
+            }}
+            animate={{
+              x: [0, -20, 30, 0],
+              y: [0, 20, -15, 0],
+              scale: [1, 0.92, 1.06, 1],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+
+          {/* Bottom-center peach glow */}
+          <motion.div
+            className="absolute -bottom-[10%] left-[20%] w-[50vw] h-[50vw] rounded-full opacity-[0.04]"
+            style={{
+              background: `radial-gradient(circle, ${colors.peach} 0%, transparent 70%)`,
+              filter: 'blur(90px)',
+            }}
+            animate={{
+              x: [0, 25, -15, 0],
+              y: [0, -20, 10, 0],
+              scale: [1, 1.05, 0.93, 1],
+            }}
+            transition={{
+              duration: 22,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
         </motion.div>
-        {/* Dark overlay */}
+
+        {/* Subtle noise/grain overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+            backgroundSize: '128px 128px',
+          }}
+        />
+
+        {/* Top vignette */}
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.7) 50%, rgba(10,10,10,0.85) 100%)`,
+            background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(184,147,90,0.04) 0%, transparent 60%)`,
           }}
         />
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-8 pt-28 pb-16 flex flex-col lg:flex-row items-center gap-12 lg:gap-0">
-        {/* LEFT: Headlines */}
+      {/* ── Content ── */}
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-8 pt-40 sm:pt-48 lg:pt-52 pb-24 lg:pb-32">
         <motion.div
-          className="w-full lg:w-[55%] lg:pr-16"
+          className="max-w-4xl"
           initial="hidden"
           animate="show"
           variants={{
             hidden: {},
-            show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+            show: { transition: { staggerChildren: 0.14, delayChildren: 0.1 } },
           }}
         >
+          {/* Overline */}
           <motion.div
-            variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } } }}
-            className="flex items-center gap-3 mb-8"
+            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } } }}
+            className="flex items-center gap-3 mb-10"
           >
-            <span className="h-px w-10" style={{ backgroundColor: colors.bronze }} />
+            <span className="h-px w-12" style={{ backgroundColor: colors.bronze }} />
             <span
               className="text-xs font-semibold tracking-[0.25em] uppercase"
               style={{ fontFamily: fonts.body, color: colors.bronze }}
@@ -74,51 +134,77 @@ export default function VideoHero() {
             </span>
           </motion.div>
 
+          {/* Massive headline — 80px on desktop */}
           <motion.h1
-            variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease } } }}
-            className="text-[2.5rem] sm:text-5xl lg:text-[3.75rem] font-bold tracking-[-0.035em] leading-[1.06] mb-7"
+            variants={{ hidden: { opacity: 0, y: 32 }, show: { opacity: 1, y: 0, transition: { duration: 0.9, ease } } }}
+            className="text-[2.75rem] sm:text-[3.5rem] md:text-[4.5rem] lg:text-[5rem] font-extrabold tracking-[-0.04em] leading-[1.04] mb-10"
             style={{ fontFamily: fonts.display, color: '#ffffff' }}
           >
-            Your business runs on decisions.{' '}
-            <span style={{ color: colors.bronze }}>We make them faster.</span>
+            Your business runs
+            <br />
+            on decisions.{' '}
+            <span
+              style={{
+                backgroundImage: `linear-gradient(135deg, ${colors.bronzeLight}, ${colors.bronze}, ${colors.copper})`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              We make
+              <br className="hidden sm:block" />
+              them faster.
+            </span>
           </motion.h1>
 
+          {/* Subheadline */}
           <motion.p
-            variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } } }}
-            className="text-lg sm:text-xl max-w-xl leading-[1.7] mb-10"
-            style={{ fontFamily: fonts.body, color: 'rgba(255,255,255,0.7)' }}
+            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } } }}
+            className="text-lg sm:text-xl lg:text-[1.375rem] max-w-2xl leading-[1.7] mb-14"
+            style={{ fontFamily: fonts.body, color: 'rgba(240,235,227,0.6)' }}
           >
-            We audit your operations, find the gaps, and build AI systems that close them.
+            We audit your operations, find the gaps, and build AI systems that close them — so every decision is faster, sharper, and backed by data.
           </motion.p>
 
+          {/* CTA row */}
           <motion.div
-            variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } } }}
-            className="flex flex-col items-start gap-3 mb-12"
+            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } } }}
+            className="flex flex-wrap items-center gap-5 mb-20 lg:mb-24"
           >
+            {/* Primary CTA — bronze gradient pill */}
             <a
               href="#booking"
-              className="relative inline-flex items-center gap-2 px-10 py-4 rounded-full text-lg font-semibold text-white overflow-hidden group"
+              className="relative inline-flex items-center gap-2.5 px-10 py-4.5 rounded-full text-lg font-semibold text-white overflow-hidden group transition-all duration-300 hover:scale-[1.03]"
               style={{
                 fontFamily: fonts.body,
-                background: `linear-gradient(135deg, ${colors.bronze}, ${colors.bronzeDark})`,
-                boxShadow: `0 8px 32px ${colors.bronze}40`,
+                background: `linear-gradient(135deg, ${colors.copper}, ${colors.bronze}, ${colors.bronzeDark})`,
+                boxShadow: `0 8px 40px rgba(200,127,78,0.35), 0 2px 12px rgba(184,147,90,0.2)`,
               }}
             >
               <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
               <span className="relative z-10">Book Your Free Audit</span>
+              <svg className="relative z-10 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
             </a>
-            <p className="text-sm" style={{ fontFamily: fonts.body, color: 'rgba(255,255,255,0.5)' }}>
-              No commitment. 30-minute strategy call.
-            </p>
+
+            {/* Secondary text */}
+            <span
+              className="text-sm"
+              style={{ fontFamily: fonts.body, color: 'rgba(255,255,255,0.4)' }}
+            >
+              No commitment &middot; 30-minute strategy call
+            </span>
           </motion.div>
 
+          {/* Trusted by */}
           <motion.div
             variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } } }}
             className="flex flex-col gap-4"
           >
             <span
               className="text-[11px] tracking-[0.2em] uppercase font-medium"
-              style={{ fontFamily: fonts.body, color: 'rgba(255,255,255,0.4)' }}
+              style={{ fontFamily: fonts.body, color: 'rgba(255,255,255,0.35)' }}
             >
               Trusted by
             </span>
@@ -126,8 +212,8 @@ export default function VideoHero() {
               {trustedLogos.map((logo) => (
                 <div
                   key={logo.name}
-                  className="flex items-center justify-center w-12 h-12 rounded-full overflow-hidden transition-all duration-300"
-                  style={{ border: '1px solid rgba(255,255,255,0.15)' }}
+                  className="flex items-center justify-center w-12 h-12 rounded-full overflow-hidden transition-all duration-300 hover:border-white/25"
+                  style={{ border: '1px solid rgba(255,255,255,0.12)' }}
                   title={logo.name}
                 >
                   <img
@@ -139,80 +225,33 @@ export default function VideoHero() {
               ))}
               <span
                 className="text-xs ml-1"
-                style={{ color: 'rgba(255,255,255,0.4)', fontFamily: fonts.body }}
+                style={{ color: 'rgba(255,255,255,0.35)', fontFamily: fonts.body }}
               >
                 + more
               </span>
             </div>
           </motion.div>
         </motion.div>
-
-        {/* RIGHT: Product image on desktop with parallax */}
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3, duration: 0.9, ease }}
-          className="hidden lg:flex w-[45%] justify-center"
-          style={{ y: imageY }}
-        >
-          <div
-            className="relative rounded-3xl overflow-hidden"
-            style={{
-              boxShadow: `0 32px 80px rgba(0,0,0,0.4)`,
-              border: '1px solid rgba(255,255,255,0.1)',
-            }}
-          >
-            <Image
-              src="/media-assets/images/product-10.png"
-              alt="Vantix multi-device ecosystem"
-              width={600}
-              height={450}
-              className="w-full h-auto"
-              priority
-              sizes="(max-width: 1024px) 100vw, 600px"
-            />
-          </div>
-        </motion.div>
       </div>
 
-      {/* Mobile product image */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.7, ease }}
-        className="relative z-10 lg:hidden px-5 pb-12"
-      >
-        <div
-          className="rounded-2xl overflow-hidden"
-          style={{ border: '1px solid rgba(255,255,255,0.1)' }}
-        >
-          <Image
-            src="/media-assets/images/product-10.png"
-            alt="Vantix multi-device ecosystem"
-            width={600}
-            height={450}
-            className="w-full h-auto"
-            priority
-            sizes="100vw"
-          />
-        </div>
-      </motion.div>
-
-      {/* Scroll indicator */}
+      {/* ── Scroll indicator ── */}
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
+        transition={{ delay: 1.4, duration: 0.6 }}
       >
-        <span className="text-[10px] tracking-[0.2em] uppercase" style={{ fontFamily: fonts.body, color: 'rgba(255,255,255,0.4)' }}>
+        <span
+          className="text-[10px] tracking-[0.2em] uppercase"
+          style={{ fontFamily: fonts.body, color: 'rgba(255,255,255,0.35)' }}
+        >
           Scroll
         </span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" strokeLinecap="round">
             <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
           </svg>
         </motion.div>
