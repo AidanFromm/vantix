@@ -260,17 +260,14 @@ COMMENT ON TABLE brain_notifications IS 'Async bot-to-bot messaging. Bots check 
 -- ============================================================
 -- 10. BRAIN REVIEWS (already exists — adding new columns only)
 -- ============================================================
+-- Existing columns: id, project_id, author_bot, reviewer_bot, commit_hash,
+--   files_changed, summary, review_status, review_notes, issues_found,
+--   quality_score, reviewed_at, created_at
 
 ALTER TABLE brain_reviews
-  ADD COLUMN IF NOT EXISTS author_bot text,
-  ADD COLUMN IF NOT EXISTS reviewer_bot text,
-  ADD COLUMN IF NOT EXISTS commit_sha text,
-  ADD COLUMN IF NOT EXISTS files_changed text[],
-  ADD COLUMN IF NOT EXISTS description text,
-  ADD COLUMN IF NOT EXISTS issues_found jsonb DEFAULT '[]',
   ADD COLUMN IF NOT EXISTS approved_at timestamptz;
 
-CREATE INDEX IF NOT EXISTS idx_reviews_status ON brain_reviews(status);
+CREATE INDEX IF NOT EXISTS idx_reviews_status ON brain_reviews(review_status);
 CREATE INDEX IF NOT EXISTS idx_reviews_project ON brain_reviews(project_id);
 
 
