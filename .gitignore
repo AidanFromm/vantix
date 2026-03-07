@@ -52,3 +52,4 @@ logos/generate_v2.py
 scripts/seed-vault.ts
 scripts/create-credentials-table.ts
 scripts/
+media-assets/
