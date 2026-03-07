@@ -1,147 +1,92 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import Image from 'next/image';
-import { colors, fonts, animations } from '@/lib/design-tokens';
 
-const ease = animations.easing as unknown as [number, number, number, number];
+const beforeItems = [
+  'Generic template website',
+  'Manual lead follow-up',
+  'Inconsistent branding',
+  'No data-driven decisions',
+];
+
+const afterItems = [
+  'Custom high-converting platform',
+  'AI-powered instant response',
+  'Premium cohesive brand identity',
+  'Real-time analytics dashboard',
+];
 
 export default function BeforeAfterSection() {
   const ref = useRef(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.2 });
-  const [sliderPos, setSliderPos] = useState(50);
-  const [dragging, setDragging] = useState(false);
-
-  const handleMove = useCallback((clientX: number) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    setSliderPos((x / rect.width) * 100);
-  }, []);
-
-  const handleMouseDown = () => setDragging(true);
-  const handleMouseUp = () => setDragging(false);
-  const handleMouseMove = (e: React.MouseEvent) => { if (dragging) handleMove(e.clientX); };
-  const handleTouchMove = (e: React.TouchEvent) => { handleMove(e.touches[0].clientX); };
+  const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section
-      ref={ref}
-      className="py-24 md:py-36 overflow-hidden"
-      style={{ backgroundColor: colors.dark }}
-    >
-      <div className="max-w-5xl mx-auto px-6">
+    <section ref={ref} className="py-20 md:py-32" style={{ background: '#0A0A0A' }}>
+      <div className="max-w-7xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease }}
-          className="text-center mb-14"
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-16"
         >
-          <div className="flex items-center justify-center gap-3 mb-5">
-            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
-            <span
-              className="text-[11px] font-semibold tracking-[0.25em] uppercase"
-              style={{ fontFamily: fonts.body, color: colors.bronze }}
-            >
-              Transformation
-            </span>
-            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
-          </div>
-          <h2
-            className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
-            style={{ fontFamily: fonts.display, color: '#ffffff' }}
-          >
-            Before Vantix. <span style={{ color: colors.bronze }}>After Vantix.</span>
-          </h2>
-          <p
-            className="text-lg max-w-xl mx-auto"
-            style={{ fontFamily: fonts.body, color: colors.muted }}
-          >
-            Drag the slider to see the difference we make.
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] mb-4" style={{ color: '#B8935A' }}>
+            The Transformation
           </p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: '#F0EBE3', letterSpacing: '-0.03em' }}>
+            Before vs. After Vantix
+          </h2>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.2, ease }}
-          ref={containerRef}
-          className="relative rounded-2xl sm:rounded-3xl overflow-hidden cursor-ew-resize select-none"
-          style={{ border: `1px solid #2a2a2a` }}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          onTouchMove={handleTouchMove}
-          onTouchStart={handleMouseDown}
-          onTouchEnd={handleMouseUp}
-        >
-          {/* Full image (After - right side) */}
-          <div className="relative aspect-[16/9]">
-            <Image
-              src="/media-assets/images/product-12.png"
-              alt="After Vantix transformation"
-              fill
-              className="object-cover"
-              loading="lazy"
-              sizes="(max-width: 1024px) 100vw, 900px"
-            />
-          </div>
-
-          {/* Before overlay (clipped to left side) */}
-          <div
-            className="absolute inset-0"
-            style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Before */}
+          <motion.div
+            initial={{ opacity: 0, x: -24 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="rounded-2xl p-8"
+            style={{ background: '#141416', border: '1px solid rgba(255,255,255,0.06)' }}
           >
-            <div className="relative w-full h-full">
-              <Image
-                src="/media-assets/images/product-12.png"
-                alt="Before Vantix"
-                fill
-                className="object-cover grayscale brightness-50"
-                loading="lazy"
-                sizes="(max-width: 1024px) 100vw, 900px"
-              />
-              {/* Before label */}
-              <div className="absolute top-4 left-4 sm:top-6 sm:left-6 px-3 py-1.5 rounded-full text-xs font-semibold"
-                style={{ backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontFamily: fonts.body }}>
-                Before
-              </div>
+            <div className="inline-block rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] mb-6"
+              style={{ background: 'rgba(207,85,85,0.15)', color: '#CF5555' }}>
+              Before
             </div>
-          </div>
+            <ul className="space-y-4">
+              {beforeItems.map((item, i) => (
+                <li key={i} className="flex items-start gap-3 text-base" style={{ color: '#9090A0' }}>
+                  <span className="mt-1 text-sm" style={{ color: '#CF5555' }}>✕</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
 
-          {/* After label */}
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 px-3 py-1.5 rounded-full text-xs font-semibold"
-            style={{ backgroundColor: `${colors.bronze}CC`, color: '#fff', fontFamily: fonts.body }}>
-            After
-          </div>
-
-          {/* Slider line */}
-          <div
-            className="absolute top-0 bottom-0 w-[3px]"
+          {/* After */}
+          <motion.div
+            initial={{ opacity: 0, x: 24 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="rounded-2xl p-8"
             style={{
-              left: `${sliderPos}%`,
-              transform: 'translateX(-50%)',
-              backgroundColor: colors.bronze,
-              boxShadow: `0 0 12px ${colors.bronze}60`,
+              background: '#1A1A1E',
+              border: '1px solid rgba(184,147,90,0.3)',
+              boxShadow: '0 0 40px rgba(184,147,90,0.08)',
             }}
           >
-            {/* Handle */}
-            <div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center"
-              style={{
-                backgroundColor: colors.bronze,
-                boxShadow: `0 4px 16px ${colors.bronze}40`,
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M8 4l-6 8 6 8M16 4l6 8-6 8" />
-              </svg>
+            <div className="inline-block rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] mb-6"
+              style={{ background: 'rgba(184,147,90,0.15)', color: '#B8935A' }}>
+              After
             </div>
-          </div>
-        </motion.div>
+            <ul className="space-y-4">
+              {afterItems.map((item, i) => (
+                <li key={i} className="flex items-start gap-3 text-base" style={{ color: '#F0EBE3' }}>
+                  <span className="mt-1 text-sm" style={{ color: '#4CAF7A' }}>✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

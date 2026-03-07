@@ -2,158 +2,76 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import Image from 'next/image';
-import { colors, fonts, animations } from '@/lib/design-tokens';
 
-const ease = animations.easing as unknown as [number, number, number, number];
-
-interface Service {
-  title: string;
-  description: string;
-  image: string;
-  gridClass: string;
-}
-
-const services: Service[] = [
+const services = [
   {
-    title: 'AI Dashboards',
-    description: 'Real-time analytics dashboards that surface the metrics you need — not 47 charts nobody reads.',
-    image: '/media-assets/images/product-2.png',
-    gridClass: 'md:col-span-2 md:row-span-2',
+    title: 'AI Automation',
+    desc: 'Custom AI agents and workflows that eliminate repetitive tasks and accelerate decision-making.',
+    icon: '⚡',
   },
   {
-    title: 'Custom Websites',
-    description: 'High-performance sites engineered for conversion and speed — not templates with your logo.',
-    image: '/media-assets/images/product-4.png',
-    gridClass: '',
+    title: 'Web & App Development',
+    desc: 'High-performance websites and applications built for conversion and scale.',
+    icon: '🖥️',
   },
   {
-    title: 'AI Chatbots',
-    description: 'Custom assistants trained on your data, handling questions, qualifying leads 24/7.',
-    image: '/media-assets/images/product-1.png',
-    gridClass: '',
+    title: 'Paid Advertising',
+    desc: 'Data-driven ad campaigns across Meta, Google, and TikTok that deliver measurable ROI.',
+    icon: '📈',
   },
   {
-    title: 'Automation',
-    description: 'AI-powered workflows that replace repetitive tasks and keep operations running autonomously.',
-    image: '/media-assets/images/product-6.png',
-    gridClass: 'md:col-span-2',
-  },
-  {
-    title: 'Analytics',
-    description: 'Clean data, clear decisions. Real-time intelligence for real-time business.',
-    image: '/media-assets/images/workspace.png',
-    gridClass: '',
-  },
-  {
-    title: 'Lead Generation',
-    description: 'AI-driven systems that identify, qualify, and nurture leads so you spend time closing, not chasing.',
-    image: '/media-assets/images/product-5.png',
-    gridClass: '',
+    title: 'Brand & Creative',
+    desc: 'Premium brand identities and creative assets that command attention and trust.',
+    icon: '✦',
   },
 ];
 
-function ServiceCard({ service, index }: { service: Service; index: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.05 });
-  const isLarge = service.gridClass.includes('col-span-2') && service.gridClass.includes('row-span-2');
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.08, ease }}
-      className={`group relative rounded-3xl overflow-hidden border cursor-default
-        transition-all duration-500 ${service.gridClass}`}
-      style={{
-        backgroundColor: colors.darkSurface,
-        borderColor: '#2a2a2a',
-        minHeight: isLarge ? '420px' : '320px',
-      }}
-
-    >
-      {/* Image / Video top portion */}
-      <div className="relative w-full overflow-hidden" style={{ height: isLarge ? '60%' : '55%' }}>
-        <Image
-          src={service.image}
-          alt={service.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700"
-          loading="lazy"
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
-        <div
-          className="absolute inset-x-0 bottom-0 h-20"
-          style={{ background: `linear-gradient(to top, ${colors.darkSurface}, transparent)` }}
-        />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col justify-end p-7 md:p-9">
-        <h3
-          className={`font-semibold mb-3 ${isLarge ? 'text-2xl md:text-3xl' : 'text-xl'}`}
-          style={{ fontFamily: fonts.display, color: '#ffffff' }}
-        >
-          {service.title}
-        </h3>
-        <p
-          className={`leading-relaxed ${isLarge ? 'text-lg max-w-lg' : 'text-sm'}`}
-          style={{ fontFamily: fonts.body, color: colors.muted }}
-        >
-          {service.description}
-        </p>
-      </div>
-
-      {/* Hover border glow */}
-      <div
-        className="absolute inset-0 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{
-          boxShadow: `inset 0 0 0 1px ${colors.bronze}40, 0 16px 48px ${colors.bronze}12`,
-        }}
-      />
-    </motion.div>
-  );
-}
-
 export default function ServicesBentoSection() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+
   return (
-    <section id="services" className="py-24 md:py-36" style={{ backgroundColor: colors.dark }}>
+    <section ref={ref} className="py-20 md:py-32" style={{ background: '#0A0A0A' }}>
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.6, ease }}
-          className="text-center mb-5"
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-16"
         >
-          <div className="flex items-center justify-center gap-3 mb-5">
-            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
-            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase" style={{ fontFamily: fonts.body, color: colors.bronze }}>
-              Our Services
-            </span>
-            <span className="h-px w-8" style={{ backgroundColor: colors.bronze }} />
-          </div>
-          <h2
-            className="text-3xl md:text-5xl font-bold mb-5 tracking-tight"
-            style={{ fontFamily: fonts.display, color: '#ffffff' }}
-          >
-            What We Build
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] mb-4" style={{ color: '#B8935A' }}>
+            What We Do
+          </p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: '#F0EBE3', letterSpacing: '-0.03em' }}>
+            Services Built for Growth
           </h2>
         </motion.div>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1, ease }}
-          className="text-center text-lg mb-16 max-w-2xl mx-auto"
-          style={{ fontFamily: fonts.body, color: colors.muted }}
-        >
-          End-to-end AI systems designed around how your business actually works.
-        </motion.p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {services.map((s, i) => (
-            <ServiceCard key={i} service={s} index={i} />
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 24 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.1 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+              className="group relative rounded-2xl p-8 transition-all duration-300 hover:-translate-y-0.5 cursor-default"
+              style={{
+                background: '#1A1A1E',
+                border: '1px solid rgba(255,255,255,0.06)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)',
+              }}
+            >
+              {/* Hover glow */}
+              <div
+                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                style={{ boxShadow: '0 0 40px rgba(184,147,90,0.15), inset 0 1px 0 rgba(184,147,90,0.1)' }}
+              />
+              <div className="relative z-10">
+                <div className="text-3xl mb-4">{s.icon}</div>
+                <h3 className="text-xl font-semibold mb-2" style={{ color: '#F0EBE3' }}>{s.title}</h3>
+                <p className="text-base leading-relaxed" style={{ color: '#9090A0' }}>{s.desc}</p>
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>
