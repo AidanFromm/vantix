@@ -22,7 +22,7 @@ export default function FooterSection() {
           <Link
             href="/"
             className="text-2xl font-bold tracking-tight"
-            style={{ fontFamily: fonts.display, color: colors.bg }}
+            style={{ fontFamily: fonts.display, color: colors.text }}
           >
             Vantix<span style={{ color: colors.bronze }}>.</span>
           </Link>

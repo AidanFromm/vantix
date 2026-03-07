@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import ChatWidgetWrapper from "@/components/ChatWidgetWrapper";
 
-const playfair = Playfair_Display({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-jakarta",
   display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -135,7 +130,7 @@ export default function RootLayout({
           src="https://plausible.io/js/script.js"
         />
       </head>
-      <body className={`antialiased ${playfair.variable} ${inter.variable}`}>
+      <body className={`antialiased ${jakarta.variable}`}>
         {children}
         <ChatWidgetWrapper />
       </body>

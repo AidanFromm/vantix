@@ -55,7 +55,7 @@ export default function FloatingNav() {
           willChange: 'transform',
           backdropFilter: scrolled ? 'blur(20px) saturate(1.6)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(1.6)' : 'none',
-          backgroundColor: scrolled ? 'rgba(244, 239, 232, 0.85)' : 'transparent',
+          backgroundColor: scrolled ? 'rgba(10, 10, 10, 0.8)' : 'transparent',
           borderBottom: scrolled ? `1px solid ${colors.border}` : '1px solid transparent',
           transition: 'background-color 0.4s, border-color 0.4s, backdrop-filter 0.4s',
         }}
@@ -90,8 +90,8 @@ export default function FloatingNav() {
           <div className="hidden md:flex items-center gap-6">
             <Link
               href="/login"
-              className="text-sm transition-colors duration-200 hover:text-[#B07A45]"
-              style={{ fontFamily: fonts.body, color: '#7A746C', fontSize: '14px' }}
+              className="text-sm transition-colors duration-200 hover:text-[#B8935A]"
+              style={{ fontFamily: fonts.body, color: colors.textSecondary, fontSize: '14px' }}
             >
               Login
             </Link>
@@ -183,8 +183,8 @@ export default function FloatingNav() {
                 <Link
                   href="/login"
                   onClick={() => setMobileOpen(false)}
-                  className="block w-full text-center py-3 text-lg transition-colors duration-200 hover:text-[#B07A45]"
-                  style={{ fontFamily: fonts.body, color: '#7A746C' }}
+                  className="block w-full text-center py-3 text-lg transition-colors duration-200 hover:text-[#B8935A]"
+                  style={{ fontFamily: fonts.body, color: colors.textSecondary }}
                 >
                   Login
                 </Link>
@@ -216,7 +216,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
       className="relative text-sm py-1 group"
       style={{ fontFamily: fonts.body, color: colors.muted }}
     >
-      <span className="transition-colors duration-200 group-hover:text-[#B07A45]">
+      <span className="transition-colors duration-200 group-hover:text-[#B8935A]">
         {label}
       </span>
       {/* Bronze underline */}

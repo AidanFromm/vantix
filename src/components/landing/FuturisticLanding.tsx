@@ -21,7 +21,7 @@ const FooterSection = dynamic(() => import('./FooterSection'), { ssr: false });
 
 export default function FuturisticLanding() {
   return (
-    <div className="min-h-screen scroll-smooth" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+    <div className="min-h-screen scroll-smooth">
       <ScrollProgressBar />
       <FloatingNav />
       <VideoHero />

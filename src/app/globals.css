@@ -1,29 +1,55 @@
-@import url('https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&f[]=satoshi@300,400,500,700&display=swap');
 @import "tailwindcss";
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-.font-playfair { font-family: var(--font-playfair), 'Playfair Display', serif; }
 img, video { max-width: 100%; height: auto; }
 
 :root {
-  --color-bg: #F4EFE8;
-  --color-text: #1C1C1C;
-  --color-muted: #7A746C;
-  --color-accent: #8E5E34;
-  --color-accent-light: #C89A6A;
-  --color-accent-hover: #8E5E34;
-  --color-border: #E3D9CD;
-  --color-card: #EEE6DC;
-  --color-surface: #EEE6DC;
-  --color-sage: #7A746C;
-  --color-primary: #B07A45;
-  --color-hover-bg: #EEE6DC;
+  /* Backgrounds */
+  --color-bg: #0A0A0A;
+  --color-bg-elevated: #141416;
+  --color-bg-card: #1A1A1E;
+  --color-bg-card-hover: #242428;
+  --color-surface: #1E1E24;
+
+  /* Text */
+  --color-text: #F0EBE3;
+  --color-text-secondary: #9090A0;
+  --color-muted: #5A5A6A;
+  --color-text-accent: #B8935A;
+
+  /* Bronze/Gold */
+  --color-accent: #B8935A;
+  --color-accent-light: #D4B87A;
+  --color-accent-hover: #7D5F35;
+  --color-copper: #C87F4E;
+
+  /* Borders */
+  --color-border: rgba(255,255,255,0.06);
+  --color-border-default: rgba(255,255,255,0.10);
+  --color-border-hover: rgba(255,255,255,0.15);
+
+  /* Legacy mappings */
+  --color-primary: #B8935A;
+  --color-card: #1A1A1E;
+  --color-sage: #5A5A6A;
+  --color-hover-bg: #242428;
+
+  /* Gradients */
+  --gradient-bronze: linear-gradient(135deg, #B8935A, #7D5F35);
+  --gradient-cta: linear-gradient(135deg, #C87F4E, #8E5E34);
+  --gradient-card-glow: radial-gradient(ellipse at top, rgba(184,147,90,0.08), transparent 70%);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 40px rgba(184,147,90,0.15);
+  --shadow-card: 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 * {
   box-sizing: border-box;
-  -webkit-transform: translateZ(0);
 }
 
 html {
@@ -32,23 +58,11 @@ html {
 
 body {
   background-color: var(--color-bg);
-  background-image: url('/paper-texture.png');
-  background-size: 600px 600px;
-  background-repeat: repeat;
-  background-blend-mode: soft-light;
   color: var(--color-text);
-  font-family: 'Satoshi', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-jakarta, 'Plus Jakarta Sans'), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-}
-
-/* Bronze button texture */
-.bronze-btn {
-  background-color: #B07A45;
-  background-image: url('/btn-texture.png');
-  background-size: cover;
-  background-position: center;
 }
 
 /* Custom scrollbar */
@@ -57,16 +71,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg);
+  background: #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: rgba(255,255,255,0.1);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-sage);
+  background: rgba(255,255,255,0.2);
 }
 
 /* Hide scrollbar for swipeable carousels */
@@ -80,8 +94,8 @@ body {
 
 /* Selection */
 ::selection {
-  background: rgba(184, 137, 90, 0.2);
-  color: var(--color-text);
+  background: rgba(184, 147, 90, 0.3);
+  color: #F0EBE3;
 }
 
 /* ========================================
@@ -100,7 +114,7 @@ body {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 50%, var(--color-accent) 100%);
+  background: linear-gradient(135deg, #B8935A 0%, #D4B87A 50%, #B8935A 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -109,7 +123,7 @@ body {
 }
 
 .gradient-text-static {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+  background: linear-gradient(135deg, #B8935A 0%, #D4B87A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -120,9 +134,9 @@ body {
    ======================================== */
 
 .bg-grid-pattern {
-  background-image: 
-    linear-gradient(to right, rgba(232,229,224,0.8) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(232,229,224,0.8) 1px, transparent 1px);
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
@@ -172,19 +186,19 @@ body {
 }
 
 /* ========================================
-   SUBTLE SHADOW UTILITIES (renamed from neumorphic)
+   SUBTLE SHADOW UTILITIES
    ======================================== */
 
 .shadow-raised {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .shadow-pressed {
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .shadow-subtle {
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 /* ========================================
@@ -200,7 +214,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(184, 137, 90, 0.05),
+    rgba(184, 147, 90, 0.08),
     transparent
   );
   background-size: 200% 100%;
@@ -292,18 +306,18 @@ body {
   html {
     font-size: 15px;
   }
-  
+
   button,
   a,
   [role="button"] {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   body {
     overflow-x: hidden;
   }
-  
+
   .overflow-auto,
   .overflow-scroll,
   .overflow-x-auto,
@@ -344,8 +358,9 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  
+
   .animate-float-slow,
   .animate-float-medium,
   .animate-float-gentle,
@@ -368,7 +383,7 @@ textarea {
   .safe-padding-bottom {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
-  
+
   .safe-padding-top {
     padding-top: max(1rem, env(safe-area-inset-top));
   }
@@ -476,17 +491,6 @@ textarea {
 /* ── Performance: GPU compositing helpers ── */
 .will-change-transform {
   will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
 }
 
 /* ── Mobile: Force all content visible ──

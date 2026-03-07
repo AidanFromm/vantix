@@ -150,13 +150,13 @@ export default function BookingSection() {
                 <div className="mb-10">
                   <div className="flex items-center justify-between mb-6">
                     <button onClick={goPrev} disabled={!canGoPrev}
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${canGoPrev ? 'hover:bg-[#E3D9CD] text-[#B07A45]' : 'text-[#E3D9CD] cursor-not-allowed'}`}>
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${canGoPrev ? 'hover:bg-[#242428] text-[#B8935A]' : 'text-[#5A5A6A] cursor-not-allowed'}`}>
                       <ChevronDown size={20} className="rotate-90" />
                     </button>
                     <p className="text-lg font-bold tracking-wide" style={{ fontFamily: fonts.display, color: colors.text }}>
                       {monthNames[viewMonth]} {viewYear}
                     </p>
-                    <button onClick={goNext} className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-[#E3D9CD] transition-all" style={{ color: colors.bronze }}>
+                    <button onClick={goNext} className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-[#242428] transition-all" style={{ color: colors.bronze }}>
                       <ChevronDown size={20} className="-rotate-90" />
                     </button>
                   </div>
@@ -181,12 +181,12 @@ export default function BookingSection() {
                                 ? 'cursor-not-allowed'
                                 : isToday
                                   ? 'font-bold ring-1'
-                                  : 'hover:bg-[#E3D9CD] cursor-pointer'
+                                  : 'hover:bg-[#242428] cursor-pointer'
                             }`}
                           style={{
                             backgroundColor: active ? colors.bronze : undefined,
                             boxShadow: active ? `0 8px 24px ${colors.bronze}30` : undefined,
-                            color: active ? '#fff' : disabled ? colors.border : isToday ? colors.bronze : colors.textSecondary,
+                            color: active ? '#fff' : disabled ? colors.textMuted : isToday ? colors.bronze : colors.textSecondary,
                             ...(isToday && !active ? { backgroundColor: `${colors.bronze}10` } : {}),
                           }}
                         >
