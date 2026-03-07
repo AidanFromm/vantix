@@ -4,15 +4,15 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { List, X } from '@phosphor-icons/react';
 import { colors, fonts, animations } from '@/lib/design-tokens';
 
 /* ── Navigation links ── */
 const links = [
-  { label: 'Services', href: '#services' },
   { label: 'Work', href: '#work' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#booking' },
+  { label: 'Services', href: '#services' },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'Contact', href: '#contact' },
 ];
 
 /* ── Ease curve for framer-motion ── */
@@ -96,7 +96,7 @@ export default function FloatingNav() {
               Login
             </Link>
             <a
-              href="#booking"
+              href="#contact"
               className="relative px-7 py-2.5 rounded-full text-sm font-semibold text-white overflow-hidden group"
               style={{
                 fontFamily: fonts.body,
@@ -123,7 +123,7 @@ export default function FloatingNav() {
                 </motion.div>
               ) : (
                 <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <Menu size={26} />
+                  <List size={26} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -189,7 +189,7 @@ export default function FloatingNav() {
                   Login
                 </Link>
                 <a
-                  href="#booking"
+                  href="#contact"
                   onClick={() => setMobileOpen(false)}
                   className="block w-full text-center py-4 rounded-full text-white font-semibold text-lg"
                   style={{
