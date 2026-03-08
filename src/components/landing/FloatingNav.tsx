@@ -32,7 +32,9 @@ export default function FloatingNav() {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex-shrink-0">
-          <Image src="/vantix-logo.png" alt="Vantix" width={120} height={36} className="h-9 w-auto" />
+          <span className="text-[22px] font-bold text-[#1A1A1A] tracking-tight">
+            Vantix<span className="text-[#B8935A]">.</span>
+          </span>
         </Link>
 
         {/* Center links - desktop */}
