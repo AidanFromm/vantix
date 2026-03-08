@@ -26,7 +26,7 @@ export default function FloatingNav() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#FAFAF7]/95 backdrop-blur-sm border-b border-black/[0.06]' : 'bg-transparent'
+        scrolled ? 'bg-[#FAFAF7]/95 backdrop-blur-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)]' : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -77,7 +77,7 @@ export default function FloatingNav() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-white border-b border-black/[0.06] px-6 pb-6"
+          className="md:hidden bg-[#FAFAF7] shadow-[0_2px_4px_rgba(0,0,0,0.04)] px-6 pb-6"
         >
           {navLinks.map((link) => (
             <a
