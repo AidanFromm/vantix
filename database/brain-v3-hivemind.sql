@@ -545,7 +545,7 @@ SELECT
   c.lifetime_value,
   c.last_contact_at,
   EXTRACT(days FROM (now() - c.last_contact_at)) as days_since_contact,
-  (SELECT COALESCE(SUM(f.amount), 0) FROM brain_financials f WHERE f.client_id = c.id AND f.type = 'subscription' AND f.recurring) as mrr,
+  (SELECT COALESCE(SUM(f.amount), 0) FROM brain_financials f JOIN brain_projects p2 ON f.project_id = p2.id WHERE p2.client_id = c.id) as total_financial,
   (SELECT COUNT(*) FROM brain_incidents i JOIN brain_projects p ON i.project_id = p.id WHERE p.client_id = c.id AND i.status != 'resolved') as open_incidents,
   CASE 
     WHEN c.satisfaction = 'churning' THEN 'critical'
