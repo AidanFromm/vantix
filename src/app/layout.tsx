@@ -50,10 +50,10 @@ export const metadata: Metadata = {
     siteName: "Vantix",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Vantix — AI-Powered Business Automation",
+        alt: "Vantix — We design and build digital products that drive real business results",
       },
     ],
     locale: "en_US",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     title: "Vantix — AI-Powered Business Infrastructure",
     description:
       "Your business runs on decisions. We make them faster. Custom AI, dashboards, websites, and automation.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.png"],
   },
   metadataBase: new URL("https://www.usevantix.com"),
   alternates: {
