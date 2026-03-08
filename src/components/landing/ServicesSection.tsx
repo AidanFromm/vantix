@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Globe, Robot, Palette, TrendUp } from '@phosphor-icons/react';
+import { Globe, Lightning, Palette, TrendUp } from '@phosphor-icons/react';
 
 const services = [
   {
@@ -11,7 +11,7 @@ const services = [
     tags: ['Next.js', 'React', 'E-Commerce', 'CMS'],
   },
   {
-    icon: Robot,
+    icon: Lightning,
     title: 'AI Automation',
     description: 'Intelligent workflows that save your team hours every week. From chatbots to data pipelines.',
     tags: ['Chatbots', 'Workflows', 'Integrations', 'AI'],
