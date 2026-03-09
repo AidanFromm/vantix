@@ -5,10 +5,397 @@
 -- Author: VantixHQ (Vix)
 -- ============================================================
 
--- Enable required extensions
+-- Enable required extensions (vector and pg_cron must be enabled in Supabase Dashboard first)
+-- Go to Database → Extensions → enable "vector", "pg_cron", "pg_net" if not already
 CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS pg_cron;
-CREATE EXTENSION IF NOT EXISTS pg_net;
+-- pg_cron and pg_net are managed extensions — enable via Dashboard > Database > Extensions
+-- CREATE EXTENSION IF NOT EXISTS pg_cron;
+-- CREATE EXTENSION IF NOT EXISTS pg_net;
+
+-- ============================================================
+-- ENSURE CORE TABLES EXIST (in case they were never created)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS brain_queue (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  title text,
+  description text,
+  project_id text,
+  requested_by text,
+  assigned_to text,
+  priority text DEFAULT 'medium',
+  required_capabilities text[],
+  status text DEFAULT 'pending',
+  blockers text,
+  result text,
+  estimated_minutes int,
+  actual_minutes int,
+  created_at timestamptz DEFAULT now(),
+  claimed_at timestamptz,
+  completed_at timestamptz,
+  due_by timestamptz,
+  depends_on uuid,
+  required_skills text[]
+);
+
+CREATE TABLE IF NOT EXISTS brain_tasks (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id text,
+  title text,
+  description text,
+  assigned_to text,
+  status text DEFAULT 'pending',
+  priority text DEFAULT 'medium',
+  created_by text,
+  started_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz DEFAULT now(),
+  deadline timestamptz,
+  depends_on uuid,
+  blocks uuid,
+  verified_commit text,
+  verified_at timestamptz,
+  sla_hours int,
+  escalated boolean DEFAULT false,
+  auto_assign_next boolean DEFAULT false,
+  estimated_hours numeric,
+  actual_hours numeric,
+  sprint_id text,
+  review_status text,
+  test_status text,
+  initiative_id uuid
+);
+
+CREATE TABLE IF NOT EXISTS brain_handoffs (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  from_bot text,
+  to_bot text,
+  project_id text,
+  reason text,
+  context text,
+  files_involved text[],
+  current_state text,
+  what_needs_done text,
+  status text DEFAULT 'pending',
+  accepted_by text,
+  accepted_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_notifications (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  from_bot text,
+  to_bot text,
+  priority text DEFAULT 'normal',
+  category text,
+  title text,
+  message text,
+  action_required boolean DEFAULT false,
+  read boolean DEFAULT false,
+  read_at timestamptz,
+  expires_at timestamptz,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_messages (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  from_bot text,
+  to_bot text,
+  message text,
+  message_type text,
+  priority text DEFAULT 'normal',
+  related_task_id uuid,
+  related_project text,
+  read boolean DEFAULT false,
+  read_at timestamptz,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_incidents (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id text,
+  title text,
+  description text,
+  severity text DEFAULT 'minor',
+  category text,
+  status text DEFAULT 'open',
+  detected_at timestamptz DEFAULT now(),
+  acknowledged_at timestamptz,
+  identified_at timestamptz,
+  resolved_at timestamptz,
+  closed_at timestamptz,
+  time_to_acknowledge_min int,
+  time_to_resolve_min int,
+  detected_by text,
+  assigned_to text,
+  resolved_by text,
+  root_cause text,
+  root_cause_category text,
+  affected_files text[],
+  affected_users_estimate int,
+  fix_description text,
+  fix_commit text,
+  fix_verified boolean DEFAULT false,
+  rollback_required boolean DEFAULT false,
+  postmortem text,
+  action_items text[],
+  learning_id uuid,
+  revenue_impact numeric,
+  downtime_minutes int,
+  tags text[],
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_live (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  event_type text,
+  message text,
+  target_bot text,
+  data jsonb,
+  responded boolean DEFAULT false,
+  response text,
+  response_by text,
+  responded_at timestamptz,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_heartbeats (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  status text,
+  current_task text,
+  blockers text,
+  last_commit_sha text,
+  project_id text,
+  session_id text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_bots (
+  id text PRIMARY KEY,
+  name text,
+  machine text,
+  owner text,
+  status text DEFAULT 'offline',
+  capabilities text[],
+  specialties text[],
+  telegram_handle text,
+  model text,
+  timezone text,
+  last_seen_at timestamptz,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_file_locks (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  project_id text,
+  file_path text,
+  reason text,
+  locked_at timestamptz DEFAULT now(),
+  expires_at timestamptz,
+  released_at timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS brain_activity (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  project_id text,
+  action text,
+  target text,
+  details text,
+  started_at timestamptz DEFAULT now(),
+  ended_at timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS brain_context (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id text,
+  bot_id text,
+  context_type text,
+  title text,
+  details text,
+  files_affected text[],
+  importance text DEFAULT 'normal',
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_memory_log (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  source text,
+  summary text,
+  decisions text[],
+  preferences text[],
+  action_items text[],
+  people_mentioned text[],
+  project_id text,
+  session_context text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_session_context (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  project_id text,
+  session_date date,
+  files_touched text[],
+  key_decisions text[],
+  fragile_areas text[],
+  learned text[],
+  handoff_notes text,
+  context_type text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_learnings (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  project_id text,
+  trigger_event text,
+  trigger_category text,
+  trigger_file text,
+  trigger_commit text,
+  lesson text,
+  fix_applied text,
+  prevention text,
+  severity text DEFAULT 'medium',
+  confidence numeric DEFAULT 0.5,
+  times_applied int DEFAULT 0,
+  times_helped int DEFAULT 0,
+  last_applied_at timestamptz,
+  tags text[],
+  related_learning_ids uuid[],
+  superseded_by uuid,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_mistakes (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  project_id text,
+  error_type text,
+  title text,
+  description text,
+  root_cause text,
+  fix_applied text,
+  prevention_rule text,
+  severity text,
+  commit_sha text,
+  resolved boolean DEFAULT false,
+  resolved_at timestamptz,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_git_events (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  repo text,
+  branch text,
+  commit_sha text,
+  commit_message text,
+  author text,
+  files_changed text[],
+  task_id uuid,
+  verified boolean DEFAULT false,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_deployments (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id text,
+  bot_id text,
+  platform text,
+  environment text,
+  commit_hash text,
+  commit_message text,
+  status text,
+  url text,
+  build_time_seconds int,
+  changes_summary text,
+  rollback_hash text,
+  deployed_at timestamptz DEFAULT now(),
+  pre_checks jsonb,
+  build_passed boolean,
+  env_clean boolean,
+  rollback_sha text,
+  deploy_url text,
+  health_check_passed boolean,
+  auto_rollback boolean DEFAULT false
+);
+
+CREATE TABLE IF NOT EXISTS brain_skills (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  skill_name text,
+  proficiency int DEFAULT 5,
+  tasks_completed int DEFAULT 0,
+  avg_quality numeric,
+  last_used_at timestamptz,
+  notes text
+);
+
+CREATE TABLE IF NOT EXISTS brain_knowledge_graph (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id text,
+  source_type text,
+  source_name text,
+  relationship text,
+  target_type text,
+  target_name text,
+  notes text,
+  discovered_by text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_stream (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  ts timestamptz DEFAULT now(),
+  actor_type text,
+  actor_id text,
+  event_type text,
+  title text,
+  details text,
+  project_id text,
+  client_id text,
+  task_id uuid,
+  tags text[],
+  importance text DEFAULT 'normal',
+  chat_source text,
+  chat_group_id text,
+  idempotency_key text UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS brain_reviews (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id text,
+  author_bot text,
+  reviewer_bot text,
+  commit_hash text,
+  files_changed text[],
+  summary text,
+  review_status text DEFAULT 'pending',
+  review_notes text,
+  issues_found jsonb,
+  quality_score numeric,
+  reviewed_at timestamptz,
+  created_at timestamptz DEFAULT now(),
+  approved_at timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS ai_daily_briefings (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  date date,
+  summary text,
+  key_metrics jsonb,
+  action_items jsonb,
+  predictions jsonb,
+  generated_at timestamptz DEFAULT now(),
+  created_at timestamptz DEFAULT now()
+);
 
 -- ============================================================
 -- PHASE 1: EVENT-DRIVEN INFRASTRUCTURE
@@ -1311,16 +1698,17 @@ CREATE TRIGGER incidents_to_stream
 
 -- ============================================================
 -- CRON JOBS (via pg_cron)
+-- Enable pg_cron in Dashboard > Database > Extensions first!
+-- Then uncomment and run these separately:
 -- ============================================================
 
--- Health check every 15 minutes
-SELECT cron.schedule('brain-health-check', '*/15 * * * *', 'SELECT brain_health_check()');
+-- SELECT cron.schedule('brain-health-check', '*/15 * * * *', 'SELECT brain_health_check()');
+-- SELECT cron.schedule('brain-timeout-check', '*/5 * * * *', 'SELECT check_task_timeouts()');
+-- SELECT cron.schedule('brain-daily-briefing', '0 13 * * *', 'SELECT generate_daily_briefing()');
 
--- Task timeout check every 5 minutes
-SELECT cron.schedule('brain-timeout-check', '*/5 * * * *', 'SELECT check_task_timeouts()');
-
--- Daily briefing at 8am EST (1pm UTC)
-SELECT cron.schedule('brain-daily-briefing', '0 13 * * *', 'SELECT generate_daily_briefing()');
+-- To enable cron jobs:
+-- 1. Go to Database > Extensions > search "pg_cron" > Enable
+-- 2. Then run the 3 SELECT cron.schedule lines above
 
 -- ============================================================
 -- ENHANCED VIEWS
