@@ -7,7 +7,10 @@
 
 -- Enable required extensions (vector and pg_cron must be enabled in Supabase Dashboard first)
 -- Go to Database → Extensions → enable "vector", "pg_cron", "pg_net" if not already
-CREATE EXTENSION IF NOT EXISTS vector;
+-- Vector extension: enable in Dashboard > Database > Extensions > search "vector" > Enable
+-- Then run: CREATE EXTENSION IF NOT EXISTS vector;
+-- Embeddings columns will be added separately after vector is enabled
+DO $$ BEGIN CREATE EXTENSION IF NOT EXISTS vector; EXCEPTION WHEN others THEN RAISE NOTICE 'vector extension not available - embeddings skipped'; END $$;
 -- pg_cron and pg_net are managed extensions — enable via Dashboard > Database > Extensions
 -- CREATE EXTENSION IF NOT EXISTS pg_cron;
 -- CREATE EXTENSION IF NOT EXISTS pg_net;
@@ -657,7 +660,7 @@ CREATE TABLE IF NOT EXISTS brain_memory_summaries (
   tasks_completed uuid[],            -- brain_tasks IDs
   raw_entry_count int,               -- how many entries were summarized
   raw_entry_ids uuid[],              -- original brain_memory_log IDs
-  embedding vector(1536),            -- for semantic search
+  embedding jsonb,            -- for semantic search
   created_at timestamptz DEFAULT now()
 );
 
@@ -667,7 +670,7 @@ CREATE INDEX IF NOT EXISTS idx_memory_summaries_project ON brain_memory_summarie
 
 -- Add embedding columns to existing tables
 DO $$ BEGIN
-  ALTER TABLE brain_knowledge ADD COLUMN IF NOT EXISTS embedding vector(1536);
+  ALTER TABLE brain_knowledge ADD COLUMN IF NOT EXISTS embedding jsonb;
   ALTER TABLE brain_knowledge ADD COLUMN IF NOT EXISTS last_accessed_at timestamptz;
   ALTER TABLE brain_knowledge ADD COLUMN IF NOT EXISTS access_count int DEFAULT 0;
 EXCEPTION WHEN others THEN NULL;
@@ -677,13 +680,13 @@ END $$;
 DO $$ BEGIN
   ALTER TABLE brain_memory_log ADD COLUMN IF NOT EXISTS archived_at timestamptz;
   ALTER TABLE brain_memory_log ADD COLUMN IF NOT EXISTS summary_id uuid REFERENCES brain_memory_summaries(id);
-  ALTER TABLE brain_memory_log ADD COLUMN IF NOT EXISTS embedding vector(1536);
+  ALTER TABLE brain_memory_log ADD COLUMN IF NOT EXISTS embedding jsonb;
 EXCEPTION WHEN others THEN NULL;
 END $$;
 
 -- Add embedding to brain_sops
 DO $$ BEGIN
-  ALTER TABLE brain_sops ADD COLUMN IF NOT EXISTS embedding vector(1536);
+  ALTER TABLE brain_sops ADD COLUMN IF NOT EXISTS embedding jsonb;
 EXCEPTION WHEN others THEN NULL;
 END $$;
 
