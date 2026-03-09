@@ -15,6 +15,111 @@ CREATE EXTENSION IF NOT EXISTS vector;
 -- ============================================================
 -- ENSURE CORE TABLES EXIST (in case they were never created)
 -- ============================================================
+CREATE TABLE IF NOT EXISTS brain_projects (
+  id text PRIMARY KEY,
+  name text,
+  client_id text,
+  repo text,
+  repo_remotes jsonb,
+  website text,
+  supabase_url text,
+  supabase_ref text,
+  vercel_project text,
+  tech_stack text[],
+  framework text,
+  deploy_platform text,
+  status text DEFAULT 'active',
+  brand_colors jsonb,
+  brand_rules text,
+  setup_instructions text,
+  important_files text,
+  gotchas text,
+  architecture_notes text,
+  dependencies text,
+  notes text,
+  updated_by text,
+  updated_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_knowledge (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  category text,
+  key text,
+  value text,
+  project_id text,
+  tags text[],
+  added_by text,
+  verified_by text,
+  updated_at timestamptz DEFAULT now(),
+  confidence numeric DEFAULT 0.5,
+  times_used int DEFAULT 0,
+  last_verified timestamptz,
+  related_to text[],
+  source_bot text,
+  source_mistake_id uuid
+);
+
+CREATE TABLE IF NOT EXISTS brain_credentials (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id text,
+  service text,
+  key_name text,
+  key_value text,
+  env_var text,
+  environment text,
+  notes text,
+  added_by text,
+  updated_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_decisions (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id text,
+  title text,
+  decision text,
+  reasoning text,
+  category text,
+  scope text,
+  alternatives jsonb,
+  decided_by text,
+  stakeholders text[],
+  decided_at timestamptz DEFAULT now(),
+  status text DEFAULT 'active',
+  superseded_by uuid,
+  reversal_reason text,
+  expires_at timestamptz,
+  reversible boolean DEFAULT true,
+  impact_level text DEFAULT 'medium',
+  related_task_id uuid,
+  related_incident_id uuid,
+  reference_urls text[],
+  tags text[],
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_discoveries (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  project_id text,
+  category text,
+  title text,
+  details text,
+  tags text[],
+  verified boolean DEFAULT false,
+  verified_by text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS brain_chat_updates (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  bot_id text,
+  project_id text,
+  message text,
+  update_type text,
+  created_at timestamptz DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS brain_queue (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   title text,
