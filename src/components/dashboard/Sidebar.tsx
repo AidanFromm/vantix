@@ -30,6 +30,7 @@ import {
   Brain,
   StickyNote,
   Settings,
+  Cpu,
   Shield,
   Bell,
   Crosshair,
@@ -105,6 +106,7 @@ const navGroups: NavGroup[] = [
     items: [
       { href: '/dashboard/team-hub', label: 'Team Hub', icon: UsersRound },
       { href: '/dashboard/bots', label: 'Bots', icon: Bot },
+      { href: '/dashboard/brain', label: 'Brain V3', icon: Cpu },
       { href: '/dashboard/memory', label: 'Memory', icon: Brain },
       { href: '/dashboard/notepad', label: 'Notepad', icon: StickyNote },
     ],
